@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
     <title>Register Users</title>
 
@@ -54,7 +55,7 @@
 	<form th:action="@{/u/admin/register_users}"  role="form" method="POST" th:object="${user}"> 
 	<div class="form-group input-group">
     	<div class="input-group-prepend">
-		    <span class="input-group-text"> <i class="fa fa-building"></i> </span>
+		    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 		</div>
 		<select class="form-control" name="role" th:object="${string_role}">
 			<option value="" disabled selected>Select Role</option>
