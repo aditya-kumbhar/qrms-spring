@@ -12,13 +12,13 @@ public class LoginController {
 		return "login";
 	}
 		
-	@GetMapping("/u/student/student-home")
+	@GetMapping("/u/student/home")
 	public String studentHome(){
-		return "student/student_home"; 
+		return "student/home"; 
 	}
 	
-	@GetMapping("/u/faculty/faculty-home")
+	@GetMapping("/u/faculty/home")
 	public String facultyHome(){
-		return "faculty/faculty_home"; 
+		return "faculty/home"; 
 	}
 }

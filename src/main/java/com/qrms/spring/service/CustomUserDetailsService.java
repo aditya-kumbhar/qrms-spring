@@ -1,7 +1,5 @@
 package com.qrms.spring.service;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Optional;
 
 import org.passay.CharacterRule;
@@ -18,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.qrms.spring.model.CustomUserDetails;
-import com.qrms.spring.model.Role;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.UsersRepository;
@@ -29,6 +26,9 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	@Autowired
 	private UsersRepository usersRepository;
 
+	@Autowired
+	private EmailServiceImpl email;
+	
 	@Autowired
 	private RoleRepository RoleRepository;
 
@@ -102,6 +102,14 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 		String password= generatePassayPassword();
 		System.out.println("Username: "+ tempUsername + " Password: "+ password);
 		
+		
+		String body = "Hi, "+user.getFirstName()+"\nYour QRMS Account has been successfully created.\n"
+				+ "Use the following credentials to login:\n"
+				+ "Username: "+tempUsername+"\n"+ "Password: "+password
+				+ "\n\nDo not share your credentials with anyone.\n"
+				+ "Regards,\nQRMS Team.";
+		
+		email.send("qrmsmail@gmail.com", user.getEmail(), "Login Credentials for QRMS", body);
 		
 		user.setPassword(bCryptPasswordEncoder().encode(password));
 		user.setActive(1);
