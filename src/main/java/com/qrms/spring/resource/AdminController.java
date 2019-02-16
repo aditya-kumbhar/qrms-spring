@@ -40,6 +40,12 @@ public class AdminController {
 		return "admin/home";
 	}
 	
+	@GetMapping("/add-course")
+	public String addCourse() {
+		return "admin/addCourses";
+	}
+	
+	
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public ModelAndView registerUsers() {
 		ModelAndView model = new ModelAndView();
@@ -56,8 +62,7 @@ public class AdminController {
 		ModelAndView model = new ModelAndView();	
 		Role userRole = roleRepository.findByRole(role);
 		user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
-		
-		
+				
 		userDetails.saveUser(user);
 		System.out.println("ROLE: "+role);
 		if(role.equals("STUDENT")) {
