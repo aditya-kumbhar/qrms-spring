@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.qrms.spring.model.Role;
 import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.Users;
+import com.qrms.spring.model.Course;
 
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
@@ -39,13 +40,8 @@ public class AdminController {
 	public String adminHome() {
 		return "admin/home";
 	}
-	
-	@GetMapping("/add-course")
-	public String addCourse() {
-		return "admin/addCourses";
-	}
-	
-	
+
+
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public ModelAndView registerUsers() {
 		ModelAndView model = new ModelAndView();
@@ -57,6 +53,7 @@ public class AdminController {
 		return model;
 	}
 	
+	//Handle register user form
 	@RequestMapping(value = "/register_users", method = RequestMethod.POST)
 	public ModelAndView createUser(@Valid Users user, String role) {
 		ModelAndView model = new ModelAndView();	
@@ -82,5 +79,32 @@ public class AdminController {
 		return model;
 	}
 	
+//	//Display add course page
+//	@RequestMapping(value = "/add-course", method = RequestMethod.GET)
+//	public ModelAndView addCourses() {
+//		ModelAndView model = new ModelAndView();
+//		Course course = new Course();
+//		model.addObject("course",course);
+//		model.setViewName("admin/addCourses");
+//		return model;
+//	}
+//	
+//	//Handle add course form
+//	@RequestMapping(value = "/add_courses", method = RequestMethod.POST)
+//	public ModelAndView addCourse(@Valid Course course) {
+//		ModelAndView model = new ModelAndView();	
+//		
+//		model.addObject("msg","Course has been added succesfully");
+//		model.addObject("course",new Course());
+//		model.setViewName("admin/addCourses");
+//		System.out.println("Controller coursename: "+course.getCourseName());
+//		return model;
+//	}
+	
+	//Display add course page
+	@GetMapping("/add-course")
+	public String addCourses() {
+		return "admin/addCourses";
+	}
 	
 }
