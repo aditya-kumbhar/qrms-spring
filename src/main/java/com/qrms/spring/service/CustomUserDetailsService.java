@@ -1,6 +1,7 @@
 package com.qrms.spring.service;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -16,8 +17,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.qrms.spring.model.CustomUserDetails;
+import com.qrms.spring.model.Role;
+import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.Users;
-import com.qrms.spring.repository.RoleRepository;
+import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.UsersRepository;
 
 @Service
@@ -27,11 +30,11 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	private UsersRepository usersRepository;
 
 	@Autowired
-	private EmailServiceImpl email;
+	private StudentAcadRepository studentAcadRepository;
 	
 	@Autowired
-	private RoleRepository RoleRepository;
-
+	private EmailServiceImpl email;
+	
 	@Override
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
@@ -77,7 +80,7 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	    String password = gen.generatePassword(10, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
 	    return password;
 	}
-	
+
 	public void saveUser(Users user) {
 		
 		String username = user.getFirstName().toLowerCase() + user.getLastName().toLowerCase().charAt(0);
@@ -103,7 +106,7 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 		System.out.println("Username: "+ tempUsername + " Password: "+ password);
 		
 		
-		String body = "Hi, "+user.getFirstName()+"\nYour QRMS Account has been successfully created.\n"
+		String body = "Hi "+user.getFirstName()+",\nYour QRMS Account has been successfully created.\n"
 				+ "Use the following credentials to login:\n"
 				+ "Username: "+tempUsername+"\n"+ "Password: "+password
 				+ "\n\nDo not share your credentials with anyone.\n"
@@ -113,9 +116,10 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 		
 		user.setPassword(bCryptPasswordEncoder().encode(password));
 		user.setActive(1);
+		
 		usersRepository.save(user);
-	
-	}
+		
+		}
 	
  
 }

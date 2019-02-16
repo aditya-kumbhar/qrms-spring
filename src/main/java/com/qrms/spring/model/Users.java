@@ -1,5 +1,6 @@
 package com.qrms.spring.model;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -17,7 +18,6 @@ import javax.persistence.Table;
 @Table(name="user")
 public class Users {
 	
-//	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
 	@Column(name="user_name")
 	private String userName;

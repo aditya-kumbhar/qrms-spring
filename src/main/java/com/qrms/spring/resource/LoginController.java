@@ -11,7 +11,11 @@ public class LoginController {
 	public String userLogin() {
 		return "login";
 	}
-		
+	
+	@GetMapping("/forgotpassword")
+	public String forgotPass() {
+		return "forgotpass";
+	}
 	@GetMapping("/u/student/home")
 	public String studentHome(){
 		return "student/home"; 
@@ -21,4 +25,5 @@ public class LoginController {
 	public String facultyHome(){
 		return "faculty/home"; 
 	}
+	
 }
