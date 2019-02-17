@@ -82,10 +82,8 @@ public class AdminController {
 			
 		}
 		
-		String string_role = new String();
 		model.addObject("msg","User has been successfully registered");
 		model.addObject("user",new Users());
-		model.addObject("string_role",string_role);
 		model.setViewName("admin/registerUsers");
 		return model;
 	}
@@ -96,8 +94,6 @@ public class AdminController {
 		ModelAndView model = new ModelAndView();
 		Course course = new Course();
 		departments = departmentRepository.findAll();
-		String string_dept = new String();
-		model.addObject("string_dept",string_dept);
 		model.addObject("course",course);		
 		model.addObject("departments",departments);
 		model.setViewName("admin/addCourses");
@@ -108,20 +104,6 @@ public class AdminController {
 	@RequestMapping(value = "/add_courses", method = RequestMethod.POST)
 	public ModelAndView addCourse(@Valid Course course, String dept) {
 		ModelAndView model = new ModelAndView();	
-		System.out.println("Hello");
-		System.out.println("dept: "+dept);
-		Department userDept = departmentRepository.findByDeptName(dept);
-		
-		/////string_dept IS NULL FOR SOME WEIRD REASON, PLS COMPARE with string_role which is working
-		//System.out.println(string_dept);
-		
-		
-		////THE FOLLOWING LINE THROWS THE ERROR BECAUSE dept is null
-		System.out.println("DB name: "+userDept.getDeptName());
-		////IF ABOVE LINE IS REMOVED, course GETS ADDED IN ,MYSQL, but with dept_id = null in table
-		
-		course.setDepartment(userDept);
-		
 		model.addObject("msg","Course has been added succesfully");
 		model.addObject("course",new Course());
 		model.addObject("departments",departments);

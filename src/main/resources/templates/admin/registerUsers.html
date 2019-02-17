@@ -91,7 +91,7 @@
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 			</div>
-			<select class="form-control" name="role" id="role" th:object="${string_role}">
+			<select class="form-control" th:name="role" th:id="role">
 				<option value="selectrole" style="color:#8F8B87" selected>Select Role</option>
 				<option value="STUDENT" style="color:#000">Student</option>
 				<option value="FACULTY" style="color:#000">Faculty</option>

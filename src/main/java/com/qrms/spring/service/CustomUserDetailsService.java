@@ -1,7 +1,6 @@
 package com.qrms.spring.service;
 
 import java.util.Optional;
-import java.util.Set;
 
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -17,10 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.qrms.spring.model.CustomUserDetails;
-import com.qrms.spring.model.Role;
-import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.Users;
-import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.UsersRepository;
 
 @Service
@@ -28,8 +24,7 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 
 	@Autowired
 	private UsersRepository usersRepository;
-
-
+	
 	@Autowired
 	private EmailServiceImpl email;
 	
@@ -110,8 +105,11 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 				+ "\n\nDo not share your credentials with anyone.\n"
 				+ "Regards,\nQRMS Team.";
 		
+		try {
 		email.send("qrmsmail@gmail.com", user.getEmail(), "Login Credentials for QRMS", body);
-		
+		}catch(Exception e) {
+			System.out.println("Error Sending Email: " + e.getMessage());
+		}
 		user.setPassword(bCryptPasswordEncoder().encode(password));
 		user.setActive(1);
 		
