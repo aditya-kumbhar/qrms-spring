@@ -29,9 +29,7 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	@Autowired
 	private UsersRepository usersRepository;
 
-	@Autowired
-	private StudentAcadRepository studentAcadRepository;
-	
+
 	@Autowired
 	private EmailServiceImpl email;
 	

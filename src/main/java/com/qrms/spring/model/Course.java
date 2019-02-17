@@ -30,18 +30,11 @@ public class Course {
 	@Column(name="course_type")
 	private String courseType;
 	
-
 	@Column(name="course_year")
 	private String courseYear;
 
-
 	@Column(name="course_sem")
-	private String courseSem;
-	
-	@Column(name="course_syllabus")
-	private String courseSyllabus;
-
-	
+	private int courseSem;
 	
 	public String getCourseId() {
 		return courseId;
@@ -91,21 +84,16 @@ public class Course {
 		this.courseYear = courseYear;
 	}
 
-	public String getCourseSem() {
+	public int getCourseSem() {
 		return courseSem;
 	}
 
-	public void setCourseSem(String courseSem) {
+	public void setCourseSem(int courseSem) {
 		this.courseSem = courseSem;
 	}
-
-	public String getCourseSyllabus() {
-		return courseSyllabus;
+	
+	public Course() {
+		
 	}
-
-	public void setCourseSyllabus(String courseSyllabus) {
-		this.courseSyllabus = courseSyllabus;
-	}
-
 	
 }

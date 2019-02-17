@@ -2,6 +2,7 @@ package com.qrms.spring.resource;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -16,7 +17,9 @@ import com.qrms.spring.model.Role;
 import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.model.Course;
-
+import com.qrms.spring.model.Department;
+import com.qrms.spring.repository.CourseRepository;
+import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
@@ -34,13 +37,22 @@ public class AdminController {
 	@Autowired
 	private StudentAcadRepository studentAcadRepository;
 	
+	@Autowired
+	private DepartmentRepository departmentRepository;
+	
+	@Autowired
+	private CourseRepository courseRepository;
+	
 	private StudentAcad student;
+	
+	private Course course;
+	
+	private List<Department> departments; 
 	
 	@GetMapping("/home")
 	public String adminHome() {
 		return "admin/home";
 	}
-
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public ModelAndView registerUsers() {
@@ -61,7 +73,6 @@ public class AdminController {
 		user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
 				
 		userDetails.saveUser(user);
-		System.out.println("ROLE: "+role);
 		if(role.equals("STUDENT")) {
 			student = new StudentAcad();
 			System.out.println("Adding user to studAcad");
@@ -75,36 +86,50 @@ public class AdminController {
 		model.addObject("user",new Users());
 		model.addObject("string_role",string_role);
 		model.setViewName("admin/registerUsers");
-		System.out.println("Controller username: "+user.getUserName());
 		return model;
 	}
 	
-//	//Display add course page
-//	@RequestMapping(value = "/add-course", method = RequestMethod.GET)
-//	public ModelAndView addCourses() {
-//		ModelAndView model = new ModelAndView();
-//		Course course = new Course();
-//		model.addObject("course",course);
-//		model.setViewName("admin/addCourses");
-//		return model;
-//	}
-//	
-//	//Handle add course form
-//	@RequestMapping(value = "/add_courses", method = RequestMethod.POST)
-//	public ModelAndView addCourse(@Valid Course course) {
-//		ModelAndView model = new ModelAndView();	
-//		
-//		model.addObject("msg","Course has been added succesfully");
-//		model.addObject("course",new Course());
-//		model.setViewName("admin/addCourses");
-//		System.out.println("Controller coursename: "+course.getCourseName());
-//		return model;
-//	}
-	
 	//Display add course page
-	@GetMapping("/add-course")
-	public String addCourses() {
-		return "admin/addCourses";
+	@RequestMapping(value = "/add-course", method = RequestMethod.GET)
+	public ModelAndView addCourses() {
+		
+		ModelAndView model = new ModelAndView();
+		course = new Course();
+		departments = departmentRepository.findAll();
+		
+		model.addObject("string_dept",new String());
+		model.addObject("course",course);		
+		model.addObject("departments",departments);
+		model.setViewName("admin/addCourses");
+		return model;
 	}
+	
+//	Handle add course form
+	@RequestMapping(value = "/add_courses", method = RequestMethod.POST)
+	public ModelAndView addCourse(@Valid Course course, String string_dept) {
+		ModelAndView model = new ModelAndView();	
+		
+		Department dept = departmentRepository.findByDeptName(string_dept);
+		
+		/////string_dept IS NULL FOR SOME WEIRD REASON, PLS COMPARE with string_role which is working
+		//System.out.println(string_dept);
+		
+		
+		////THE FOLLOWING LINE THROWS THE ERROR BECAUSE dept is null
+		System.out.println("DB name: "+dept.getDeptName());
+		////IF ABOVE LINE IS REMOVED, course GETS ADDED IN ,MYSQL, but with dept_id = null in table
+		
+		course.setDepartment(dept);
+		
+		model.addObject("msg","Course has been added succesfully");
+		model.addObject("course",new Course());
+		model.addObject("departments",departments);
+		model.addObject("input_dept", new String());
+		model.setViewName("admin/addCourses");
+		
+		courseRepository.save(course);
+		return model;
+	}
+	
 	
 }

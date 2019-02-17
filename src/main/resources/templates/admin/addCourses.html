@@ -23,13 +23,13 @@
 	        $("#courseYear").change(function () {
 	            var val = $(this).val();
 	            if (val == "FE") {
-	                $("#courseSem").html("<option value='selectsem' style='color:#8F8B87' selected>Select Semester</option><option value='sem1' style='color:#000'>1</option><option value='sem2' style='color:#000'>2</option>");
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='1' style='color:#000'>1</option><option value='2' style='color:#000'>2</option>");
 	            } else if (val == "SE") {
-	                $("#courseSem").html("<option value='selectsem' style='color:#8F8B87' selected>Select Semester</option><option value='sem3' style='color:#000'>3</option><option value='sem4' style='color:#000'>4</option>");
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='3' style='color:#000'>3</option><option value='4' style='color:#000'>4</option>");
 	            } else if (val == "TE") {
-	                $("#courseSem").html("<option value='selectsem' style='color:#8F8B87' selected>Select Semester</option><option value='sem5' style='color:#000'>5</option><option value='sem6' style='color:#000'>6</option>");
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='5' style='color:#000'>5</option><option value='6' style='color:#000'>6</option>");
 	            } else if (val == "BE") {
-	                $("#courseSem").html("<option value='selectsem' style='color:#8F8B87' selected>Select Semester</option><option value='sem7' style='color:#000'>7</option><option value='sem8' style='color:#000'>8</option>");
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='7' style='color:#000'>7</option><option value='8' style='color:#000'>8</option>");
 	            } else if (val == "select") {
 	            	$("#courseSem").html("<option value=''>Select Semester</option>");
 	            }
@@ -42,18 +42,26 @@
 	            var ctype = $('#courseType');
 	            var cyear = $('#courseYear');
 	            var csem = $('#courseSem');
+	            var dept = $('#dept');
 	            
-	            if (ctype.val() == "selecttype") {
+	            if (dept.val() == "none") {
+	                alert("Please select a course department");
+	                $('#dept').focus();
+
+	                return false;
+	            } 
+	            else if (ctype.val() == "selecttype") {
 	                alert("Please select a course type");
 	                $('#courseType').focus();
 
 	                return false;
-	            } else if (cyear.val() == "selectyear") {
+	            } 
+	            else if (cyear.val() == "selectyear") {
 	                alert("Please select a course year");
 	                $('#courseYear').focus();
 
-	                return false;
-	            } else if (csem.val() == "selectsem") {
+	               return false;
+	            } else if (csem.val() == "0") {
 	                alert("Please select a semester");
 	                $('#courseSem').focus();
 
@@ -102,7 +110,7 @@
 	    
     </script>
     
-    
+ 
     
 </head>
 
@@ -140,34 +148,44 @@
 <article class="card-body mx-auto" style="max-width: 400px;">
 	<h4 class="card-title mt-3 text-center">Add Course</h4>
 	
-	<form th:action="@{/u/admin/add_courses}"  role="form" method="POST"> 
+	<form th:action="@{/u/admin/add_courses}"  role="form" method="POST" th:object="${course}"> 
+	
+		<div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<select class="form-control" name="dept" th:object="${string_dept}" id="dept">
+				<option value="none" style="color:#8F8B87" selected>Select Department</option>
+				<option th:each="dept : ${departments}" th:value="${dept.deptName}" style="color:#000" th:text="${dept.deptName}">
+				</select>
+		</div> <!-- form-group end.// -->
 		
 		<div class="form-group input-group">
 			<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
 			 </div>
-	        <input id="courseId" name="courseId" class="form-control" placeholder="Course ID" type="text" required autofocus/>
+	        <input id="courseId" name="courseId" th:field="*{courseId}" class="form-control" placeholder="Course ID" type="text" required autofocus/>
 	    </div> <!-- form-group// -->
 	    
 	    <div class="form-group input-group">
 			<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
 			 </div>
-	        <input id="courseName" name="courseName" class="form-control" placeholder="Course Name" type="text" required autofocus/>
+	        <input id="courseName" name="courseName" th:field="*{courseName}" class="form-control" placeholder="Course Name" type="text" required autofocus/>
 	    </div> <!-- form-group// -->
-	    
+	   
 	    <div class="form-group input-group">
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
 			 </div>
-	        <input id="courseCredits"  name="courseCredits" class="form-control" placeholder="Course Credits" type="number" required autofocus/>
+	        <input id="courseCredits"  name="courseCredits" class="form-control" th:field="*{courseCredits}" placeholder="Course Credits" type="number" required autofocus/>
 	    </div> <!-- form-group// -->  
 	    
 	    <div class="form-group input-group">
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 			</div>
-			<select class="form-control" name="courseType" id="courseType" required >
+			<select class="form-control" name="courseType" id="courseType" required th:field="*{courseType}" >
 				<option value="selecttype" style="color:#8F8B87" selected>Course Type</option>
 				<option value="regular" style="color:#000">Regular</option>
 				<option value="nelective" style="color:#000">Normal Elective</option>
@@ -179,7 +197,7 @@
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 			</div>
-			<select class="form-control" name="courseYear" id="courseYear" required>
+			<select class="form-control" name="courseYear" id="courseYear" required th:field="*{courseYear}">
 				<option value="selectyear" style="color:#8F8B87" selected>Select Year</option>
 				<option value="FE" style="color:#000">FE</option>
 				<option value="SE" style="color:#000">SE</option>
@@ -192,8 +210,8 @@
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 			</div>
-			<select class="form-control"  name="courseSem" id="courseSem" required>
-				<option value="selectsem" style="color:#8F8B87" selected>Select Semester</option>
+			<select class="form-control"  name="courseSem" id="courseSem" required th:field="*{courseSem}">
+				<option value="0" style="color:#8F8B87" selected>Select Semester</option>
 			</select>
 		</div> <!-- form-group end.// -->
 	    
@@ -201,7 +219,9 @@
 	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Add Course  </button>
 	    </div> <!-- form-group// -->   
 	           
-	     
+	     <div class="row">
+	    	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+	    </div>       
                                                                 
 	</form>
 </article>

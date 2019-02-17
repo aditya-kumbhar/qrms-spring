@@ -1,6 +1,5 @@
 package com.qrms.spring.model;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
