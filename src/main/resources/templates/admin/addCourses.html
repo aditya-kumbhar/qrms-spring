@@ -146,8 +146,7 @@
 <div class="card bg-light">
 <article class="card-body mx-auto" style="max-width: 400px;">
 	<h4 class="card-title mt-3 text-center">Add Course</h4>
-	<span th:text="${string_dept}"></span>
-	
+
 	<form th:action="@{/u/admin/add_courses}"  role="form" method="POST" th:object="${course}"> 
 	
 		<div class="form-group input-group">

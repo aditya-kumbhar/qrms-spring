@@ -59,8 +59,6 @@ public class AdminController {
 	public ModelAndView registerUsers() {
 		ModelAndView model = new ModelAndView();
 		Users user = new Users();
-		String string_role = new String();
-		model.addObject("string_role",string_role);
 		model.addObject("user",user);
 		model.setViewName("admin/registerUsers");
 		return model;
@@ -72,8 +70,8 @@ public class AdminController {
 		ModelAndView model = new ModelAndView();	
 		Role userRole = roleRepository.findByRole(role);
 		user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
-		//System.out.println("role:"+ role);
 		userDetails.saveUser(user);
+
 		if(role.equals("STUDENT")) {
 			student = new StudentAcad();
 			System.out.println("Adding user to studAcad");
