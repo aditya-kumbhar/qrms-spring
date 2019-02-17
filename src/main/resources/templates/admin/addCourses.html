@@ -147,6 +147,7 @@
 <div class="card bg-light">
 <article class="card-body mx-auto" style="max-width: 400px;">
 	<h4 class="card-title mt-3 text-center">Add Course</h4>
+	<span th:text="${string_dept}"></span>
 	
 	<form th:action="@{/u/admin/add_courses}"  role="form" method="POST" th:object="${course}"> 
 	
@@ -154,10 +155,11 @@
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 			</div>
-			<select class="form-control" name="dept" th:object="${string_dept}" id="dept">
-				<option value="none" style="color:#8F8B87" selected>Select Department</option>
-				<option th:each="dept : ${departments}" th:value="${dept.deptName}" style="color:#000" th:text="${dept.deptName}">
-				</select>
+		
+			<select class="form-control" th:id="dept" th:name="dept" autofocus>
+				<option th:value="none" style="color:#8F8B87" selected disabled>Select Department</option>
+				<option th:each="dept : ${departments}" th:value="${dept.deptName}"  th:text="${dept.deptName}" style="color:#000"></option>
+			</select>
 		</div> <!-- form-group end.// -->
 		
 		<div class="form-group input-group">
@@ -178,7 +180,7 @@
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
 			 </div>
-	        <input id="courseCredits"  name="courseCredits" class="form-control" th:field="*{courseCredits}" placeholder="Course Credits" type="number" required autofocus/>
+	        <input th:id="courseCredits"  th:name="courseCredits" class="form-control" th:field="*{courseCredits}" placeholder="Course Credits" type="number" required autofocus/>
 	    </div> <!-- form-group// -->  
 	    
 	    <div class="form-group input-group">
