@@ -37,7 +37,6 @@
     	
 	    $(document).ready(function () {
 	        $("#submit").click(function () {
-
 	            var ctype = $('#courseType');
 	            var cyear = $('#courseYear');
 	            var csem = $('#courseSem');
@@ -46,30 +45,38 @@
 	            if (dept.val() == "none") {
 	                alert("Please select a course department");
 	                $('#dept').focus();
-
 	                return false;
 	            } 
 	            else if (ctype.val() == "selecttype") {
 	                alert("Please select a course type");
 	                $('#courseType').focus();
-
 	                return false;
 	            } 
 	            else if (cyear.val() == "selectyear") {
 	                alert("Please select a course year");
 	                $('#courseYear').focus();
-
 	               return false;
 	            } else if (csem.val() == "0") {
 	                alert("Please select a semester");
 	                $('#courseSem').focus();
-
 	                return false;
 	            }
 	            
 	            else return;
 	        });
 	    });
+	    
+	    $(document).ready(function() {
+    	   $('#dept').css('color','#8F8B87');
+    	   $('#dept').change(function() {
+    	      var current = $('#dept').val();
+    	      if (current != 'none') {
+    	          $('#dept').css('color','black');
+    	      } else {
+    	          $('#dept').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
 	    
 	    $(document).ready(function() {
     	   $('#courseType').css('color','#8F8B87');
@@ -155,7 +162,7 @@
 			</div>
 		
 			<select class="form-control" th:id="dept" th:name="dept" autofocus>
-				<option th:value="none" style="color:#8F8B87" selected disabled>Select Department</option>
+				<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
 				<option th:each="dept : ${departments}" th:value="${dept.deptName}"  th:text="${dept.deptName}" style="color:#000"></option>
 			</select>
 
