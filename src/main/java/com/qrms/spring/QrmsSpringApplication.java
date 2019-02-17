@@ -2,9 +2,9 @@ package com.qrms.spring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
-//@EnableJpaRepositories("com.qrms.spring.repository")
-//@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+@EnableAsync
 @SpringBootApplication
 public class QrmsSpringApplication {
 
