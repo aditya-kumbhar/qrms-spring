@@ -7,7 +7,6 @@
     <meta name="author" content="">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     
-
     <title>Register Users</title>
 
      <!-- Bootstrap core CSS -->
@@ -154,10 +153,10 @@
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 			</div>
-			<select class="form-control" name="dept" th:object="${string_dept}" id="dept">
+			<select class="form-control" name="dept" id="dept" th:object="${string_dept}" >
 				<option value="none" style="color:#8F8B87" selected>Select Department</option>
 				<option th:each="dept : ${departments}" th:value="${dept.deptName}" style="color:#000" th:text="${dept.deptName}">
-				</select>
+			</select>
 		</div> <!-- form-group end.// -->
 		
 		<div class="form-group input-group">

@@ -45,7 +45,7 @@ public class AdminController {
 	
 	private StudentAcad student;
 	
-	private Course course;
+	//private Course course;
 	
 	private List<Department> departments; 
 	
@@ -54,6 +54,7 @@ public class AdminController {
 		return "admin/home";
 	}
 
+	//Display register user form
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public ModelAndView registerUsers() {
 		ModelAndView model = new ModelAndView();
@@ -71,7 +72,7 @@ public class AdminController {
 		ModelAndView model = new ModelAndView();	
 		Role userRole = roleRepository.findByRole(role);
 		user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
-				
+		//System.out.println("role:"+ role);
 		userDetails.saveUser(user);
 		if(role.equals("STUDENT")) {
 			student = new StudentAcad();
@@ -92,34 +93,34 @@ public class AdminController {
 	//Display add course page
 	@RequestMapping(value = "/add-course", method = RequestMethod.GET)
 	public ModelAndView addCourses() {
-		
 		ModelAndView model = new ModelAndView();
-		course = new Course();
+		Course course = new Course();
 		departments = departmentRepository.findAll();
-		
-		model.addObject("string_dept",new String());
+		String string_dept = new String();
+		model.addObject("string_dept",string_dept);
 		model.addObject("course",course);		
 		model.addObject("departments",departments);
 		model.setViewName("admin/addCourses");
 		return model;
 	}
 	
-//	Handle add course form
+	//Handle add course form
 	@RequestMapping(value = "/add_courses", method = RequestMethod.POST)
-	public ModelAndView addCourse(@Valid Course course, String string_dept) {
+	public ModelAndView addCourse(@Valid Course course, String dept) {
 		ModelAndView model = new ModelAndView();	
-		
-		Department dept = departmentRepository.findByDeptName(string_dept);
+		System.out.println("Hello");
+		System.out.println("dept: "+dept);
+		Department userDept = departmentRepository.findByDeptName(dept);
 		
 		/////string_dept IS NULL FOR SOME WEIRD REASON, PLS COMPARE with string_role which is working
 		//System.out.println(string_dept);
 		
 		
 		////THE FOLLOWING LINE THROWS THE ERROR BECAUSE dept is null
-		System.out.println("DB name: "+dept.getDeptName());
+		System.out.println("DB name: "+userDept.getDeptName());
 		////IF ABOVE LINE IS REMOVED, course GETS ADDED IN ,MYSQL, but with dept_id = null in table
 		
-		course.setDepartment(dept);
+		course.setDepartment(userDept);
 		
 		model.addObject("msg","Course has been added succesfully");
 		model.addObject("course",new Course());
