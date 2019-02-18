@@ -21,7 +21,7 @@ public class Course {
 	private String courseName;
 	
 	@Column(name="course_credits")
-	private int courseCredits;
+	private Integer courseCredits;
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "dept_id")
@@ -52,11 +52,11 @@ public class Course {
 		this.courseName = courseName;
 	}
 
-	public int getCourseCredits() {
+	public Integer getCourseCredits() {
 		return courseCredits;
 	}
 
-	public void setCourseCredits(int courseCredits) {
+	public void setCourseCredits(Integer courseCredits) {
 		this.courseCredits = courseCredits;
 	}
 

@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     
-    <title>Register Users</title>
+    <title>Add Courses</title>
 
      <!-- Bootstrap core CSS -->
     <link th:href="@{/webjars/bootstrap/4.1.3/css/bootstrap.min.css}" rel="stylesheet">
@@ -37,6 +37,7 @@
     	
 	    $(document).ready(function () {
 	        $("#submit").click(function () {
+	        	
 	            var ctype = $('#courseType');
 	            var cyear = $('#courseYear');
 	            var csem = $('#courseSem');
@@ -45,20 +46,24 @@
 	            if (dept.val() == "none") {
 	                alert("Please select a course department");
 	                $('#dept').focus();
+	                
 	                return false;
 	            } 
 	            else if (ctype.val() == "selecttype") {
 	                alert("Please select a course type");
 	                $('#courseType').focus();
+	                
 	                return false;
 	            } 
 	            else if (cyear.val() == "selectyear") {
 	                alert("Please select a course year");
 	                $('#courseYear').focus();
+	                
 	               return false;
 	            } else if (csem.val() == "0") {
 	                alert("Please select a semester");
 	                $('#courseSem').focus();
+	                
 	                return false;
 	            }
 	            
@@ -114,11 +119,12 @@
     	   }); 
     	});
 	    
+	    
     </script>
     
  
-    
-</head>
+  
+</head> 
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
@@ -160,7 +166,6 @@
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 			</div>
-		
 			<select class="form-control" th:id="dept" th:name="dept" autofocus>
 				<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
 				<option th:each="dept : ${departments}" th:value="${dept.deptName}"  th:text="${dept.deptName}" style="color:#000"></option>
@@ -186,7 +191,7 @@
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
 			 </div>
-	        <input th:id="courseCredits"  th:name="courseCredits" class="form-control" th:field="*{courseCredits}" placeholder="Course Credits" type="number" required autofocus/>
+	        <input id="courseCredits"  name="courseCredits" th:field="*{courseCredits}" class="form-control" placeholder="Course Credits" type="number" min="0" required autofocus/>
 	    </div> <!-- form-group// -->  
 	    
 	    <div class="form-group input-group">
