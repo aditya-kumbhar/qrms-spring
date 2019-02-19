@@ -23,10 +23,10 @@ public class StudentAcad{
 	private Department department;
 	
 	@Column(name="year")
-	private String year;
+	private int year;
 	
 	@Column(name="semester")
-	private String sem;
+	private int sem;
 	
 	@Column(name="division")
 	private String div;
@@ -57,19 +57,19 @@ public class StudentAcad{
 		this.department = department;
 	}
 
-	public String getYear() {
+	public int getYear() {
 		return year;
 	}
 
-	public void setYear(String year) {
+	public void setYear(int year) {
 		this.year = year;
 	}
 
-	public String getSem() {
+	public int getSem() {
 		return sem;
 	}
 
-	public void setSem(String sem) {
+	public void setSem(int sem) {
 		this.sem = sem;
 	}
 

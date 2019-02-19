@@ -1,0 +1,73 @@
+mysql> drop database qrmsdb;
+Query OK, 8 rows affected (0.00 sec)
+
+mysql> create database qrmsdb;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert insert into department values("CS","Computer Department");
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'insert into department values("CS","Computer Department")' at line 1
+mysql> 
+mysql> 
+mysql> 
+mysql> 
+mysql> 
+mysql> 
+mysql> insert into department values("CS","Computer Department");
+ERROR 1046 (3D000): No database selected
+mysql> 
+mysql> 
+mysql> 
+mysql> 
+mysql> 
+mysql> use qrmsdb;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> insert into department values("CS","Computer Department");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into department values("MH","Mechanical Department");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into department values("IT","IT Department");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into department values("CV","Civil Department");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into user values('admin',1,'adminpccoe@gmail.com','Admin','Admin','admin');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into role values(1,'ADMIN');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into role values(2,'FACULTY');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into role values(3,'STUDENT');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into user_role values('admin',1);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> update student_acad set agg_marks=80,division="B",rollno="BECOB210",semester=8,shift=1,year=4,dept_id="CS" where user_name="bharatik";
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> 
+mysql> 
+mysql> 
+mysql> 
+mysql> 
+mysql> insert into course(course_id,course_name,course_sem,course_year,course_type,dept_id) values("MLCSBE","Machine Learning",8,4,3,"CS");
+Query OK, 1 row affected (0.00 sec)
+mysql> insert into course(course_id,course_name,course_sem,course_year,course_type,dept_id) values("DMCSBE","Data Mining",8,4,3,"CS");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into course(course_id,course_name,course_sem,course_year,course_type,dept_id) values("SCCSBE","Soft Computing",8,4,3,"CS");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into course(course_id,course_name,course_sem,course_year,course_type,dept_id) values("CCCSBE","Cloud Computing",8,4,3,"CS");
+Query OK, 1 row affected (0.00 sec)
+

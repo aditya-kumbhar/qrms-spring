@@ -31,10 +31,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.Role;
+import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.repository.CourseRepository;
+import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.RoleRepository;
+import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
 
@@ -43,11 +46,17 @@ import com.qrms.spring.service.CustomUserDetailsService;
 public class StudentController {
 	
 	@Autowired
+	private DepartmentRepository departmentRepository;
+	
+	@Autowired
 	private RoleRepository roleRepository;
 	
 	@Autowired
 	private StudentPrefRepository studentPrefRepository;
 		
+	@Autowired
+	private StudentAcadRepository studentAcadRepository;
+	
 	@Autowired
 	private CourseRepository courseRepository;
 	
@@ -68,14 +77,26 @@ public class StudentController {
 		String userName = user.getUserName();
 		System.out.println(userName);
 		
-//		Optional<Course> temp= courseRepository.findByCourseSemAndCourseYearAndCourseType(8,4,3);
-//		ArrayList<Course> ar= temp.map(Course::new).orElseGet(Course::new);
-		ArrayList<Course> ar=courseRepository.findByCourseSemAndCourseYearAndCourseType(8,4,3);
+		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
-		for (Course course : ar) {
-			System.out.println(course.getCourseId());
+		ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartment(8,4,3,currUserAcad.getDepartment());
+		
+		if(courseList.size()==0) {
+			System.out.println("No courses exist");
+		}else {
+			System.out.println("Courses exist");
 		}
 		
+		String arr[] = new String[100];
+		
+		int i = 0;
+		for (Course course : courseList) {
+			System.out.println(course.getCourseId());
+			System.out.println("hello");
+			arr[i]=course.getCourseName()+"("+course.getCourseName()+")";
+			i++;
+		}
+		model.addObject("courseList", courseList);
 		model.setViewName("student/studentPref");
 		return model;
 	}
