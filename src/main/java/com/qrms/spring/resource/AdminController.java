@@ -116,7 +116,7 @@ public class AdminController {
 		Department deptObj = departmentRepository.findByDeptName(dept);
 		course.setDepartment(deptObj);
 		
-		model.addObject("msg","Course has been added succesfully");
+		model.addObject("msg","Course has been added successfully");
 		model.addObject("course",new Course());
 		model.addObject("departments",departments);
 		model.addObject("input_dept", new String());

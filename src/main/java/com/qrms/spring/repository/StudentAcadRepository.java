@@ -8,5 +8,5 @@ import com.qrms.spring.model.StudentAcad;
 @Repository
 public interface StudentAcadRepository extends JpaRepository<StudentAcad, Integer> {
 	
-	
+	StudentAcad findByUserName(String name);
 }

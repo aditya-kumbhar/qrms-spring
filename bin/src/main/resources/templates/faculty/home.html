@@ -1,5 +1,5 @@
 <!doctype html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Student Home</title>
+    <title>Faculty Home</title>
 
      <!-- Bootstrap core CSS -->
     <link th:href="@{/webjars/bootstrap/4.1.3/css/bootstrap.min.css}" rel="stylesheet">
@@ -21,11 +21,11 @@
                 <a class="navbar-brand" href="#"><img src="@{/img/pccoelogo.png}" width="30" height="30" alt="">QRMS</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" th:href="@{/u/student/home}">Home</a>
+                <a class="nav-link" href="/u/admin/home">Home</a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/u/student/getStudentPrefs}">Course Preferences</a>
+                <a class="nav-link" href="/u/admin/register">Registration</a>
             </li>
             
         </ul>

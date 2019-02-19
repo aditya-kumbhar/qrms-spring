@@ -21,17 +21,17 @@ public class Course {
 	private String courseName;
 	
 	@Column(name="course_credits")
-	private int courseCredits;
+	private Integer courseCredits;
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "dept_id")
 	private Department department;
 	
 	@Column(name="course_type")
-	private String courseType;
+	private int courseType;
 	
 	@Column(name="course_year")
-	private String courseYear;
+	private int courseYear;
 
 	@Column(name="course_sem")
 	private int courseSem;
@@ -52,11 +52,11 @@ public class Course {
 		this.courseName = courseName;
 	}
 
-	public int getCourseCredits() {
+	public Integer getCourseCredits() {
 		return courseCredits;
 	}
 
-	public void setCourseCredits(int courseCredits) {
+	public void setCourseCredits(Integer courseCredits) {
 		this.courseCredits = courseCredits;
 	}
 
@@ -68,19 +68,19 @@ public class Course {
 		this.department = department;
 	}
 
-	public String getCourseType() {
+	public int getCourseType() {
 		return courseType;
 	}
 
-	public void setCourseType(String courseType) {
+	public void setCourseType(int courseType) {
 		this.courseType = courseType;
 	}
 
-	public String getCourseYear() {
+	public int getCourseYear() {
 		return courseYear;
 	}
 
-	public void setCourseYear(String courseYear) {
+	public void setCourseYear(int courseYear) {
 		this.courseYear = courseYear;
 	}
 
