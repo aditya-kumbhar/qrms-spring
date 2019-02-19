@@ -1,5 +1,7 @@
 package com.qrms.spring.service;
 
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Optional;
 
 import org.passay.CharacterRule;
@@ -9,6 +11,10 @@ import org.passay.CharacterData;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,7 +22,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.qrms.spring.model.CustomUserDetails;
+import com.qrms.spring.model.PasswordResetToken;
 import com.qrms.spring.model.Users;
+import com.qrms.spring.repository.PasswordResetTokenRepository;
 import com.qrms.spring.repository.UsersRepository;
 
 @Service
@@ -26,16 +34,36 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	private UsersRepository usersRepository;
 	
 	@Autowired
+	private PasswordResetTokenRepository passwordResetTokenRepository;
+	
+	@Autowired
 	private EmailServiceImpl email;
 	
 	@Override
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-
+					
 				Optional<Users> optionalUsers = usersRepository.findByUserName(userName);
 				optionalUsers.orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 				return optionalUsers.map(CustomUserDetails::new).get();
 		
-//		return usersRepository.findByUserName(userName);
+	}
+	
+	@Override
+	public Users findByUserName(String username) {
+		// TODO Auto-generated method stub
+		Optional<Users> optionalUsers = usersRepository.findByUserName(username);
+		optionalUsers.orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+		return optionalUsers.map(Users::new).get();
+	}
+	@Override
+	public Users findUserByEmail(String email) {
+		Optional<Users> optionalUsers =  usersRepository.findByEmail(email);
+		
+		if(!optionalUsers.isPresent()) {
+			return null;
+		}
+		return optionalUsers.map(Users::new).get();
+
 	}
 	
 	@Bean
@@ -73,6 +101,15 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	    String password = gen.generatePassword(10, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
 	    return password;
 	}
+	
+	public boolean isUniqueEmail(String email) {
+	
+		Users tempUser = findUserByEmail(email);
+		if(tempUser!=null) {
+			return false;
+		}
+		return true;
+	}
 
 	public void saveUser(Users user) {
 		
@@ -80,6 +117,8 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 		String tempUsername = username;
 		System.out.println(tempUsername);
 		int i = 0;
+		
+		//Check if email is unique
 		
 		while(true) {
 			try {
@@ -116,6 +155,43 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 		usersRepository.save(user);
 		
 		}
+
+	@Override
+	public void createPasswordTokenForUser(Users user, String token) {
+		// TODO Auto-generated method stub
+		PasswordResetToken myToken = new PasswordResetToken(token, user);
+	    passwordResetTokenRepository.save(myToken);
 	
+	}
  
+	public String validatePasswordResetToken(String username, String token) {
+		
+		Optional<PasswordResetToken> optionalPassToken = passwordResetTokenRepository.findByToken(token);
+		PasswordResetToken passToken = optionalPassToken.map(PasswordResetToken::new).get();
+		
+		if ((passToken == null) || !(passToken.getUser().getUserName().equals(username))) {
+			return "Invalid Token";
+			}
+		Calendar cal = Calendar.getInstance();
+		if ((passToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+			return "Token has Expired";
+		}
+		
+		Users user = passToken.getUser();
+		Authentication auth = new UsernamePasswordAuthenticationToken(
+				user, null, Arrays.asList(new SimpleGrantedAuthority("CHANGE_PASSWORD_PRIVILEGE")));
+		
+		SecurityContextHolder.getContext().setAuthentication(auth);
+		//Delete the token once it is used
+		passwordResetTokenRepository.delete(passToken);
+		return null;
+	}
+
+	@Override
+	public void savePassword(Users user, String password) {
+		user.setPassword(bCryptPasswordEncoder().encode(password));
+		usersRepository.save(user);
+	}
+
+	
 }

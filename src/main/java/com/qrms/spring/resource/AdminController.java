@@ -70,6 +70,16 @@ public class AdminController {
 		ModelAndView model = new ModelAndView();	
 		Role userRole = roleRepository.findByRole(role);
 		user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+		
+		//check unique email
+		String email = user.getEmail();
+		if(!userDetails.isUniqueEmail(email)) {
+			model.addObject("errmsg","A user is already registered with the given email");
+			model.addObject("user",new Users());
+			model.setViewName("admin/registerUsers");
+			return model;
+		}
+		
 		userDetails.saveUser(user);
 
 		if(role.equals("STUDENT")) {

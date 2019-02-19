@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,9 +40,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	    }
 		
 		@Override
+		public void configure(WebSecurity web) throws Exception {
+		    web.ignoring().antMatchers("/validateToken*","/updatePassword*","/forgotPassword*");
+		}
+		
+		@Override
 		protected void configure(HttpSecurity http) throws Exception{
 			http.csrf().disable();
-			http.authorizeRequests() 
+			http.authorizeRequests()
+			 	.antMatchers("/updatePassword*",
+			 				 "/validateToken*")
+			 	.hasAuthority("CHANGE_PASSWORD_PRIVILEGE")
 				.antMatchers("/u/admin/*").hasRole("ADMIN")
 				.antMatchers("/u/student/*").hasRole("STUDENT")
 				.antMatchers("/u/faculty/*").hasRole("FACULTY")
@@ -72,5 +81,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 				}
 			};
 		}
-
+		
+		
 }

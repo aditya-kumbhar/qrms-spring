@@ -122,13 +122,14 @@
 	    
 	    <div class="form-group">
 	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Create Account  </button>
-	    </div> <!-- form-group// -->  
-	       
-	    <div class="row">
-	    	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
-	    </div>                                                           
+	    </div> <!-- form-group// -->                                                   
 	</form>
+	     
 </article>
+		<div class="row text-center card-body mx-auto">
+			<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+	    	<div class="alert alert-danger" role="alert" th:if="${errmsg}" th:utext="${errmsg}"></div>
+	 	</div>  
 </div>
-
+ 	
 </body>

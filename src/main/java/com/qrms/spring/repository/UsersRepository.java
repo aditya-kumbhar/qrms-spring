@@ -12,6 +12,7 @@ import com.qrms.spring.model.Users;
 public interface UsersRepository extends JpaRepository<Users, Integer> {
 
 	Optional<Users> findByUserName(String user_name);
-	
+	Optional<Users> findByEmail(String email);
+//	Optional<Users> findByResetToken(String resetToken);
 
 }
