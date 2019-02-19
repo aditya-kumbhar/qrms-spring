@@ -28,10 +28,10 @@ public class Course {
 	private Department department;
 	
 	@Column(name="course_type")
-	private String courseType;
+	private int courseType;
 	
 	@Column(name="course_year")
-	private String courseYear;
+	private int courseYear;
 
 	@Column(name="course_sem")
 	private int courseSem;
@@ -68,19 +68,19 @@ public class Course {
 		this.department = department;
 	}
 
-	public String getCourseType() {
+	public int getCourseType() {
 		return courseType;
 	}
 
-	public void setCourseType(String courseType) {
+	public void setCourseType(int courseType) {
 		this.courseType = courseType;
 	}
 
-	public String getCourseYear() {
+	public int getCourseYear() {
 		return courseYear;
 	}
 
-	public void setCourseYear(String courseYear) {
+	public void setCourseYear(int courseYear) {
 		this.courseYear = courseYear;
 	}
 
