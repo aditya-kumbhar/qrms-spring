@@ -41,6 +41,7 @@ public class LoginController {
 		return "forgotPass";
 	}
 	
+	//handles forgot password form (user requests token and posts email through form)
 	@RequestMapping(value = "/forgotPassword", method = RequestMethod.POST)
 	public ModelAndView resetToken(String email,HttpServletRequest request) {
 		
@@ -69,14 +70,15 @@ public class LoginController {
 		return model;
 	}
 	
-	//redirects to this URL when email reset link is clicked & show reset Password form
+	//redirects to this URL when email reset link is clicked & show reset Password form after validating token
 	@RequestMapping(value = "/validateToken", method = RequestMethod.GET)
 	public ModelAndView showChangePasswordPage( @RequestParam("id") String username, @RequestParam("token") String token) {
 		ModelAndView model = new ModelAndView();
 	
 		String result = userService.validatePasswordResetToken(username, token);
+		
 	    if (result != null) {
-	        model.addObject("message",result);
+	        model.addObject("errmsg",result);
 	        model.setViewName("login");
 	        System.out.println(result);
 	        return model;
@@ -99,6 +101,7 @@ public class LoginController {
 
 	}
 	
+	//added this function for readability
 	private String constructEmail(HttpServletRequest request,Users user, String token) {
 		String url = "http://"+request.getLocalName()+":"+request.getLocalPort()+"/validateToken?id=" + user.getUserName() + "&token=" + token;
 		String body = "Hi "+user.getFirstName()+",\nTo initiate the password reset process for your QRMS Account, click the link below:\n"+url+"\nIf clicking the link above doesn't work, please copy and paste the URL in a new browser window instead.\nSincerely, QRMS Team.";

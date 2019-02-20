@@ -27,11 +27,12 @@ public class Course {
 	@JoinColumn(name = "dept_id")
 	private Department department;
 	
+	//O: Open Elective, E: Normal Elective R: regular course
 	@Column(name="course_type")
-	private int courseType;
+	private char courseType;
 	
 	@Column(name="course_year")
-	private int courseYear;
+	private String courseYear;
 
 	@Column(name="course_sem")
 	private int courseSem;
@@ -68,19 +69,19 @@ public class Course {
 		this.department = department;
 	}
 
-	public int getCourseType() {
+	public char getCourseType() {
 		return courseType;
 	}
 
-	public void setCourseType(int courseType) {
+	public void setCourseType(char courseType) {
 		this.courseType = courseType;
 	}
 
-	public int getCourseYear() {
+	public String getCourseYear() {
 		return courseYear;
 	}
 
-	public void setCourseYear(int courseYear) {
+	public void setCourseYear(String courseYear) {
 		this.courseYear = courseYear;
 	}
 

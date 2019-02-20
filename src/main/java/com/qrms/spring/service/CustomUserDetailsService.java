@@ -55,6 +55,7 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 		optionalUsers.orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 		return optionalUsers.map(Users::new).get();
 	}
+	
 	@Override
 	public Users findUserByEmail(String email) {
 		Optional<Users> optionalUsers =  usersRepository.findByEmail(email);
@@ -158,7 +159,7 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 
 	@Override
 	public void createPasswordTokenForUser(Users user, String token) {
-		// TODO Auto-generated method stub
+		
 		PasswordResetToken myToken = new PasswordResetToken(token, user);
 	    passwordResetTokenRepository.save(myToken);
 	
@@ -167,24 +168,41 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	public String validatePasswordResetToken(String username, String token) {
 		
 		Optional<PasswordResetToken> optionalPassToken = passwordResetTokenRepository.findByToken(token);
-		PasswordResetToken passToken = optionalPassToken.map(PasswordResetToken::new).get();
+		PasswordResetToken passToken;
 		
-		if ((passToken == null) || !(passToken.getUser().getUserName().equals(username))) {
-			return "Invalid Token";
+		//check if token is valid
+		if (optionalPassToken.isPresent()) {
+			passToken = optionalPassToken.map(PasswordResetToken::new).get();
+			
+			//check if username is valid
+			if(!(passToken.getUser().getUserName().equals(username)))
+				return "Invalid Token";
+			else {
+				
+				//check if token has expired
+				Calendar cal = Calendar.getInstance();
+				if ((passToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+					return "Token has Expired";
+				}
+				
+				Users user = passToken.getUser();
+				Authentication auth = new UsernamePasswordAuthenticationToken(
+						user, null, Arrays.asList(new SimpleGrantedAuthority("CHANGE_PASSWORD_PRIVILEGE")));
+				
+				SecurityContextHolder.getContext().setAuthentication(auth);
+				
+				//Delete the token since it is now used
+				passwordResetTokenRepository.delete(passToken);
+				
+				//token and username are valid, return null
+				return null;
 			}
-		Calendar cal = Calendar.getInstance();
-		if ((passToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-			return "Token has Expired";
 		}
+		else
+			return "Invalid Token";	//if token String is not valid
 		
-		Users user = passToken.getUser();
-		Authentication auth = new UsernamePasswordAuthenticationToken(
-				user, null, Arrays.asList(new SimpleGrantedAuthority("CHANGE_PASSWORD_PRIVILEGE")));
 		
-		SecurityContextHolder.getContext().setAuthentication(auth);
-		//Delete the token once it is used
-		passwordResetTokenRepository.delete(passToken);
-		return null;
+		
 	}
 
 	@Override

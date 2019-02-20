@@ -29,7 +29,7 @@
 	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='5' style='color:#000'>5</option><option value='6' style='color:#000'>6</option>");
 	            } else if (val == "BE") {
 	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='7' style='color:#000'>7</option><option value='8' style='color:#000'>8</option>");
-	            } else if (val == "select") {
+	            } else if (val == "none") {
 	            	$("#courseSem").html("<option value=''>Select Semester</option>");
 	            }
 	        });
@@ -49,13 +49,13 @@
 	                
 	                return false;
 	            } 
-	            else if (ctype.val() == "selecttype") {
+	            else if (ctype.val() == "X") {
 	                alert("Please select a course type");
 	                $('#courseType').focus();
 	                
 	                return false;
 	            } 
-	            else if (cyear.val() == "selectyear") {
+	            else if (cyear.val() == "none") {
 	                alert("Please select a course year");
 	                $('#courseYear').focus();
 	                
@@ -87,7 +87,7 @@
     	   $('#courseType').css('color','#8F8B87');
     	   $('#courseType').change(function() {
     	      var current = $('#courseType').val();
-    	      if (current != 'selecttype') {
+    	      if (current != '0') {
     	          $('#courseType').css('color','black');
     	      } else {
     	          $('#courseType').css('color','#8F8B87');
@@ -99,7 +99,7 @@
     	   $('#courseYear').css('color','#8F8B87');
     	   $('#courseYear').change(function() {
     	      var current = $('#courseYear').val();
-    	      if (current != 'selectyear') {
+    	      if (current != 'none') {
     	          $('#courseYear').css('color','black');
     	      } else {
     	          $('#courseYear').css('color','#8F8B87');
@@ -111,7 +111,7 @@
     	   $('#courseSem').css('color','#8F8B87');
     	   $('#courseSem').change(function() {
     	      var current = $('#courseSem').val();
-    	      if (current != 'selectsem') {
+    	      if (current != '0') {
     	          $('#courseSem').css('color','black');
     	      } else {
     	          $('#courseSem').css('color','#8F8B87');
@@ -199,10 +199,10 @@
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 			</div>
 			<select class="form-control" name="courseType" id="courseType" required th:field="*{courseType}" >
-				<option value="selecttype" style="color:#8F8B87" selected>Course Type</option>
-				<option value="regular" style="color:#000">Regular</option>
-				<option value="nelective" style="color:#000">Normal Elective</option>
-				<option value="oelective" style="color:#000">Open Elective</option>
+				<option value="X" style="color:#8F8B87" selected>Course Type</option>
+				<option value="R" style="color:#000">Regular</option>
+				<option value="E" style="color:#000">Normal Elective</option>
+				<option value="O" style="color:#000">Open Elective</option>
 			</select>
 		</div> <!-- form-group end.// -->
 	    
@@ -211,7 +211,7 @@
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 			</div>
 			<select class="form-control" name="courseYear" id="courseYear" required th:field="*{courseYear}">
-				<option value="selectyear" style="color:#8F8B87" selected>Select Year</option>
+				<option value="none" style="color:#8F8B87" selected>Select Year</option>
 				<option value="FE" style="color:#000">FE</option>
 				<option value="SE" style="color:#000">SE</option>
 				<option value="TE" style="color:#000">TE</option>
@@ -230,14 +230,12 @@
 	    
 	    <div class="form-group">
 	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Add Course  </button>
-	    </div> <!-- form-group// -->   
-	           
-	     <div class="row">
-	    	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
-	    </div>       
-                                                   
+	    </div> <!-- form-group// -->   	           
+	                                                 
 	</form>
-	 
 </article>
+		<div class="row text-center card-body mx-auto">
+			<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+	 	</div>  
 </div>
 </body>

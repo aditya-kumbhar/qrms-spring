@@ -11,6 +11,6 @@ import com.qrms.spring.model.Department;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Integer> {
 
-	ArrayList<Course> findByCourseSemAndCourseYearAndCourseTypeAndDepartment(int i, int j, int k,Department d);
+	ArrayList<Course> findByCourseSemAndCourseYearAndCourseTypeAndDepartment(int sem, String year, char cType,Department d);
 	
 }

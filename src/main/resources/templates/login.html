@@ -38,11 +38,13 @@
             </form>
         </div>
         <div class="form-signin text-center">
-    		<div class="alert alert-success" role="alert" th:if="${ message != null }" th:text="${message}"></div>	    	
+    		<div class="alert alert-success" role="alert" th:if="${ message != null }" th:text="${message}"></div>	 
+ 			<div class="alert alert-danger" role="alert" th:if="${param.error}">Username or Password is incorrect</div>
+			<div class="alert alert-danger" role="alert" th:if="${errmsg}" th:text="${errmsg}"></div>
+ 			
+    		   	
     	</div>
-	    <div class="form-signin text-center" >
-	    	<div class="alert alert-danger" role="alert" th:if="${param.error}">Username or Password are incorrect</div>
-    	</div>
+	  
 	    	
 </div>
 </body>

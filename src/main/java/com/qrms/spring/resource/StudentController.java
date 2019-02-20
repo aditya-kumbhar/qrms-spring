@@ -61,25 +61,23 @@ public class StudentController {
 	private CourseRepository courseRepository;
 	
 	private Optional<StudentPref> studentPrefs;
+
+	@GetMapping("/home")
+	public String studentHome() {
+		return "student/home";
+	}
 	
-//	@GetMapping("/home")
-//	public String studentHome() {
-//		return "student/home";
-//	}
-//	
 	@RequestMapping(value = "/getStudentPrefs", method = RequestMethod.GET)
 	public ModelAndView studentPref() {
 		ModelAndView model = new ModelAndView();
 		
-//		String r = request.toString();
-//		System.out.println(r);
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
 		System.out.println(userName);
 		
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
-		ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartment(8,4,3,currUserAcad.getDepartment());
+		ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartment(8,"BE",'E',currUserAcad.getDepartment());
 		
 		if(courseList.size()==0) {
 			System.out.println("No courses exist");

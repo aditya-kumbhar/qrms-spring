@@ -17,13 +17,12 @@ public class StudentAcad{
 	@Column(name="user_name")
 	private String userName;
 	
-	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "dept_id")
 	private Department department;
 	
 	@Column(name="year")
-	private int year;
+	private String year;
 	
 	@Column(name="semester")
 	private int sem;
@@ -57,11 +56,11 @@ public class StudentAcad{
 		this.department = department;
 	}
 
-	public int getYear() {
+	public String getYear() {
 		return year;
 	}
 
-	public void setYear(int year) {
+	public void setYear(String year) {
 		this.year = year;
 	}
 

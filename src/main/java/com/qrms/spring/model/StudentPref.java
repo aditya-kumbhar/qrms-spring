@@ -35,7 +35,7 @@ public class StudentPref {
 	private Course course4;
 	
 	@Column(name="year")
-	private int year;
+	private String year;
 	
 	@Column(name="semester")
 	private int semester;
@@ -44,7 +44,7 @@ public class StudentPref {
 	private String academicYear;
 
 	
-	public StudentPref(String userName, Course course1, Course course2, Course course3, Course course4, int year,
+	public StudentPref(String userName, Course course1, Course course2, Course course3, Course course4, String year,
 			int sem, String academic_year) {
 		super();
 		this.userName = userName;
@@ -101,11 +101,11 @@ public class StudentPref {
 		this.course4 = course4;
 	}
 
-	public int getYear() {
+	public String getYear() {
 		return year;
 	}
 
-	public void setYear(int year) {
+	public void setYear(String year) {
 		this.year = year;
 	}
 
