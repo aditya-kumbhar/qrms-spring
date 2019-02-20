@@ -33,3 +33,6 @@ insert into course(course_id,course_name,course_sem,course_year,course_type,dept
 insert into course(course_id,course_name,course_sem,course_year,course_type,dept_id) values("CCCSBE","Cloud Computing",8,"BE","E","CS");
 */
 
+/*For updating student acad details (change username)
+update student_acad set agg_marks=80,division="B",rollno="BECOB210",semester=8,shift=1,year='BE',dept_id="CS" where user_name="bharatik";
+*/
