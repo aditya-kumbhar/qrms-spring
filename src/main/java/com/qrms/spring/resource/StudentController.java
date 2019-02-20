@@ -78,7 +78,7 @@ public class StudentController {
 		
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
-		ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartment(8,"BE",'E',currUserAcad.getDepartment());
+		ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartment(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment());
 		
 		if(courseList.size()==0) {
 			System.out.println("No courses exist");
@@ -111,7 +111,7 @@ public class StudentController {
 		studentPref.setUserName(userName);
 		studentPref.setSemester(currUserAcad.getSem());
 		studentPref.setYear(currUserAcad.getYear());
-		studentPref.setAcademicYear("2018-19");
+		studentPref.setAcademicYear(currUserAcad.getAcademicYear());
 		studentPref.setCourse1(courseRepository.findByCourseId(course1));
 		studentPref.setCourse2(courseRepository.findByCourseId(course2));
 		studentPref.setCourse3(courseRepository.findByCourseId(course3));

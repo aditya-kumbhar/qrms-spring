@@ -39,6 +39,16 @@ public class StudentAcad{
 	@Column(name="agg_marks")
 	private float aggMarks;
 	
+	@Column(name="academic_year")
+	private String academicYear;
+
+	public String getAcademicYear() {
+		return academicYear;
+	}
+
+	public void setAcademicYear(String academicYear) {
+		this.academicYear = academicYear;
+	}
 
 	public String getUserName() {
 		return userName;
