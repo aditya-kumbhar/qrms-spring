@@ -18,7 +18,7 @@
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="navbar-brand" href="#"><img src="@{/img/pccoelogo.png}" width="30" height="30" alt="">QRMS</a>
+                <a class="navbar-brand" href="#"><img th:src="@{/img/pccoelogo.png}" width="30" height="30" alt="">QRMS</a>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" th:href="@{/u/student/home}">Home</a>
@@ -39,3 +39,9 @@
     </div>
     
 </nav>
+
+<body>
+ <div class="row">
+   	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+</div> 
+</body>

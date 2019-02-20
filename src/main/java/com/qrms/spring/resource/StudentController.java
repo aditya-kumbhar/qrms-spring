@@ -59,13 +59,14 @@ public class StudentController {
 	
 	@Autowired
 	private CourseRepository courseRepository;
-	
+
 	private Optional<StudentPref> studentPrefs;
 
 	@GetMapping("/home")
 	public String studentHome() {
 		return "student/home";
 	}
+	
 	
 	@RequestMapping(value = "/getStudentPrefs", method = RequestMethod.GET)
 	public ModelAndView studentPref() {
@@ -85,27 +86,40 @@ public class StudentController {
 			System.out.println("Courses exist");
 		}
 		
-		String arr[] = new String[100];
-		
-		int i = 0;
-		for (Course course : courseList) {
-			System.out.println(course.getCourseId());
-			System.out.println("hello");
-			arr[i]=course.getCourseName()+"("+course.getCourseName()+")";
-			i++;
-		}
+		model.addObject("studentPref",new StudentPref());
 		model.addObject("courseList", courseList);
+		model.addObject("course1",new String());
+		model.addObject("course2",new String());
+		model.addObject("course3",new String());
+		model.addObject("course4",new String());
 		model.setViewName("student/studentPref");
 		return model;
 	}
 	
 	//Handle student pref form
 	@RequestMapping(value = "/setStudentPrefs", method = RequestMethod.POST)
-	public ModelAndView addPreferences() {
+	public ModelAndView addPreferences(@Valid String course1,String course2,String course3,String course4) {
 		
 		ModelAndView model = new ModelAndView();	
 		
-		model.setViewName("student/studentPref");
+		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userName = user.getUserName();
+		
+		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
+		
+		StudentPref studentPref = new StudentPref();
+		studentPref.setUserName(userName);
+		studentPref.setSemester(currUserAcad.getSem());
+		studentPref.setYear(currUserAcad.getYear());
+		studentPref.setAcademicYear("2018-19");
+		studentPref.setCourse1(courseRepository.findByCourseId(course1));
+		studentPref.setCourse2(courseRepository.findByCourseId(course2));
+		studentPref.setCourse3(courseRepository.findByCourseId(course3));
+		studentPref.setCourse4(courseRepository.findByCourseId(course4));
+
+		studentPrefRepository.save(studentPref);
+		model.addObject("msg","Your Preferences have been added successfully!");
+		model.setViewName("student/home");
 		return model;
 		
 	}
