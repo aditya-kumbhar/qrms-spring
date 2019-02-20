@@ -49,6 +49,8 @@ public class AdminController {
 	
 	private List<Department> departments; 
 	
+	private List<Role> roles; 
+	
 	@GetMapping("/home")
 	public String adminHome() {
 		return "admin/home";
@@ -59,7 +61,9 @@ public class AdminController {
 	public ModelAndView registerUsers() {
 		ModelAndView model = new ModelAndView();
 		Users user = new Users();
+		roles = roleRepository.findAll();
 		model.addObject("user",user);
+		model.addObject("roles",roles);
 		model.setViewName("admin/registerUsers");
 		return model;
 	}
@@ -76,6 +80,7 @@ public class AdminController {
 		if(!userDetails.isUniqueEmail(email)) {
 			model.addObject("errmsg","A user is already registered with the given email");
 			model.addObject("user",new Users());
+			model.addObject("roles",roles);
 			model.setViewName("admin/registerUsers");
 			return model;
 		}
@@ -92,6 +97,7 @@ public class AdminController {
 		
 		model.addObject("msg","User has been successfully registered");
 		model.addObject("user",new Users());
+		model.addObject("roles",roles);
 		model.setViewName("admin/registerUsers");
 		return model;
 	}
@@ -119,7 +125,6 @@ public class AdminController {
 		model.addObject("msg","Course has been added successfully");
 		model.addObject("course",new Course());
 		model.addObject("departments",departments);
-		model.addObject("input_dept", new String());
 		model.setViewName("admin/addCourses");
 		
 		courseRepository.save(course);

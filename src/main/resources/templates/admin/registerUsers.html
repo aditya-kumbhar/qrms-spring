@@ -93,9 +93,7 @@
 			</div>
 			<select class="form-control" th:name="role" th:id="role" autofocus>
 				<option value="selectrole" style="color:#8F8B87" selected>Select Role</option>
-				<option value="STUDENT" style="color:#000">Student</option>
-				<option value="FACULTY" style="color:#000">Faculty</option>
-				<option value="ADMIN" style="color:#000">Admin</option>
+				<option th:each="role : ${roles}" th:value="${role.role}"  th:text="${role.role}" style="color:#000"></option>
 			</select>
 		</div> <!-- form-group end.// -->
 		
