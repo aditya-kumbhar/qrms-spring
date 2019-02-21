@@ -182,6 +182,7 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 				//check if token has expired
 				Calendar cal = Calendar.getInstance();
 				if ((passToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+					passwordResetTokenRepository.delete(passToken);
 					return "Token has Expired";
 				}
 				
