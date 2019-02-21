@@ -37,6 +37,17 @@ public class Course {
 	@Column(name="course_sem")
 	private int courseSem;
 	
+	@Column(name="elective_id")
+	private String elective_id;
+	
+	public String getElective_id() {
+		return elective_id;
+	}
+
+	public void setElective_id(String elective_id) {
+		this.elective_id = elective_id;
+	}
+
 	public String getCourseId() {
 		return courseId;
 	}

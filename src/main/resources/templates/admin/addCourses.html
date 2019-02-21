@@ -34,6 +34,14 @@
 	            }
 	        });
 	    });
+
+	    function yesnoCheck(obj) {
+	        if (obj.value=="E" || obj.value=="O") {
+	            document.getElementById('electiveId').style.display = 'block';
+	        }
+	        else document.getElementById('electiveId').style.display = 'none';
+
+	    }
     	
 	    $(document).ready(function () {
 	        $("#submit").click(function () {
@@ -87,7 +95,7 @@
     	   $('#courseType').css('color','#8F8B87');
     	   $('#courseType').change(function() {
     	      var current = $('#courseType').val();
-    	      if (current != '0') {
+    	      if (current != 'X') {
     	          $('#courseType').css('color','black');
     	      } else {
     	          $('#courseType').css('color','#8F8B87');
@@ -170,7 +178,6 @@
 				<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
 				<option th:each="dept : ${departments}" th:value="${dept.deptName}"  th:text="${dept.deptName}" style="color:#000"></option>
 			</select>
-
 		</div> <!-- form-group end.// -->
 		
 		<div class="form-group input-group">
@@ -198,18 +205,6 @@
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 			</div>
-			<select class="form-control" name="courseType" id="courseType" required th:field="*{courseType}" >
-				<option value="X" style="color:#8F8B87" selected>Course Type</option>
-				<option value="R" style="color:#000">Regular</option>
-				<option value="E" style="color:#000">Normal Elective</option>
-				<option value="O" style="color:#000">Open Elective</option>
-			</select>
-		</div> <!-- form-group end.// -->
-	    
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
 			<select class="form-control" name="courseYear" id="courseYear" required th:field="*{courseYear}">
 				<option value="none" style="color:#8F8B87" selected>Select Year</option>
 				<option value="FE" style="color:#000">FE</option>
@@ -227,6 +222,33 @@
 				<option value="0" style="color:#8F8B87" selected>Select Semester</option>
 			</select>
 		</div> <!-- form-group end.// -->
+		
+		<div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<select class="form-control" name="courseType" id="courseType" required th:field="*{courseType}" onchange="yesnoCheck(this)">
+				<option value="X" style="color:#8F8B87" selected>Course Type</option>
+				<option value="R" style="color:#000">Regular</option>
+				<option value="E" style="color:#000">Normal Elective</option>
+				<option value="O" style="color:#000">Open Elective</option>
+			</select>
+		</div> <!-- form-group end.// -->
+		
+		<div style="display:none" id="electiveId" name="electiveId">
+		<div class="form-group input-group" >
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<select class="form-control">
+				<option value="none" style="color:#8F8B87" selected>Select Elective number</option>
+				<option value="el1" style="color:#000">EL-1</option>
+				<option value="el2" style="color:#000">EL-2</option>
+				<option value="el3" style="color:#000">EL-3</option>
+				<option value="el4" style="color:#000">EL-4</option>
+			</select>
+		</div> <!-- form-group end.// -->
+		</div>
 	    
 	    <div class="form-group">
 	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Add Course  </button>
