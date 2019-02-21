@@ -46,12 +46,6 @@ import com.qrms.spring.service.CustomUserDetailsService;
 public class StudentController {
 	
 	@Autowired
-	private DepartmentRepository departmentRepository;
-	
-	@Autowired
-	private RoleRepository roleRepository;
-	
-	@Autowired
 	private StudentPrefRepository studentPrefRepository;
 		
 	@Autowired
@@ -59,8 +53,6 @@ public class StudentController {
 	
 	@Autowired
 	private CourseRepository courseRepository;
-
-	private Optional<StudentPref> studentPrefs;
 
 	@GetMapping("/home")
 	public String studentHome() {
@@ -76,27 +68,37 @@ public class StudentController {
 		String userName = user.getUserName();
 		System.out.println(userName);
 		
+
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
-		ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartment(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment());
-		
-		if(courseList.size()==0) {
-			System.out.println("No courses exist");
+		Optional <StudentPref> studentPrefs = studentPrefRepository.findByUserNameEqualsAndSemesterEqualsAndYearEqualsAndAcademicYearEquals(currUserAcad.getUserName(), currUserAcad.getSem(), currUserAcad.getYear(), currUserAcad.getAcademicYear());
+		if(studentPrefs.isPresent()) {
+			model.addObject("msg","Your preferences for electives have been recorded already!");
+			model.setViewName("student/home");
+			return model;
 		}else {
-			System.out.println("Courses exist");
+			ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartment(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment());
+			
+			if(courseList.size()==0) {
+				System.out.println("No courses exist");
+			}else {
+				System.out.println("Courses exist");
+			}
+			
+			model.addObject("studentPref",new StudentPref());
+			model.addObject("courseList", courseList);
+			model.addObject("course1",new String());
+			model.addObject("course2",new String());
+			model.addObject("course3",new String());
+			model.addObject("course4",new String());
+			model.setViewName("student/studentPref");
+			return model;
 		}
 		
-		model.addObject("studentPref",new StudentPref());
-		model.addObject("courseList", courseList);
-		model.addObject("course1",new String());
-		model.addObject("course2",new String());
-		model.addObject("course3",new String());
-		model.addObject("course4",new String());
-		model.setViewName("student/studentPref");
-		return model;
+		
 	}
 	
-	//Handle student pref form
+	//Handle student preference form
 	@RequestMapping(value = "/setStudentPrefs", method = RequestMethod.POST)
 	public ModelAndView addPreferences(@Valid String course1,String course2,String course3,String course4) {
 		
@@ -118,7 +120,7 @@ public class StudentController {
 		studentPref.setCourse4(courseRepository.findByCourseId(course4));
 
 		studentPrefRepository.save(studentPref);
-		model.addObject("msg","Your Preferences have been added successfully!");
+		model.addObject("msg","Your preferences for electives have been recorded!");
 		model.setViewName("student/home");
 		return model;
 		

@@ -11,6 +11,5 @@ import com.qrms.spring.model.Users;
 @Repository
 public interface StudentPrefRepository extends JpaRepository<StudentPref, Integer>{
 	
-	Optional<StudentPref> findByUserNameEqualsAndSemesterEqualsAndYearEqualsAndAcademicYearEquals(String user_name,int semester,int year,String academic_year);
-	
+	Optional<StudentPref> findByUserNameEqualsAndSemesterEqualsAndYearEqualsAndAcademicYearEquals(String user_name,int semester,String year,String academic_year);
 }

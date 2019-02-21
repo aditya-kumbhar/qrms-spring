@@ -42,7 +42,6 @@ public class StudentPref {
 	
 	@Column(name="academicYear")
 	private String academicYear;
-
 	
 	public StudentPref(String userName, Course course1, Course course2, Course course3, Course course4, String year,
 			int sem, String academic_year) {
