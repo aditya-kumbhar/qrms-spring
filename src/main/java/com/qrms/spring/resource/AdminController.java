@@ -1,6 +1,8 @@
 package com.qrms.spring.resource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -15,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Role;
 import com.qrms.spring.model.StudentAcad;
+import com.qrms.spring.model.StudentAllocation;
+import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.Department;
@@ -22,6 +26,8 @@ import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
+import com.qrms.spring.repository.StudentAllocationRepository;
+import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
 
 @Controller
@@ -42,6 +48,12 @@ public class AdminController {
 	
 	@Autowired
 	private CourseRepository courseRepository;
+	
+	@Autowired
+	private StudentPrefRepository studentPrefRepository;
+	
+	@Autowired
+	private StudentAllocationRepository studentAllocationRepository;
 	
 	private StudentAcad student;
 	
@@ -130,6 +142,60 @@ public class AdminController {
 		courseRepository.save(course);
 		return model;
 	}
+	
+	@RequestMapping(value="/start_student_allocation",method=RequestMethod.POST)
+	public ModelAndView start_student_allocation() {
+		int semester = 8;
+		String year = "BE";
+		String academic_year = "2018-19";
+		
+		ArrayList<StudentPref> studentPrefs = studentPrefRepository.findBySemesterEqualsAndYearEqualsAndAcademicYearEquals(semester, year, academic_year);
+		
+		ArrayList<StudentAcad> studentAcads = studentAcadRepository.findBySemEqualsAndYearEqualsAndAcademicYearEquals(semester, year, academic_year);
+		
+		Collections.sort(studentAcads);
+		for (StudentAcad studentAcad : studentAcads) {
+			System.out.println(studentAcad.getUserName());
+		}
+		
+		ModelAndView model = new ModelAndView();
+		
+//		model.setViewName("/admin/StudentAllocation");
+		return model;
+		
+	}
+	
+	
+	//Course Allocation
+	@RequestMapping(value="/get_start_student_allocation",method=RequestMethod.GET)
+	public ModelAndView get_student_allocation() {
+		
+		ModelAndView model = new ModelAndView();
+		
+		ArrayList<Department> departments = departmentRepository.findAll();
+		
+		model.addObject("departments",departments);
+//		model.setViewName("/admin/StudentAllocation");
+		return model;
+	}
+	
+	//Setting the allocation entity to ON
+	@RequestMapping(value="/get_set_allocation",method = RequestMethod.GET)
+	public ModelAndView get_set_allocation() {
+		ModelAndView model = new ModelAndView();
+		
+		String academic_year = "2018-19";
+		
+		ArrayList<StudentAllocation> studentAllocationEntries= studentAllocationRepository.findByAcademicYearAndIsONNot(academic_year,"N");
+		
+		model.addObject("studentAllocationEntries",studentAllocationEntries);
+		
+		
+		model.setViewName("/admin/StudentAllocation");
+		return model;
+	}
+	
+	
 	
 	
 }

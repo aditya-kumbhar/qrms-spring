@@ -1,5 +1,7 @@
 package com.qrms.spring.repository;
 
+import java.util.ArrayList;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +11,5 @@ import com.qrms.spring.model.StudentAcad;
 public interface StudentAcadRepository extends JpaRepository<StudentAcad, Integer> {
 	
 	StudentAcad findByUserName(String name);
+	ArrayList<StudentAcad> findBySemEqualsAndYearEqualsAndAcademicYearEquals(int semester,String year,String academic_year);
 }

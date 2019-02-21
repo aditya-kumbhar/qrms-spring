@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="student_acad")
-public class StudentAcad{
+public class StudentAcad  implements Comparable <StudentAcad>{
 
 	@Id
 	@Column(name="user_name")
@@ -113,6 +113,21 @@ public class StudentAcad{
 	public void setAggMarks(float aggMarks) {
 		this.aggMarks = aggMarks;
 	}
+
+//	@Override
+//	public int compareTo(StudentAcad o) {
+//		// TODO Auto-generated method stub
+//		return this.getAggMarks().compareTo(o.getAggMarks());
+//	}
+	
+	@Override
+	  public int compareTo(StudentAcad s) {          
+
+	    return (this.getAggMarks() > s.getAggMarks() ? -1 : 
+
+	            (this.getAggMarks() == s.getAggMarks() ? 0 : 1));     
+
+	  }
 
 	
 }

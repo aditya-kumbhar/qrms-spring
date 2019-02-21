@@ -1,0 +1,33 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Forgot Password</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/webjars/bootstrap/4.1.3/css/bootstrap.min.css}" rel="stylesheet">
+	<!-- Custom styles for this template -->
+   <link th:href="@{/css/signin.css}" rel="stylesheet">
+
+</head>
+
+<body>
+	<div class="container">
+        <div>
+			<form class="form-signin text-center" th:action = "@{/forgotPassword}" method="POST">
+				<img class="mb-4" th:src="@{/img/pccoelogo.png}" alt="" width="100" height="100" />
+                <h1 class="h3 mb-3 font-weight-normal">Forgot Password</h1>
+                <label for="email" class="sr-only">Email</label>
+                <input type="email" name="email" id="email" class="form-control" placeholder="Enter registered email" required autofocus/>
+                <br>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Reset Password</button>
+           
+			</form>
+				<div class="form-signin text-center">
+    			<div class="alert alert-danger" role="alert" th:if="${ message != null }" th:text="${message}"></div>	    	
+    	</div>
+    	</div>
+		</div>
+	</div>
+</body>
+ 
+</html>

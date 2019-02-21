@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="student_pref")
-public class StudentPref {
+public class StudentPref{
 	
 
 	@Id
@@ -123,5 +123,6 @@ public class StudentPref {
 	public void setAcademicYear(String academic_year) {
 		this.academicYear = academic_year;
 	}
+
 	
 }
