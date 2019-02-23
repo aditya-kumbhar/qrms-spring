@@ -9,6 +9,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+
+
+/*
+ * Table - FacultyPref
+ * String userName
+ * Course course1
+ * Course course2
+ * Course course3
+ * Course course4
+ */
+
 @Entity
 @Table(name="faculty_pref")
 public class FacultyPref {
@@ -32,12 +43,6 @@ public class FacultyPref {
 	@JoinColumn(name = "pref4")
 	private Course course4;
 
-	@Column(name="semester")
-	private int semester;
-	
-	@Column(name="academicYear")
-	private String academicYear;
-	
 	public String getUserName() {
 		return userName;
 	}
@@ -65,33 +70,21 @@ public class FacultyPref {
 	public Course getCourse4() {
 		return course4;
 	}
+	
 	public void setCourse4(Course course4) {
 		this.course4 = course4;
 	}
-	public int getSemester() {
-		return semester;
-	}
-	public void setSemester(int semester) {
-		this.semester = semester;
-	}
-	public String getAcademicYear() {
-		return academicYear;
-	}
-	public void setAcademicYear(String academicYear) {
-		this.academicYear = academicYear;
-	}
+	
 	public FacultyPref() {
 		
 	}
-	public FacultyPref(String userName, Course course1, Course course2, Course course3, Course course4, int semester,
-			String academicYear) {
+	
+	public FacultyPref(String userName, Course course1, Course course2, Course course3, Course course4) {
 		super();
 		this.userName = userName;
 		this.course1 = course1;
 		this.course2 = course2;
 		this.course3 = course3;
 		this.course4 = course4;
-		this.semester = semester;
-		this.academicYear = academicYear;
 	}
 }

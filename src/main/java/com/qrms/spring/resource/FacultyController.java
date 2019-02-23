@@ -1,12 +1,9 @@
 package com.qrms.spring.resource;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Optional;
 
 import javax.validation.Valid;
-
-import java.util.GregorianCalendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,7 +31,6 @@ public class FacultyController {
 	@Autowired
 	private FacultyAcadRepository facultyAcadRepository;
 	
-	
 	@Autowired
 	private CourseRepository courseRepository;
 	
@@ -42,18 +38,9 @@ public class FacultyController {
 	public String facultyHome() {
 		return "faculty/home";
 	}
-	
-	@RequestMapping(value = "/CheckForFacultyPrefs", method = RequestMethod.GET)
-	public ModelAndView checkForFacultyPrefs() {
-		ModelAndView model = new ModelAndView();
-		model.addObject("facultyPrefSA",new FacultyPref());
-		model.setViewName("faculty/facultyPref");
-		return model;
-	}
-	
-	
+		
 	@RequestMapping(value = "/getFacultyPrefs", method = RequestMethod.GET)
-	public ModelAndView getFacultyPref(@Valid FacultyPref facultyPref) {
+	public ModelAndView getFacultyPref() {
 		ModelAndView model = new ModelAndView();
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -61,18 +48,15 @@ public class FacultyController {
 		System.out.println(userName);
 		
 		FacultyAcad currFacultyAcad = facultyAcadRepository.findByUserName(userName);
-		Calendar cal = GregorianCalendar.getInstance();
 		
-		String academic_year = Integer.toString(cal.get(Calendar.YEAR));
-		int semester = facultyPref.getSemester();
-		
-		Optional <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserNameEqualsAndSemesterEqualsAndAcademicYearEquals(currFacultyAcad.getUserName(),semester,academic_year);
+		Optional <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserName(currFacultyAcad.getUserName());
 		
 		if(facultyPrefs.isPresent()) {
 			model.addObject("msg","Your preferences for electives have been recorded already!");
 			model.setViewName("faculty/home");
 			return model;
 		}else {
+			//Have to change the below, get courses with semester even or odd depending on the current month
 			ArrayList <Course> courseList = courseRepository.findAll();
 			
 			if(courseList.size()==0) {
@@ -80,8 +64,6 @@ public class FacultyController {
 			}else {
 				System.out.println("Courses exist");
 			}
-			
-			model.addObject("facultyPrefSA",new FacultyPref());
 			model.addObject("courseList", courseList);
 			model.addObject("course1",new String());
 			model.addObject("course2",new String());
@@ -96,17 +78,15 @@ public class FacultyController {
 	}
 	
 	@RequestMapping(value = "/setFacultyPrefs", method = RequestMethod.POST)
-	public ModelAndView addPreferences(@Valid FacultyPref facultyPrefSA,String course1,String course2,String course3,String course4) {
+	public ModelAndView addPreferences(@Valid String course1,String course2,String course3,String course4) {
 		
-		ModelAndView model = new ModelAndView();	
+		ModelAndView model = new ModelAndView();
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
 
 		FacultyPref facultyPref = new FacultyPref();
 		facultyPref.setUserName(userName);
-		facultyPref.setSemester(facultyPrefSA.getSemester());
-		facultyPref.setAcademicYear(facultyPrefSA.getAcademicYear());
 		facultyPref.setCourse1(courseRepository.findByCourseId(course1));
 		facultyPref.setCourse2(courseRepository.findByCourseId(course2));
 		facultyPref.setCourse3(courseRepository.findByCourseId(course3));

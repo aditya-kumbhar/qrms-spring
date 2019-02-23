@@ -22,8 +22,10 @@ import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.Department;
+import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
+import com.qrms.spring.repository.FacultyAcadRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.StudentAllocationRepository;
@@ -55,8 +57,12 @@ public class AdminController {
 	@Autowired
 	private StudentAllocationRepository studentAllocationRepository;
 	
+	@Autowired
+	private FacultyAcadRepository facultyAcadRepository;
+	
 	private StudentAcad student;
 	
+	private FacultyAcad faculty;
 	//private Course course;
 	
 	private List<Department> departments; 
@@ -106,7 +112,13 @@ public class AdminController {
 			studentAcadRepository.save(student);
 			
 		}
-		
+		else if(role.equals("FACULTY")) {
+			faculty = new FacultyAcad();
+			System.out.println("Adding user to facultyAcad");
+			faculty.setUserName(user.getUserName());
+			facultyAcadRepository.save(faculty);
+			
+		}
 		model.addObject("msg","User has been successfully registered");
 		model.addObject("user",new Users());
 		model.addObject("roles",roles);
@@ -149,7 +161,7 @@ public class AdminController {
 		String year = "BE";
 		String academic_year = "2018-19";
 		
-		ArrayList<StudentPref> studentPrefs = studentPrefRepository.findBySemesterEqualsAndYearEqualsAndAcademicYearEquals(semester, year, academic_year);
+//		ArrayList<StudentPref> studentPrefs = studentPrefRepository.findBySemesterEqualsAndYearEqualsAndAcademicYearEquals(semester, year, academic_year);
 		
 		ArrayList<StudentAcad> studentAcads = studentAcadRepository.findBySemEqualsAndYearEqualsAndAcademicYearEquals(semester, year, academic_year);
 		

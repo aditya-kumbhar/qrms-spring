@@ -33,27 +33,18 @@ public class StudentPref{
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "pref4")
 	private Course course4;
+
+	@Column(name="elective_id")
+	private String electiveId;
 	
-	@Column(name="year")
-	private String year;
-	
-	@Column(name="semester")
-	private int semester;
-	
-	@Column(name="academicYear")
-	private String academicYear;
-	
-	public StudentPref(String userName, Course course1, Course course2, Course course3, Course course4, String year,
-			int sem, String academic_year) {
+	public StudentPref(String userName, Course course1, Course course2, Course course3, Course course4, String electiveId) {
 		super();
 		this.userName = userName;
 		this.course1 = course1;
 		this.course2 = course2;
 		this.course3 = course3;
 		this.course4 = course4;
-		this.year = year;
-		this.semester = sem;
-		this.academicYear = academic_year;
+		this.electiveId = electiveId;
 	}
 
 	public StudentPref() {
@@ -99,29 +90,13 @@ public class StudentPref{
 	public void setCourse4(Course course4) {
 		this.course4 = course4;
 	}
-
-	public String getYear() {
-		return year;
-	}
-
-	public void setYear(String year) {
-		this.year = year;
-	}
-
-	public int getSemester() {
-		return semester;
-	}
-
-	public void setSemester(int sem) {
-		this.semester = sem;
-	}
-
+	
 	public String getAcademicYear() {
-		return academicYear;
+		return electiveId;
 	}
 
-	public void setAcademicYear(String academic_year) {
-		this.academicYear = academic_year;
+	public void setAcademicYear(String electiveId) {
+		this.electiveId = electiveId;
 	}
 
 	

@@ -53,7 +53,7 @@ public class StudentController {
 
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
-		Optional <StudentPref> studentPrefs = studentPrefRepository.findByUserNameEqualsAndSemesterEqualsAndYearEqualsAndAcademicYearEquals(currUserAcad.getUserName(), currUserAcad.getSem(), currUserAcad.getYear(), currUserAcad.getAcademicYear());
+		Optional <StudentPref> studentPrefs = studentPrefRepository.findByUserName(currUserAcad.getUserName());
 		if(studentPrefs.isPresent()) {
 			model.addObject("msg","Your preferences for electives have been recorded already!");
 			model.setViewName("student/home");
@@ -93,8 +93,6 @@ public class StudentController {
 		
 		StudentPref studentPref = new StudentPref();
 		studentPref.setUserName(userName);
-		studentPref.setSemester(currUserAcad.getSem());
-		studentPref.setYear(currUserAcad.getYear());
 		studentPref.setAcademicYear(currUserAcad.getAcademicYear());
 		studentPref.setCourse1(courseRepository.findByCourseId(course1));
 		studentPref.setCourse2(courseRepository.findByCourseId(course2));
