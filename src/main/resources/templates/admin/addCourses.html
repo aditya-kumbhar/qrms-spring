@@ -17,6 +17,7 @@
 	<link rel="stylesheet" th:href="@{/css/register.css}">
 	
     <script>
+    	$("#isTheory").prop("selectedIndex", 0);
     	//display semester options as per year selected
 	    $(document).ready(function () {
 	        $("#courseYear").change(function () {
@@ -50,6 +51,7 @@
 	            var cyear = $('#courseYear');
 	            var csem = $('#courseSem');
 	            var dept = $('#dept');
+	            var isTheory = $('#isTheory')
 	            
 	            if (dept.val() == "none") {
 	                alert("Please select a course department");
@@ -76,6 +78,11 @@
 	            	$('#electiveIdOption').focus();
 	            	
 	            	return false;
+	            } else if (isTheory.val() == "-1") {
+	                alert("Please select a course category");
+	                $('#isTheory').focus();
+	                
+	                return false;
 	            }
 	            
 	            else return;
@@ -90,6 +97,18 @@
     	          $('#dept').css('color','black');
     	      } else {
     	          $('#dept').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
+	    $(document).ready(function() {
+    	   $('#isTheory').css('color','#8F8B87');
+    	   $('#isTheory').change(function() {
+    	      var current = $('#isTheory').val();
+    	      if (current != '-1') {
+    	          $('#isTheory').css('color','black');
+    	      } else {
+    	          $('#isTheory').css('color','#8F8B87');
     	      }
     	   }); 
     	});
@@ -268,6 +287,24 @@
 			</select>
 		</div> <!-- form-group end.// -->
 		</div>
+	    
+	    <div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<select class="form-control" name="isTheory" id="isTheory" required th:field="*{isTheory}">
+				<option value="-1" style="color:#8F8B87" selected>Course Category</option>
+				<option value="1" style="color:#000">Theory</option>
+				<option value="2" style="color:#000">Practical</option>
+			</select>
+		</div> <!-- form-group end.// -->
+		
+		<div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+			 </div>
+	        <input id="noOfHours"  name="noOfHours" th:field="*{noOfHours}" class="form-control" placeholder="Hours Alloted" type="number" min="0" required autofocus/>
+	    </div> <!-- form-group// --> 
 	    
 	    <div class="form-group">
 	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Add Course  </button>

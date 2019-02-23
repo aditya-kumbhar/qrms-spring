@@ -49,7 +49,7 @@ public class Course {
 	private int isTheory;
 	
 	@Column(name="no_of_hours")
-	private int noOfHours;
+	private Integer noOfHours;
 	
 	public int getIsTheory() {
 		return isTheory;
@@ -59,11 +59,11 @@ public class Course {
 		this.isTheory = isTheory;
 	}
 
-	public int getNoOfHours() {
+	public Integer getNoOfHours() {
 		return noOfHours;
 	}
 
-	public void setNoOfHours(int noOfHours) {
+	public void setNoOfHours(Integer noOfHours) {
 		this.noOfHours = noOfHours;
 	}
 
