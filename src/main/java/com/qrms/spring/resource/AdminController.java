@@ -153,8 +153,7 @@ public class AdminController {
 		courseRepository.save(course);
 		return model;
 	}
-	
-<<<<<<< HEAD
+
 	@RequestMapping(value="/start_student_allocation",method=RequestMethod.POST)
 	public ModelAndView start_student_allocation() {
 		int semester = 8;
@@ -177,13 +176,9 @@ public class AdminController {
 		
 	}
 	
-	
-	//Course Allocation
-	@RequestMapping(value="/get_start_student_allocation",method=RequestMethod.GET)
-=======
+
 	//Retrieve Student course allocation page 
 	@RequestMapping(value="/studentCourseAllocationStatus",method=RequestMethod.GET)
->>>>>>> f06f9c2e48ecde499313da7f2d7cf3cf5b2f4bc2
 	public ModelAndView get_student_allocation() {
 			
 		ModelAndView model = new ModelAndView();
