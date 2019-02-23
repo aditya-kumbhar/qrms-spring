@@ -35,28 +35,13 @@
 	        });
 	    });
 
-	    function yesnoCheck(obj) {
-	        if (obj.value=="E" || obj.value=="O") {
-	            document.getElementById('electiveId').style.display = 'block';
-	        }
-	        else document.getElementById('electiveId').style.display = 'none';
-
-	    }
-    	
 	    $(document).ready(function () {
-	        $("#submit").click(function () {
+	        $("#submit_all").click(function () {
 	        	
-	            var ctype = $('#courseType');
 	            var cyear = $('#courseYear');
 	            var csem = $('#courseSem');
-	            var dept = $('#dept');
 	            
-	            if (dept.val() == "none") {
-	                alert("Please select a course department");
-	                $('#dept').focus();
-	                
-	                return false;
-	            }  else if (cyear.val() == "none") {
+	          	if (cyear.val() == "none") {
 	                alert("Please select a course year");
 	                $('#courseYear').focus();
 	                
@@ -66,58 +51,13 @@
 	                $('#courseSem').focus();
 	                
 	                return false;
-	            } else if (ctype.val() == "X") {
-	                alert("Please select a course type");
-	                $('#courseType').focus();
-	                
-	                return false;
-	            } else if(document.getElementById('electiveId').style.display === 'block' &&  $('#electiveIdOption').val() == 'none' ){
-	            	alert("Please select Elective number");
-	            	$('#electiveIdOption').focus();
-	            	
-	            	return false;
-	            }
+	            } 
 	            
 	            else return;
 	        });
 	    });
 	    
-	    $(document).ready(function() {
-    	   $('#dept').css('color','#8F8B87');
-    	   $('#dept').change(function() {
-    	      var current = $('#dept').val();
-    	      if (current != 'none') {
-    	          $('#dept').css('color','black');
-    	      } else {
-    	          $('#dept').css('color','#8F8B87');
-    	      }
-    	   }); 
-    	});
-	    
-	    $(document).ready(function() {
-	    	   $('#electiveIdOption').css('color','#8F8B87');
-	    	   $('#electiveIdOption').change(function() {
-	    	      var current = $('#electiveIdOption').val();
-	    	      if (current != 'none') {
-	    	          $('#electiveIdOption').css('color','black');
-	    	      } else {
-	    	          $('#electiveIdOption').css('color','#8F8B87');
-	    	      }
-	    	   }); 
-	    	});
-	    
-	    $(document).ready(function() {
-    	   $('#courseType').css('color','#8F8B87');
-    	   $('#courseType').change(function() {
-    	      var current = $('#courseType').val();
-    	      if (current != 'X') {
-    	          $('#courseType').css('color','black');
-    	      } else {
-    	          $('#courseType').css('color','#8F8B87');
-    	      }
-    	   }); 
-    	});
-	    
+	
 	    $(document).ready(function() {
     	   $('#courseYear').css('color','#8F8B87');
     	   $('#courseYear').change(function() {
@@ -142,10 +82,26 @@
     	   }); 
     	});
 	    
-	    
+	   function displayForms(obj){
+			
+		   	  var current = obj.value;
+    	      if (current == 'none') {	    	          
+   	    	     document.getElementById('singleForm').style.display = 'none';
+   	    	     document.getElementById('batchForm').style.display = 'none';
+   	    	        
+    	      } else if(current == 'single'){	    	    	  
+   	    	     document.getElementById('singleForm').style.display = 'block';
+   	    	     document.getElementById('batchForm').style.display = 'none';
+	    	     	
+    	      } else if(current == 'batch'){
+   	    	     
+    	    	 document.getElementById('singleForm').style.display = 'none';
+      	    	 document.getElementById('batchForm').style.display = 'block';
+  	    		}
+	   }
+    	
     </script>
-    
- 
+     
   
 </head> 
 
@@ -163,13 +119,13 @@
                 <a class="nav-link" th:href="@{/u/admin/register}">Registration</a>
             </li>
             
-    		<li class="nav-item active" >
+    		<li class="nav-item" >
                 <a class="nav-link" th:href="@{/u/admin/add-course}">Add Courses</a>
-            </li>        
+            </li>   
             
-             <li class="nav-item" >
+            <li class="nav-item active" >
                 <a class="nav-link" th:href="@{/u/admin/studentCourseAllocationStatus}">Course Allocation</a>
-            </li> 
+            </li>       
         </ul>
     </div>
     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
@@ -185,41 +141,35 @@
 
 <div class="card bg-light">
 <article class="card-body mx-auto" style="max-width: 400px;">
-	<h4 class="card-title mt-3 text-center">Add Course</h4>
+	<h4 class="card-title mt-3 text-center">Start Course Allocation</h4>
 
-	<form th:action="@{/u/admin/add_courses}"  role="form" method="POST" th:object="${course}"> 
-	
-		<div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" th:id="dept" th:name="dept" autofocus>
-				<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
-				<option th:each="dept : ${departments}" th:value="${dept.deptName}"  th:text="${dept.deptName}" style="color:#000"></option>
-			</select>
-		</div> <!-- form-group end.// -->
+ 	<div class="form-group input-group">
+	<select class="form-control" name="selectMode" id="selectMode" onchange = "displayForms(this)">
+				<option value="none" style="color:#8F8B87" selected>Select Mode</option>
+				<option value="single" style="color:#000">Single Elective: Specify Course ID</option>
+				<option value="batch" style="color:#000">All Electives: Specify Year and Semester</option>
+			</select>	
+	</div>
+
+	<div style="display:none" id="singleForm" name="singleForm">
+	<form th:action="@{/u/admin/start_student_allocation_single}"  role="form" method="POST" th:object="${course}" id="all_form">   	    
 		
 		<div class="form-group input-group">
 			<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
 			 </div>
 	        <input id="courseId" name="courseId" th:field="*{courseId}" class="form-control" placeholder="Course ID" type="text" required autofocus/>
-	    </div> <!-- form-group// -->
-	    
-	    <div class="form-group input-group">
-			<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
-			 </div>
-	        <input id="courseName" name="courseName" th:field="*{courseName}" class="form-control" placeholder="Course Name" type="text" required autofocus/>
-	    </div> <!-- form-group// -->
-	   
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
-			 </div>
-	        <input id="courseCredits"  name="courseCredits" th:field="*{courseCredits}" class="form-control" placeholder="Course Credits" type="number" min="0" required autofocus/>
-	    </div> <!-- form-group// -->  
-	    
+	    </div> <!-- form-group// -->	  
+				
+		
+	    <div class="form-group">
+	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Submit  </button>
+	    </div> <!-- form-group// -->   	           	                                                 
+	</form>	
+	</div>		
+	
+	<div style="display:none" id="batchForm">		
+	<form th:action="@{/u/admin/start_student_allocation_batch}"  role="form" method="POST" th:object="${course}" id="all_form">   	    
 	    <div class="form-group input-group">
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
@@ -240,43 +190,19 @@
 			<select class="form-control"  name="courseSem" id="courseSem" required th:field="*{courseSem}">
 				<option value="0" style="color:#8F8B87" selected>Select Semester</option>
 			</select>
-		</div> <!-- form-group end.// -->
-		
-		<div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" name="courseType" id="courseType" required th:field="*{courseType}" onchange="yesnoCheck(this)">
-				<option value="X" style="color:#8F8B87" selected>Course Type</option>
-				<option value="R" style="color:#000">Regular</option>
-				<option value="E" style="color:#000">Normal Elective</option>
-				<option value="O" style="color:#000">Open Elective</option>
-			</select>
-		</div> <!-- form-group end.// -->
-		
-		<div style="display:none" id="electiveId" name="electiveId">
-		<div class="form-group input-group" >
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" name="electiveIdOption" id="electiveIdOption">
-				<option value="none" style="color:#8F8B87" selected>Select Elective number</option>
-				<option value="el1" style="color:#000">EL-1</option>
-				<option value="el2" style="color:#000">EL-2</option>
-				<option value="el3" style="color:#000">EL-3</option>
-				<option value="el4" style="color:#000">EL-4</option>
-			</select>
-		</div> <!-- form-group end.// -->
-		</div>
-	    
+		</div> <!-- form-group end.// -->			
+
 	    <div class="form-group">
-	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Add Course  </button>
-	    </div> <!-- form-group// -->   	           
-	                                                 
-	</form>		
+	        <button type="submit" id="submit_all" class="btn btn-primary btn-block"> Submit  </button>
+	    </div> <!-- form-group// -->   	           	                                                 
+	</form>
+	</div>
+	
 </article>
-	<div class="row text-center mx-auto">
-			<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
-	 </div>  
+	<div class="row text-center card-body mx-auto">
+		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+ 		<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
+ 	
+ 	</div>  
 </div>
 </body>

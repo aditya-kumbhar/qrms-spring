@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -17,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Role;
 import com.qrms.spring.model.StudentAcad;
-import com.qrms.spring.model.StudentAllocation;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.model.Course;
@@ -28,7 +28,6 @@ import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
-import com.qrms.spring.repository.StudentAllocationRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
 
@@ -54,8 +53,6 @@ public class AdminController {
 	@Autowired
 	private StudentPrefRepository studentPrefRepository;
 	
-	@Autowired
-	private StudentAllocationRepository studentAllocationRepository;
 	
 	@Autowired
 	private FacultyAcadRepository facultyAcadRepository;
@@ -140,12 +137,14 @@ public class AdminController {
 	
 	//Handle add course form
 	@RequestMapping(value = "/add_courses", method = RequestMethod.POST)
-	public ModelAndView addCourse(@Valid Course course, String dept) {
+	public ModelAndView addCourse(@Valid Course course, String dept, String electiveIdOption) {
 		ModelAndView model = new ModelAndView();
 		
 		Department deptObj = departmentRepository.findByDeptName(dept);
 		course.setDepartment(deptObj);
+		course.setStudAllocFlag(0);
 		
+		course.setElectiveId(electiveIdOption);
 		model.addObject("msg","Course has been added successfully");
 		model.addObject("course",new Course());
 		model.addObject("departments",departments);
@@ -155,6 +154,7 @@ public class AdminController {
 		return model;
 	}
 	
+<<<<<<< HEAD
 	@RequestMapping(value="/start_student_allocation",method=RequestMethod.POST)
 	public ModelAndView start_student_allocation() {
 		int semester = 8;
@@ -180,34 +180,83 @@ public class AdminController {
 	
 	//Course Allocation
 	@RequestMapping(value="/get_start_student_allocation",method=RequestMethod.GET)
+=======
+	//Retrieve Student course allocation page 
+	@RequestMapping(value="/studentCourseAllocationStatus",method=RequestMethod.GET)
+>>>>>>> f06f9c2e48ecde499313da7f2d7cf3cf5b2f4bc2
 	public ModelAndView get_student_allocation() {
-		
+			
 		ModelAndView model = new ModelAndView();
+		Course course = new Course();
 		
-		ArrayList<Department> departments = departmentRepository.findAll();
-		
-		model.addObject("departments",departments);
-//		model.setViewName("/admin/StudentAllocation");
+		model.addObject("course",course);
+		model.setViewName("/admin/studCourseAllocation");
 		return model;
+	
 	}
 	
-	//Setting the allocation entity to ON
-	@RequestMapping(value="/get_set_allocation",method = RequestMethod.GET)
-	public ModelAndView get_set_allocation() {
+	//single mode: start course allocation for specified course ID
+		@RequestMapping(value="/start_student_allocation_single",method=RequestMethod.POST)
+		public ModelAndView start_student_allocation_single(Course course) {
+			
+			ModelAndView model = new ModelAndView();
+			String msg="",err_msg="";
+			
+			
+			Course c = courseRepository.findByCourseId(course.getCourseId());
+			if(c == null) {
+				model.addObject("err_msg","Invalid course ID");
+				
+			}
+			else if(c.getCourseType()!='R') {
+				if(c.getStudAllocFlag() == 1)
+				{
+					err_msg = "Course allocation already started for CourseID:"+c.getCourseId()+" - "+c.getCourseName();				
+					model.addObject("err_msg",err_msg);
+					
+				}
+				else {
+					c.setStudAllocFlag(1);
+					msg = "Course allocation started for Course ID: "+c.getCourseId()+" - "+c.getCourseName();				
+					courseRepository.save(c);
+					model.addObject("msg",msg);
+					
+				}					
+			}
+			else {
+				err_msg = "Specified course is not an elective.";								
+				model.addObject("err_msg",err_msg);
+				
+			}
+												
+			model.addObject("course",new Course());
+			model.setViewName("/admin/studCourseAllocation");		
+			return model;
+		}
+	
+	
+	//batch mode: start course allocation for specified year and semester
+	@RequestMapping(value="/start_student_allocation_batch",method=RequestMethod.POST)
+	public ModelAndView start_student_allocation_all(Course course) {
+		
 		ModelAndView model = new ModelAndView();
-		
-		String academic_year = "2018-19";
-		
-		ArrayList<StudentAllocation> studentAllocationEntries= studentAllocationRepository.findByAcademicYearAndIsONNot(academic_year,"N");
-		
-		model.addObject("studentAllocationEntries",studentAllocationEntries);
-		
-		
-		model.setViewName("/admin/StudentAllocation");
+		String msg;
+				
+		ArrayList<Course> startCourses = courseRepository.findByCourseSemAndCourseYear(course.getCourseSem(), course.getCourseYear());
+				
+		for(Course c: startCourses) {
+			
+			if(c.getCourseType()!='R') {
+				c.setStudAllocFlag(1);
+				courseRepository.save(c);					
+			}
+						
+		}
+					
+		model.addObject("course",new Course());
+		model.addObject("msg","Student course allocation process started for : "+course.getCourseYear()+" Sem:"+course.getCourseSem());
+		model.setViewName("/admin/studCourseAllocation");		
 		return model;
-	}
-	
-	
-	
+	}	
 	
 }

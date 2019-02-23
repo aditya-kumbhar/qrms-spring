@@ -38,14 +38,27 @@ public class Course {
 	private int courseSem;
 	
 	@Column(name="elective_id")
-	private String elective_id;
+	private String electiveId;
 	
-	public String getElective_id() {
-		return elective_id;
+	//0 = allocation not yet started by admin
+	//1 = allocation has been started and students can give prefs
+	@Column(name="stud_allocation_flag")
+	private int studAllocFlag;
+	
+	public String getElectiveId() {
+		return electiveId;
 	}
 
-	public void setElective_id(String elective_id) {
-		this.elective_id = elective_id;
+	public void setElectiveId(String elective_id) {
+		this.electiveId = elective_id;
+	}
+
+	public int getStudAllocFlag() {
+		return studAllocFlag;
+	}
+
+	public void setStudAllocFlag(int studAllocFlag) {
+		this.studAllocFlag = studAllocFlag;
 	}
 
 	public String getCourseId() {

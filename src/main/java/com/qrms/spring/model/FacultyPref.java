@@ -23,6 +23,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="faculty_pref")
 public class FacultyPref {
+	
 	@Id
 	@Column(name="user_name")
 	private String userName;
