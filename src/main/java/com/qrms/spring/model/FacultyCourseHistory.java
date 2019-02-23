@@ -27,6 +27,25 @@ public class FacultyCourseHistory {
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name="course_taught")
 	private Course courseTaught;
+	
+	@Column(name="course_experience")
+	private int courseExperience;
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getCourseExperience() {
+		return courseExperience;
+	}
+
+	public void setCourseExperience(int courseExperience) {
+		this.courseExperience = courseExperience;
+	}
 
 	public FacultyAcad getFacultyUserName() {
 		return facultyUserName;
@@ -44,10 +63,11 @@ public class FacultyCourseHistory {
 		this.courseTaught = courseTaught;
 	}
 
-	public FacultyCourseHistory(FacultyAcad facultyUserName, Course courseTaught) {
+	public FacultyCourseHistory(FacultyAcad facultyUserName, Course courseTaught,int courseExperience) {
 		super();
 		this.facultyUserName = facultyUserName;
 		this.courseTaught = courseTaught;
+		this.courseExperience = courseExperience;
 	}
 
 	public FacultyCourseHistory() {

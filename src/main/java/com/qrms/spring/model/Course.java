@@ -45,6 +45,28 @@ public class Course {
 	@Column(name="stud_allocation_flag")
 	private int studAllocFlag;
 	
+	@Column(name="is_theory")
+	private int isTheory;
+	
+	@Column(name="no_of_hours")
+	private int noOfHours;
+	
+	public int getIsTheory() {
+		return isTheory;
+	}
+
+	public void setIsTheory(int isTheory) {
+		this.isTheory = isTheory;
+	}
+
+	public int getNoOfHours() {
+		return noOfHours;
+	}
+
+	public void setNoOfHours(int noOfHours) {
+		this.noOfHours = noOfHours;
+	}
+
 	public String getElectiveId() {
 		return electiveId;
 	}
@@ -117,6 +139,22 @@ public class Course {
 		this.courseSem = courseSem;
 	}
 	
+	public Course(String courseId, String courseName, Integer courseCredits, Department department, char courseType,
+			String courseYear, int courseSem, String electiveId, int studAllocFlag, int isTheory, int noOfHours) {
+		super();
+		this.courseId = courseId;
+		this.courseName = courseName;
+		this.courseCredits = courseCredits;
+		this.department = department;
+		this.courseType = courseType;
+		this.courseYear = courseYear;
+		this.courseSem = courseSem;
+		this.electiveId = electiveId;
+		this.studAllocFlag = studAllocFlag;
+		this.isTheory = isTheory;
+		this.noOfHours = noOfHours;
+	}
+
 	public Course() {
 		
 	}
