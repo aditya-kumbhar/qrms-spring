@@ -43,7 +43,7 @@ public class Course {
 	//0 = allocation not yet started by admin
 	//1 = allocation has been started and students can give prefs
 	@Column(name="stud_allocation_flag")
-	private int studAllocFlag;
+	private int studAllocFlag=0;
 	
 	@Column(name="is_theory")
 	private int isTheory;
