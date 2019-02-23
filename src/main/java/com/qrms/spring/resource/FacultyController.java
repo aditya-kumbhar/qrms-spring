@@ -105,8 +105,8 @@ public class FacultyController {
 
 		FacultyPref facultyPref = new FacultyPref();
 		facultyPref.setUserName(userName);
-		facultyPref.setSemester(facultyPref.getSemester());
-		facultyPref.setAcademicYear(facultyPref.getAcademicYear());
+		facultyPref.setSemester(facultyPrefSA.getSemester());
+		facultyPref.setAcademicYear(facultyPrefSA.getAcademicYear());
 		facultyPref.setCourse1(courseRepository.findByCourseId(course1));
 		facultyPref.setCourse2(courseRepository.findByCourseId(course2));
 		facultyPref.setCourse3(courseRepository.findByCourseId(course3));
