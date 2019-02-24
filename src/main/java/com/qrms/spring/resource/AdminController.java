@@ -22,9 +22,11 @@ import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.Department;
+import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
+import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
@@ -53,6 +55,8 @@ public class AdminController {
 	@Autowired
 	private StudentPrefRepository studentPrefRepository;
 	
+	@Autowired
+	private ElectiveVacancyPrefCountsRepository electiveVacancyPrefCountsRepository;
 	
 	@Autowired
 	private FacultyAcadRepository facultyAcadRepository;
@@ -163,6 +167,16 @@ public class AdminController {
 		model.setViewName("admin/addCourses");
 		
 		courseRepository.save(course);
+		if(course.getCourseType()=='E' || course.getCourseType()=='O')
+		{
+			ElectiveVacancyPrefCounts electiveVacancyPrefCounts = new ElectiveVacancyPrefCounts();
+			System.out.println(course.getCourseId());
+			electiveVacancyPrefCounts.setCourseId(course.getCourseId());
+			electiveVacancyPrefCounts.setPrefCount(0);
+			electiveVacancyPrefCounts.setVacancyCount(80);
+			System.out.println("here!");
+			electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);
+		}
 		return model;
 	}
 
@@ -200,6 +214,21 @@ public class AdminController {
 		model.setViewName("/admin/studCourseAllocation");
 		return model;
 	
+	}
+	
+	//Retrieve Student preference counts for each course elective
+	@RequestMapping(value="studentPreferenceCounts",method=RequestMethod.GET)
+	public ModelAndView get_student_preferences() {
+		ModelAndView model = new ModelAndView();
+		
+		ArrayList <ElectiveVacancyPrefCounts> electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findAll();
+		
+		model.addObject("electiveVacancyPrefCounts",electiveVacancyPrefCounts);
+		for (ElectiveVacancyPrefCounts electiveVacancyPrefCounts2 : electiveVacancyPrefCounts) {
+			System.out.println(electiveVacancyPrefCounts2.getVacancyCount()+" "+electiveVacancyPrefCounts2.getPrefCount());
+		}
+		model.setViewName("/admin/home");
+		return model;
 	}
 	
 	//single mode: start course allocation for specified course ID

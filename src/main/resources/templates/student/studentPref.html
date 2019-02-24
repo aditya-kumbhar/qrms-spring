@@ -29,7 +29,7 @@
 	            var pref4 = $('#course4');
 	            
 	            
-	            if (pref1.val() == "Preference_1")
+	            if (pref1.val() == "Preference_1") {
 	                alert("Please select preference 1");
 	                $('#course1').focus();
 	
@@ -41,13 +41,13 @@
 	
 	                return false;
 	            } 
-	            else if (pref3.val() == "Preference_3")
+	            else if (pref3.val() == "Preference_3") {
 	                alert("Please select preference 3");
 	                $('#course3').focus();
 	
 	                return false;
 	            } 
-	            else if (pref4.val() == "Preference_4")
+	            else if (pref4.val() == "Preference_4") {
 	                alert("Please select preference 4");
 	                $('#course4').focus();
 	
@@ -60,10 +60,6 @@
 	    
 	    $(document).ready(function() {
     	   $('#course1').css('color','#8F8B87');
-    	   $('#course2').css('color','#8F8B87');
-    	   $('#course3').css('color','#8F8B87');
-    	   $('#course4').css('color','#8F8B87');
-    	   
     	   $('#course1').change(function() {
     	      var current = $('#course1').val();
     	      if (current != 'Preference_1') {
@@ -71,7 +67,11 @@
     	      } else {
     	          $('#course1').css('color','#8F8B87');
     	      }
-    	   }); 
+    	   });  
+    	});
+	    
+	    $(document).ready(function() {
+    	   $('#course2').css('color','#8F8B87');
     	   $('#course2').change(function() {
      	      var current = $('#course2').val();
      	      if (current != 'Preference_2') {
@@ -80,6 +80,10 @@
      	          $('#course2').css('color','#8F8B87');
      	      }
      	   }); 
+    	});
+	    
+	    $(document).ready(function() {
+    	   $('#course3').css('color','#8F8B87');
     	   $('#course3').change(function() {
      	      var current = $('#course3').val();
      	      if (current != 'Preference_3') {
@@ -87,7 +91,11 @@
      	      } else {
      	          $('#course3').css('color','#8F8B87');
      	      }
-     	   }); 
+     	   });  
+    	});
+	    
+	    $(document).ready(function() {
+    	   $('#course4').css('color','#8F8B87');
     	   $('#course4').change(function() {
      	      var current = $('#course4').val();
      	      if (current != 'Preference_4') {
@@ -136,28 +144,28 @@
 				<div class="form-group input-group">
 					<select class="form-control" th:name="course1" th:id="course1" required>
 						<option th:value="Preference_1" style="color:#8F8B87" selected>Select Preference 1</option>
-						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}"></option>
+						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
 					</select>	
 				</div>
 				
 				<div class="form-group input-group">
 					<select class="form-control" th:name="course2" th:id="course2" required>
 						<option th:value="Preference_2" style="color:#8F8B87" selected>Select Preference 2</option>
-						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}"></option>
+						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
 					</select>
 				</div>
 				
 				<div class="form-group input-group">
 					<select class="form-control" th:name="course3" th:id="course3" required>
 						<option th:value="Preference_3" style="color:#8F8B87" selected>Select Preference 3</option>
-						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}"></option>
+						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
 					</select>
 				</div>
 				
 				<div class="form-group input-group">
 					<select class="form-control" th:name="course4" th:id="course4" required>
 						<option th:value="Preference_4" style="color:#8F8B87" selected>Select Preference 4</option>
-						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}"></option>
+						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
 					</select>
 				</div>
 				
