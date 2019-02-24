@@ -19,6 +19,7 @@ import com.qrms.spring.model.Role;
 import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
+import com.qrms.spring.queryBeans.StudentCountByYearSem;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.Department;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
@@ -68,8 +69,19 @@ public class AdminController {
 	private List<Role> roles; 
 	
 	@GetMapping("/home")
-	public String adminHome() {
-		return "admin/home";
+	public ModelAndView adminHome() {
+		ModelAndView model = new ModelAndView();
+		List<StudentCountByYearSem> totalStudentCount;
+		
+		totalStudentCount = studentAcadRepository.findStudentCountByYearSem();
+		
+		for(StudentCountByYearSem student: totalStudentCount) {
+			
+		}
+		model.addObject("students",totalStudentCount);
+		
+		model.setViewName("admin/home");
+		return model;
 	}
 
 	//Display register user form
@@ -181,7 +193,7 @@ public class AdminController {
 	public ModelAndView process_student_allocation() {
 		int semester = 8;
 		String year = "BE";
-		String academic_year = "2018-19";
+	//	String academic_year = "2018-19";
 		
 //		ArrayList<StudentPref> studentPrefs = studentPrefRepository.findBySemesterEqualsAndYearEqualsAndAcademicYearEquals(semester, year, academic_year);
 		

@@ -49,5 +49,30 @@
             </li>
         </ul>
     </div>
-    
 </nav>
+<body>
+<article class="card-body mx-auto" style="max-width:70%;">
+
+<h3>Student Preferences</h3>
+<div>
+<table class="table table-bordered table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Year</th>
+      <th scope="col">Semester</th>
+      <th scope="col">Elective</th>
+      <th scope="col">Count</th>
+    </tr>
+  </thead>			
+  <tbody>
+    <tr th:each="stud : ${students}">
+     	<td th:text="${stud.year}"></td>
+     	<td th:text="${stud.sem}"></td>
+     	<td>Null</td>
+     	<td th:text="${stud.count}"></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</article>
+</body>
