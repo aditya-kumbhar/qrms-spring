@@ -1,0 +1,195 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    
+    <title>Add Courses</title>
+
+     <!-- Bootstrap core CSS -->
+    <link th:href="@{/webjars/bootstrap/4.1.3/css/bootstrap.min.css}" rel="stylesheet">
+   	<script th:src="@{/webjars/bootstrap/4.1.3/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/ajax/libs/jquery/3.2.1/jquery.min.js}"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/register.css}">
+	
+    <script>
+    	//display semester options as per year selected
+	    $(document).ready(function () {
+	        $("#courseYear").change(function () {
+	            var val = $(this).val();
+	            if (val == "FE") {
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='1' style='color:#000'>1</option><option value='2' style='color:#000'>2</option>");
+	            } else if (val == "SE") {
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='3' style='color:#000'>3</option><option value='4' style='color:#000'>4</option>");
+	            } else if (val == "TE") {
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='5' style='color:#000'>5</option><option value='6' style='color:#000'>6</option>");
+	            } else if (val == "BE") {
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='7' style='color:#000'>7</option><option value='8' style='color:#000'>8</option>");
+	            } else if (val == "none") {
+	            	$("#courseSem").html("<option value=''>Select Semester</option>");
+	            }
+	        });
+	    });
+
+	    $(document).ready(function () {
+	        $("#submit_all").click(function () {
+	        	
+	            var cyear = $('#courseYear');
+	            var csem = $('#courseSem');
+	            
+	          	if (cyear.val() == "none") {
+	                alert("Please select a course year");
+	                $('#courseYear').focus();
+	                
+	               return false;
+	            } else if (csem.val() == "0") {
+	                alert("Please select a semester");
+	                $('#courseSem').focus();
+	                
+	                return false;
+	            }
+	            else if( $('#electiveIdOption').val() == 'none' ){
+	            	alert("Please select Elective number");
+	            	$('#electiveIdOption').focus();
+	            	
+	            	return false;
+	            }  
+	            
+	            else return;
+	        });
+	    });
+	    
+	
+	    $(document).ready(function() {
+    	   $('#courseYear').css('color','#8F8B87');
+    	   $('#courseYear').change(function() {
+    	      var current = $('#courseYear').val();
+    	      if (current != 'none') {
+    	          $('#courseYear').css('color','black');
+    	      } else {
+    	          $('#courseYear').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
+	    $(document).ready(function() {
+	    	   $('#electiveIdOption').css('color','#8F8B87');
+	    	   $('#electiveIdOption').change(function() {
+	    	      var current = $('#electiveIdOption').val();
+	    	      if (current != 'none') {
+	    	          $('#electiveIdOption').css('color','black');
+	    	      } else {
+	    	          $('#electiveIdOption').css('color','#8F8B87');
+	    	      }
+	    	   }); 
+	    	});
+	    
+	    $(document).ready(function() {
+    	   $('#courseSem').css('color','#8F8B87');
+    	   $('#courseSem').change(function() {
+    	      var current = $('#courseSem').val();
+    	      if (current != '0') {
+    	          $('#courseSem').css('color','black');
+    	      } else {
+    	          $('#courseSem').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
+    	
+    </script>
+     
+  
+</head> 
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="navbar-brand" href="#"><img th:src="@{/img/pccoelogo.png}" width="30" height="30" alt="">QRMS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/u/admin/home}">Home</a>
+            </li>
+            
+            <li class="nav-item ">
+                <a class="nav-link" th:href="@{/u/admin/register}">Registration</a>
+            </li>
+            
+    		<li class="nav-item" >
+                <a class="nav-link" th:href="@{/u/admin/add-course}">Add Courses</a>
+            </li>   
+            
+            <li class="nav-item active" >
+                <a class="nav-link" th:href="@{/u/admin/studentCourseAllocationStatus}">Course Allocation</a>
+            </li>       
+        </ul>
+    </div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Log Out</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<body>
+
+<div class="card bg-light">
+<article class="card-body mx-auto" style="max-width: 400px;">
+	<h4 class="card-title mt-3 text-center">Start Course Allocation</h4>
+
+	<form th:action="@{/u/admin/process_student_allocation}"  role="form" method="POST" th:object="${course}" id="all_form">   	    
+	    <div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<select class="form-control" name="courseYear" id="courseYear" required th:field="*{courseYear}">
+				<option value="none" style="color:#8F8B87" selected>Select Year</option>
+				<option value="FE" style="color:#000">FE</option>
+				<option value="SE" style="color:#000">SE</option>
+				<option value="TE" style="color:#000">TE</option>
+				<option value="BE" style="color:#000">BE</option>
+			</select>
+		</div> <!-- form-group end.// -->
+	    
+	    <div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<select class="form-control"  name="courseSem" id="courseSem" required th:field="*{courseSem}">
+				<option value="0" style="color:#8F8B87" selected>Select Semester</option>
+			</select>
+		</div> <!-- form-group end.// -->			
+
+  		<div class="form-group input-group" >
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<select class="form-control" name="electiveIdOption" id="electiveIdOption" th:field="*{electiveId}">
+				<option value="none" style="color:#8F8B87" selected>Select Elective number</option>
+				<option value="el1" style="color:#000">EL-1</option>
+				<option value="el2" style="color:#000">EL-2</option>
+				<option value="el3" style="color:#000">EL-3</option>
+				<option value="el4" style="color:#000">EL-4</option>
+			</select>
+		</div> <!-- form-group end.// -->
+		
+	    <div class="form-group">
+	        <button type="submit" id="submit_all" class="btn btn-primary btn-block"> Submit  </button>
+	    </div> <!-- form-group// -->   	           	                                                 
+	</form>
+	
+</article>
+	<div class="row text-center card-body mx-auto">
+		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+ 		<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
+ 	
+ 	</div>  
+</div>
+</body>

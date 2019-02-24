@@ -3,8 +3,14 @@ package com.qrms.spring.resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collector;
 
 import javax.validation.Valid;
 
@@ -17,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Role;
 import com.qrms.spring.model.StudentAcad;
+import com.qrms.spring.model.StudentAllocCourse;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.model.Course;
@@ -29,6 +36,7 @@ import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
+import com.qrms.spring.repository.StudentAllocCourseRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
 
@@ -53,6 +61,9 @@ public class AdminController {
 	
 	@Autowired
 	private ElectiveVacancyPrefCountsRepository electiveVacancyPrefCountsRepository;
+	
+	@Autowired
+	private StudentAllocCourseRepository studentAllocCourseRepository;
 	
 	@Autowired
 	private StudentPrefRepository studentPrefRepository;
@@ -171,30 +182,37 @@ public class AdminController {
 			electiveVacancyPrefCounts.setCourseId(course.getCourseId());
 			electiveVacancyPrefCounts.setPrefCount(0);
 			electiveVacancyPrefCounts.setVacancyCount(80);
+			electiveVacancyPrefCounts.setElectiveId(course.getElectiveId());
 			System.out.println("here!");
 			electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);
 		}
 		return model;
 	}
-
-	@RequestMapping(value="/process_student_allocation",method=RequestMethod.POST)
-	public ModelAndView process_student_allocation() {
-		int semester = 8;
-		String year = "BE";
-		String academic_year = "2018-19";
-		
-//		ArrayList<StudentPref> studentPrefs = studentPrefRepository.findBySemesterEqualsAndYearEqualsAndAcademicYearEquals(semester, year, academic_year);
-		
-		ArrayList<StudentAcad> studentAcads = studentAcadRepository.findBySemEqualsAndYearEquals(semester, year);
-		
-		Collections.sort(studentAcads);
-		for (StudentAcad studentAcad : studentAcads) {
-			System.out.println(studentAcad.getUserName());
-		}
+	
+	@RequestMapping(value="/process_student_allocation",method=RequestMethod.GET)
+	public ModelAndView get_process_student_allocation() {
 		
 		ModelAndView model = new ModelAndView();
+		Course course = new Course();
+		System.out.println("hello");
+		model.addObject("course",course);
+		model.setViewName("/admin/studStartAllocation");
+		return model;
 		
-//		model.setViewName("/admin/StudentAllocation");
+	}
+
+	@RequestMapping(value="/process_student_allocation",method=RequestMethod.POST)
+	public ModelAndView set_process_student_allocation(@Valid Course course) {
+		
+		ModelAndView model = new ModelAndView();
+		//allocation algorithm
+		if (allocation_of_students_to_elective_course(course.getElectiveId(),course.getCourseYear(),course.getCourseSem())) {
+			model.addObject("msg","The allocation has been completed!");
+		}
+		else {
+			model.addObject("msg","No preferences are recorded!");
+		}
+		model.setViewName("/admin/studStartAllocation");
 		return model;
 		
 	}
@@ -214,20 +232,20 @@ public class AdminController {
 	}
 	
 	//Retrieve Student preference counts for each course elective
-	@RequestMapping(value="studentPreferenceCounts",method=RequestMethod.GET)
-	public ModelAndView get_student_preferences() {
-		ModelAndView model = new ModelAndView();
-		
-		ArrayList <ElectiveVacancyPrefCounts> electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findAll();
-		
-		model.addObject("electiveVacancyPrefCounts",electiveVacancyPrefCounts);
-		for (ElectiveVacancyPrefCounts electiveVacancyPrefCounts2 : electiveVacancyPrefCounts) {
-			System.out.println(electiveVacancyPrefCounts2.getVacancyCount()+" "+electiveVacancyPrefCounts2.getPrefCount());
-		}
-		model.setViewName("/admin/home");
-		return model;
-	}
-	
+//	@RequestMapping(value="studentPreferenceCounts",method=RequestMethod.GET)
+//	public ModelAndView get_student_preferences() {
+//		ModelAndView model = new ModelAndView();
+//		
+//		ArrayList <ElectiveVacancyPrefCounts> electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findAll();
+//		
+//		model.addObject("electiveVacancyPrefCounts",electiveVacancyPrefCounts);
+//		for (ElectiveVacancyPrefCounts electiveVacancyPrefCounts2 : electiveVacancyPrefCounts) {
+//			System.out.println(electiveVacancyPrefCounts2.getVacancyCount()+" "+electiveVacancyPrefCounts2.getPrefCount());
+//		}
+//		model.setViewName("/admin/home");
+//		return model;
+//	}
+
 	//start course allocation for specified year and semester
 	@RequestMapping(value="/start_student_allocation",method=RequestMethod.POST)
 	public ModelAndView start_student_allocation(Course course) {
@@ -247,10 +265,6 @@ public class AdminController {
 						c.setStudAllocFlag(1);
 						courseRepository.save(c);					
 						flag = 1;
-						
-						//allocation algorithm
-						allocation_of_students_to_elective_course(course.getElectiveId());
-						
 					}
 				}
 						
@@ -268,19 +282,89 @@ public class AdminController {
 	}	
 	
 	
-	private void allocation_of_students_to_elective_course(String elective_id) {
-
+	private boolean allocation_of_students_to_elective_course(String elective_id,String year,int semester) {
+		
+//		HashMap<Course,Integer> hm = calculatePrefCounts(elective_id);
+//		for (Course course : hm.keySet()) {
+//			if(course.getCourseSem()!=semester || course.getCourseYear()!=year){
+//				hm.remove(course);
+//			}
+//		}
+		
 		ArrayList<StudentPref> studentPrefs = studentPrefRepository.findByElectiveIdEquals(elective_id);
-		
-		ArrayList<StudentAcad> studentAcads = studentAcadRepository.findBySemEqualsAndYearEquals(studentPrefs.get(0).getCourse1().getCourseSem(),studentPrefs.get(0).getCourse1().getCourseYear());
-		
-		Collections.sort(studentAcads);
-		for (StudentAcad studentAcad : studentAcads) {
-			System.out.println(studentAcad.getUserName());
+		if(studentPrefs.size()!=0) {
+			ArrayList<StudentPref> temp = new ArrayList<StudentPref>();
+			for (StudentPref studentPref : studentPrefs) {
+				if (studentPref.getCourse1().getCourseSem()!=semester || studentPref.getCourse1().getCourseYear()!=year)
+					temp.add(studentPref);
+					
+			}
+			
+			for (StudentPref studentPref : temp) {
+				System.out.println(studentPref.getUserName());
+				studentPrefs.remove(studentPref);
+			}
+			
+			ArrayList<StudentAcad> studentAcads = studentAcadRepository.findBySemEqualsAndYearEquals(semester,year);
+			
+			System.out.println("hello1");
+
+			Collections.sort(studentAcads);
+			for (StudentAcad studentAcad : studentAcads) {
+				System.out.println(studentAcad.getUserName());
+			}
+			System.out.println("hello2");
+
+			//for each student in reverse 
+			
+			for (StudentAcad studentAcad : studentAcads) {
+				Optional<StudentPref> stud = studentPrefRepository.findByUserName(studentAcad.getUserName());
+				
+				if(stud.isPresent()) {
+					
+					Course prefs []= {stud.get().getCourse1(),stud.get().getCourse2(),stud.get().getCourse3(),stud.get().getCourse4()};
+					int prefNo = 1;
+					int flag = 0;
+					for (Course pref : prefs) {
+						ElectiveVacancyPrefCounts e = electiveVacancyPrefCountsRepository.findByCourseId(pref.getCourseId());
+						if (e.getVacancyCount()>0)
+						{
+							e.setVacancyCount(e.getVacancyCount()+1);
+							StudentAllocCourse s = new StudentAllocCourse(elective_id,pref,studentAcad.getUserName(),prefNo);
+							studentAllocCourseRepository.save(s);
+							flag = 1;
+							break;
+						}
+						prefNo+=1;
+					}
+					if(flag==0) {
+						//assign popular course
+						System.out.println("No preference left!");
+					}
+					
+				}else {
+					//assign popular course
+					System.out.println("Hasn't given preference");
+				}
+				
+				
+			}
+			return true;
+		}else {
+			return false;
 		}
 		
-		//for each student in reverse 
-		
 	}
-	
+
+//	private HashMap<Course,Integer> calculatePrefCounts(String elective_id){
+//
+//		ArrayList <ElectiveVacancyPrefCounts> electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findByElectiveId(elective_id);
+//		
+//		HashMap<Course,Integer> hm = new HashMap<>();
+//		for (ElectiveVacancyPrefCounts electiveVacancyPrefCounts2 : electiveVacancyPrefCounts) {
+//			System.out.println(electiveVacancyPrefCounts2.getVacancyCount()+" "+electiveVacancyPrefCounts2.getPrefCount());
+//			hm.put(courseRepository.findByCourseId(electiveVacancyPrefCounts2.getCourseId()), electiveVacancyPrefCounts2.getPrefCount());
+//		}
+//		return hm;
+//	}
 }
