@@ -6,7 +6,7 @@
 
 use qrmsdb;
 
-/*insert data into deoartment table*/
+/*insert data into department table*/
 insert into department values("CS","Computer Department");
 insert into department values("MH","Mechanical Department");
 insert into department values("EN","EnTC Department");

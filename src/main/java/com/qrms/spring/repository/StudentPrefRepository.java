@@ -12,5 +12,6 @@ import com.qrms.spring.model.StudentPref;
 public interface StudentPrefRepository extends JpaRepository<StudentPref, Integer>{
 	
 	Optional<StudentPref> findByUserName(String user_name);
-	ArrayList<StudentPref> findByElectiveIdEquals(String elective_id);
+	ArrayList<StudentPref> findByElectiveIdEquals(String electiveId);
+	void deleteByCourseId(String courseId);
 }

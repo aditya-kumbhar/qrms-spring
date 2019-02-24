@@ -13,8 +13,9 @@ public class ElectiveVacancyPrefCounts{
 		
 	}
 	
-	public ElectiveVacancyPrefCounts(String courseId, int vacancyCount, int prefCount) {
+	public ElectiveVacancyPrefCounts(String courseId, int vacancyCount, int prefCount,String electiveId) {
 		super();
+		this.electiveId = electiveId;
 		this.courseId = courseId;
 		this.vacancyCount = vacancyCount;
 		this.prefCount = prefCount;
@@ -42,6 +43,17 @@ public class ElectiveVacancyPrefCounts{
 
 	public void setPrefCount(int prefCount) {
 		this.prefCount = prefCount;
+	}
+	
+	@Column(name="elective_id")
+	private String electiveId;
+	
+	public String getElectiveId() {
+		return electiveId;
+	}
+
+	public void setElectiveId(String electiveId) {
+		this.electiveId = electiveId;
 	}
 
 	@Id
