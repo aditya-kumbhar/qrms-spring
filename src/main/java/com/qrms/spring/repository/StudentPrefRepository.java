@@ -13,5 +13,6 @@ public interface StudentPrefRepository extends JpaRepository<StudentPref, Intege
 	
 	Optional<StudentPref> findByUserName(String user_name);
 	ArrayList<StudentPref> findByElectiveIdEquals(String electiveId);
-	void deleteByCourseId(String courseId);
+//	void deleteByCourseId(String courseId);
+
 }
