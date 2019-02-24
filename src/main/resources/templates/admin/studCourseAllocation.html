@@ -51,7 +51,13 @@
 	                $('#courseSem').focus();
 	                
 	                return false;
-	            } 
+	            }
+	            else if( $('#electiveIdOption').val() == 'none' ){
+	            	alert("Please select Elective number");
+	            	$('#electiveIdOption').focus();
+	            	
+	            	return false;
+	            }  
 	            
 	            else return;
 	        });
@@ -71,6 +77,18 @@
     	});
 	    
 	    $(document).ready(function() {
+	    	   $('#electiveIdOption').css('color','#8F8B87');
+	    	   $('#electiveIdOption').change(function() {
+	    	      var current = $('#electiveIdOption').val();
+	    	      if (current != 'none') {
+	    	          $('#electiveIdOption').css('color','black');
+	    	      } else {
+	    	          $('#electiveIdOption').css('color','#8F8B87');
+	    	      }
+	    	   }); 
+	    	});
+	    
+	    $(document).ready(function() {
     	   $('#courseSem').css('color','#8F8B87');
     	   $('#courseSem').change(function() {
     	      var current = $('#courseSem').val();
@@ -82,23 +100,6 @@
     	   }); 
     	});
 	    
-	   function displayForms(obj){
-			
-		   	  var current = obj.value;
-    	      if (current == 'none') {	    	          
-   	    	     document.getElementById('singleForm').style.display = 'none';
-   	    	     document.getElementById('batchForm').style.display = 'none';
-   	    	        
-    	      } else if(current == 'single'){	    	    	  
-   	    	     document.getElementById('singleForm').style.display = 'block';
-   	    	     document.getElementById('batchForm').style.display = 'none';
-	    	     	
-    	      } else if(current == 'batch'){
-   	    	     
-    	    	 document.getElementById('singleForm').style.display = 'none';
-      	    	 document.getElementById('batchForm').style.display = 'block';
-  	    		}
-	   }
     	
     </script>
      
@@ -143,33 +144,7 @@
 <article class="card-body mx-auto" style="max-width: 400px;">
 	<h4 class="card-title mt-3 text-center">Start Course Allocation</h4>
 
- 	<div class="form-group input-group">
-	<select class="form-control" name="selectMode" id="selectMode" onchange = "displayForms(this)">
-				<option value="none" style="color:#8F8B87" selected>Select Mode</option>
-				<option value="single" style="color:#000">Single Elective: Specify Course ID</option>
-				<option value="batch" style="color:#000">All Electives: Specify Year and Semester</option>
-			</select>	
-	</div>
-
-	<div style="display:none" id="singleForm" name="singleForm">
-	<form th:action="@{/u/admin/start_student_allocation_single}"  role="form" method="POST" th:object="${course}" id="all_form">   	    
-		
-		<div class="form-group input-group">
-			<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
-			 </div>
-	        <input id="courseId" name="courseId" th:field="*{courseId}" class="form-control" placeholder="Course ID" type="text" required autofocus/>
-	    </div> <!-- form-group// -->	  
-				
-		
-	    <div class="form-group">
-	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Submit  </button>
-	    </div> <!-- form-group// -->   	           	                                                 
-	</form>	
-	</div>		
-	
-	<div style="display:none" id="batchForm">		
-	<form th:action="@{/u/admin/start_student_allocation_batch}"  role="form" method="POST" th:object="${course}" id="all_form">   	    
+	<form th:action="@{/u/admin/start_student_allocation}"  role="form" method="POST" th:object="${course}" id="all_form">   	    
 	    <div class="form-group input-group">
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
@@ -192,11 +167,23 @@
 			</select>
 		</div> <!-- form-group end.// -->			
 
+  		<div class="form-group input-group" >
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<select class="form-control" name="electiveIdOption" id="electiveIdOption" th:field="*{electiveId}">
+				<option value="none" style="color:#8F8B87" selected>Select Elective number</option>
+				<option value="el1" style="color:#000">EL-1</option>
+				<option value="el2" style="color:#000">EL-2</option>
+				<option value="el3" style="color:#000">EL-3</option>
+				<option value="el4" style="color:#000">EL-4</option>
+			</select>
+		</div> <!-- form-group end.// -->
+		
 	    <div class="form-group">
 	        <button type="submit" id="submit_all" class="btn btn-primary btn-block"> Submit  </button>
 	    </div> <!-- form-group// -->   	           	                                                 
 	</form>
-	</div>
 	
 </article>
 	<div class="row text-center card-body mx-auto">
