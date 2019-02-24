@@ -297,14 +297,10 @@ public class AdminController {
 	}	
 	
 	
+	
 	private boolean allocation_of_students_to_elective_course(String elective_id,String year,int semester) {
 		
-//		HashMap<Course,Integer> hm = calculatePrefCounts(elective_id);
-//		for (Course course : hm.keySet()) {
-//			if(course.getCourseSem()!=semester || course.getCourseYear()!=year){
-//				hm.remove(course);
-//			}
-//		}
+		ArrayList<Course> popularCourses = calculatePrefCounts(elective_id,year,semester);
 				
 		
 		ArrayList<StudentPref> studentPrefs = studentPrefRepository.findByElectiveIdEquals(elective_id);
@@ -349,13 +345,42 @@ public class AdminController {
 					if(flag==0) {
 						//assign popular course
 						System.out.println("No preference left!");
+						System.out.println("Assigning course according to popularity!");
+						for (Course c : popularCourses) {
+							ElectiveVacancyPrefCounts e = electiveVacancyPrefCountsRepository.findByCourseId(c.getCourseId());
+							if (e.getVacancyCount()>0)
+							{
+								e.setVacancyCount(e.getVacancyCount()+1);
+								StudentAllocCourse s = new StudentAllocCourse(elective_id,c,studentAcad.getUserName(),-1);
+								studentAllocCourseRepository.save(s);
+								flag = 1;
+								break;
+							}
+						}
+						if(flag==0) {
+							System.out.println("NO OPTION LEFT!!!! NEED TO INCREASE CAPACITY!!!");
+						}
 					}
 					
 				}else {
 					//assign popular course
 					System.out.println("Hasn't given preference");
+					System.out.println("Assigning course according to popularity!");
+					int flag=0;
+					for (Course c : popularCourses) {
+						ElectiveVacancyPrefCounts e = electiveVacancyPrefCountsRepository.findByCourseId(c.getCourseId());
+						if (e.getVacancyCount()>0)
+						{
+							e.setVacancyCount(e.getVacancyCount()+1);
+							StudentAllocCourse s = new StudentAllocCourse(elective_id,c,studentAcad.getUserName(),-1);
+							studentAllocCourseRepository.save(s);
+							break;
+						}
+					}
+					if(flag==0) {
+						System.out.println("NO OPTION LEFT!!!! NEED TO INCREASE CAPACITY!!!");
+					}
 				}
-				
 				
 			}
 			return true;
@@ -365,17 +390,23 @@ public class AdminController {
 		
 	}
 
-//	private HashMap<Course,Integer> calculatePrefCounts(String elective_id){
-//
-//		ArrayList <ElectiveVacancyPrefCounts> electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findByElectiveId(elective_id);
-//		
-//		HashMap<Course,Integer> hm = new HashMap<>();
-//		for (ElectiveVacancyPrefCounts electiveVacancyPrefCounts2 : electiveVacancyPrefCounts) {
-//			System.out.println(electiveVacancyPrefCounts2.getVacancyCount()+" "+electiveVacancyPrefCounts2.getPrefCount());
-//			hm.put(courseRepository.findByCourseId(electiveVacancyPrefCounts2.getCourseId()), electiveVacancyPrefCounts2.getPrefCount());
-//		}
-//		return hm;
-//	}
+	private ArrayList<Course> calculatePrefCounts(String elective_id,String year,int semester){
+
+		ArrayList <ElectiveVacancyPrefCounts> electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findByElectiveId(elective_id);
+		Collections.sort(electiveVacancyPrefCounts);
+		
+
+		ArrayList<Course> courseList = new ArrayList<>();
+		
+		
+		for (ElectiveVacancyPrefCounts e : electiveVacancyPrefCounts) {
+			Course c = courseRepository.findByCourseId(e.getCourseId());
+			if(c.getCourseSem()==semester && c.getCourseYear().equals(year)) {
+				courseList.add(c);
+			}
+		}
+		return courseList;
+	}
 	
 	//for clearing preferences of a specific elective id, sem, year
 	@RequestMapping(value="/clear_preferences",method=RequestMethod.GET)

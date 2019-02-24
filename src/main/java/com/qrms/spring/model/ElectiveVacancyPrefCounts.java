@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="student_elective_vacancy_pref_counts")
-public class ElectiveVacancyPrefCounts{
+public class ElectiveVacancyPrefCounts implements Comparable<ElectiveVacancyPrefCounts>{
 
 	public ElectiveVacancyPrefCounts() {
 		
@@ -64,4 +64,14 @@ public class ElectiveVacancyPrefCounts{
 	
 	@Column(name="pref_count")
 	private int prefCount;
+	
+	@Override
+	public int compareTo(ElectiveVacancyPrefCounts e) {          
+
+	    return (this.getPrefCount() > e.getPrefCount() ? -1 : 
+
+	            (this.getPrefCount() == e.getPrefCount() ? 0 : 1));     
+
+	  }
 }
+
