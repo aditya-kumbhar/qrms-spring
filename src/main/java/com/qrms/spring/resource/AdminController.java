@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Role;
 import com.qrms.spring.model.StudentAcad;
+import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.Department;
@@ -28,6 +29,7 @@ import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
+import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
 
 @Controller
@@ -51,6 +53,9 @@ public class AdminController {
 	
 	@Autowired
 	private ElectiveVacancyPrefCountsRepository electiveVacancyPrefCountsRepository;
+	
+	@Autowired
+	private StudentPrefRepository studentPrefRepository;
 	
 	@Autowired
 	private FacultyAcadRepository facultyAcadRepository;
@@ -180,7 +185,7 @@ public class AdminController {
 		
 //		ArrayList<StudentPref> studentPrefs = studentPrefRepository.findBySemesterEqualsAndYearEqualsAndAcademicYearEquals(semester, year, academic_year);
 		
-		ArrayList<StudentAcad> studentAcads = studentAcadRepository.findBySemEqualsAndYearEqualsAndAcademicYearEquals(semester, year, academic_year);
+		ArrayList<StudentAcad> studentAcads = studentAcadRepository.findBySemEqualsAndYearEquals(semester, year);
 		
 		Collections.sort(studentAcads);
 		for (StudentAcad studentAcad : studentAcads) {
@@ -242,6 +247,10 @@ public class AdminController {
 						c.setStudAllocFlag(1);
 						courseRepository.save(c);					
 						flag = 1;
+						
+						//allocation algorithm
+						allocation_of_students_to_elective_course(course.getElectiveId());
+						
 					}
 				}
 						
@@ -257,5 +266,21 @@ public class AdminController {
 		model.setViewName("/admin/studCourseAllocation");		
 		return model;
 	}	
+	
+	
+	private void allocation_of_students_to_elective_course(String elective_id) {
+
+		ArrayList<StudentPref> studentPrefs = studentPrefRepository.findByElectiveIdEquals(elective_id);
+		
+		ArrayList<StudentAcad> studentAcads = studentAcadRepository.findBySemEqualsAndYearEquals(studentPrefs.get(0).getCourse1().getCourseSem(),studentPrefs.get(0).getCourse1().getCourseYear());
+		
+		Collections.sort(studentAcads);
+		for (StudentAcad studentAcad : studentAcads) {
+			System.out.println(studentAcad.getUserName());
+		}
+		
+		//for each student in reverse 
+		
+	}
 	
 }

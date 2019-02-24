@@ -91,11 +91,11 @@ public class StudentPref{
 		this.course4 = course4;
 	}
 	
-	public String getAcademicYear() {
+	public String getElectiveId() {
 		return electiveId;
 	}
 
-	public void setAcademicYear(String electiveId) {
+	public void setElectiveId(String electiveId) {
 		this.electiveId = electiveId;
 	}
 

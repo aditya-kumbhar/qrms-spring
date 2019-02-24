@@ -11,5 +11,5 @@ import com.qrms.spring.model.StudentAcad;
 public interface StudentAcadRepository extends JpaRepository<StudentAcad, Integer> {
 	
 	StudentAcad findByUserName(String name);
-	ArrayList<StudentAcad> findBySemEqualsAndYearEqualsAndAcademicYearEquals(int semester,String year,String academic_year);
+	ArrayList<StudentAcad> findBySemEqualsAndYearEquals(int semester,String year);
 }

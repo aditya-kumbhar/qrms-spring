@@ -64,7 +64,7 @@ public class StudentController {
 			model.setViewName("student/home");
 			return model;
 		}else {
-			ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartment(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment());
+			ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartmentAndIsTheoryAndElectiveIdAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment(),1,"el3",1);
 			
 			if(courseList.size()==0) {
 				System.out.println("No courses exist");
@@ -94,9 +94,6 @@ public class StudentController {
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
 		
-		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
-		
-		
 		Course c1 = courseRepository.findByCourseId(course1);
 		Course c2 = courseRepository.findByCourseId(course2);
 		Course c3 = courseRepository.findByCourseId(course3);
@@ -104,7 +101,7 @@ public class StudentController {
 		
 		StudentPref studentPref = new StudentPref();
 		studentPref.setUserName(userName);
-		studentPref.setAcademicYear(currUserAcad.getAcademicYear());
+		studentPref.setElectiveId(c1.getElectiveId());
 		studentPref.setCourse1(c1);
 		studentPref.setCourse2(c2);
 		studentPref.setCourse3(c3);
@@ -116,16 +113,14 @@ public class StudentController {
 		
 		electiveVacancyPrefCounts.setCourseId(c1.getCourseId());
 		int prefCount = electiveVacancyPrefCounts.getPrefCount();
-//		int vacancyCount = electiveVacancyPrefCounts.getVacancyCount();
-		
+
 		electiveVacancyPrefCounts.setPrefCount(++prefCount);
-//		electiveVacancyPrefCounts.setVacancyCount(--vacancyCount);
-		
+
 		electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);
 		
 		model.addObject("msg","Your preferences for electives have been recorded!");
 		model.setViewName("student/home");
 		return model;
-		
+	
 	}
 }
