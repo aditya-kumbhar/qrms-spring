@@ -77,15 +77,19 @@ public class AdminController {
 		ModelAndView model = new ModelAndView();
 		Users user = new Users();
 		roles = roleRepository.findAll();
+		departments = departmentRepository.findAll();
+		
 		model.addObject("user",user);
+		model.addObject("student",new StudentAcad());
 		model.addObject("roles",roles);
+		model.addObject("department", departments);
 		model.setViewName("admin/registerUsers");
 		return model;
 	}
 	
 	//Handle register user form
 	@RequestMapping(value = "/register_users", method = RequestMethod.POST)
-	public ModelAndView createUser(@Valid Users user, String role) {
+	public ModelAndView createUser(@Valid Users user, String role, StudentAcad student,String dept) {
 		ModelAndView model = new ModelAndView();	
 		Role userRole = roleRepository.findByRole(role);
 		user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
@@ -103,24 +107,32 @@ public class AdminController {
 		userDetails.saveUser(user);
 
 		if(role.equals("STUDENT")) {
-			student = new StudentAcad();
+		
 			System.out.println("Adding user to studAcad");
 			student.setUserName(user.getUserName());
+			Department department = departmentRepository.findByDeptId(dept);
+			student.setDepartment(department);
 			studentAcadRepository.save(student);
 			
 		}
 		else if(role.equals("FACULTY")) {
+			
 			faculty = new FacultyAcad();
 			System.out.println("Adding user to facultyAcad");
 			faculty.setUserName(user.getUserName());
 			facultyAcadRepository.save(faculty);
 			
 		}
+		departments = departmentRepository.findAll();
+		
 		model.addObject("msg","User has been successfully registered");
 		model.addObject("user",new Users());
 		model.addObject("roles",roles);
+		model.addObject("department", departments);
+		model.addObject("student",new StudentAcad());		
 		model.setViewName("admin/registerUsers");
 		return model;
+	
 	}
 	
 	//Display add course page

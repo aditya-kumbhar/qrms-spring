@@ -37,7 +37,7 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 	private String rollno;
 	
 	@Column(name="agg_marks")
-	private float aggMarks;
+	private Float aggMarks;
 	
 	@Column(name="academic_year")
 	private String academicYear;
@@ -106,20 +106,17 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 		this.rollno = rollno;
 	}
 
-	public float getAggMarks() {
+	public Float getAggMarks() {
 		return aggMarks;
 	}
 
-	public void setAggMarks(float aggMarks) {
+	public void setAggMarks(Float aggMarks) {
 		this.aggMarks = aggMarks;
 	}
 
-//	@Override
-//	public int compareTo(StudentAcad o) {
-//		// TODO Auto-generated method stub
-//		return this.getAggMarks().compareTo(o.getAggMarks());
-//	}
-	
+	public StudentAcad(){
+		
+	}
 	@Override
 	  public int compareTo(StudentAcad s) {          
 

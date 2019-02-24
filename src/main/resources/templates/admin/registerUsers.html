@@ -17,6 +17,23 @@
 	<link rel="stylesheet" th:href="@{/css/register.css}">
     
     <script>
+    $(document).ready(function () {
+        $("#year").change(function () {
+            var val = $(this).val();
+            if (val == "FE") {
+                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='1' style='color:#000'>1</option><option value='2' style='color:#000'>2</option>");
+            } else if (val == "SE") {
+                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='3' style='color:#000'>3</option><option value='4' style='color:#000'>4</option>");
+            } else if (val == "TE") {
+                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='5' style='color:#000'>5</option><option value='6' style='color:#000'>6</option>");
+            } else if (val == "BE") {
+                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='7' style='color:#000'>7</option><option value='8' style='color:#000'>8</option>");
+            } else if (val == "none") {
+            	$("#sem").html("<option value=''>Select Semester</option>");
+            }
+        });
+    });
+
 	    $(document).ready(function () {
 	        $("#submit").click(function () {
 	
@@ -27,7 +44,33 @@
 	                $('#role').focus();
 	
 	                return false;
-	            } 
+	            } else if(document.getElementById('studentForm').style.display === 'block'){
+	            	var year = $('#year');
+	 	            var sem = $('#sem');
+	 	            var dept = $('#dept');
+	 	            var shift = $('#shift');
+	 	            
+	 	           if (dept.val() == "none") {
+		                alert("Please select a course department");
+		                $('#dept').focus();
+		                
+		                return false;
+		            }  else if (year.val() == "none") {
+		                alert("Please select a course year");
+		                $('#year').focus();
+		                
+		               return false;
+		            } else if (sem.val() == "0") {
+		                alert("Please select a semester");
+		                $('#sem').focus();
+		                
+		                return false;
+		            }  else if (shift.val() == "0") {
+		            	alert("Please select a shift");
+		                $('#shift').focus();
+						return false;
+		            }
+	            }
 	            
 	            else return;
 	        });
@@ -37,10 +80,18 @@
     	   $('#role').css('color','#8F8B87');
     	   $('#role').change(function() {
     	      var current = $('#role').val();
+    	      if(current == 'STUDENT'){
+	  	            document.getElementById('studentForm').style.display = 'block';
+    	      }
+    	      else{
+	  	            document.getElementById('studentForm').style.display = 'none';
+    	      }
+    	      
     	      if (current != 'selectrole') {
     	          $('#role').css('color','black');
     	      } else {
     	          $('#role').css('color','#8F8B87');
+    	
     	      }
     	   }); 
     	});
@@ -122,6 +173,73 @@
 	        <input id="email"  th:field="*{email}" class="form-control" placeholder="Email address" type="email" required autofocus/>
 	    </div> <!-- form-group// -->    
 	    
+	    <!--Following part is displayed if role is STUDENT  -->
+	    <div id="studentForm" th:object="${student}" style="display:none">
+	    
+	    <div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<select class="form-control" th:id="dept" th:name="dept" autofocus>
+				<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+				<option th:each="dept : ${department}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
+			</select>
+		</div> <!-- form-group end.// -->
+		
+	    <div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>	
+	    <select class="form-control" name="year" id="year" required th:field="*{year}">
+				<option value="none" style="color:#8F8B87" selected>Select Year</option>
+				<option value="FE" style="color:#000">FE</option>
+				<option value="SE" style="color:#000">SE</option>
+				<option value="TE" style="color:#000">TE</option>
+				<option value="BE" style="color:#000">BE</option>
+		</select>
+		</div>
+		
+		<div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<select class="form-control"  name="sem" id="sem" required th:field="*{sem}">
+				<option value="0" style="color:#8F8B87" selected>Select Semester</option>
+			</select>
+		</div> <!-- form-group end.// -->	    
+		
+		<div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+	    <select class="form-control" name="shift" id="shift" required th:field="*{shift}">
+				<option value="0" style="color:#8F8B87" selected>Select Shift</option>
+				<option value="1" style="color:#000">1</option>
+				<option value="2" style="color:#000">2</option>
+		</select>
+		</div>
+		
+	    <div class="form-group input-group">
+			<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+			 </div>
+	        <input id="division" th:field="*{div}" class="form-control" placeholder="Division" type="text" required autofocus/>
+	    </div> <!-- form-group// -->
+	    	    		
+		<div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+	 	        <input id="rollno" th:field="*{rollno}" class="form-control" placeholder="Roll number" type="text" required autofocus/>
+		</div>
+		<div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+	 			<input type="number" step="0.01" th:field="*{aggMarks}" class ="form-control" placeholder="Aggregate CGPA" required autofocus/>			
+	 	</div>
+				    
+	    </div>
 	    <div class="form-group">
 	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Create Account  </button>
 	    </div> <!-- form-group// -->                                                   
