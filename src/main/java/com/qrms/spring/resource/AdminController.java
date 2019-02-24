@@ -194,7 +194,7 @@ public class AdminController {
 		
 		ModelAndView model = new ModelAndView();
 		Course course = new Course();
-		System.out.println("hello");
+		
 		model.addObject("course",course);
 		model.setViewName("/admin/studStartAllocation");
 		return model;
@@ -205,6 +205,11 @@ public class AdminController {
 	public ModelAndView set_process_student_allocation(@Valid Course course) {
 		
 		ModelAndView model = new ModelAndView();
+		
+		//check whether course is open for preferences or not
+		
+		
+		
 		//allocation algorithm
 		if (allocation_of_students_to_elective_course(course.getElectiveId(),course.getCourseYear(),course.getCourseSem())) {
 			model.addObject("msg","The allocation has been completed!");
@@ -290,6 +295,7 @@ public class AdminController {
 //				hm.remove(course);
 //			}
 //		}
+				
 		
 		ArrayList<StudentPref> studentPrefs = studentPrefRepository.findByElectiveIdEquals(elective_id);
 		if(studentPrefs.size()!=0) {
@@ -301,20 +307,13 @@ public class AdminController {
 			}
 			
 			for (StudentPref studentPref : temp) {
-				System.out.println(studentPref.getUserName());
 				studentPrefs.remove(studentPref);
 			}
 			
 			ArrayList<StudentAcad> studentAcads = studentAcadRepository.findBySemEqualsAndYearEquals(semester,year);
-			
-			System.out.println("hello1");
 
 			Collections.sort(studentAcads);
-			for (StudentAcad studentAcad : studentAcads) {
-				System.out.println(studentAcad.getUserName());
-			}
-			System.out.println("hello2");
-
+			
 			//for each student in reverse 
 			
 			for (StudentAcad studentAcad : studentAcads) {
@@ -367,4 +366,20 @@ public class AdminController {
 //		}
 //		return hm;
 //	}
+	
+	//for clearing preferences of a specific elective id, sem, year
+	@RequestMapping(value="/clear_preferences",method=RequestMethod.GET)
+	public ModelAndView clear_preferences() {
+		ModelAndView model = new ModelAndView();
+		
+		
+		
+		
+		model.addObject("msg","The preferences have been cleared!");
+		
+		model.setViewName("/admin/clearPreferences");
+		return model;
+	}
+
+
 }
