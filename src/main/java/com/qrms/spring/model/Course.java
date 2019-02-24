@@ -46,16 +46,16 @@ public class Course {
 	private int studAllocFlag=0;
 	
 	@Column(name="is_theory")
-	private int isTheory;
+	private Integer isTheory;
 	
 	@Column(name="no_of_hours")
 	private Integer noOfHours;
 	
-	public int getIsTheory() {
+	public Integer getIsTheory() {
 		return isTheory;
 	}
 
-	public void setIsTheory(int isTheory) {
+	public void setIsTheory(Integer isTheory) {
 		this.isTheory = isTheory;
 	}
 

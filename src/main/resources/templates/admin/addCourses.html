@@ -17,7 +17,6 @@
 	<link rel="stylesheet" th:href="@{/css/register.css}">
 	
     <script>
-    	$("#isTheory").prop("selectedIndex", 0);
     	//display semester options as per year selected
 	    $(document).ready(function () {
 	        $("#courseYear").change(function () {
@@ -295,7 +294,7 @@
 			<select class="form-control" name="isTheory" id="isTheory" required th:field="*{isTheory}">
 				<option value="-1" style="color:#8F8B87" selected>Course Category</option>
 				<option value="1" style="color:#000">Theory</option>
-				<option value="2" style="color:#000">Practical</option>
+				<option value="0" style="color:#000">Practical</option>
 			</select>
 		</div> <!-- form-group end.// -->
 		
