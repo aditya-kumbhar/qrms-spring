@@ -211,117 +211,125 @@
 <body>
 
 <div class="card bg-light">
-<article class="card-body mx-auto" style="max-width: 400px;">
+<article class="card-body mx-auto">
 	<h4 class="card-title mt-3 text-center">Add Course</h4>
 
 	<form th:action="@{/u/admin/add_courses}"  role="form" method="POST" th:object="${course}"> 
-	
-		<div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" th:id="dept" th:name="dept" autofocus>
-				<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
-				<option th:each="dept : ${departments}" th:value="${dept.deptName}"  th:text="${dept.deptName}" style="color:#000"></option>
-			</select>
-		</div> <!-- form-group end.// -->
+	<table>
+		<tr>
+			<td>
+				Select Department
+			</td>
+			<td>
+				<select class="form-control" th:id="dept" th:name="dept" autofocus>
+					<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+					<option th:each="dept : ${departments}" th:value="${dept.deptName}"  th:text="${dept.deptName}" style="color:#000"></option>
+				</select>
+			</td>
+		</tr>
 		
-		<div class="form-group input-group">
-			<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
-			 </div>
-	        <input id="courseId" name="courseId" th:field="*{courseId}" class="form-control" placeholder="Course ID" type="text" required autofocus/>
-	    </div> <!-- form-group// -->
-	    
-	    <div class="form-group input-group">
-			<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
-			 </div>
-	        <input id="courseName" name="courseName" th:field="*{courseName}" class="form-control" placeholder="Course Name" type="text" required autofocus/>
-	    </div> <!-- form-group// -->
-	   
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
-			 </div>
-	        <input id="courseCredits"  name="courseCredits" th:field="*{courseCredits}" class="form-control" placeholder="Course Credits" type="number" min="0" required autofocus/>
-	    </div> <!-- form-group// -->  
-	    
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" name="courseYear" id="courseYear" required th:field="*{courseYear}">
-				<option value="none" style="color:#8F8B87" selected>Select Year</option>
-				<option value="FE" style="color:#000">FE</option>
-				<option value="SE" style="color:#000">SE</option>
-				<option value="TE" style="color:#000">TE</option>
-				<option value="BE" style="color:#000">BE</option>
-			</select>
-		</div> <!-- form-group end.// -->
-	    
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control"  name="courseSem" id="courseSem" required th:field="*{courseSem}">
-				<option value="0" style="color:#8F8B87" selected>Select Semester</option>
-			</select>
-		</div> <!-- form-group end.// -->
+		<tr>
+			<td>
+				Course ID
+			</td>
+			<td>
+				<input id="courseId" name="courseId" th:field="*{courseId}" class="form-control" placeholder="Course ID" type="text" required autofocus/>
+			</td>
+		</tr>
 		
-		<div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" name="courseType" id="courseType" required th:field="*{courseType}" onchange="yesnoCheck(this)">
-				<option value="X" style="color:#8F8B87" selected>Course Type</option>
-				<option value="R" style="color:#000">Regular</option>
-				<option value="E" style="color:#000">Normal Elective</option>
-				<option value="O" style="color:#000">Open Elective</option>
-			</select>
-		</div> <!-- form-group end.// -->
+		<tr>
+			<td>
+				Course Name
+			</td>
+			<td>
+				<input id="courseName" name="courseName" th:field="*{courseName}" class="form-control" placeholder="Course Name" type="text" required autofocus/>
+			</td>
+		</tr>
 		
-		<div style="display:none" id="electiveId" name="electiveId">
-		<div class="form-group input-group" >
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" name="electiveIdOption" id="electiveIdOption">
-				<option value="none" style="color:#8F8B87" selected>Select Elective number</option>
-				<option value="el1" style="color:#000">EL-1</option>
-				<option value="el2" style="color:#000">EL-2</option>
-				<option value="el3" style="color:#000">EL-3</option>
-				<option value="el4" style="color:#000">EL-4</option>
-			</select>
-		</div> <!-- form-group end.// -->
-		</div>
-	    
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" name="isTheory" id="isTheory" required th:field="*{isTheory}">
-				<option value="-1" style="color:#8F8B87" selected>Course Category</option>
-				<option value="1" style="color:#000">Theory</option>
-				<option value="0" style="color:#000">Practical</option>
-			</select>
-		</div> <!-- form-group end.// -->
+		<tr>
+			<td>
+				Course Credits
+			</td>
+			<td>
+				<input id="courseCredits"  name="courseCredits" th:field="*{courseCredits}" class="form-control" placeholder="Course Credits" type="number" min="0" required autofocus/>
+			</td>
+		</tr>
 		
-		<div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
-			 </div>
-	        <input id="noOfHours"  name="noOfHours" th:field="*{noOfHours}" class="form-control" placeholder="Hours Alloted" type="number" min="0" required autofocus/>
-	    </div> <!-- form-group// --> 
-	    
-	    <div class="form-group">
-	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Add Course  </button>
-	    </div> <!-- form-group// -->   	           
-	                                                 
+		<tr>
+			<td>
+				Select Year
+			</td>
+			<td>
+				<select class="form-control" name="courseYear" id="courseYear" required th:field="*{courseYear}">
+					<option value="none" style="color:#8F8B87" selected>Select Year</option>
+					<option value="FE" style="color:#000">FE</option>
+					<option value="SE" style="color:#000">SE</option>
+					<option value="TE" style="color:#000">TE</option>
+					<option value="BE" style="color:#000">BE</option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Select Semester
+			</td>
+			<td>
+				<select class="form-control"  name="courseSem" id="courseSem" required th:field="*{courseSem}">
+					<option value="0" style="color:#8F8B87" selected>Select Semester</option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Course Type
+			</td>
+			<td>
+				<select class="form-control" name="courseType" id="courseType" required th:field="*{courseType}" onchange="yesnoCheck(this)">
+					<option value="X" style="color:#8F8B87" selected>Course Type</option>
+					<option value="R" style="color:#000">Regular</option>
+					<option value="E" style="color:#000">Normal Elective</option>
+					<option value="O" style="color:#000">Open Elective</option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Course Category
+			</td>
+			<td>
+				<select class="form-control" name="isTheory" id="isTheory" required th:field="*{isTheory}">
+					<option value="-1" style="color:#8F8B87" selected>Course Category</option>
+					<option value="1" style="color:#000">Theory</option>
+					<option value="0" style="color:#000">Practical</option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Total hours Alloted
+			</td>
+			<td>
+				<input id="noOfHours"  name="noOfHours" th:field="*{noOfHours}" class="form-control" placeholder="Hours Alloted" type="number" min="0" required autofocus/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td colspan=2 align=center>
+				<div class="form-group">
+	        		<button type="submit" id="submit" class="btn btn-primary btn-block"  style="width:150px"> Add Course  </button>
+	    		</div> <!-- form-group// -->  
+	    	</td> 	  
+		</tr>
+	</table>                                             
 	</form>		
 </article>
-	<div class="row text-center mx-auto">
-			<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
-	 </div>  
+
+<div class="row text-center mx-auto">
+	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+</div>  
 </div>
 </body>

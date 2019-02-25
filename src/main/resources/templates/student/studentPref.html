@@ -21,7 +21,23 @@
     
     <script>
 	    $(document).ready(function () {
-	        $("#submit").click(function () {
+	        $("#submit1").click(function () {
+	
+	           var eid = $('#elective_id');
+	           
+	           if (eid.val() == "Select_elective_id") {
+	               alert("Please select elective ID");
+	               $('#elective_id').focus();
+	
+	               return false;
+	           } 
+	           
+	           else return;
+	       });
+	   });
+    
+	    $(document).ready(function () {
+	        $("#submit2").click(function () {
 	
 	            var pref1 = $('#course1');
 	            var pref2 = $('#course2');
@@ -57,6 +73,18 @@
 	            else return;
 	        });
 	    });
+	    
+	    $(document).ready(function() {
+    	   $('#elective_id').css('color','#8F8B87');
+    	   $('#elective_id').change(function() {
+    	      var current = $('#elective_id').val();
+    	      if (current != 'Preference_1') {
+    	          $('#elective_id').css('color','black');
+    	      } else {
+    	          $('#elective_id').css('color','#8F8B87');
+    	      }
+    	   });  
+    	});
 	    
 	    $(document).ready(function() {
     	   $('#course1').css('color','#8F8B87');
@@ -135,69 +163,106 @@
     </div>
     
 </nav>
+
 <body>
-	<div class="card bg-light">
-		<article class="card-body mx-auto" style="max-width: 400px;">
-			<h4 class="card-title mt-3 text-center">Select Elective-id</h4>
-			<form th:action="@{/u/student/getStudentPrefs}"  role="form" method="GET">
-				
-				<div class="form-group input-group">
-					<select class="form-control" th:name="elective_id" th:id="elective_id" required>
-						<option th:value="Select_elective_id" style="color:#8F8B87" selected>Select Elective Id</option>
-						<option th:each="i : ${elective_ids}" th:value="${i}" th:text="${i}" style="color:#000"></option>
-					</select>	
-				</div>
-				
+<div class="card bg-light">
+<article class="card-body mx-auto">
+	<h4 class="card-title mt-3 text-center">Select Elective-id</h4>
+	<form th:action="@{/u/student/getStudentPrefs}"  role="form" method="GET">
+	<table>
+		<tr>
+			<td>
+			    Select Elective ID
+			</td>
+			<td>
+				<select class="form-control" th:name="elective_id" th:id="elective_id" required>
+					<option th:value="Select_elective_id" style="color:#8F8B87" selected>Select Elective Id</option>
+					<option th:each="i : ${elective_ids}" th:value="${i}" th:text="${i}" style="color:#000"></option>
+				</select>	
+			</td>
+		</tr>
+		
+		<tr>
+			<td colspan=2 align=center>
 				<div class="form-group">
-			        <button type="submit" id="submit_elective_id" class="btn btn-primary btn-block"> Get Choices  </button>
-			    </div>
-			    
-			</form>
-			
-			<div class="row text-center mx-auto">
-			<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
-	 	</div>  
-	 	
-			<h4 class="card-title mt-3 text-center">Give Preferences</h4>
-			
-	        <form th:action="@{/u/student/setStudentPrefs}"  role="form" method="POST" th:object="${studentPref}"> 
-				<div class="form-group input-group">
-					<select class="form-control" th:name="course1" th:id="course1" required>
-						<option th:value="Preference_1" style="color:#8F8B87" selected>Select Preference 1</option>
-						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
-					</select>	
-				</div>
-				
-				<div class="form-group input-group">
-					<select class="form-control" th:name="course2" th:id="course2" required>
-						<option th:value="Preference_2" style="color:#8F8B87" selected>Select Preference 2</option>
-						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
-					</select>
-				</div>
-				
-				<div class="form-group input-group">
-					<select class="form-control" th:name="course3" th:id="course3" required>
-						<option th:value="Preference_3" style="color:#8F8B87" selected>Select Preference 3</option>
-						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
-					</select>
-				</div>
-				
-				<div class="form-group input-group">
-					<select class="form-control" th:name="course4" th:id="course4" required>
-						<option th:value="Preference_4" style="color:#8F8B87" selected>Select Preference 4</option>
-						<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
-					</select>
-				</div>
-				
+		        	<button type="submit" id="submit1" class="btn btn-primary btn-block" style="width:150px"> Get Choices  </button>
+		    	</div> <!-- form-group// -->  
+			</td>
+		</tr>
+	</table>
+	</form>
+</article>
+		
+<div class="row text-center mx-auto">
+	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+</div> 
+	
+<article class="card-body mx-auto">
+	<h4 class="card-title mt-3 text-center">Give Preferences</h4>
+	
+    <form th:action="@{/u/student/setStudentPrefs}"  role="form" method="POST" th:object="${studentPref}"> 
+    <table>
+    	<tr>
+    		<td>
+    			Select Preference 1
+    		</td>
+    		<td>
+    			<select class="form-control" th:name="course1" th:id="course1" required>
+					<option th:value="Preference_1" style="color:#8F8B87" selected>Select Preference 1</option>
+					<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
+				</select>
+    		</td>
+    	</tr>
+    	
+    	<tr>
+    		<td>
+    			Select Preference 2
+    		</td>
+    		<td>
+    			<select class="form-control" th:name="course2" th:id="course2" required>
+					<option th:value="Preference_2" style="color:#8F8B87" selected>Select Preference 2</option>
+					<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
+				</select>
+    		</td>
+    	</tr>
+    	
+    	<tr>
+    		<td>
+    			Select Preference 3
+    		</td>
+    		<td>
+    			<select class="form-control" th:name="course3" th:id="course3" required>
+					<option th:value="Preference_3" style="color:#8F8B87" selected>Select Preference 3</option>
+					<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
+				</select>
+    		</td>
+    	</tr>
+    	
+    	<tr>
+    		<td>
+    			Select Preference 4
+    		</td>
+    		<td>
+    			<select class="form-control" th:name="course4" th:id="course4" required>
+					<option th:value="Preference_4" style="color:#8F8B87" selected>Select Preference 4</option>
+					<option th:each="i : ${courseList}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
+				</select>
+    		</td>
+    	</tr>
+    	
+    	<tr>
+			<td colspan=2 align=center>
 				<div class="form-group">
-			        <button type="submit" id="submit" class="btn btn-primary btn-block"> Submit Preferences  </button>
-			    </div> <!-- form-group// -->  
-		       
-			     
-			</form>
-		</article>
-		<div class="row text-center mx-auto">
-			<div class="alert alert-success" role="alert" th:if="${msg1}" th:utext="${msg1}"></div>
-	 	</div>  
-	</div>
+		        	<button type="submit" id="submit2" class="btn btn-primary btn-block" style="width:165px"> Submit Preferences  </button>
+		    	</div> <!-- form-group// -->  
+			</td>
+		</tr>
+    </table>
+	</form>
+</article>
+
+<div class="row text-center mx-auto">
+	<div class="alert alert-success" role="alert" th:if="${msg1}" th:utext="${msg1}"></div>
+</div>  
+</div>
 </body>

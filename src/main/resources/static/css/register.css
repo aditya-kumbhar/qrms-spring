@@ -28,3 +28,8 @@
     background-color: #42AEEC;
     color: #fff;
 }
+
+td {
+    padding: 5px;
+    align: center;
+}

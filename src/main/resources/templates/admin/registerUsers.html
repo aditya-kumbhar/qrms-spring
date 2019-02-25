@@ -44,7 +44,7 @@
 	                $('#role').focus();
 	
 	                return false;
-	            } else if(document.getElementById('studentForm').style.display === 'block'){
+	            } else if(document.getElementById('studentForm').style.display === ''){
 	            	var year = $('#year');
 	 	            var sem = $('#sem');
 	 	            var dept = $('#dept');
@@ -81,10 +81,12 @@
     	   $('#role').change(function() {
     	      var current = $('#role').val();
     	      if(current == 'STUDENT'){
-	  	            document.getElementById('studentForm').style.display = 'block';
+  	              document.getElementById('studentForm').style.display = '';
+	  	   
     	      }
     	      else{
-	  	            document.getElementById('studentForm').style.display = 'none';
+    	    	  document.getElementById('studentForm').style.display = 'none';
+	  	          
     	      }
     	      
     	      if (current != 'selectrole') {
@@ -92,6 +94,54 @@
     	      } else {
     	          $('#role').css('color','#8F8B87');
     	
+    	      }
+    	   }); 
+    	});
+	    
+	    $(document).ready(function() {
+    	   $('#dept').css('color','#8F8B87');
+    	   $('#dept').change(function() {
+    	      var current = $('#dept').val();
+    	      if (current != 'none') {
+    	          $('#dept').css('color','black');
+    	      } else {
+    	          $('#dept').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
+	    $(document).ready(function() {
+    	   $('#year').css('color','#8F8B87');
+    	   $('#year').change(function() {
+    	      var current = $('#year').val();
+    	      if (current != 'none') {
+    	          $('#year').css('color','black');
+    	      } else {
+    	          $('#year').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
+	    $(document).ready(function() {
+    	   $('#sem').css('color','#8F8B87');
+    	   $('#sem').change(function() {
+    	      var current = $('#sem').val();
+    	      if (current != '0') {
+    	          $('#sem').css('color','black');
+    	      } else {
+    	          $('#sem').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
+	    $(document).ready(function() {
+    	   $('#shift').css('color','#8F8B87');
+    	   $('#shift').change(function() {
+    	      var current = $('#shift').val();
+    	      if (current != '0') {
+    	          $('#shift').css('color','black');
+    	      } else {
+    	          $('#shift').css('color','#8F8B87');
     	      }
     	   }); 
     	});
@@ -148,119 +198,146 @@
 <body>
 
 <div class="card bg-light">
-<article class="card-body mx-auto" style="max-width: 400px;">
+<article class="card-body mx-auto">
 	<h4 class="card-title mt-3 text-center">Create Account</h4>
 	
 	<form th:action="@{/u/admin/register_users}"  role="form" method="POST" th:object="${user}"> 
-		<div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" th:name="role" th:id="role" autofocus>
-				<option value="selectrole" style="color:#8F8B87" selected>Select Role</option>
-				<option th:each="role : ${roles}" th:value="${role.role}"  th:text="${role.role}" style="color:#000"></option>
-			</select>
-		</div> <!-- form-group end.// -->
+	<table>
+		<tr>
+			<td>
+				Select Role
+			</td>
+			<td>
+				<select class="form-control" th:name="role" th:id="role" autofocus>
+					<option value="selectrole" style="color:#8F8B87" selected>Select Role</option>
+					<option th:each="role : ${roles}" th:value="${role.role}"  th:text="${role.role}" style="color:#000"></option>
+				</select>
+			</td>
+		</tr>
 		
-		<div class="form-group input-group">
-			<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
-			 </div>
-	        <input id="firstName" th:field="*{firstName}" class="form-control" placeholder="First Name" type="text" required autofocus/>
-	    </div> <!-- form-group// -->
-	    
-	    <div class="form-group input-group">
-			<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
-			 </div>
-	        <input id="lastName" th:field="*{lastName}" class="form-control" placeholder="Last Name" type="text" required autofocus/>
-	    </div> <!-- form-group// -->
-	    
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
-			 </div>
-	        <input id="email"  th:field="*{email}" class="form-control" placeholder="Email address" type="email" required autofocus/>
-	    </div> <!-- form-group// -->    
-	    
-	    <!--Following part is displayed if role is STUDENT  -->
-	    <div id="studentForm" th:object="${student}" style="display:none">
-	    
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" th:id="dept" th:name="dept" autofocus>
-				<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
-				<option th:each="dept : ${department}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
-			</select>
-		</div> <!-- form-group end.// -->
+		<tr>
+			<td>
+				First Name
+			</td>
+			<td>
+				<input id="firstName" th:field="*{firstName}" class="form-control" placeholder="First Name" type="text" required autofocus/>
+			</td>
+		</tr>
 		
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>	
-	    <select class="form-control" name="year" id="year" required th:field="*{year}">
-				<option value="none" style="color:#8F8B87" selected>Select Year</option>
-				<option value="FE" style="color:#000">FE</option>
-				<option value="SE" style="color:#000">SE</option>
-				<option value="TE" style="color:#000">TE</option>
-				<option value="BE" style="color:#000">BE</option>
-		</select>
-		</div>
+		<tr>
+			<td>
+				Last Name
+			</td>
+			<td>
+				<input id="lastName" th:field="*{lastName}" class="form-control" placeholder="Last Name" type="text" required autofocus/>
+			</td>
+		</tr>
 		
-		<div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control"  name="sem" id="sem" required th:field="*{sem}">
-				<option value="0" style="color:#8F8B87" selected>Select Semester</option>
-			</select>
-		</div> <!-- form-group end.// -->	    
+		<tr>
+			<td>
+				Email
+			</td>
+			<td>
+				<input id="email"  th:field="*{email}" class="form-control" placeholder="Email address" type="email" required autofocus/>   
+			</td>
+		</tr>
 		
-		<div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-	    <select class="form-control" name="shift" id="shift" required th:field="*{shift}">
-				<option value="0" style="color:#8F8B87" selected>Select Shift</option>
-				<option value="1" style="color:#000">1</option>
-				<option value="2" style="color:#000">2</option>
-		</select>
-		</div>
+		<tbody id="studentForm" style="display: none">
+		<tr>
+			<td>
+				Select Department
+			</td>
+			<td>
+				<select class="form-control" th:id="dept" th:name="dept" autofocus>
+					<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+					<option th:each="dept : ${department}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
+				</select>
+			</td>
+		</tr>
+	
+		<tr>
+			<td>
+				Select Year
+			</td>
+			<td>
+				<select class="form-control" name="year" id="year" required th:field="${student.year}">
+					<option value="none" style="color:#8F8B87" selected>Select Year</option>
+					<option value="FE" style="color:#000">FE</option>
+					<option value="SE" style="color:#000">SE</option>
+					<option value="TE" style="color:#000">TE</option>
+					<option value="BE" style="color:#000">BE</option>
+				</select>
+			</td>
+		</tr>
 		
-	    <div class="form-group input-group">
-			<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
-			 </div>
-	        <input id="division" th:field="*{div}" class="form-control" placeholder="Division" type="text" required autofocus/>
-	    </div> <!-- form-group// -->
-	    	    		
-		<div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-	 	        <input id="rollno" th:field="*{rollno}" class="form-control" placeholder="Roll number" type="text" required autofocus/>
-		</div>
-		<div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-	 			<input type="number" step="0.01" th:field="*{aggMarks}" class ="form-control" placeholder="Aggregate CGPA" required autofocus/>			
-	 	</div>
-				    
-	    </div>
-	    <div class="form-group">
-	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Create Account  </button>
-	    </div> <!-- form-group// -->                                                   
+		<tr>
+			<td>
+				Select Semester
+			</td>
+			<td>
+				<select class="form-control"  name="sem" id="sem" required th:field="${student.sem}">
+					<option value="0" style="color:#8F8B87" selected>Select Semester</option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Select Shift
+			</td>
+			<td>
+				<select class="form-control" name="shift" id="shift" required th:field="${student.shift}">
+					<option value="0" style="color:#8F8B87" selected>Select Shift</option>
+					<option value="1" style="color:#000">1</option>
+					<option value="2" style="color:#000">2</option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Division
+			</td>
+			<td>
+				<input id="division" th:field="${student.div}" class="form-control" placeholder="Division" type="text" required autofocus/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Roll no.
+			</td>
+			<td>
+				<input id="rollno" th:field="${student.rollno}" class="form-control" placeholder="Roll number" type="text" required autofocus/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Aggregate Marks
+			</td>
+			<td>
+				<input type="number" step="0.01" th:field="${student.aggMarks}" class ="form-control" placeholder="Aggregate CGPA" required autofocus/>			
+			</td>
+		</tr> 
+		</tbody>
+		
+		<tr>
+			<td colspan=2 align=center>
+				<div class="form-group">
+	        		<button type="submit" id="submit" class="btn btn-primary btn-block"  style="width:150px"> Create Account  </button>
+	    		</div> <!-- form-group// -->  
+	    	</td> 	  
+		</tr>
+		
+		</table>                                           
 	</form>
-	     
 </article>
-		<div class="row text-center card-body mx-auto">
-			<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
-			
-	    	<div class="alert alert-danger" role="alert" th:if="${errmsg}" th:utext="${errmsg}"></div>
-	 	</div>  
+
+<div class="row text-center card-body mx-auto">
+	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+   	<div class="alert alert-danger" role="alert" th:if="${errmsg}" th:utext="${errmsg}"></div>
+</div>  
 </div>
  	
 </body>
