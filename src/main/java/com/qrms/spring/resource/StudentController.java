@@ -91,13 +91,12 @@ public class StudentController {
 		
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
-		Optional <StudentPref> studentPrefs = studentPrefRepository.findByUserNameAndElectiveId(currUserAcad.getUserName(),elective_id);
+		Optional <StudentPref> studentPrefs = studentPrefRepository.findByUserNameAndCourseId(currUserAcad.getUserName(),elective_id);
 		if(studentPrefs.isPresent()) {
 			model.addObject("msg","Your preferences for electives have been recorded already!");
 			model.setViewName("student/home");
 			return model;
 		} else {
-//			ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartmentAndIsTheoryAndElectiveIdAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment(),1,elective_id,1);
 			ArrayList<Electives> electiveList = electivesRepository.findByCourse(courseRepository.findByCourseId(elective_id)); 
 			if(electiveList.size()==0) {
 				System.out.println("No courses exist");
@@ -130,24 +129,21 @@ public class StudentController {
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
 		
-		Course c1 = courseRepository.findByCourseId(course1);
-		Course c2 = courseRepository.findByCourseId(course2);
-		Course c3 = courseRepository.findByCourseId(course3);
-		Course c4 = courseRepository.findByCourseId(course4);
+		System.out.println(course1);
 		
-		StudentPref studentPref = new StudentPref();
-		studentPref.setUserName(userName);
-		studentPref.setElectiveId(c1.getElectiveId());
-		studentPref.setCourse1(c1);
-		studentPref.setCourse2(c2);
-		studentPref.setCourse3(c3);
-		studentPref.setCourse4(c4);
+		Electives electives[] = {electivesRepository.findByElectiveCourseId(course1),electivesRepository.findByElectiveCourseId(course2),electivesRepository.findByElectiveCourseId(course3),electivesRepository.findByElectiveCourseId(course4)};
+		
+		for(int i = 0;i<4;i++) {
+			System.out.println(electives[i].getElectiveCourseId());
+			StudentPref studentPref = new StudentPref(userName,electives[i].getCourse().getCourseId(),electives[i],i+1);					
+			studentPrefRepository.save(studentPref);
+		}
 
-		studentPrefRepository.save(studentPref);
 		
-		ElectiveVacancyPrefCounts electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findByCourseId(course1);
+		System.out.println(electivesRepository.findByElectiveCourseId(course1).getElectiveCourseId());
 		
-		electiveVacancyPrefCounts.setCourseId(c1.getCourseId());
+		ElectiveVacancyPrefCounts electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findByElectiveId(electivesRepository.findByElectiveCourseId(course1).getElectiveCourseId());
+		
 		int prefCount = electiveVacancyPrefCounts.getPrefCount();
 
 		electiveVacancyPrefCounts.setPrefCount(++prefCount);

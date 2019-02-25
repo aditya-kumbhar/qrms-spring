@@ -15,7 +15,7 @@ import javax.persistence.Table;
 public class Electives {
 	@Id
 	@Column(name="elective_course_id")
-	private String electiveCourseId;
+	public String electiveCourseId;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "course_id")

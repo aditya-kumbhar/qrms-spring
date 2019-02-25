@@ -1,59 +1,52 @@
 package com.qrms.spring.model;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
+@IdClass(StudAllocKey.class)
 @Table(name="student_alloc_course")
-public class StudentAllocCourse {
+public class StudentAllocCourse implements Serializable{
 	
-	@javax.persistence.Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="id")
-	private int Id;
-	
-	@Column(name="elective_id")
-	private String electiveId;
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "course_id")
-	private Course courseId;
-	
-	@Column(name = "user_name")
-	private String userName;
-	
-	@Column(name="pref_no")
-	private int prefNo;
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-	public StudentAllocCourse(String electiveId, Course courseId, String userName, int prefNo) {
+	//	@javax.persistence.Id
+//	@GeneratedValue(strategy = GenerationType.AUTO)
+//	@Column(name="id")
+//	private int Id;
+//	
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "elective_id")
+	private Electives elective;
+	
+	public StudentAllocCourse(Electives elective, Course courseId, String userName, int prefNo) {
 		super();
-		this.electiveId = electiveId;
+		this.elective = elective;
 		this.courseId = courseId;
 		this.userName = userName;
 		this.prefNo = prefNo;
 	}
 
-	public int getId() {
-		return Id;
+	public Electives getElective() {
+		return elective;
 	}
 
-	public void setId(int id) {
-		Id = id;
-	}
-
-	public String getElectiveId() {
-		return electiveId;
-	}
-
-	public void setElectiveId(String electiveId) {
-		this.electiveId = electiveId;
+	public void setElective(Electives elective) {
+		this.elective = elective;
 	}
 
 	public Course getCourseId() {
@@ -79,5 +72,17 @@ public class StudentAllocCourse {
 	public void setPrefNo(int prefNo) {
 		this.prefNo = prefNo;
 	}
+	
+	@Id
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name="course_Id")
+	private Course courseId;
+	
+	@Id
+	@Column(name = "user_name")
+	private String userName;
+	
+	@Column(name="pref_no")
+	private int prefNo;
 	
 }

@@ -12,21 +12,32 @@ public class ElectiveVacancyPrefCounts implements Comparable<ElectiveVacancyPref
 	public ElectiveVacancyPrefCounts() {
 		
 	}
+		
+	@Column(name="course_id")
+	private String courseId;
 	
-	public ElectiveVacancyPrefCounts(String courseId, int vacancyCount, int prefCount,String electiveId) {
-		super();
-		this.electiveId = electiveId;
-		this.courseId = courseId;
-		this.vacancyCount = vacancyCount;
-		this.prefCount = prefCount;
-	}
-
 	public String getCourseId() {
 		return courseId;
 	}
 
 	public void setCourseId(String courseId) {
 		this.courseId = courseId;
+	}
+
+	public String getElectiveId() {
+		return electiveId;
+	}
+
+	public void setElectiveId(String electiveId) {
+		this.electiveId = electiveId;
+	}
+
+	public ElectiveVacancyPrefCounts(String courseId, String electiveId, int vacancyCount, int prefCount) {
+		super();
+		this.courseId = courseId;
+		this.electiveId = electiveId;
+		this.vacancyCount = vacancyCount;
+		this.prefCount = prefCount;
 	}
 
 	public int getVacancyCount() {
@@ -44,20 +55,10 @@ public class ElectiveVacancyPrefCounts implements Comparable<ElectiveVacancyPref
 	public void setPrefCount(int prefCount) {
 		this.prefCount = prefCount;
 	}
-	
-	@Column(name="elective_id")
-	private String electiveId;
-	
-	public String getElectiveId() {
-		return electiveId;
-	}
-
-	public void setElectiveId(String electiveId) {
-		this.electiveId = electiveId;
-	}
 
 	@Id
-	private String courseId;
+	@Column(name="elective_id")
+	private String electiveId;
 	
 	@Column(name="vacancy_count")
 	private int vacancyCount;

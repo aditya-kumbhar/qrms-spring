@@ -5,52 +5,36 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
+@IdClass(StudPrefKey.class)
 @Table(name="student_pref")
 public class StudentPref{
 	
-
+	
 	@Id
 	@Column(name="user_name")
 	private String userName;
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "pref1")
-	private Course course1;
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "pref2")
-	private Course course2;
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "pref3")
-	private Course course3;
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "pref4")
-	private Course course4;
-
-	@Column(name="elective_id")
-	private String electiveId;
-	
-	public StudentPref(String userName, Course course1, Course course2, Course course3, Course course4, String electiveId) {
-		super();
-		this.userName = userName;
-		this.course1 = course1;
-		this.course2 = course2;
-		this.course3 = course3;
-		this.course4 = course4;
-		this.electiveId = electiveId;
-	}
-
-	public StudentPref() {
+	//course id
+	@Column(name="course_id")
+	private String courseId;
 		
-	}
+	//individual Elective
+	@Id
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "pref")
+	private Electives elective;
 	
+	@Column(name="pref_no")
+	private int prefNo;
+	
+	
+
 	public String getUserName() {
 		return userName;
 	}
@@ -59,45 +43,39 @@ public class StudentPref{
 		this.userName = userName;
 	}
 
-	public Course getCourse1() {
-		return course1;
+	public Electives getElective() {
+		return elective;
 	}
 
-	public void setCourse1(Course course1) {
-		this.course1 = course1;
+	public void setElective(Electives elective) {
+		this.elective = elective;
 	}
 
-	public Course getCourse2() {
-		return course2;
+	public int getPrefNo() {
+		return prefNo;
 	}
 
-	public void setCourse2(Course course2) {
-		this.course2 = course2;
+	public void setPrefNo(int prefNo) {
+		this.prefNo = prefNo;
 	}
 
-	public Course getCourse3() {
-		return course3;
+	public String getCourseId() {
+		return courseId;
 	}
 
-	public void setCourse3(Course course3) {
-		this.course3 = course3;
+	public void setCourseId(String courseId) {
+		this.courseId = courseId;
 	}
 
-	public Course getCourse4() {
-		return course4;
+	public StudentPref(String userName, String courseId, Electives elective, int prefNo) {
+		super();
+		this.userName = userName;
+		this.courseId = courseId;
+		this.elective = elective;
+		this.prefNo = prefNo;
 	}
 
-	public void setCourse4(Course course4) {
-		this.course4 = course4;
+	public StudentPref() {
+		
 	}
-	
-	public String getElectiveId() {
-		return electiveId;
-	}
-
-	public void setElectiveId(String electiveId) {
-		this.electiveId = electiveId;
-	}
-
-	
 }

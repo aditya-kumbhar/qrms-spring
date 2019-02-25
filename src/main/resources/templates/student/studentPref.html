@@ -164,28 +164,28 @@
 				<div class="form-group input-group">
 					<select class="form-control" th:name="course1" th:id="course1" required>
 						<option th:value="Preference_1" style="color:#8F8B87" selected>Select Preference 1</option>
-						<option th:each="i : ${courseList}" th:value="${i.course.courseId}" th:text="${i.electiveName}" style="color:#000"></option>
+						<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
 					</select>	
 				</div>
 				
 				<div class="form-group input-group">
 					<select class="form-control" th:name="course2" th:id="course2" required>
 						<option th:value="Preference_2" style="color:#8F8B87" selected>Select Preference 2</option>
-						<option th:each="i : ${courseList}" th:value="${i.course.courseId}" th:text="${i.electiveName}" style="color:#000"></option>
+						<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
 					</select>
 				</div>
 				
 				<div class="form-group input-group">
 					<select class="form-control" th:name="course3" th:id="course3" required>
 						<option th:value="Preference_3" style="color:#8F8B87" selected>Select Preference 3</option>
-						<option th:each="i : ${courseList}" th:value="${i.course.courseId}" th:text="${i.electiveName}" style="color:#000"></option>
+						<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
 					</select>
 				</div>
 				
 				<div class="form-group input-group">
 					<select class="form-control" th:name="course4" th:id="course4" required>
 						<option th:value="Preference_4" style="color:#8F8B87" selected>Select Preference 4</option>
-						<option th:each="i : ${courseList}" th:value="${i.course.courseId}" th:text="${i.electiveName}" style="color:#000"></option>
+						<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
 					</select>
 				</div>
 				
