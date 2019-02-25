@@ -214,13 +214,17 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/add-elective",method=RequestMethod.POST)
-	public ModelAndView set_all_elective() {
+	public ModelAndView set_all_elective(String suffix, @Valid Electives elective,String courseId) {
 		
 		ModelAndView model = new ModelAndView();
-//		Course course = new Course();
-//		
-//		model.addObject("course",course);
-//		model.setViewName("/admin/studStartAllocation");
+		elective.setElectiveCourseId(courseId.concat(suffix));
+		
+		ArrayList<Course> electivesList = courseRepository.findByCourseTypeNot('R');		
+		
+		model.addObject("electivesList",electivesList);
+		model.addObject("elective",elective);
+		model.addObject("msg","Elective added successfully");
+		model.setViewName("/admin/addElective");
 		return model;
 		
 	}

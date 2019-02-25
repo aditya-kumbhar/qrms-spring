@@ -1,8 +1,13 @@
 package com.qrms.spring.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -12,9 +17,23 @@ public class Electives {
 	@Column(name="elective_course_id")
 	private String electiveCourseId;
 
-	@Column(name="elective_id")
-	private String electiveId;
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "course_id")
+	private Course course;
 	
+	
+	public Course getCourse() {
+		return course;
+	}
+
+	public void setCourse(Course course) {
+		this.course = course;
+	}
+
+	public void setElectiveName(String electiveName) {
+		this.electiveName = electiveName;
+	}
+
 	@Column(name="elective_name")
 	private String electiveName;
 
@@ -24,14 +43,6 @@ public class Electives {
 
 	public void setElectiveCourseId(String electiveCourseId) {
 		this.electiveCourseId = electiveCourseId;
-	}
-
-	public String getElectiveId() {
-		return electiveId;
-	}
-
-	public void setElectiveId(String electiveId) {
-		this.electiveId = electiveId;
 	}
 
 	public String getElectiveName() {
@@ -47,10 +58,10 @@ public class Electives {
 		
 	}
 	
-	public Electives(String electiveCourseId, String electiveId, String electiveName) {
+	public Electives(String electiveCourseId, Course course, String electiveName) {
 		super();
 		this.electiveCourseId = electiveCourseId;
-		this.electiveId = electiveId;
 		this.electiveName = electiveName;
+		this.course = course;
 	}
 }
