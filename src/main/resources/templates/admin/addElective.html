@@ -181,7 +181,7 @@
                 <a class="nav-link" th:href="@{/u/admin/register}">Registration</a>
             </li>
             
-    		<li class="nav-item active" >
+    		<li class="nav-item" >
                 <a class="nav-link" th:href="@{/u/admin/add-course}">Add Courses</a>
             </li>        
             
@@ -192,6 +192,11 @@
             <li class="nav-item" >
                 <a class="nav-link" th:href="@{/u/admin/process_student_allocation}">Start allocation</a>
             </li>
+            
+            <li class="nav-item active">
+                <a class="nav-link" href="/u/admin/add-elective">Add Elective</a>
+            </li>
+            
         </ul>
     </div>
     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
@@ -209,27 +214,42 @@
 <article class="card-body mx-auto" style="max-width: 400px;">
 	<h4 class="card-title mt-3 text-center">Add Elective</h4>
 
-	<form th:action="@{/u/admin/add_courses}"  role="form" method="POST" th:object="${course}"> 
+	<form th:action="@{/u/admin/add_elective}"  role="form" method="POST" th:object="${elective}"> 
 	
 		<div class="form-group input-group">
-		
 	    	<div class="input-group-prepend">
 			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
 			</div>
-			<select class="form-control" th:id="dept" th:name="dept" autofocus>
-				<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
-				<option th:each="dept : ${departments}" th:value="${dept.deptName}"  th:text="${dept.deptName}" style="color:#000"></option>
+			<select class="form-control" th:id="courseId" th:name="courseId" autofocus>
+				<option th:value="none" style="color:#8F8B87" selected>Select Elective</option>
+				<option th:each="elec : ${electivesList}" th:value="${elec.courseId}"  th:text="${elec.courseName + '(' + elec.courseId + ')'}" style="color:#000"></option>
 			</select>
-		
 		</div> <!-- form-group end.// -->
+		
+		<div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<input id="suffix" name="suffix" class="form-control" placeholder="Elective ID Suffix" type="text" required autofocus/>
+		</div> <!-- form-group end.// -->
+		
+		<div class="form-group input-group">
+	    	<div class="input-group-prepend">
+			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
+			</div>
+			<input th:id="electiveName" th:name="electiveName" th:field="*{electiveName}" class="form-control" placeholder="Elective Name" type="text" required autofocus/>
+		</div> <!-- form-group end.// -->
+		
+		
 
 	    
 	    <div class="form-group">
-	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Add Course  </button>
+	        <button type="submit" id="submit" class="btn btn-primary btn-block"> Add Elective  </button>
 	    </div> <!-- form-group// -->   	           
 	                                                 
 	</form>		
 </article>
+
 	<div class="row text-center mx-auto">
 			<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
 	 </div>  

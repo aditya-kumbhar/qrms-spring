@@ -35,6 +35,7 @@ import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
+import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
@@ -72,6 +73,9 @@ public class AdminController {
 	
 	@Autowired
 	private FacultyAcadRepository facultyAcadRepository;
+	
+	@Autowired
+	private ElectivesRepository electivesRepository;
 	
 	private FacultyAcad faculty;
 	
@@ -197,7 +201,7 @@ public class AdminController {
 		return model;
 	}
 	
-	
+	//Display add elective page
 	@RequestMapping(value="/add-elective",method=RequestMethod.GET)
 	public ModelAndView get_all_elective() {
 		
@@ -213,13 +217,18 @@ public class AdminController {
 		
 	}
 	
-	@RequestMapping(value="/add-elective",method=RequestMethod.POST)
+	//Handle add elective form
+	@RequestMapping(value="/add_elective",method=RequestMethod.POST)
 	public ModelAndView set_all_elective(String suffix, @Valid Electives elective,String courseId) {
 		
 		ModelAndView model = new ModelAndView();
+		System.out.println("checkL-"+courseId);
 		elective.setElectiveCourseId(courseId.concat(suffix));
+		Course course = courseRepository.findByCourseId(courseId);
+		elective.setCourse(course);
+		electivesRepository.save(elective);
 		
-		ArrayList<Course> electivesList = courseRepository.findByCourseTypeNot('R');		
+		ArrayList<Course> electivesList = courseRepository.findByCourseTypeNot('R');
 		
 		model.addObject("electivesList",electivesList);
 		model.addObject("elective",elective);

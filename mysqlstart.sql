@@ -16,6 +16,12 @@ insert into department values("CV","Civil Department");
 /*create admin*/
 insert into user values('admin',1,'adminpccoe@gmail.com','Admin','Admin','admin');
 
+/*insert default student*/
+insert into user values('student',1,'stud@gmail.com','Stud','Stud','student');
+
+/*insert default faculty*/
+insert into user values('faculty',1,'fac@gmail.com','Fac','Fac','faculty');
+
 /*insert values in role table*/
 insert into role values(1,'ADMIN');
 insert into role values(2,'FACULTY');
@@ -23,16 +29,16 @@ insert into role values(3,'STUDENT');
 
 /*insert values in user_role table*/
 insert into user_role values('admin',1);
+insert into user_role values('studs',1);
+insert into user_role values('facf',1);
 
+/*update student_acad*/
+update student_acad set agg_marks=80,division="B",rollno="BECOB210",semester=8,shift=1,year=4,dept_id="CS" where user_name="student";
 
 /*
-update student_acad set agg_marks=80,division="B",rollno="BECOB210",semester=8,shift=1,year=4,dept_id="CS" where user_name="bharatik";
-insert into course(course_id,course_name,course_sem,course_year,course_type,dept_id) values("MLCSBE","Machine Learning",8,"BE","E","CS");
-insert into course(course_id,course_name,course_sem,course_year,course_type,dept_id) values("DMCSBE","Data Mining",8,"BE","E","CS");
-insert into course(course_id,course_name,course_sem,course_year,course_type,dept_id) values("SCCSBE","Soft Computing",8,"BE","E","CS");
-insert into course(course_id,course_name,course_sem,course_year,course_type,dept_id) values("CCCSBE","Cloud Computing",8,"BE","E","CS");
+insert into course values("MLCSBE","Machine Learning",8,"BE","E","CS");
+insert into course values("DMCSBE","Data Mining",8,"BE","E","CS");
+insert into course values("SCCSBE","Soft Computing",8,"BE","E","CS");
+insert into course values("CCCSBE","Cloud Computing",8,"BE","E","CS");
 */
 
-/*For updating student acad details (change username)
-update student_acad set agg_marks=80,division="B",rollno="BECOB210",semester=8,shift=1,year='BE',dept_id="CS" where user_name="bharatik";
-*/
