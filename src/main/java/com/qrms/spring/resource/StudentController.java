@@ -91,8 +91,8 @@ public class StudentController {
 		
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
-		Optional <StudentPref> studentPrefs = studentPrefRepository.findByUserNameAndCourseId(currUserAcad.getUserName(),elective_id);
-		if(studentPrefs.isPresent()) {
+		ArrayList <StudentPref> studentPrefs = studentPrefRepository.findByUserNameAndCourseId(currUserAcad.getUserName(),elective_id);
+		if(studentPrefs.size()!=0) {
 			model.addObject("msg","Your preferences for electives have been recorded already!");
 			model.setViewName("student/home");
 			return model;
