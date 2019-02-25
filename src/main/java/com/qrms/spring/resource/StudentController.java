@@ -65,11 +65,7 @@ public class StudentController {
 		System.out.println(currUserAcad.getUserName());
 		
 		ArrayList<Course> elective_ids = courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'R',currUserAcad.getDepartment(),1,1);
-		
-		for (Course course : elective_ids) {
-			System.out.println(course.getCourseName());
-		}
-		
+			
 		model.addObject("elective_ids",elective_ids);
 		model.setViewName("/student/studentPref");
 		
@@ -82,7 +78,7 @@ public class StudentController {
 	
 	
 	@RequestMapping(value = "/getStudentPrefs", method = RequestMethod.GET)
-	public ModelAndView studentPref(@Valid String elective_id,String []elective_ids) {
+	public ModelAndView studentPref(String elective_id) {
 		ModelAndView model = new ModelAndView();
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -105,14 +101,16 @@ public class StudentController {
 			}else {
 				System.out.println("Courses exist");
 			}
+		
+			ArrayList<Course> elective_ids = courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'R',currUserAcad.getDepartment(),1,1);
 			
+			model.addObject("elective_ids",elective_ids);
 			model.addObject("studentPref",new StudentPref());
 			model.addObject("courseList", electiveList);
 			model.addObject("course1",new String());
 			model.addObject("course2",new String());
 			model.addObject("course3",new String());
 			model.addObject("course4",new String());
-			model.addObject("elective_ids",elective_ids);
 			model.setViewName("student/studentPref");
 			return model;
 		}
@@ -122,7 +120,7 @@ public class StudentController {
 	
 	//Handle student preference form
 	@RequestMapping(value = "/setStudentPrefs", method = RequestMethod.POST)
-	public ModelAndView addPreferences(@Valid String course1,String course2,String course3,String course4) {
+	public ModelAndView addPreferences(String course1,String course2,String course3,String course4) {
 		
 		ModelAndView model = new ModelAndView();	
 		

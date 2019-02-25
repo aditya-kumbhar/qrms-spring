@@ -209,7 +209,7 @@ public class AdminController {
 	
 	//Handle add elective form
 	@RequestMapping(value="/add_elective",method=RequestMethod.POST)
-	public ModelAndView set_all_elective(String suffix, @Valid Electives elective,String courseId) {
+	public ModelAndView set_all_elective(String suffix, Electives elective,String courseId) {
 		
 		ModelAndView model = new ModelAndView();
 		System.out.println("checkL-"+courseId);
@@ -238,57 +238,45 @@ public class AdminController {
 		
 	}
 	
-	
-//	@RequestMapping(value="/process_student_allocation",method=RequestMethod.GET)
-//	public ModelAndView get_process_student_allocation() {
-//		
-//		ModelAndView model = new ModelAndView();
-//		Course course = new Course();
-//		
-//		model.addObject("course",course);
-//		model.setViewName("/admin/studStartAllocation");
-//		return model;
-//		
-//	}
-	
-		//Get studStartAllocation HTML page
-		@RequestMapping(value="/process_student_allocation",method=RequestMethod.GET)
-		public ModelAndView process_student_allocation(ArrayList<Course> elective_ids) {
-			ModelAndView model = new ModelAndView();
-			
-			ArrayList<Department> departments = departmentRepository.findAll();
-			model.addObject("departments",departments);
-			model.setViewName("/admin/studStartAllocation");
-			model.addObject("course",new Course());
-			
-			if(!elective_ids.isEmpty())
-			{	
-				for(Course el : elective_ids) {
-					System.out.println(el.getCourseName());
-				}
-				model.addObject("elective_ids",elective_ids);
-				
-			}
-				return model;
-		}
-
-		//Retrieve all electives for specified dept, year and sem 
-		@RequestMapping(value="/findElectiveForStartAllocation",method=RequestMethod.POST)
-		public ModelAndView findElectiveForStartAllocation(@Valid Course course, String dept) {
+	//Get studStartAllocation HTML page
+	@RequestMapping(value="/process_student_allocation",method=RequestMethod.GET)
+	public ModelAndView process_student_allocation(ArrayList<Course> elective_ids) {
+		ModelAndView model = new ModelAndView();
 		
-			Department department = departmentRepository.findByDeptId(dept);
-			
-			System.out.println(course.getCourseSem()+" "+course.getCourseYear());
-			System.out.println(department.getDeptId());
-			
-			ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,1);
-
+		ArrayList<Department> departments = departmentRepository.findAll();
+		model.addObject("departments",departments);
+		model.setViewName("/admin/studStartAllocation");
+		model.addObject("course",new Course());
+		
+		if(!elective_ids.isEmpty())
+		{	
 			for(Course el : elective_ids) {
 				System.out.println(el.getCourseName());
 			}
-			return process_student_allocation(elective_ids);
-		
+			model.addObject("elective_ids",elective_ids);
+			
 		}
+			return model;
+	}
+
+	//Retrieve all electives for specified dept, year and sem 
+	@RequestMapping(value="/findElectiveForStartAllocation",method=RequestMethod.POST)
+	public ModelAndView findElectiveForStartAllocation(@Valid Course course, String dept) {
+	
+		Department department = departmentRepository.findByDeptId(dept);
+		
+		System.out.println(course.getCourseSem()+" "+course.getCourseYear());
+		System.out.println(department.getDeptId());
+		
+		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,1);
+
+		for(Course el : elective_ids) {
+			System.out.println(el.getCourseName());
+		}
+		return process_student_allocation(elective_ids);
+	
+	}
+
 	@RequestMapping(value="/process_student_allocation",method=RequestMethod.POST)
 	public ModelAndView set_process_student_allocation(@Valid Course elective) {
 		
