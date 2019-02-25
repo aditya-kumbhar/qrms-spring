@@ -30,6 +30,7 @@ import com.qrms.spring.queryBeans.StudentCountByYearSem;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.Department;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
+import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
@@ -195,6 +196,35 @@ public class AdminController {
 		}
 		return model;
 	}
+	
+	
+	@RequestMapping(value="/add-elective",method=RequestMethod.GET)
+	public ModelAndView get_all_elective() {
+		
+		ModelAndView model = new ModelAndView();
+		Electives elective = new Electives();
+		
+		ArrayList<Course> electivesList = courseRepository.findByCourseTypeNot('R');
+		
+		model.addObject("electivesList",electivesList);
+		model.addObject("elective",elective);
+		model.setViewName("/admin/addElective");
+		return model;
+		
+	}
+	
+	@RequestMapping(value="/add-elective",method=RequestMethod.POST)
+	public ModelAndView set_all_elective() {
+		
+		ModelAndView model = new ModelAndView();
+//		Course course = new Course();
+//		
+//		model.addObject("course",course);
+//		model.setViewName("/admin/studStartAllocation");
+		return model;
+		
+	}
+	
 	
 	@RequestMapping(value="/process_student_allocation",method=RequestMethod.GET)
 	public ModelAndView get_process_student_allocation() {
