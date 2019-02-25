@@ -44,7 +44,7 @@
 	                $('#role').focus();
 	
 	                return false;
-	            } else if(document.getElementById('studentForm').style.display === ''){
+	            } else if(document.getElementById('studentForm').style.display == ''){
 	            	var year = $('#year');
 	 	            var sem = $('#sem');
 	 	            var dept = $('#dept');
@@ -71,7 +71,6 @@
 						return false;
 		            }
 	            }
-	            
 	            else return;
 	        });
 	    });
@@ -260,7 +259,7 @@
 				Select Year
 			</td>
 			<td>
-				<select class="form-control" name="year" id="year" required th:field="${student.year}">
+				<select class="form-control" name="year" id="year" th:field="${student.year}">
 					<option value="none" style="color:#8F8B87" selected>Select Year</option>
 					<option value="FE" style="color:#000">FE</option>
 					<option value="SE" style="color:#000">SE</option>
@@ -275,7 +274,7 @@
 				Select Semester
 			</td>
 			<td>
-				<select class="form-control"  name="sem" id="sem" required th:field="${student.sem}">
+				<select class="form-control"  name="sem" id="sem" th:field="${student.sem}">
 					<option value="0" style="color:#8F8B87" selected>Select Semester</option>
 				</select>
 			</td>
@@ -286,7 +285,7 @@
 				Select Shift
 			</td>
 			<td>
-				<select class="form-control" name="shift" id="shift" required th:field="${student.shift}">
+				<select class="form-control" name="shift" id="shift" th:field="${student.shift}">
 					<option value="0" style="color:#8F8B87" selected>Select Shift</option>
 					<option value="1" style="color:#000">1</option>
 					<option value="2" style="color:#000">2</option>
@@ -299,7 +298,7 @@
 				Division
 			</td>
 			<td>
-				<input id="division" th:field="${student.div}" class="form-control" placeholder="Division" type="text" required autofocus/>
+				<input id="division" th:field="${student.div}" class="form-control" placeholder="Division" type="text" autofocus/>
 			</td>
 		</tr>
 		
@@ -308,7 +307,7 @@
 				Roll no.
 			</td>
 			<td>
-				<input id="rollno" th:field="${student.rollno}" class="form-control" placeholder="Roll number" type="text" required autofocus/>
+				<input id="rollno" th:field="${student.rollno}" class="form-control" placeholder="Roll number" type="text" autofocus/>
 			</td>
 		</tr>
 		
@@ -317,7 +316,7 @@
 				Aggregate Marks
 			</td>
 			<td>
-				<input type="number" step="0.01" th:field="${student.aggMarks}" class ="form-control" placeholder="Aggregate CGPA" required autofocus/>			
+				<input type="number" step="0.01" th:field="${student.aggMarks}" class ="form-control" placeholder="Aggregate CGPA" autofocus/>			
 			</td>
 		</tr> 
 		</tbody>
