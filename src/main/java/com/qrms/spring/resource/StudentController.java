@@ -47,7 +47,7 @@ public class StudentController {
 	}
 	
 	@RequestMapping(value="/getElectiveId",method=RequestMethod.GET)
-	public ModelAndView getElectiveId() {
+	public ModelAndView getElectiveId(String msg) {
 		ModelAndView model = new ModelAndView();
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -71,6 +71,10 @@ public class StudentController {
 		}
 		model.addObject("elective_ids",elective_ids);
 		model.setViewName("/student/studentPref");
+		
+		System.out.println(msg);
+		if(msg!=null)
+			model.addObject("msg",msg);
 		return model;
 	}
 	
@@ -84,7 +88,6 @@ public class StudentController {
 		String userName = user.getUserName();
 		System.out.println(userName);
 		
-
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
 		Optional <StudentPref> studentPrefs = studentPrefRepository.findByUserNameAndElectiveId(currUserAcad.getUserName(),elective_id);
@@ -92,12 +95,13 @@ public class StudentController {
 			model.addObject("msg","Your preferences for electives have been recorded already!");
 			model.setViewName("student/home");
 			return model;
-		}else {
+		} else {
 			ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartmentAndIsTheoryAndElectiveIdAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment(),1,elective_id,1);
 			
 			if(courseList.size()==0) {
 				System.out.println("No courses exist");
-				model.addObject("msg","Please choose other elective-id!");
+				String msg = "Please choose other elective-id!";
+				return getElectiveId(msg);
 			}else {
 				System.out.println("Courses exist");
 			}

@@ -85,9 +85,6 @@ public class AdminController {
 		
 		totalStudentCount = studentAcadRepository.findStudentCountByYearSem();
 		
-		for(StudentCountByYearSem student: totalStudentCount) {
-			
-		}
 		model.addObject("students",totalStudentCount);
 		
 		model.setViewName("admin/home");
