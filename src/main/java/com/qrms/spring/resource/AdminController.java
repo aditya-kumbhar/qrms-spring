@@ -195,7 +195,6 @@ public class AdminController {
 			electiveVacancyPrefCounts.setPrefCount(0);
 			electiveVacancyPrefCounts.setVacancyCount(80);
 			electiveVacancyPrefCounts.setElectiveId(course.getElectiveId());
-			System.out.println("here!");
 			electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);
 		}
 		return model;
