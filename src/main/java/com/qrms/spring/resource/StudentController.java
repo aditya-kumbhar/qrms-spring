@@ -46,9 +46,8 @@ public class StudentController {
 		return "student/home";
 	}
 	
-	
-	@RequestMapping(value = "/getStudentPrefs", method = RequestMethod.GET)
-	public ModelAndView studentPref() {
+	@RequestMapping(value="/getElectiveId",method=RequestMethod.GET)
+	public ModelAndView getElectiveId() {
 		ModelAndView model = new ModelAndView();
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -58,16 +57,47 @@ public class StudentController {
 
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
-		Optional <StudentPref> studentPrefs = studentPrefRepository.findByUserName(currUserAcad.getUserName());
+		int sem = currUserAcad.getSem();
+		
+		String []elective_ids = new String[2];
+		if (sem%2==0){
+			//even sem
+			elective_ids[0] = new String("el3");
+			elective_ids[1] = new String("el4");		
+		}else {
+			//odd sem
+			elective_ids[0] = new String("el1");
+			elective_ids[1] = new String("el2");
+		}
+		model.addObject("elective_ids",elective_ids);
+		model.setViewName("/student/studentPref");
+		return model;
+	}
+	
+	
+	
+	@RequestMapping(value = "/getStudentPrefs", method = RequestMethod.GET)
+	public ModelAndView studentPref(@Valid String elective_id,String []elective_ids) {
+		ModelAndView model = new ModelAndView();
+		
+		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userName = user.getUserName();
+		System.out.println(userName);
+		
+
+		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
+		
+		Optional <StudentPref> studentPrefs = studentPrefRepository.findByUserNameAndElectiveId(currUserAcad.getUserName(),elective_id);
 		if(studentPrefs.isPresent()) {
 			model.addObject("msg","Your preferences for electives have been recorded already!");
 			model.setViewName("student/home");
 			return model;
 		}else {
-			ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartmentAndIsTheoryAndElectiveIdAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment(),1,"el3",1);
+			ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartmentAndIsTheoryAndElectiveIdAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment(),1,elective_id,1);
 			
 			if(courseList.size()==0) {
 				System.out.println("No courses exist");
+				model.addObject("msg","Please choose other elective-id!");
 			}else {
 				System.out.println("Courses exist");
 			}
@@ -78,6 +108,7 @@ public class StudentController {
 			model.addObject("course2",new String());
 			model.addObject("course3",new String());
 			model.addObject("course4",new String());
+			model.addObject("elective_ids",elective_ids);
 			model.setViewName("student/studentPref");
 			return model;
 		}
@@ -118,8 +149,9 @@ public class StudentController {
 
 		electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);
 		
-		model.addObject("msg","Your preferences for electives have been recorded!");
-		model.setViewName("student/home");
+		model.addObject("msg1","Your preferences for electives have been recorded!");
+		model.setViewName("student/studentPref");
+		
 		return model;
 	
 	}
