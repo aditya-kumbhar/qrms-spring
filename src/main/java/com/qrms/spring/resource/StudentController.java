@@ -17,11 +17,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
+import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
+import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
 
@@ -41,6 +43,9 @@ public class StudentController {
 	@Autowired
 	private ElectiveVacancyPrefCountsRepository electiveVacancyPrefCountsRepository;
 	
+	@Autowired
+	private ElectivesRepository electivesRepository;
+	
 	@GetMapping("/home")
 	public String studentHome() {
 		return "student/home";
@@ -57,18 +62,14 @@ public class StudentController {
 
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
-		int sem = currUserAcad.getSem();
+		System.out.println(currUserAcad.getUserName());
 		
-		String []elective_ids = new String[2];
-		if (sem%2==0){
-			//even sem
-			elective_ids[0] = new String("el3");
-			elective_ids[1] = new String("el4");		
-		}else {
-			//odd sem
-			elective_ids[0] = new String("el1");
-			elective_ids[1] = new String("el2");
+		ArrayList<Course> elective_ids = courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'R',currUserAcad.getDepartment(),1,1);
+		
+		for (Course course : elective_ids) {
+			System.out.println(course.getCourseName());
 		}
+		
 		model.addObject("elective_ids",elective_ids);
 		model.setViewName("/student/studentPref");
 		
@@ -96,9 +97,9 @@ public class StudentController {
 			model.setViewName("student/home");
 			return model;
 		} else {
-			ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartmentAndIsTheoryAndElectiveIdAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment(),1,elective_id,1);
-			
-			if(courseList.size()==0) {
+//			ArrayList<Course> courseList=courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartmentAndIsTheoryAndElectiveIdAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment(),1,elective_id,1);
+			ArrayList<Electives> electiveList = electivesRepository.findByCourse(courseRepository.findByCourseId(elective_id)); 
+			if(electiveList.size()==0) {
 				System.out.println("No courses exist");
 				String msg = "Please choose other elective-id!";
 				return getElectiveId(msg);
@@ -107,7 +108,7 @@ public class StudentController {
 			}
 			
 			model.addObject("studentPref",new StudentPref());
-			model.addObject("courseList", courseList);
+			model.addObject("courseList", electiveList);
 			model.addObject("course1",new String());
 			model.addObject("course2",new String());
 			model.addObject("course3",new String());
