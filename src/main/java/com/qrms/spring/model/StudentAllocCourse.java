@@ -19,7 +19,6 @@ public class StudentAllocCourse {
 	@Column(name="id")
 	private int Id;
 	
-	
 	@Column(name="elective_id")
 	private String electiveId;
 	
