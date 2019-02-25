@@ -8,6 +8,6 @@ import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 
 public interface ElectiveVacancyPrefCountsRepository extends JpaRepository<ElectiveVacancyPrefCounts, Integer> {
 	ArrayList<ElectiveVacancyPrefCounts> findAll();
-	ElectiveVacancyPrefCounts findByCourseId(String course_id);
-	ArrayList<ElectiveVacancyPrefCounts> findByElectiveId(String elective_id);
+	ArrayList<ElectiveVacancyPrefCounts> findByCourseId(String course_id);
+	ElectiveVacancyPrefCounts findByElectiveId(String elective_id);
 }

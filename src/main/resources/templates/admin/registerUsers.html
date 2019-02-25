@@ -17,22 +17,22 @@
 	<link rel="stylesheet" th:href="@{/css/register.css}">
     
     <script>
-    $(document).ready(function () {
-        $("#year").change(function () {
-            var val = $(this).val();
-            if (val == "FE") {
-                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='1' style='color:#000'>1</option><option value='2' style='color:#000'>2</option>");
-            } else if (val == "SE") {
-                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='3' style='color:#000'>3</option><option value='4' style='color:#000'>4</option>");
-            } else if (val == "TE") {
-                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='5' style='color:#000'>5</option><option value='6' style='color:#000'>6</option>");
-            } else if (val == "BE") {
-                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='7' style='color:#000'>7</option><option value='8' style='color:#000'>8</option>");
-            } else if (val == "none") {
-            	$("#sem").html("<option value=''>Select Semester</option>");
-            }
-        });
-    });
+	   $(document).ready(function () {
+	       $("#year").change(function () {
+	           var val = $(this).val();
+	           if (val == "FE") {
+	               $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='1' style='color:#000'>1</option><option value='2' style='color:#000'>2</option>");
+	           } else if (val == "SE") {
+	               $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='3' style='color:#000'>3</option><option value='4' style='color:#000'>4</option>");
+	           } else if (val == "TE") {
+	               $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='5' style='color:#000'>5</option><option value='6' style='color:#000'>6</option>");
+	           } else if (val == "BE") {
+	               $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='7' style='color:#000'>7</option><option value='8' style='color:#000'>8</option>");
+	           } else if (val == "none") {
+	           	$("#sem").html("<option value=''>Select Semester</option>");
+	           }
+	       });
+	   });
 
 	    $(document).ready(function () {
 	        $("#submit").click(function () {
@@ -171,9 +171,9 @@
 
             </li>        
             
-             <li class="nav-item" >
-                <a class="nav-link" th:href="@{/u/admin/studentCourseAllocationStatus}">Course Allocation</a>
-            </li>
+            <li class="nav-item" >
+                <a class="nav-link" th:href="@{/u/admin/openCourseAllocation}">Course Allocation</a>
+            </li> 
             
             
             <li class="nav-item" >
