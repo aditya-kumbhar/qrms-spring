@@ -72,7 +72,6 @@ public class AdminController {
 	@Autowired
 	private FacultyAcadRepository facultyAcadRepository;
 	
-	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
