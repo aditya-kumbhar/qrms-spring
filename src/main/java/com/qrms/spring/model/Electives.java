@@ -13,14 +13,18 @@ import javax.persistence.Table;
 @Entity
 @Table(name="electives")
 public class Electives {
+	
 	@Id
 	@Column(name="elective_course_id")
 	private String electiveCourseId;
 
-	@OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "course_id")
 	private Course course;
 	
+	@Column(name="elective_name")
+	private String electiveName;
 	
 	public Course getCourse() {
 		return course;
@@ -33,9 +37,6 @@ public class Electives {
 	public void setElectiveName(String electiveName) {
 		this.electiveName = electiveName;
 	}
-
-	@Column(name="elective_name")
-	private String electiveName;
 
 	public String getElectiveCourseId() {
 		return electiveCourseId;
