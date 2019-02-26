@@ -23,7 +23,8 @@ public class Course {
 	@Column(name="course_credits")
 	private Integer courseCredits;
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	//Child (owner) of FK relation to Department -- do not cascade on delete/update
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "dept_id")
 	private Department department;
 	

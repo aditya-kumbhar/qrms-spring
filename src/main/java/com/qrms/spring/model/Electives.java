@@ -22,16 +22,17 @@ public class Electives {
 	@Column(name="elective_course_id")
 	private String electiveCourseId;
 
-
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "course_id")
-	private Course course;
-	
 	@Column(name="elective_name")
 	private String electiveName;
 	
+	//Child (owner) of FK relation to Course -- do not cascade on delete/update	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "course_id")
+	private Course course;
+	
+	//Parent of FK relation to StudentPrefs -- on update/delete cascade
 	@OneToMany(mappedBy="elective",cascade=CascadeType.ALL)
-	Set<StudentPref> studentPref = new HashSet<StudentPref>();
+	Set<StudentPref> studentPrefs = new HashSet<StudentPref>();
 	
 	public Course getCourse() {
 		return course;

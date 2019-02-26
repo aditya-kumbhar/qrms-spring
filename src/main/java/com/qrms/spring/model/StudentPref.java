@@ -28,17 +28,15 @@ public class StudentPref{
 	@Column(name="course_id")
 	private String courseId;
 		
-	//individual Elective
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "pref")
-	private Electives elective;
-	
 	@Column(name="pref_no")
 	private int prefNo;
-	
-	
 
+	//Child (owner) of FK relation to Electives -- do not cascade on delete/update	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "el_pref")
+	private Electives elective;
+	
+	
 	public String getUserName() {
 		return userName;
 	}

@@ -501,10 +501,8 @@ public class AdminController {
 		ArrayList <ElectiveVacancyPrefCounts> electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findByCourseId(course_id);
 		Collections.sort(electiveVacancyPrefCounts);
 		
-
 		ArrayList<Electives> electivesList = new ArrayList<>();
-		
-		
+				
 		for (ElectiveVacancyPrefCounts e : electiveVacancyPrefCounts) {
 			Course c = courseRepository.findByCourseId(e.getCourseId());
 			if(c.getCourseSem()==semester && c.getCourseYear()==year) {
@@ -515,7 +513,7 @@ public class AdminController {
 	}
 	
 	//for clearing preferences of a specific elective id, sem, year
-	@RequestMapping(value="/findElectivesToClear",method=RequestMethod.GET)
+	@RequestMapping(value="/clearPreferences",method=RequestMethod.GET)
 	public ModelAndView get_find_electives_to_clear() {
 		ModelAndView model = new ModelAndView();
 		ArrayList<Department> departments = departmentRepository.findAll();
@@ -526,8 +524,8 @@ public class AdminController {
 	}
 
 	//for clearing preferences of a specific elective id, sem, year
-		@RequestMapping(value="/findElectivesToClear",method=RequestMethod.POST)
-		public ModelAndView set_find_electives_to_clear(Course course, String dept) {
+	@RequestMapping(value="/findElectivesToClear",method=RequestMethod.POST)
+	public ModelAndView set_find_electives_to_clear(Course course, String dept) {
 			ModelAndView model = new ModelAndView();
 			Department department = departmentRepository.findByDeptId(dept);
 			
@@ -548,24 +546,20 @@ public class AdminController {
 			model.setViewName("/admin/clearStudPref");
 			return model;
 		}
-		//for clearing preferences of a specific elective id, sem, year
-		@Transactional
-		@RequestMapping(value="/clear_preferences",method=RequestMethod.POST)
-		public ModelAndView clear_prefernces(String electiveIdOption) {
-			
-			ModelAndView model = new ModelAndView();
-			System.out.println(electiveIdOption);
-			studentPrefRepository.deleteByCourseId(electiveIdOption);
-			//deletes the department -_-
-			
-			
-			
-			//reason - cascade.all
-			ArrayList<Department> departments = departmentRepository.findAll();
-			model.addObject("departments",departments);
-			model.addObject("course",new Course());
-			model.setViewName("/admin/clearStudPref");
-			model.addObject("msg","Cleared preferences for Course Id: "+electiveIdOption);
-			return model;
-		}
+	
+	@Transactional
+	@RequestMapping(value="/clear_preferences",method=RequestMethod.POST)
+	public ModelAndView clear_prefernces(String electiveIdOption) {
+		
+		ModelAndView model = new ModelAndView();
+		System.out.println(electiveIdOption);
+		studentPrefRepository.deleteByCourseId(electiveIdOption);
+		
+		ArrayList<Department> departments = departmentRepository.findAll();
+		model.addObject("departments",departments);
+		model.addObject("course",new Course());
+		model.setViewName("/admin/clearStudPref");
+		model.addObject("msg","Cleared preferences for Course Id: "+electiveIdOption);
+		return model;
+	}
 }
