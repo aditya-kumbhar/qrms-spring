@@ -143,7 +143,8 @@ public class StudentController {
 		ElectiveVacancyPrefCounts electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findByElectiveId(electivesRepository.findByElectiveCourseId(course1).getElectiveCourseId());
 		
 		int prefCount = electiveVacancyPrefCounts.getPrefCount();
-
+		
+		System.out.println(prefCount);
 		electiveVacancyPrefCounts.setPrefCount(++prefCount);
 
 		electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);

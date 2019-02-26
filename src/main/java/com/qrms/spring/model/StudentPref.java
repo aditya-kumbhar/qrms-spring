@@ -18,8 +18,8 @@ public class StudentPref{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="role_id")
-	private int role_id;
+	@Column(name="id")
+	private int id;
 	
 	@Column(name="user_name")
 	private String userName;
@@ -30,7 +30,7 @@ public class StudentPref{
 		
 	//individual Elective
 	
-	@ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "pref")
 	private Electives elective;
 	

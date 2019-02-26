@@ -15,23 +15,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@IdClass(StudAllocKey.class)
 @Table(name="student_alloc_course")
-public class StudentAllocCourse implements Serializable{
-	
-/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class StudentAllocCourse{
 
-	//	@javax.persistence.Id
-//	@GeneratedValue(strategy = GenerationType.AUTO)
-//	@Column(name="id")
-//	private int Id;
-//	
+	@javax.persistence.Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name="id")
+	private int Id;
+	
+	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "elective_id")
 	private Electives elective;
+	
+	public StudentAllocCourse() {
+		
+	}
 	
 	public StudentAllocCourse(Electives elective, Course courseId, String userName, int prefNo) {
 		super();
@@ -56,7 +55,7 @@ public class StudentAllocCourse implements Serializable{
 	public void setCourseId(Course courseId) {
 		this.courseId = courseId;
 	}
-
+	
 	public String getUserName() {
 		return userName;
 	}
@@ -73,12 +72,12 @@ public class StudentAllocCourse implements Serializable{
 		this.prefNo = prefNo;
 	}
 	
-	@Id
+	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name="course_Id")
 	private Course courseId;
 	
-	@Id
+	
 	@Column(name = "user_name")
 	private String userName;
 	

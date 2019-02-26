@@ -167,27 +167,38 @@
 <div class="card bg-light">
 <article class="card-body mx-auto">
 	<h4 class="card-title mt-3 text-center">Select Year and Semester</h4>
-	<form th:action="@{/u/admin/start_student_allocation}"  role="form" method="POST" th:object="${course}" id="all_form">   
+	<form th:action="@{/u/admin/findElective}"  role="form" method="POST" th:object="${course}" id="all_form">   
 	<table>
+		<tr>
+			<td>
+				Select Department
+			</td>
+			<td>
+				<select class="form-control" th:id="dept" th:name="dept" autofocus>
+				<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+				<option th:each="dept : ${departments}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
+			</select>
+			</td>
+		</tr>
+		
 		<tr>
 			<td>
 				Select Year
 			</td>
 			<td>
 				<select class="form-control" name="courseYear" id="courseYear" required th:field="*{courseYear}">
-					<option value="none" style="color:#8F8B87" selected>Select Year</option>
-					<option value="FE" style="color:#000">FE</option>
-					<option value="SE" style="color:#000">SE</option>
-					<option value="TE" style="color:#000">TE</option>
-					<option value="BE" style="color:#000">BE</option>
-				</select>
+				<option value="none" style="color:#8F8B87" selected>Select Year</option>
+				<option value="FE" style="color:#000">FE</option>
+				<option value="SE" style="color:#000">SE</option>
+				<option value="TE" style="color:#000">TE</option>
+				<option value="BE" style="color:#000">BE</option>
+			</select>
 			</td>
 		</tr>
 		
 		<tr>
 			<td>
 				Select Semester
-			</td>
 			<td>
 				<select class="form-control"  name="courseSem" id="courseSem" required th:field="*{courseSem}">
 					<option value="0" style="color:#8F8B87" selected>Select Semester</option>
@@ -196,93 +207,40 @@
 		</tr>
 		
 		<tr>
-			<td>
-				Select Elective ID
-			</td>
-			<td>
-				<select class="form-control" name="electiveIdOption" id="electiveIdOption" th:field="*{electiveId}">
-					<option value="none" style="color:#8F8B87" selected>Select Elective number</option>
-					<option value="el1" style="color:#000">EL-1</option>
-					<option value="el2" style="color:#000">EL-2</option>
-					<option value="el3" style="color:#000">EL-3</option>
-					<option value="el4" style="color:#000">EL-4</option>
-				</select>
-			</td>
-		</tr>
-		
-		<tr>
 			<td colspan=2 align=center>
-				<div class="form-group">
-	        		<button type="submit" id="submit" class="btn btn-primary btn-block"  style="width:150px"> Submit  </button>
-	    		</div> <!-- form-group// -->  
+	        		<button type="submit" id="submit_all" class="btn btn-primary btn-block"> Get Electives </button>
 	    	</td> 	  
 		</tr>
-	</table>	         	                                                 
-	</form>
-</article>
-	
-<div class="row text-center card-body mx-auto">
-<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
-	<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
-</div>  
-<article class="card-body mx-auto">
-	<form th:action="@{/u/admin/findElective}"  role="form" method="POST" th:object=${course} id="all_form">   	    
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" th:id="dept" th:name="dept" autofocus>
-				<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
-				<option th:each="dept : ${departments}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
-			</select>
-		</div> <!-- form-group end.// -->
 		
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" name="courseYear" id="courseYear" required th:field="*{courseYear}">
-				<option value="none" style="color:#8F8B87" selected>Select Year</option>
-				<option value="FE" style="color:#000">FE</option>
-				<option value="SE" style="color:#000">SE</option>
-				<option value="TE" style="color:#000">TE</option>
-				<option value="BE" style="color:#000">BE</option>
-			</select>
-		</div> <!-- form-group end.// -->
-	    
-	    <div class="form-group input-group">
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control"  name="courseSem" id="courseSem" required th:field="*{courseSem}">
-				<option value="0" style="color:#8F8B87" selected>Select Semester</option>
-			</select>
-		</div> <!-- form-group end.// -->			
-		<div class="form-group">
-	        <button type="submit" id="submit_all" class="btn btn-primary btn-block"> Get Electives </button>
-	    </div> 
-	    
-	    </form>
-	    <div th:if="${elective_ids}">
-	    <h4 class="card-title mt-3 text-center">Open Course Allocation</h4>
-
-		<form th:action="@{/u/admin/open_student_allocation}"  role="form" method="POST" th:object="${elective}" id="all_form">   	    
-	    
-  		<div class="form-group input-group" >
-	    	<div class="input-group-prepend">
-			    <span class="input-group-text"> <i class="fa fa-address-card-o"></i> </span>
-			</div>
-			<select class="form-control" name="electiveIdOption" id="electiveIdOption">
-				<option value="none" style="color:#8F8B87" selected>Select Elective number</option>
-				<option th:each="i : ${elective_ids}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
-			</select>
-		</div> <!-- form-group end.// -->
-		
-	    <div class="form-group">
-	        <button type="submit" id="submit_elective" class="btn btn-primary btn-block"> Submit  </button>
-	    </div> <!-- form-group// -->   	           	                                                 
+		</table>
+		</form>
+		<form th:if="${elective_ids}" th:action="@{/u/admin/open_student_allocation}"  role="form" method="POST" th:object="${elective}" id="all_form">   	    
+			<table>
+				<tr>
+					<td  colspan=2 align=center>
+					    <h4 class="card-title mt-3 text-center">Open Course Allocation</h4>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						Select Elective Course
+					</td>
+					<td>		
+						<select class="form-control" name="electiveIdOption" id="electiveIdOption">
+							<option value="none" style="color:#8F8B87" selected>Select Elective number</option>
+							<option th:each="i : ${elective_ids}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
+						</select>							
+					</td>
+				</tr>
+				
+				<tr>
+					<td colspan=2 align=center>
+						<button type="submit" id="submit_elective" class="btn btn-primary btn-block"> Submit  </button>     	
+					</td>
+				</tr>
+			</table> 	                                                 
 	</form>
-	</div>
 </article>
 	<div class="row text-center card-body mx-auto">
 		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
