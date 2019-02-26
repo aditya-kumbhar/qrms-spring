@@ -122,7 +122,7 @@ public class StudentController {
 	
 	//Handle student preference form
 	@RequestMapping(value = "/setStudentPrefs", method = RequestMethod.POST)
-	public ModelAndView addPreferences(@Valid String course1,String course2,String course3,String course4) {
+	public ModelAndView addPreferences(String course1,String course2,String course3,String course4) {
 		
 		ModelAndView model = new ModelAndView();	
 		

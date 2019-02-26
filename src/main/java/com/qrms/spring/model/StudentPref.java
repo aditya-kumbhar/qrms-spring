@@ -4,6 +4,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -11,12 +13,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@IdClass(StudPrefKey.class)
 @Table(name="student_pref")
 public class StudentPref{
 	
-	
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name="role_id")
+	private int role_id;
+	
 	@Column(name="user_name")
 	private String userName;
 	
@@ -25,8 +29,8 @@ public class StudentPref{
 	private String courseId;
 		
 	//individual Elective
-	@Id
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	
+	@ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	@JoinColumn(name = "pref")
 	private Electives elective;
 	

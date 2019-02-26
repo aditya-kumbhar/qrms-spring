@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collector;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,6 +217,26 @@ public class AdminController {
 		elective.setElectiveCourseId(courseId.concat(suffix));
 		Course course = courseRepository.findByCourseId(courseId);
 		elective.setCourse(course);
+		
+		if(electivesRepository.findByElectiveName(elective.getElectiveName()).isPresent()) {
+			System.out.println("Elective with same name already exists");
+			model.addObject("msg","Elective with same name already exists");
+		}
+		else {
+			
+			
+			
+			ElectiveVacancyPrefCounts electiveVacancyPrefCounts = new ElectiveVacancyPrefCounts();
+			System.out.println(course.getCourseId());
+			electiveVacancyPrefCounts.setCourseId(course.getCourseId());
+			electiveVacancyPrefCounts.setPrefCount(0);
+			electiveVacancyPrefCounts.setVacancyCount(80);
+			electiveVacancyPrefCounts.setElectiveId(elective.getElectiveCourseId());
+			electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);
+			
+			model.addObject("msg","Elective added successfully");
+		
+		}
 		electivesRepository.save(elective);
 		
 		ArrayList<Course> electivesList = courseRepository.findByCourseTypeNot('R');
@@ -223,16 +244,6 @@ public class AdminController {
 		model.addObject("electivesList",electivesList);
 		model.addObject("elective",elective);
 		
-		
-		ElectiveVacancyPrefCounts electiveVacancyPrefCounts = new ElectiveVacancyPrefCounts();
-		System.out.println(course.getCourseId());
-		electiveVacancyPrefCounts.setCourseId(course.getCourseId());
-		electiveVacancyPrefCounts.setPrefCount(0);
-		electiveVacancyPrefCounts.setVacancyCount(80);
-		electiveVacancyPrefCounts.setElectiveId(elective.getElectiveCourseId());
-		electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);
-		
-		model.addObject("msg","Elective added successfully");
 		model.setViewName("/admin/addElective");
 		return model;
 		
@@ -499,15 +510,57 @@ public class AdminController {
 	}
 	
 	//for clearing preferences of a specific elective id, sem, year
-	@RequestMapping(value="/clear_preferences",method=RequestMethod.GET)
-	public ModelAndView clear_preferences() {
+	@RequestMapping(value="/findElectivesToClear",method=RequestMethod.GET)
+	public ModelAndView get_find_electives_to_clear() {
 		ModelAndView model = new ModelAndView();
-		
-		model.addObject("msg","The preferences have been cleared!");
-		
-		model.setViewName("/admin/clearPreferences");
+		ArrayList<Department> departments = departmentRepository.findAll();
+		model.addObject("departments",departments);
+		model.addObject("course",new Course());
+		model.setViewName("/admin/clearStudPref");
 		return model;
 	}
 
+	//for clearing preferences of a specific elective id, sem, year
+		@RequestMapping(value="/findElectivesToClear",method=RequestMethod.POST)
+		public ModelAndView set_find_electives_to_clear(Course course, String dept) {
+			ModelAndView model = new ModelAndView();
+			Department department = departmentRepository.findByDeptId(dept);
+			
+			System.out.println(course.getCourseSem()+" "+course.getCourseYear());
+			System.out.println(department.getDeptId());
+			
+			ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,1);
 
+			for(Course el : elective_ids) {
+				System.out.println(el.getCourseName());
+			}
+			
+			ArrayList<Department> departments = departmentRepository.findAll();
+			
+			model.addObject("departments",departments);
+			model.addObject("course",new Course());
+			model.addObject("elective_ids",elective_ids);
+			model.setViewName("/admin/clearStudPref");
+			return model;
+		}
+		//for clearing preferences of a specific elective id, sem, year
+		@Transactional
+		@RequestMapping(value="/clear_preferences",method=RequestMethod.POST)
+		public ModelAndView clear_prefernces(String electiveIdOption) {
+			
+			ModelAndView model = new ModelAndView();
+			System.out.println(electiveIdOption);
+			studentPrefRepository.deleteByCourseId(electiveIdOption);
+			//deletes the department -_-
+			
+			
+			
+			//reason - cascade.all
+			ArrayList<Department> departments = departmentRepository.findAll();
+			model.addObject("departments",departments);
+			model.addObject("course",new Course());
+			model.setViewName("/admin/clearStudPref");
+			model.addObject("msg","Cleared preferences for Course Id: "+electiveIdOption);
+			return model;
+		}
 }
