@@ -67,6 +67,14 @@ public class Electives {
 		
 	}
 	
+	public Set<StudentPref> getStudentPrefs() {
+		return studentPrefs;
+	}
+
+	public void setStudentPrefs(Set<StudentPref> studentPrefs) {
+		this.studentPrefs = studentPrefs;
+	}
+
 	public Electives(String electiveCourseId, Course course, String electiveName) {
 		super();
 		this.electiveCourseId = electiveCourseId;

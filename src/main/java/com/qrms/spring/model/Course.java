@@ -1,5 +1,8 @@
 package com.qrms.spring.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -28,6 +32,10 @@ public class Course {
 	@JoinColumn(name = "dept_id")
 	private Department department;
 	
+	//Child (owner) of FK relation to Department -- do not cascade on delete/update
+	@OneToMany(mappedBy="course",cascade=CascadeType.ALL)
+	Set<Electives> electives = new HashSet<Electives>();
+
 	//O: Open Elective, E: Normal Elective R: regular course
 	@Column(name="course_type")
 	private char courseType;
@@ -37,9 +45,6 @@ public class Course {
 
 	@Column(name="course_sem")
 	private int courseSem;
-	
-	@Column(name="elective_id")
-	private String electiveId;
 	
 	//0 = allocation not yet started by admin
 	//1 = allocation has been started and students can give prefs
@@ -66,14 +71,6 @@ public class Course {
 
 	public void setNoOfHours(Integer noOfHours) {
 		this.noOfHours = noOfHours;
-	}
-
-	public String getElectiveId() {
-		return electiveId;
-	}
-
-	public void setElectiveId(String elective_id) {
-		this.electiveId = elective_id;
 	}
 
 	public int getStudAllocFlag() {
@@ -140,8 +137,16 @@ public class Course {
 		this.courseSem = courseSem;
 	}
 	
+	public Set<Electives> getElectives() {
+		return electives;
+	}
+
+	public void setElectives(Set<Electives> electives) {
+		this.electives = electives;
+	}
+	
 	public Course(String courseId, String courseName, Integer courseCredits, Department department, char courseType,
-			String courseYear, int courseSem, String electiveId, int studAllocFlag, int isTheory, int noOfHours) {
+			String courseYear, int courseSem, int studAllocFlag, int isTheory, int noOfHours) {
 		super();
 		this.courseId = courseId;
 		this.courseName = courseName;
@@ -150,7 +155,6 @@ public class Course {
 		this.courseType = courseType;
 		this.courseYear = courseYear;
 		this.courseSem = courseSem;
-		this.electiveId = electiveId;
 		this.studAllocFlag = studAllocFlag;
 		this.isTheory = isTheory;
 		this.noOfHours = noOfHours;

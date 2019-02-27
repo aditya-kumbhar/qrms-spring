@@ -200,10 +200,7 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 			}
 		}
 		else
-			return "Invalid Token";	//if token String is not valid
-		
-		
-		
+			return "Invalid Token";	//if token String is not valid		
 	}
 
 	@Override

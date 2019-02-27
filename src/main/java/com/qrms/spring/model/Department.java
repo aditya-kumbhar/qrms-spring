@@ -25,7 +25,6 @@ public class Department {
 	@OneToMany(mappedBy="department",cascade=CascadeType.ALL)
 	Set<Course> courses = new HashSet<Course>();
 	
-	
 	public String getDeptId() {
 		return deptId;
 	}

@@ -175,14 +175,13 @@ public class AdminController {
 	
 	//Handle add course form
 	@RequestMapping(value = "/add_courses", method = RequestMethod.POST)
-	public ModelAndView addCourse(@Valid Course course, String dept, String electiveIdOption) {
+	public ModelAndView addCourse(@Valid Course course, String dept) {
 		ModelAndView model = new ModelAndView();
 		
 		Department deptObj = departmentRepository.findByDeptName(dept);
 		course.setDepartment(deptObj);
 		course.setStudAllocFlag(0);
 		
-		course.setElectiveId(electiveIdOption);
 		model.addObject("msg","Course has been added successfully");
 		model.addObject("course",new Course());
 		model.addObject("departments",departments);
