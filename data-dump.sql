@@ -45,7 +45,7 @@ CREATE TABLE `course` (
 
 LOCK TABLES `course` WRITE;
 /*!40000 ALTER TABLE `course` DISABLE KEYS */;
-INSERT INTO `course` VALUES ('410252',3,'Elective 3',8,'E','BE','el3',1,3,1,'CS'),('410253',3,'Elective 4',8,'E','BE','el3',1,3,1,'CS');
+INSERT INTO `course` VALUES ('410252',3,'Elective 3',8,'E','BE',1,3,0,'CS'),('410253',3,'Elective 4',8,'E','BE',1,3,0,'CS');
 /*!40000 ALTER TABLE `course` ENABLE KEYS */;
 UNLOCK TABLES;
 
