@@ -49,9 +49,9 @@ public class FacultyController {
 		
 		FacultyAcad currFacultyAcad = facultyAcadRepository.findByUserName(userName);
 		
-		Optional <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserName(currFacultyAcad.getUserName());
+		ArrayList<FacultyPref> facultyPrefs = facultyPrefRepository.findByUserName(userName);
 		
-		if(facultyPrefs.isPresent()) {
+		if(facultyPrefs.size()!=0) {
 			model.addObject("msg","Your preferences for electives have been recorded already!");
 			model.setViewName("faculty/home");
 			return model;

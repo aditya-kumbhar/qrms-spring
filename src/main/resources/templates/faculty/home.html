@@ -1,16 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
+    <th:block th:include="fragments/fac_header.html :: headerfiles"></th:block>
     <title>Faculty Home</title>
-
-     <!-- Bootstrap core CSS -->
-    <link th:href="@{/webjars/bootstrap/4.1.3/css/bootstrap.min.css}" rel="stylesheet">    
+	
+    <!-- Custom styles for this template -->
+   	<!-- <link th:href="@{/css/faculty/fac_home.css}" rel="stylesheet"> -->
 </head>
-<div th:replace="fragments/fac_header :: header">
-</div>
+<div th:replace="fragments/fac_header :: header"></div>
