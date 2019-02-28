@@ -15,9 +15,8 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 	Course findByCourseId(String course_id);
 	ArrayList<Course> findAll();
 	ArrayList<Course> findByStudAllocFlag(int flag);
-	ArrayList<Course> findByCourseSemAndCourseYearAndElectiveId(int courseSem, String courseYear, String electiveId);
-	ArrayList<Course> findByCourseSemAndCourseYearAndCourseTypeAndDepartmentAndIsTheoryAndElectiveIdAndStudAllocFlag(int sem, String year, char cType,Department d,int isTheory,String ElectiveId,int stud_allocation_flag);
-	ArrayList<Course> findByCourseSemAndCourseYear(int sem, String year);
+	ArrayList<Course> findByCourseSemAndCourseYear(int courseSem, String courseYear);
+	ArrayList<Course> findByCourseSemAndCourseYearAndCourseTypeAndDepartmentAndIsTheoryAndStudAllocFlag(int sem, String year, char cType,Department d,int isTheory,int stud_allocation_flag);
 	ArrayList<Course> findByCourseTypeNot(char courseType);
 	
 	ArrayList<Course> findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(int sem, String year, char cType,Department d,int isTheory,int stud_allocation_flag);
