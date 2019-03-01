@@ -15,10 +15,10 @@
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark" th:fragment="header">
   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2 align-center" id="fac-div">
-    <div class="navbar-nav ml-sm-2">
+    <div class="navbar-nav ml-sm-2" id="nav-bar">
         <a class="navbar-brand" href="#"><img th:src="@{/img/pccoelogo.png}" width=30 height=30 class="align-center" alt="PCCOE LOGO">QRMS <span class="sr-only">(current)</span></a>
-        <a class="nav-link" href="/u/faculty/home">Home</a>
-        <a class="nav-link" href="/u/faculty/getFacultyPrefs">Course Preferences</a>
+        <a class="nav-link" href="/u/faculty/home" id="home-nav">Home</a>
+        <a class="nav-link" href="/u/faculty/getFacultyPrefs" id="cpref-nav">Course Preferences</a>
     </div>
     <div class="navbar-nav ml-auto">
         <a class="nav-link mr-sm-2" href="/logout">Log Out</a>

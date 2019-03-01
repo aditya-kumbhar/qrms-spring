@@ -5,7 +5,7 @@
 
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     
-    <title>Open Course Allocation</title>
+    <title>Run Course Allocation</title>
 
 	<link rel="stylesheet" th:href="@{/css/register.css}">
 	
@@ -116,6 +116,17 @@
 
 <div th:replace="fragments/admin_header :: header"></div>
 
+<!-- script to turn nav link active -->
+<script type="text/javascript">
+	var navBar = document.getElementById("nav-bar");		
+	var current = navBar.getElementsByClassName("active");
+    // If there's any other active nav, make it inactive
+    if (current.length > 0) { 
+      current[0].className = current[0].className.replace(" active", "");
+    }
+	//set current page nav as active
+	document.getElementById("startAlloc-nav").className+=" active";		
+</script>
 <body>
 
 <div class="card bg-light">
