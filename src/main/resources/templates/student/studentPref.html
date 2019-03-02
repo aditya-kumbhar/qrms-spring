@@ -170,14 +170,13 @@
 		</tr>
 	</table>
 	</form>
-</article>
-		
+</article>	
 <div class="row text-center mx-auto">
 	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
-</div> 
-	
-<article class="card-body mx-auto">
-	<h4 class="card-title mt-3 text-center">Give Preferences</h4>
+</div>
+<article class="card-body mx-auto" th:if="${studentPref}">
+
+	<h4 class="card-title mt-3 text-center">Give preferences for <span th:text="${chosen_course_name + '(' + chosen_course_id + ')' }"></span></h4>
 	
     <form th:action="@{/u/student/setStudentPrefs}"  role="form" method="POST" th:object="${studentPref}"> 
     <table>

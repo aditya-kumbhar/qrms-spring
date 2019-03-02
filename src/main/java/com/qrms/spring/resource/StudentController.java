@@ -88,29 +88,23 @@ public class StudentController {
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
 		ArrayList <StudentPref> studentPrefs = studentPrefRepository.findByUserNameAndCourseId(currUserAcad.getUserName(),elective_id);
-		if(studentPrefs.size()!=0) {
-			model.addObject("msg","Your preferences for electives have been recorded already!");
-			model.setViewName("student/home");
-			return model;
-		} else {
-			ArrayList<Electives> electiveList = electivesRepository.findByCourse(courseRepository.findByCourseId(elective_id)); 
+		if(studentPrefs.size()!=0) 
+			return getElectiveId("Your preferences for chosen elective have been recorded already!");
+		else {
+			Course chosen_course = courseRepository.findByCourseId(elective_id);
+			ArrayList<Electives> electiveList = electivesRepository.findByCourse(chosen_course); 
 			if(electiveList.size()==0) {
 				System.out.println("No courses exist");
 				String msg = "Please choose other elective-id!";
 				return getElectiveId(msg);
-			}else {
-				System.out.println("Courses exist");
 			}
 		
 			ArrayList<Course> elective_ids = courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'R',currUserAcad.getDepartment(),1,1);
-			
+			model.addObject("chosen_course_name",chosen_course.getCourseName());
+			model.addObject("chosen_course_id",chosen_course.getCourseId());
 			model.addObject("elective_ids",elective_ids);
 			model.addObject("studentPref",new StudentPref());
 			model.addObject("courseList", electiveList);
-			model.addObject("course1",new String());
-			model.addObject("course2",new String());
-			model.addObject("course3",new String());
-			model.addObject("course4",new String());
 			model.setViewName("student/studentPref");
 			return model;
 		}
@@ -127,7 +121,7 @@ public class StudentController {
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
 		
-		System.out.println(course1);
+		
 		
 		Electives electives[] = {electivesRepository.findByElectiveCourseId(course1),electivesRepository.findByElectiveCourseId(course2),electivesRepository.findByElectiveCourseId(course3),electivesRepository.findByElectiveCourseId(course4)};
 		
@@ -149,10 +143,7 @@ public class StudentController {
 
 		electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);
 		
-		model.addObject("msg1","Your preferences for electives have been recorded!");
-		model.setViewName("student/studentPref");
+		return getElectiveId("Your preferences for electives have been recorded!");
 		
-		return model;
-	
 	}
 }
