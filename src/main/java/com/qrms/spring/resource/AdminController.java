@@ -3,14 +3,8 @@ package com.qrms.spring.resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collector;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -27,7 +21,9 @@ import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.StudentAllocCourse;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
+import com.qrms.spring.queryBeans.PrefGroupByCourseStudent;
 import com.qrms.spring.queryBeans.StudentCountByYearSem;
+import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.Department;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
@@ -88,10 +84,40 @@ public class AdminController {
 	public ModelAndView adminHome() {
 		ModelAndView model = new ModelAndView();
 		List<StudentCountByYearSem> totalStudentCount;
+		List<PrefGroupByCourseStudent> prefsPerElective;
+		List<StudentPrefCountInfo> countInfo = new ArrayList<StudentPrefCountInfo>();
+
 		
 		totalStudentCount = studentAcadRepository.findStudentCountByYearSem();
+		prefsPerElective = studentPrefRepository.findPrefsGroupByCourseStudent();
+		Course c;
 		
-		model.addObject("students",totalStudentCount);
+		for(PrefGroupByCourseStudent p: prefsPerElective) {
+			c = courseRepository.findByCourseId(p.getCourseId());
+			//TODO: add check for department
+			for(StudentCountByYearSem s: totalStudentCount) {
+			
+				if(s.getSem() == c.getCourseSem() && s.getYear().equals(c.getCourseYear())) {
+					StudentPrefCountInfo si = new StudentPrefCountInfo();
+					si.setCourseId(c.getCourseId());
+					si.setCourseName(c.getCourseName());
+					si.setDeptId(c.getDepartment().getDeptId());
+					si.setSem(c.getCourseSem());
+					si.setSubmitCount(p.getCount());
+					si.setTotalStudentCount(s.getCount());
+					si.setYear(c.getCourseYear());
+					countInfo.add(si);
+					totalStudentCount.remove(s);
+					break;
+				}
+			}
+		}
+	
+		for(StudentPrefCountInfo s : countInfo) {
+			System.out.println(s.getSubmitCount()+"/"+s.getTotalStudentCount());
+		}
+		model.addObject("countInfo", countInfo);
+		//model.addObject("students",totalStudentCount);
 		
 		model.setViewName("admin/home");
 		return model;
