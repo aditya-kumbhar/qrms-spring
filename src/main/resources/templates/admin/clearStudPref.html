@@ -182,10 +182,6 @@
 		</table>
 	    </form>
 	    
-	    
-	    <div th:if="${elective_ids}">
-	    <h4 class="card-title mt-3 text-center">Clear Preferences</h4>
-
 		<form th:if="${elective_ids}" th:action="@{/u/admin/clear_preferences}"  role="form" method="POST" th:object="${elective}" id="all_form">   	    
 	    <table>
 				<tr>
@@ -213,12 +209,13 @@
 	        </tr>
 	        </table>         	                                                 
 		</form>
-		</div>
+
 </article>
-</div>
-	<div class="row text-center card-body mx-auto">
+<div class="row text-center card-body mx-auto">
 		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
  		<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
- 	</div>  
+</div>  
+</div>
+	
 
 </body>
