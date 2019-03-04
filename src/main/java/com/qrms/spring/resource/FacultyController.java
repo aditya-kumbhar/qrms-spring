@@ -1,8 +1,6 @@
 package com.qrms.spring.resource;
 
 import java.util.ArrayList;
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Course;
-import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.repository.CourseRepository;
-import com.qrms.spring.repository.FacultyAcadRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
 
 @Controller
@@ -27,9 +23,6 @@ public class FacultyController {
 	
 	@Autowired
 	private FacultyPrefRepository facultyPrefRepository;
-	
-	@Autowired
-	private FacultyAcadRepository facultyAcadRepository;
 	
 	@Autowired
 	private CourseRepository courseRepository;
@@ -46,8 +39,6 @@ public class FacultyController {
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
 		System.out.println(userName);
-		
-		FacultyAcad currFacultyAcad = facultyAcadRepository.findByUserName(userName);
 		
 		ArrayList<FacultyPref> facultyPrefs = facultyPrefRepository.findByUserName(userName);
 		
