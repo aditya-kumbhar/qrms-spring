@@ -32,9 +32,21 @@ public class Course {
 	@JoinColumn(name = "dept_id")
 	private Department department;
 	
-	//Child (owner) of FK relation to Department -- do not cascade on delete/update
+	//Parent (owner) of FK relation to Electives -- do not cascade on delete/update
 	@OneToMany(mappedBy="course",cascade=CascadeType.ALL)
 	Set<Electives> electives = new HashSet<Electives>();
+	
+	//Parent (owner) of FK relation to StudentAllocs -- do not cascade on delete/update
+	@OneToMany(mappedBy="courseId",cascade=CascadeType.ALL)
+	Set<StudentAllocCourse> course_Ids = new HashSet<StudentAllocCourse>();
+		
+	public Set<StudentAllocCourse> getCourse_Ids() {
+		return course_Ids;
+	}
+
+	public void setCourse_Ids(Set<StudentAllocCourse> course_Ids) {
+		this.course_Ids = course_Ids;
+	}
 
 	//O: Open Elective, E: Normal Elective R: regular course
 	@Column(name="course_type")

@@ -20,21 +20,40 @@ public class StudentAllocCourse{
 	@Column(name="id")
 	private int Id;
 	
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "elective_id")
 	private Electives elective;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="course_Id")
+	private Course courseId;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "student")
+	private StudentAcad student;
+
+	@Column(name="pref_no")
+	private int prefNo;
+	
 	
 	public StudentAllocCourse() {
 		
 	}
 	
-	public StudentAllocCourse(Electives elective, Course courseId, String userName, int prefNo) {
+	public StudentAllocCourse(Electives elective, Course courseId,StudentAcad student, int prefNo) {
 		super();
 		this.elective = elective;
 		this.courseId = courseId;
-		this.userName = userName;
 		this.prefNo = prefNo;
+		this.student = student;
+	}
+
+	public StudentAcad getStudent() {
+		return student;
+	}
+
+	public void setStudent(StudentAcad student) {
+		this.student = student;
 	}
 
 	public Electives getElective() {
@@ -53,14 +72,6 @@ public class StudentAllocCourse{
 		this.courseId = courseId;
 	}
 	
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
 	public int getPrefNo() {
 		return prefNo;
 	}
@@ -68,17 +79,15 @@ public class StudentAllocCourse{
 	public void setPrefNo(int prefNo) {
 		this.prefNo = prefNo;
 	}
+
 	
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name="course_Id")
-	private Course courseId;
-	
-	
-	@Column(name = "user_name")
-	private String userName;
-	
-	@Column(name="pref_no")
-	private int prefNo;
+	public int getId() {
+		return Id;
+	}
+
+	public void setId(int id) {
+		this.Id = id;
+	}
+
 	
 }

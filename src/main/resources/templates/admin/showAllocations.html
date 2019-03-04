@@ -1,0 +1,242 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <th:block th:include="fragments/admin_header.html :: headerfiles"></th:block>
+
+    <title>Change Elective Seats</title>
+
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+	
+    <script>
+    	//display semester options as per year selected
+	    $(document).ready(function () {
+	        $("#courseYear").change(function () {
+	            var val = $(this).val();
+	            if (val == "FE") {
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='1' style='color:#000'>1</option><option value='2' style='color:#000'>2</option>");
+	            } else if (val == "SE") {
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='3' style='color:#000'>3</option><option value='4' style='color:#000'>4</option>");
+	            } else if (val == "TE") {
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='5' style='color:#000'>5</option><option value='6' style='color:#000'>6</option>");
+	            } else if (val == "BE") {
+	                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='7' style='color:#000'>7</option><option value='8' style='color:#000'>8</option>");
+	            } else if (val == "none") {
+	            	$("#courseSem").html("<option value=''>Select Semester</option>");
+	            }
+	        });
+	    });
+		
+	    $(document).ready(function () {
+	        $("#submit_elective").click(function () {
+	        	
+	            var cyear = $('#electiveIdOption');
+	            var csem = $('#electiveIdOption');
+	            
+	          	if (cyear.val() == "none") {
+	                alert("Please select an elective");
+	                $('#electiveIdOption').focus();
+	                
+	               return false;
+	            }
+	        });
+	    });
+    	
+	    $(document).ready(function () {
+	        $("#submit_all").click(function () {
+	        	
+	            var cyear = $('#courseYear');
+	            var csem = $('#courseSem');
+	            
+	          	if (cyear.val() == "none") {
+	                alert("Please select a course year");
+	                $('#courseYear').focus();
+	                
+	               return false;
+	            } else if (csem.val() == "0") {
+	                alert("Please select a semester");
+	                $('#courseSem').focus();
+	                
+	                return false;
+	            }
+	            else if( $('#electiveIdOption').val() == 'none' ){
+	            	alert("Please select Elective number");
+	            	$('#electiveIdOption').focus();
+	            	
+	            	return false;
+	            }  
+	            
+	            else return;
+	        });
+	    });
+	    
+	
+	    $(document).ready(function() {
+    	   $('#courseYear').css('color','#8F8B87');
+    	   $('#courseYear').change(function() {
+    	      var current = $('#courseYear').val();
+    	      if (current != 'none') {
+    	          $('#courseYear').css('color','black');
+    	      } else {
+    	          $('#courseYear').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
+	    $(document).ready(function() {
+	    	   $('#electiveIdOption').css('color','#8F8B87');
+	    	   $('#electiveIdOption').change(function() {
+	    	      var current = $('#electiveIdOption').val();
+	    	      if (current != 'none') {
+	    	          $('#electiveIdOption').css('color','black');
+	    	      } else {
+	    	          $('#electiveIdOption').css('color','#8F8B87');
+	    	      }
+	    	   }); 
+	    	});
+	    
+	    $(document).ready(function() {
+    	   $('#courseSem').css('color','#8F8B87');
+    	   $('#courseSem').change(function() {
+    	      var current = $('#courseSem').val();
+    	      if (current != '0') {
+    	          $('#courseSem').css('color','black');
+    	      } else {
+    	          $('#courseSem').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
+	    $(document).ready(function(){
+	    	$('#selectedElective').css('color','#8F8B87');
+	    	$('#selectedElective').change(function() {
+	    	      var current = $('#selectedElective').val();
+	    	      if (current != 'none') {
+	    	          $('#courseSem').css('color','black');
+	    	          document.getElementById("seats").placeholder = "Enter new Seats";
+	    	      } else {
+	    	          $('#courseSem').css('color','#8F8B87');
+	    	      }
+	    	   });
+	    });
+	    
+    </script>
+
+  
+</head> 
+
+<div th:replace="fragments/admin_header :: header"></div>
+
+<body>
+     
+     <!-- script to turn nav link active -->
+	<script type="text/javascript">
+		var navBar = document.getElementById("nav-bar");		
+		var current = navBar.getElementsByClassName("active");
+	    // If there's any other active nav, make it inactive
+	    if (current.length > 0) { 
+	      current[0].className = current[0].className.replace(" active", "");
+	    }
+		//set current page nav as active
+		document.getElementById("change-seats").className+=" active";		
+	</script>
+<div class="card bg-light">
+<article class="card-body mx-auto">
+	<h6 class="card-title mt-3 text-center">Enter Elective Details</h6>
+	
+	<form th:action="@{/u/admin/findElectivesToShow}"  role="form" method="POST" th:object="${course}" id="all_form">   
+	<table>
+		<tr>
+			<td>
+				Select Department
+			</td>
+			<td>
+				<select class="form-control" th:id="dept" th:name="dept" autofocus>
+					<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+					<option th:each="dept : ${departments}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Select Year
+			</td>
+			<td>
+				<select class="form-control" name="courseYear" id="courseYear" required th:field="*{courseYear}">
+				<option value="none" style="color:#8F8B87" selected>Select Year</option>
+				<option value="FE" style="color:#000">FE</option>
+				<option value="SE" style="color:#000">SE</option>
+				<option value="TE" style="color:#000">TE</option>
+				<option value="BE" style="color:#000">BE</option>
+			</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Select Semester
+			<td>
+				<select class="form-control"  name="courseSem" id="courseSem" required th:field="*{courseSem}">
+					<option value="0" style="color:#8F8B87" selected>Select Semester</option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td colspan=2 align=center>
+	        		<button type="submit" id="submit_all" class="btn btn-primary btn-block"> Get Electives </button>
+	    	</td> 	  
+		</tr>
+		
+		</table>
+		</form>
+		
+		<form th:if="${elective_ids}" th:action="@{/u/admin/showAllocations}"  role="form" method="POST" th:object="${elective}" id="all_form">   	    
+			<table>
+				<tr>
+					<td  colspan=2 align=center>
+					    <h4 class="card-title mt-3 text-center">Elective Course</h4>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						Select Elective Course
+					</td>
+					<td>		
+						<select class="form-control" name="electiveIdOption" id="electiveIdOption">
+							<option value="none" style="color:#8F8B87" selected>Select Course number</option>
+							<option th:each="i : ${elective_ids}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
+						</select>							
+					</td>
+				</tr>
+				
+				<tr>
+					<td colspan=2 align=center>
+						<button type="submit" id="submit_elective" class="btn btn-primary btn-block"> Submit  </button>     	
+					</td>
+				</tr>
+			</table> 	                                                 
+	</form>
+	<table th:if="${studAllocations}" class="table table-hover table-bordered">
+		<tr>
+			<th>Roll number</th>
+			<th>Elective Name</th>
+		</tr>
+		<tr th:each="i : ${studAllocations}">
+		<td th:text="${i.student.rollno}"></td>
+		
+		<!-- BELOW CODE DOES NOT WORK. SOLVE IT -->
+		<!-- <td th:text="${i.student.user_dets.firstName +' '+ i.student.user_dets.lastName}"></td>-->
+		
+		
+		<td th:text="${i.elective.electiveName + ' (' + i.elective.electiveCourseId + ' )'}"></td>
+		</tr>
+	</table>
+</article>
+	<div class="row text-center card-body mx-auto">
+		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+ 		<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
+ 	</div>  
+</div>
+</body>

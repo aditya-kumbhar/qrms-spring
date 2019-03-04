@@ -1,5 +1,8 @@
 package com.qrms.spring.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,6 +21,18 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 	@Id
 	@Column(name="user_name")
 	private String userName;
+	
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name="userName")
+	private Users user_dets;
+
+	public Users getUser_dets() {
+		return user_dets;
+	}
+
+	public void setUser_dets(Users user_dets) {
+		this.user_dets = user_dets;
+	}
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "dept_id")
@@ -41,6 +58,19 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 	
 	@Column(name="academic_year")
 	private String academicYear;
+
+	//Parent of FK relation to StudentAlloc -- on update/delete cascade
+	@OneToMany(mappedBy="student",cascade=CascadeType.ALL)
+	Set<StudentAllocCourse> studentAllocs = new HashSet<StudentAllocCourse>();
+	
+		
+	public Set<StudentAllocCourse> getStudentAllocs() {
+		return studentAllocs;
+	}
+
+	public void setStudentAllocs(Set<StudentAllocCourse> studentAllocs) {
+		this.studentAllocs = studentAllocs;
+	}
 
 	public String getAcademicYear() {
 		return academicYear;

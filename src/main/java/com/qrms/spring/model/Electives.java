@@ -33,6 +33,18 @@ public class Electives {
 	@OneToMany(mappedBy="elective",cascade=CascadeType.ALL)
 	Set<StudentPref> studentPrefs = new HashSet<StudentPref>();
 	
+	public Set<StudentAllocCourse> getStudentAllocs() {
+		return studentAllocs;
+	}
+
+	public void setStudentAllocs(Set<StudentAllocCourse> studentAllocs) {
+		this.studentAllocs = studentAllocs;
+	}
+
+	//Parent of FK relation to StudentAllocs -- on update/delete cascade
+	@OneToMany(mappedBy="elective",cascade=CascadeType.ALL)
+	Set<StudentAllocCourse> studentAllocs = new HashSet<StudentAllocCourse>();
+		
 	public Course getCourse() {
 		return course;
 	}
