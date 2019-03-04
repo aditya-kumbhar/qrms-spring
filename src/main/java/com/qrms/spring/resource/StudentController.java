@@ -2,10 +2,6 @@ package com.qrms.spring.resource;
 
 
 import java.util.ArrayList;
-import java.util.Optional;
-
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -64,8 +60,11 @@ public class StudentController {
 		
 		System.out.println(currUserAcad.getUserName());
 		
-		ArrayList<Course> elective_ids = courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'R',currUserAcad.getDepartment(),1,1);
-			
+		ArrayList<Course> elective_ids = courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartmentAndIsTheoryAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment(),1,1);
+		ArrayList<Course> open_elective_ids = courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndIsTheoryAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'O',1,1);
+		
+		elective_ids.addAll(open_elective_ids);
+		
 		model.addObject("elective_ids",elective_ids);
 		model.setViewName("/student/studentPref");
 		
@@ -115,8 +114,6 @@ public class StudentController {
 	//Handle student preference form
 	@RequestMapping(value = "/setStudentPrefs", method = RequestMethod.POST)
 	public ModelAndView addPreferences(String course1,String course2,String course3,String course4) {
-		
-		ModelAndView model = new ModelAndView();	
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
