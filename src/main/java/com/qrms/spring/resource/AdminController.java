@@ -117,7 +117,6 @@ public class AdminController {
 			System.out.println(s.getSubmitCount()+"/"+s.getTotalStudentCount());
 		}
 		model.addObject("countInfo", countInfo);
-		//model.addObject("students",totalStudentCount);
 		
 		model.setViewName("admin/home");
 		return model;
