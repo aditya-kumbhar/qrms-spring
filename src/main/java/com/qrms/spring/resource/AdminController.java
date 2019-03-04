@@ -82,19 +82,40 @@ public class AdminController {
 	
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
+		
+		return getViewAdminHome(null);
+	}
+	
+	public ModelAndView getViewAdminHome(List<StudentPrefCountInfo> studCountInfo) {
 		ModelAndView model = new ModelAndView();
+		
+		if(studCountInfo!=null) {
+			if(studCountInfo.isEmpty())
+				model.addObject("err_msg","There are no open student elective preference forms");
+			else
+				model.addObject("studCountInfo",studCountInfo);
+		}
+		model.setViewName("/admin/home");
+		return model;
+		
+	}
+	
+	@GetMapping("/getStudPrefDetailsTable")
+	public ModelAndView getStudPrefDetailsTable() {
+		
 		List<StudentCountByYearSem> totalStudentCount;
 		List<PrefGroupByCourseStudent> prefsPerElective;
-		List<StudentPrefCountInfo> countInfo = new ArrayList<StudentPrefCountInfo>();
-
-		
-		totalStudentCount = studentAcadRepository.findStudentCountByYearSem();
+		List<StudentPrefCountInfo> studCountInfo = new ArrayList<StudentPrefCountInfo>();
+	
+		totalStudentCount = studentAcadRepository.findStudentCountByYearSemDept();
 		prefsPerElective = studentPrefRepository.findPrefsGroupByCourseStudent();
 		Course c;
 		
+		List<Course> openCourses = courseRepository.findByStudAllocFlag(1);
+		
 		for(PrefGroupByCourseStudent p: prefsPerElective) {
 			c = courseRepository.findByCourseId(p.getCourseId());
-			//TODO: add check for department
+			
 			for(StudentCountByYearSem s: totalStudentCount) {
 			
 				if(s.getSem() == c.getCourseSem() && s.getYear().equals(c.getCourseYear())) {
@@ -106,21 +127,32 @@ public class AdminController {
 					si.setSubmitCount(p.getCount());
 					si.setTotalStudentCount(s.getCount());
 					si.setYear(c.getCourseYear());
-					countInfo.add(si);
-					totalStudentCount.remove(s);
+					studCountInfo.add(si);
+					openCourses.remove(c);
 					break;
 				}
 			}
 		}
-	
-		for(StudentPrefCountInfo s : countInfo) {
-			System.out.println(s.getSubmitCount()+"/"+s.getTotalStudentCount());
-		}
-		model.addObject("countInfo", countInfo);
-		//model.addObject("students",totalStudentCount);
 		
-		model.setViewName("admin/home");
-		return model;
+		for(Course openCourse: openCourses) {
+			StudentPrefCountInfo si = new StudentPrefCountInfo();
+			si.setCourseId(openCourse.getCourseId());
+			si.setCourseName(openCourse.getCourseName());
+			si.setDeptId(openCourse.getDepartment().getDeptId());
+			si.setSem(openCourse.getCourseSem());
+			si.setSubmitCount(0);
+			for(StudentCountByYearSem s: totalStudentCount) {
+				if(s.getSem() == openCourse.getCourseSem() && s.getYear().equals(openCourse.getCourseYear())) {
+					si.setTotalStudentCount(s.getCount());
+					break;
+				}
+			}
+			si.setYear(openCourse.getCourseYear());
+			studCountInfo.add(si);
+			
+		}
+	
+		return getViewAdminHome(studCountInfo);		
 	}
 
 	//Display register user form
@@ -632,7 +664,7 @@ public class AdminController {
 		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,1);
 		
 		if(elective_ids.size()==0) {
-			String err_msg = "No electives are opened for preference forms.";
+			String err_msg = "No elective preference forms are opened for specified year and sem.";
 			return getChangeSeats(elective_ids,electives,null,err_msg);
 		}
 		if(msg1!=null)

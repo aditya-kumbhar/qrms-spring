@@ -118,17 +118,13 @@
 	    	      }
 	    	   });
 	    });
-	    
-    </script>
-
-  
+	</script>
 </head> 
 
 <div th:replace="fragments/admin_header :: header"></div>
 
 <body>
-     
-     <!-- script to turn nav link active -->
+    <!-- script to turn nav link active -->
 	<script type="text/javascript">
 		var navBar = document.getElementById("nav-bar");		
 		var current = navBar.getElementsByClassName("active");
@@ -139,9 +135,10 @@
 		//set current page nav as active
 		document.getElementById("change-seats").className+=" active";		
 	</script>
+
 <div class="card bg-light">
 <article class="card-body mx-auto">
-	<h6 class="card-title mt-3 text-center">Enter Elective Details</h6>
+	<h5 class="card-title mt-3 text-center">Enter Elective Details</h5>
 	
 	<form th:action="@{/u/admin/findElectiveToChangeSeats}"  role="form" method="POST" th:object="${course}" id="all_form">   
 	<table>
