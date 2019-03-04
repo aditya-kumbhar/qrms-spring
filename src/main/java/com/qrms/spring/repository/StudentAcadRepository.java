@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.qrms.spring.model.Department;
 import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.queryBeans.StudentCountByYearSem;
 
@@ -22,4 +23,6 @@ public interface StudentAcadRepository extends JpaRepository<StudentAcad, Intege
 			"FROM StudentAcad sa "+
 			"GROUP BY sa.sem,sa.year")
 	List<StudentCountByYearSem> findStudentCountByYearSem();
+	ArrayList<StudentAcad> findBySemEqualsAndYearEqualsAndDepartmentEquals(int semester, String year,
+			Department department);
 }
