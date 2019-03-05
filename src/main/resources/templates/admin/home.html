@@ -8,7 +8,12 @@
 
     <!-- Custom styles for this template -->
    	<link th:href="@{/css/admin/admin_home.css}" rel="stylesheet">
-   
+	<script>
+	function SubmitForm(formId) {
+	    var oForm = document.getElementById(formId);
+	    oForm.submit(); 
+	}
+	</script>
 </head>
 
 <div th:replace="fragments/admin_header :: header"></div>
@@ -38,8 +43,10 @@
 	</div>
 </div>
 <div class="row text-center card-body mx-auto">
+	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
 	<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
-</div>  
+</div>
+<form action="/u/admin/performQuickAction-student" method="post" id="tableForm">  
 <table class="table table-bordered table-hover" th:if="${studCountInfo}">
   <thead class="thead-dark">
     <tr>    
@@ -48,17 +55,34 @@
       <th scope="col">Semester</th>
       <th scope="col">Department</th>
       <th scope="col">Form submissions</th>
+      <th scope="col">Select Action</th>
     </tr>
   </thead>			
   <tbody>
     <tr th:each="rs : ${studCountInfo}">
-     	<td th:text="${rs.courseName +' (' + rs.courseId + ')'}"></td>     	
+    	
+     	<td th:text="${rs.courseName +' (' + rs.courseId + ')'}">
+     	<!--Hidden input fields  -->  	   	
+     	</td>
      	<td th:text="${rs.year}"></td>
-     	<td th:text="${rs.sem}"></td>     	
+     	<td th:text="${rs.sem}"></td>
      	<td th:text="${rs.deptId}"></td>
      	<td th:text="${rs.submitCount + '/' + rs.totalStudentCount}"></td>
-    </tr>
+    	<td>
+    	<input type="hidden" th:name="courseId" th:value="${rs.courseId}"></input>
+     	<input type="hidden" th:name="courseYear" th:value="${rs.year}"></input>
+     	<input type="hidden" th:name="courseSem" th:value="${rs.sem}"></input>
+     	<input type="hidden" th:name="deptId" th:value="${rs.courseId}"></input>  
+    		<select class="form-control" th:name="selectAction" onchange="if(this.value!='none') { SubmitForm('tableForm'); }">
+				<option th:value="none" style="color:#8F8B87" selected>Select action</option>
+				<option th:value="closeForms" style="color:#000">Close forms</option>				
+				<option th:value="performAllocation" th:if="${rs.submitCount}!=0" style="color:#000">Perform allocation</option>
+				<option th:value="clearPrefs" th:if="${rs.submitCount}!=0" style="color:#000">Clear preferences</option>
+			</select>
+    	</td>
+   	</tr>
   </tbody>
 </table>
+</form>   
 </article>
 </body>

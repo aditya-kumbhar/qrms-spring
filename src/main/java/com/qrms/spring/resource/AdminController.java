@@ -80,6 +80,8 @@ public class AdminController {
 	
 	private List<Role> roles; 
 	
+	private String g_msg,g_err_msg;
+	
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
 		
@@ -92,12 +94,16 @@ public class AdminController {
 		if(studCountInfo!=null) {
 			if(studCountInfo.isEmpty())
 				model.addObject("err_msg","There are no open student elective preference forms");
-			else
+			else {
 				model.addObject("studCountInfo",studCountInfo);
+				if(g_msg!=null)
+					model.addObject("msg",g_msg);
+				else
+					model.addObject("err_msg",g_err_msg);
+			}
 		}
 		model.setViewName("/admin/home");
-		return model;
-		
+		return model;		
 	}
 	
 	@GetMapping("/getStudPrefDetailsTable")
@@ -151,10 +157,45 @@ public class AdminController {
 			studCountInfo.add(si);
 			
 		}
-	
 		return getViewAdminHome(studCountInfo);		
 	}
-
+	
+	//Display register user form
+	@Transactional
+	@RequestMapping(value = "/performQuickAction-student", method = RequestMethod.POST)
+	public ModelAndView studentAllocQuickAction(String courseId, String courseSem, String deptId, String coureYear, String selectAction) {
+		System.out.println(courseId);
+		System.out.println(selectAction);
+		String courses[] = courseId.split(",");
+		String actions[] = selectAction.split(",");
+		int i=0;
+		for(i=0; i<actions.length;i++) {
+			if(!actions[i].equals("none")) {
+				break;
+			}
+		}
+		ModelAndView mv = new ModelAndView(),model = null;
+		
+		if(actions[i].equals("performAllocation")) {
+			set_process_student_allocation(courses[i]);
+			
+			
+		} else if(actions[i].equals("clearPrefs")) {
+			clear_preferences(courses[i]);			
+			
+		} else {
+			//action = close pref forms
+			Course course = courseRepository.findByCourseId(courses[i]);				
+			course.setStudAllocFlag(0);
+			courseRepository.save(course);
+			g_msg = "Preference forms for Course-id: "+courses[i]+" have been closed";
+			g_err_msg = null;
+		}
+		
+		return getStudPrefDetailsTable();
+	}
+	
+	
 	//Display register user form
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public ModelAndView registerUsers() {
@@ -162,7 +203,6 @@ public class AdminController {
 		Users user = new Users();
 		roles = roleRepository.findAll();
 		departments = departmentRepository.findAll();
-		
 		model.addObject("user",user);
 		model.addObject("student",new StudentAcad());
 		model.addObject("roles",roles);
@@ -336,7 +376,6 @@ public class AdminController {
 
 		//check whether course is open for preferences or not
 		Course course = courseRepository.findByCourseId(electiveIdOption);
-		String msg ="",err_msg = "";
 		
 		
 		ArrayList<Electives> all_electives = electivesRepository.findByCourse(course);
@@ -344,18 +383,25 @@ public class AdminController {
 		if(all_electives.size()!=0) {
 			
 			int alloc = allocation_of_students_to_elective_course(course.getCourseId(),course.getCourseYear(),course.getCourseSem()); 
-			if (alloc==1)
-				 msg = "The allocation has been completed!";
-			else if(alloc==0)
-				err_msg = "No preferences are recorded!";
-			else if(alloc==-1)
-				err_msg = "Already Allocated!";
-			
+			if (alloc==1) {
+				 g_msg = "The allocation has been completed!";
+				 g_err_msg = null;
+			}
+			else if(alloc==0) {
+				g_err_msg = "No preferences are recorded!";
+				g_msg = null;
+			}
+			else if(alloc==-1) {
+				g_err_msg = "Allocation has already been performed for Course-id: "+electiveIdOption;
+				g_msg = null;
+			}
+				
 		}else {
-			err_msg = "No electives found for the course Id: ".concat(electiveIdOption);
+			g_err_msg = "No electives found for the course Id: ".concat(electiveIdOption);
+			g_msg = null;
 		}
 		
-		return process_student_allocation(null,msg,err_msg);
+		return process_student_allocation(null,g_msg,g_err_msg);
 	}	
 	
 	//Get studCourseAllocation HTML page
@@ -422,7 +468,6 @@ public class AdminController {
 					electiveVacancyPrefCounts.setElectiveId(electives.getElectiveCourseId());
 					electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);
 					
-
 					startCourse.setStudAllocFlag(1);
 					courseRepository.save(startCourse);	
 					
@@ -612,7 +657,7 @@ public class AdminController {
 	
 	@Transactional
 	@RequestMapping(value="/clear_preferences",method=RequestMethod.POST)
-	public ModelAndView clear_prefernces(String electiveIdOption) {
+	public ModelAndView clear_preferences(String electiveIdOption) {
 		
 		ModelAndView model = new ModelAndView();
 		System.out.println(electiveIdOption);
@@ -622,7 +667,10 @@ public class AdminController {
 		model.addObject("departments",departments);
 		model.addObject("course",new Course());
 		model.setViewName("/admin/clearStudPref");
-		model.addObject("msg","Cleared preferences for Course Id: "+electiveIdOption);
+		g_msg = "Cleared preferences for Course Id: "+electiveIdOption;
+		g_err_msg = null;
+		model.addObject("msg",g_msg);
+		
 		return model;
 	}
 	
