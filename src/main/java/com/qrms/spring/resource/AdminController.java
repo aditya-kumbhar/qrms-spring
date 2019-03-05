@@ -3,6 +3,7 @@ package com.qrms.spring.resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -186,7 +187,7 @@ public class AdminController {
 		} else {
 			//action = close pref forms
 			Course course = courseRepository.findByCourseId(courses[i]);				
-			course.setStudAllocFlag(0);
+			course.setStudAllocFlag(2);
 			courseRepository.save(course);
 			g_msg = "Preference forms for Course-id: "+courses[i]+" have been closed";
 			g_err_msg = null;
@@ -335,74 +336,9 @@ public class AdminController {
 		
 	}
 	
-	//Get studStartAllocation HTML page
-	@RequestMapping(value="/process_student_allocation",method=RequestMethod.GET)
-	public ModelAndView process_student_allocation(ArrayList<Course> elective_ids,String msg,String err_msg) {
-		ModelAndView model = new ModelAndView();
-		
-		ArrayList<Department> departments = departmentRepository.findAll();
-		model.addObject("departments",departments);
-		model.setViewName("/admin/studStartAllocation");
-		model.addObject("course",new Course());
-		
-		if(elective_ids!=null && !elective_ids.isEmpty())
-			model.addObject("elective_ids",elective_ids);
-		
-		if(msg!=null && !msg.equals(""))
-			model.addObject("msg",msg);
-		else if(err_msg!=null && !err_msg.equals(""))
-			model.addObject("err_msg",err_msg);
-		
-		return model;
-	}
-
-	//Retrieve all electives for specified dept, year and sem 
-	@RequestMapping(value="/findElectiveForStartAllocation",method=RequestMethod.POST)
-	public ModelAndView findElectiveForStartAllocation(@Valid Course course, String dept) {
 	
-		Department department = departmentRepository.findByDeptId(dept);
-		
-		System.out.println(course.getCourseSem()+" "+course.getCourseYear());
-		System.out.println(department.getDeptId());
-		
-		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,1);
 
-		return process_student_allocation(elective_ids,"","");
-	
-	}
-
-	@RequestMapping(value="/process_student_allocation_post",method=RequestMethod.POST)
-	public ModelAndView set_process_student_allocation(String electiveIdOption) {
-
-		//check whether course is open for preferences or not
-		Course course = courseRepository.findByCourseId(electiveIdOption);
 		
-		
-		ArrayList<Electives> all_electives = electivesRepository.findByCourse(course);
-		
-		if(all_electives.size()!=0) {
-			
-			int alloc = allocation_of_students_to_elective_course(course.getCourseId(),course.getCourseYear(),course.getCourseSem()); 
-			if (alloc==1) {
-				 g_msg = "The allocation has been completed!";
-				 g_err_msg = null;
-			}
-			else if(alloc==0) {
-				g_err_msg = "No preferences are recorded!";
-				g_msg = null;
-			}
-			else if(alloc==-1) {
-				g_err_msg = "Allocation has already been performed for Course-id: "+electiveIdOption;
-				g_msg = null;
-			}
-				
-		}else {
-			g_err_msg = "No electives found for the course Id: ".concat(electiveIdOption);
-			g_msg = null;
-		}
-		
-		return process_student_allocation(null,g_msg,g_err_msg);
-	}	
 	
 	//Get studCourseAllocation HTML page
 	@RequestMapping(value="/openCourseAllocation",method=RequestMethod.GET)
@@ -423,6 +359,8 @@ public class AdminController {
 		return model;
 	}
 	
+	
+
 	// CHANGE NEEDED AFTER HANDLING OPEN ELECTIVES
 	
 	//Retrieve all electives for specified dept, year and sem 
@@ -475,9 +413,9 @@ public class AdminController {
 							+startCourse.getCourseYear()+" Semester: "+startCourse.getCourseSem()
 							+" "+startCourse.getCourseName());
 				}
-				}else {
-					model.addObject("err_msg","No electives found for the Course Id: ".concat(electiveIdOption));
-				}
+			}else {
+				model.addObject("err_msg","No electives found for the Course Id: ".concat(electiveIdOption));
+			}
 							
 			}
 		
@@ -485,41 +423,142 @@ public class AdminController {
 		model.setViewName("/admin/studCourseAllocation");		
 		return model;
 	}	
+
+	//Get studStartAllocation HTML page
+		@RequestMapping(value="/process_student_allocation",method=RequestMethod.GET)
+		public ModelAndView process_student_allocation(ArrayList<Course> elective_ids,String msg,String err_msg) {
+			ModelAndView model = new ModelAndView();
+			
+			ArrayList<Department> departments = departmentRepository.findAll();
+			model.addObject("departments",departments);
+			model.setViewName("/admin/studStartAllocation");
+			model.addObject("course",new Course());
+			
+			if(elective_ids!=null && !elective_ids.isEmpty())
+				model.addObject("elective_ids",elective_ids);
+			
+			if(msg!=null)
+				model.addObject("msg",msg);
+			if(err_msg!=null)
+				model.addObject("err_msg",err_msg);
+			return model;
+		}
+
 	
+	//Retrieve all electives for specified dept, year and sem 
+	@RequestMapping(value="/findElectiveForStartAllocation",method=RequestMethod.POST)
+	public ModelAndView findElectiveForStartAllocation(@Valid Course course, String dept) {
+	
+		Department department = departmentRepository.findByDeptId(dept);
+		
+		System.out.println(course.getCourseSem()+" "+course.getCourseYear());
+		System.out.println(department.getDeptId());
+		
+		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,2);
+		if(elective_ids.size()==0) {
+			g_err_msg = "Preference Forms not closed for any Course.";
+			g_msg = null;
+		}else {
+			g_msg = null;
+			g_err_msg = null;
+		}
+		
+		return process_student_allocation(elective_ids,g_msg,g_err_msg);
+			
+	}
+
+	@Transactional
+	@RequestMapping(value="/process_student_allocation_post",method=RequestMethod.POST)
+	public ModelAndView set_process_student_allocation(String electiveIdOption) {
+
+		//check whether course is open for preferences or not
+		Course course = courseRepository.findByCourseId(electiveIdOption);
+		
+		
+		ArrayList<Electives> all_electives = electivesRepository.findByCourse(course);
+		
+		if(all_electives.size()!=0) {
+			
+			int alloc = allocation_of_students_to_elective_course(course.getCourseId(),course.getCourseYear(),course.getCourseSem()); 
+			if (alloc==1) {
+				 g_msg = "The allocation has been completed!";
+				 g_err_msg = null;
+			}
+			else if(alloc==0) {
+				g_err_msg = "No preferences are recorded!";
+				g_msg = null;
+			}
+			else if(alloc==-1) {
+				g_err_msg = "Allocation has already been performed for Course-id: "+electiveIdOption;
+				g_msg = null;
+			}
+			else if(alloc==-2) {
+				g_err_msg = "Number of total seats is less than number of students.";
+				g_msg = null;
+			}
+				
+		}else {
+			g_err_msg = "No electives found for the course Id: ".concat(electiveIdOption);
+			g_msg = null;
+		}
+		
+		return process_student_allocation(null,g_msg,g_err_msg);
+	}
 	
 	// CHANGE NEEDED AFTER HANDLING OPEN ELECTIVES
 	
 	private int allocation_of_students_to_elective_course(String course_id,String year,int semester) {
 		
-		ArrayList<Electives> popularElectives = calculatePrefCounts(course_id,year,semester);
 		ArrayList<StudentPref> studentPrefs = studentPrefRepository.findByCourseIdEquals(course_id);
-		ArrayList<StudentAllocCourse> studentAllocs = studentAllocCourseRepository.findByCourseId(courseRepository.findByCourseId(course_id));
-		
+
 		Course ElCourse = courseRepository.findByCourseId(course_id);
+		ArrayList<StudentAllocCourse> studentAllocs = studentAllocCourseRepository.findByCourseId(ElCourse);
 		
-		if(studentAllocs.size()==0) {
+		
+		
+		if(studentAllocs.size()!=0) {
+			studentAllocCourseRepository.deleteByCourseId(ElCourse);
+		}
 			if(studentPrefs.size()!=0) {
-				ArrayList<StudentPref> temp = new ArrayList<StudentPref>();
-				
-				for (StudentPref studentPref : studentPrefs) {
-					
-					Course c =courseRepository.findByCourseId(studentPref.getCourseId());
-					if (c.getCourseSem()!=semester ||c.getCourseYear()!=year)
-						{
-							temp.add(studentPref);
-						}
-						
-				}
-				
-				for (StudentPref studentPref : temp) {
-					studentPrefs.remove(studentPref);
-				}
+//				ArrayList<StudentPref> temp = new ArrayList<StudentPref>();				
+//				for (StudentPref studentPref : studentPrefs) {
+//					
+//					Course c =courseRepository.findByCourseId(studentPref.getCourseId());
+//					if (c.getCourseSem()!=semester ||c.getCourseYear()!=year)
+//						{
+//							temp.add(studentPref);
+//						}
+//						
+//				}
+//				
+//				for (StudentPref studentPref : temp) {
+//					studentPrefs.remove(studentPref);
+//				}
 				
 				ArrayList<StudentAcad> studentAcads = studentAcadRepository.findBySemEqualsAndYearEqualsAndDepartmentEquals(semester,year,ElCourse.getDepartment());
 
 				Collections.sort(studentAcads);
 				
+				
+				//Store all vacancy counts for all courses
+				
+				ArrayList <ElectiveVacancyPrefCounts> allElectiveCounts = electiveVacancyPrefCountsRepository.findByCourseId(course_id);
+				
+
+				HashMap<String,Integer> eVHM = new HashMap<String,Integer>();
+				
+				for (ElectiveVacancyPrefCounts e : allElectiveCounts) {
+					eVHM.put(e.getElectiveId(), e.getVacancyCount());							
+				}
+				
+				ArrayList<Electives> popularElectives = calculatePrefCounts(course_id,year,semester,allElectiveCounts);
+				
+				
+				HashMap<StudentAcad,StudentAllocCourse> studAllocs = new HashMap<StudentAcad,StudentAllocCourse>();
+				
 				//for each student in reverse 
+				
+				
 				
 				for (StudentAcad studentAcad : studentAcads) {
 					ArrayList<StudentPref> stud = studentPrefRepository.findByUserName(studentAcad.getUserName());
@@ -535,15 +574,13 @@ public class AdminController {
 						
 						int prefNo = 1;
 						int flag = 0;
+						
 						for (Electives pref : prefs) {
-							ElectiveVacancyPrefCounts e = electiveVacancyPrefCountsRepository.findByElectiveId(pref.getElectiveCourseId());
-							
-							if (e.getVacancyCount()>0)
-							{
-								e.setVacancyCount(e.getVacancyCount()-1);
-//								StudentAllocCourse s = new StudentAllocCourse(elective_id,pref,studentAcad.getUserName(),prefNo);
+							int vCount = eVHM.get(pref.getElectiveCourseId());
+							if (vCount>0) {
+								eVHM.replace(pref.getElectiveCourseId(), vCount-1);
 								StudentAllocCourse s = new StudentAllocCourse(pref, pref.getCourse(), studentAcad, prefNo);
-								studentAllocCourseRepository.save(s);
+								studAllocs.put(studentAcad, s);
 								flag = 1;
 								break;
 							}
@@ -554,18 +591,18 @@ public class AdminController {
 							System.out.println("No preference left!");
 							System.out.println("Assigning course according to popularity!");
 							for (Electives e : popularElectives) {
-								ElectiveVacancyPrefCounts eC = electiveVacancyPrefCountsRepository.findByElectiveId(e.getElectiveCourseId());
-								if (eC.getVacancyCount()>0)
-								{
-									eC.setVacancyCount(eC.getVacancyCount()-1);
+								int vCount = eVHM.get(e.getElectiveCourseId());
+								if (vCount>0) {
+									eVHM.replace(e.getElectiveCourseId(), vCount-1);
 									StudentAllocCourse s = new StudentAllocCourse(e,e.getCourse(),studentAcad,-1);
-									studentAllocCourseRepository.save(s);
+									studAllocs.put(studentAcad, s);
 									flag = 1;
 									break;
 								}
 							}
 							if(flag==0) {
 								System.out.println("NO OPTION LEFT!!!! NEED TO INCREASE CAPACITY!!!");
+								return -2;
 							}
 						}
 						
@@ -575,47 +612,55 @@ public class AdminController {
 						System.out.println("Assigning course according to popularity!");
 						int flag=0;
 						for (Electives e : popularElectives) {
-							ElectiveVacancyPrefCounts eC = electiveVacancyPrefCountsRepository.findByElectiveId(e.getElectiveCourseId());
-							if (eC.getVacancyCount()>0)
-							{
-								eC.setVacancyCount(eC.getVacancyCount()-1);
+							int vCount = eVHM.get(e.getElectiveCourseId());
+							if (vCount>0) {
+								eVHM.replace(e.getElectiveCourseId(), vCount-1);
 								StudentAllocCourse s = new StudentAllocCourse(e,e.getCourse(),studentAcad,-1);
-								studentAllocCourseRepository.save(s);
+								studAllocs.put(studentAcad, s);
 								flag = 1;
 								break;
 							}
 						}
 						if(flag==0) {
 							System.out.println("NO OPTION LEFT!!!! NEED TO INCREASE CAPACITY!!!");
+							return -2;
 						}
 
 					}
 					
 				}
+				for (StudentAcad s : studAllocs.keySet()) {
+					studentAllocCourseRepository.save(studAllocs.get(s));
+				}
+				
+//				for (ElectiveVacancyPrefCounts e : allElectiveCounts) {
+//					e.setVacancyCount(eVHM.get(e.getElectiveId()));
+//					electiveVacancyPrefCountsRepository.save(e);
+//				}
+				
 				return 1;
 			}else {
 				return 0;
 			}
-		}
-		else {
-			return -1;
-		}
+//		}
+//		else {
+//			return -1;
+//		}
 		
 		
 	}
 
-	private ArrayList<Electives> calculatePrefCounts(String course_id,String year,int semester){
+	private ArrayList<Electives> calculatePrefCounts(String course_id,String year,int semester,ArrayList <ElectiveVacancyPrefCounts> electiveVacancyPrefCounts){
 
-		ArrayList <ElectiveVacancyPrefCounts> electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findByCourseId(course_id);
 		Collections.sort(electiveVacancyPrefCounts);
 		
 		ArrayList<Electives> electivesList = new ArrayList<>();
 				
 		for (ElectiveVacancyPrefCounts e : electiveVacancyPrefCounts) {
-			Course c = courseRepository.findByCourseId(e.getCourseId());
-			if(c.getCourseSem()==semester && c.getCourseYear()==year) {
+//			Course c = courseRepository.findByCourseId(e.getCourseId());
+//			if(c.getCourseSem()==semester && c.getCourseYear()==year) {
 				electivesList.add(electivesRepository.findByElectiveCourseId(e.getElectiveId()));
-			}
+//			}
 		}
 		return electivesList;
 	}
@@ -709,7 +754,7 @@ public class AdminController {
 		System.out.println(course.getCourseSem()+" "+course.getCourseYear());
 		System.out.println(department.getDeptId());
 		
-		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,1);
+		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,2);
 		
 		if(elective_ids.size()==0) {
 			String err_msg = "No elective preference forms are opened for specified year and sem.";
@@ -792,7 +837,7 @@ public class AdminController {
 		System.out.println(course.getCourseSem()+" "+course.getCourseYear());
 		System.out.println(department.getDeptId());
 		
-		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,1);
+		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,2);
 		
 		if(elective_ids.size()==0) {
 			String err_msg = "No electives are opened for preference forms.";

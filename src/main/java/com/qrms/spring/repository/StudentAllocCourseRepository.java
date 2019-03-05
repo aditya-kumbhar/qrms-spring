@@ -9,4 +9,6 @@ import com.qrms.spring.model.StudentAllocCourse;
 
 public interface StudentAllocCourseRepository extends JpaRepository<StudentAllocCourse, Integer> {
 	ArrayList<StudentAllocCourse> findByCourseId(Course course_id);
+
+	void deleteByCourseId(Course course);
 }
