@@ -46,8 +46,15 @@
 	        	
 	            var cyear = $('#courseYear');
 	            var csem = $('#courseSem');
+				var dept = $('#dept');
 	            
-	          	if (cyear.val() == "none") {
+	            if (dept.val() == "none") {
+	                alert("Please select a course department");
+	                $('#dept').focus();
+	                
+	                return false;
+	            }
+	            else if (cyear.val() == "none") {
 	                alert("Please select a course year");
 	                $('#courseYear').focus();
 	                
@@ -69,7 +76,18 @@
 	        });
 	    });
 	    
-	
+	    $(document).ready(function() {
+    	   $('#dept').css('color','#8F8B87');
+    	   $('#dept').change(function() {
+    	      var current = $('#dept').val();
+    	      if (current != 'none') {
+    	          $('#dept').css('color','black');
+    	      } else {
+    	          $('#dept').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
 	    $(document).ready(function() {
     	   $('#courseYear').css('color','#8F8B87');
     	   $('#courseYear').change(function() {
