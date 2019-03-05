@@ -26,7 +26,7 @@
 	           else return;
 	       });
 	   });
-    
+	    
 	    $(document).ready(function () {
 	        $("#submit2").click(function () {
 	
@@ -60,6 +60,18 @@
 	
 	                return false;
 	            } 
+	            else if (pref1.val()==pref2.val() || 
+	            		 pref1.val()==pref3.val() || 
+	            		 pref1.val()==pref4.val() || 
+	            		 pref2.val()==pref3.val() || 
+	            		 pref2.val()==pref4.val() || 
+	            		 pref3.val()==pref4.val()) {
+	            	
+	            	alert("Two fields cannot have same value");
+	
+	                return false;
+	            	
+	            }
 	            
 	            else return;
 	        });
@@ -124,6 +136,7 @@
      	      }
      	   }); 
     	});
+	    
 	    
     </script>
     

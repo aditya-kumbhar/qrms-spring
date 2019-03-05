@@ -25,34 +25,27 @@
 	            }
 	        });
 	    });
-		
-	    $(document).ready(function () {
-	        $("#submit_elective").click(function () {
-	        	
-	            var cyear = $('#electiveIdOption');
-	            var csem = $('#electiveIdOption');
-	            
-	          	if (cyear.val() == "none") {
-	                alert("Please select an elective");
-	                $('#electiveIdOption').focus();
-	                
-	               return false;
-	            }
-	        });
-	    });
     	
 	    $(document).ready(function () {
-	        $("#submit_all").click(function () {
+	        $("#submit1").click(function () {
 	        	
 	            var cyear = $('#courseYear');
 	            var csem = $('#courseSem');
+	            var dept = $('#dept');
 	            
-	          	if (cyear.val() == "none") {
+	            if (dept.val() == "none") {
+	                alert("Please select a course department");
+	                $('#dept').focus();
+	                
+	                return false;
+	            }
+	            else if (cyear.val() == "none") {
 	                alert("Please select a course year");
 	                $('#courseYear').focus();
 	                
 	               return false;
-	            } else if (csem.val() == "0") {
+	            } 
+	            else if (csem.val() == "0") {
 	                alert("Please select a semester");
 	                $('#courseSem').focus();
 	                
@@ -68,8 +61,48 @@
 	            else return;
 	        });
 	    });
+		
+	    $(document).ready(function () {
+	        $("#submit2").click(function () {
+	        	
+	            var cyear = $('#electiveIdOption');
+	            var csem = $('#electiveIdOption');
+	            
+	          	if (cyear.val() == "none") {
+	                alert("Please select an elective course");
+	                $('#electiveIdOption').focus();
+	                
+	               return false;
+	            }
+	        });
+	    });
 	    
-	
+	    $(document).ready(function () {
+	        $("#submit3").click(function () {
+	        	
+	            var elec = $('#selectedElective');
+	            
+	          	if (elec.val() == "none") {
+	                alert("Please select an elective");
+	                $('#selectedElective').focus();
+	                
+	               return false;
+	            }
+	        });
+	    });
+    	
+	    $(document).ready(function() {
+    	   $('#dept').css('color','#8F8B87');
+    	   $('#dept').change(function() {
+    	      var current = $('#dept').val();
+    	      if (current != 'none') {
+    	          $('#dept').css('color','black');
+    	      } else {
+    	          $('#dept').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
 	    $(document).ready(function() {
     	   $('#courseYear').css('color','#8F8B87');
     	   $('#courseYear').change(function() {
@@ -83,18 +116,6 @@
     	});
 	    
 	    $(document).ready(function() {
-	    	   $('#electiveIdOption').css('color','#8F8B87');
-	    	   $('#electiveIdOption').change(function() {
-	    	      var current = $('#electiveIdOption').val();
-	    	      if (current != 'none') {
-	    	          $('#electiveIdOption').css('color','black');
-	    	      } else {
-	    	          $('#electiveIdOption').css('color','#8F8B87');
-	    	      }
-	    	   }); 
-	    	});
-	    
-	    $(document).ready(function() {
     	   $('#courseSem').css('color','#8F8B87');
     	   $('#courseSem').change(function() {
     	      var current = $('#courseSem').val();
@@ -106,17 +127,29 @@
     	   }); 
     	});
 	    
+	    $(document).ready(function() {
+    	   $('#electiveIdOption').css('color','#8F8B87');
+    	   $('#electiveIdOption').change(function() {
+    	      var current = $('#electiveIdOption').val();
+    	      if (current != 'none') {
+    	          $('#electiveIdOption').css('color','black');
+    	      } else {
+    	          $('#electiveIdOption').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
 	    $(document).ready(function(){
 	    	$('#selectedElective').css('color','#8F8B87');
 	    	$('#selectedElective').change(function() {
-	    	      var current = $('#selectedElective').val();
-	    	      if (current != 'none') {
-	    	          $('#courseSem').css('color','black');
-	    	          document.getElementById("seats").placeholder = "Enter new Seats";
-	    	      } else {
-	    	          $('#courseSem').css('color','#8F8B87');
-	    	      }
-	    	   });
+    	      var current = $('#selectedElective').val();
+    	      if (current != 'none') {
+    	          $('#selectedElective').css('color','black');
+    	          document.getElementById("seats").placeholder = "Enter new Seats";
+    	      } else {
+    	          $('#selectedElective').css('color','#8F8B87');
+    	      }
+    	   });
 	    });
 	</script>
 </head> 
@@ -140,6 +173,7 @@
 <article class="card-body mx-auto">
 	<h5 class="card-title mt-3 text-center">Enter Elective Details</h5>
 	
+	<!-- Form 1 -->
 	<form th:action="@{/u/admin/findElectiveToChangeSeats}"  role="form" method="POST" th:object="${course}" id="all_form">   
 	<table>
 		<tr>
@@ -181,13 +215,14 @@
 		
 		<tr>
 			<td colspan=2 align=center>
-	        		<button type="submit" id="submit_all" class="btn btn-primary btn-block"> Get Electives </button>
+	        		<button type="submit" id="submit1" class="btn btn-primary btn-block"> Get Electives </button>
 	    	</td> 	  
 		</tr>
 		
 		</table>
 		</form>
 		
+		<!-- Form 2 -->
 		<form th:if="${elective_ids}" th:action="@{/u/admin/findElectivesForCourse}"  role="form" method="POST" th:object="${elective}" id="all_form">   	    
 			<table>
 				<tr>
@@ -210,12 +245,13 @@
 				
 				<tr>
 					<td colspan=2 align=center>
-						<button type="submit" id="submit_elective" class="btn btn-primary btn-block"> Submit  </button>     	
+						<button type="submit" id="submit2" class="btn btn-primary btn-block"> Submit  </button>     	
 					</td>
 				</tr>
 			</table> 	                                                 
 	</form>
 	
+	<!-- Form 3 -->
 	<form th:if="${electives}" th:action="@{/u/admin/changeElectiveSeats}"  role="form" method="POST" th:object="${eCount}" id="all_form">
 		<table>
 			<tr>
@@ -239,12 +275,12 @@
 					Enter new seats
 				</td>
 				<td>
-					<input type="number" id="seats" name="seats" placeholder="Enter number of seats" th:field="*{vacancyCount}">
+					<input type="number" id="seats" name="seats" placeholder="Enter number of seats" th:field="*{vacancyCount}" min=0>
 				</td>
 			</tr>
 			<tr>
 				<td colspan=2 align=center>
-					<button type="submit" id="submit_elective_seats" class="btn btn-primary btn-block"> Submit </button>     	
+					<button type="submit" id="submit3" class="btn btn-primary btn-block"> Submit </button>     	
 				</td>
 			</tr>
 		</table>
