@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,6 +24,7 @@ import com.qrms.spring.model.StudentAllocCourse;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.PrefGroupByCourseStudent;
+import com.qrms.spring.queryBeans.PrefNumCountPerElective;
 import com.qrms.spring.queryBeans.StudentCountByYearSem;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.model.Course;
@@ -82,6 +84,7 @@ public class AdminController {
 	private List<Role> roles; 
 	
 	private String g_msg,g_err_msg;
+	private List<StudentPrefCountInfo> prefSummaryList;
 	
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
@@ -105,11 +108,10 @@ public class AdminController {
 		}
 		model.setViewName("/admin/home");
 		return model;		
+	
 	}
 	
-	@GetMapping("/getStudPrefDetailsTable")
-	public ModelAndView getStudPrefDetailsTable() {
-		
+	private List<StudentPrefCountInfo> computeStudPrefTable() {
 		List<StudentCountByYearSem> totalStudentCount;
 		List<PrefGroupByCourseStudent> prefsPerElective;
 		List<StudentPrefCountInfo> studCountInfo = new ArrayList<StudentPrefCountInfo>();
@@ -158,16 +160,37 @@ public class AdminController {
 			studCountInfo.add(si);
 			
 		}
-		return getViewAdminHome(studCountInfo);		
+		if(prefSummaryList!=null) {
+			for(StudentPrefCountInfo ps: prefSummaryList) {
+				System.out.println(ps.getCourseName()+" "+ps.getCount1()+" "+ps.getCount2()+" "+ps.getCount3()+" "+ps.getCount4());
+			}
+		}
+		
+		return studCountInfo;
+	}
+	
+	@GetMapping("/getStudPrefDetailsTable")
+	public ModelAndView getStudPrefDetailsTable() {		
+	
+		return getViewAdminHome(computeStudPrefTable());		
+		
+	}
+	
+	@GetMapping("/getViewPreferenceDetails")
+	public ModelAndView getViewPreferenceDetails() {		
+		g_err_msg = null;
+		g_msg = null;
+		return getViewAdminHome(computeStudPrefTable());		
+		
 	}
 	
 	//Display register user form
 	@Transactional
 	@RequestMapping(value = "/performQuickAction-student", method = RequestMethod.POST)
-	public ModelAndView studentAllocQuickAction(String courseId, String courseSem, String deptId, String coureYear, String selectAction) {
+	public ModelAndView studentAllocQuickAction(String courseId,  String selectAction, String courseName) {
 		System.out.println(courseId);
 		System.out.println(selectAction);
-		String courses[] = courseId.split(",");
+		String courseIds[] = courseId.split(",");
 		String actions[] = selectAction.split(",");
 		int i=0;
 		for(i=0; i<actions.length;i++) {
@@ -175,21 +198,54 @@ public class AdminController {
 				break;
 			}
 		}
-		ModelAndView mv = new ModelAndView(),model = null;
 		
 		if(actions[i].equals("performAllocation")) {
-			set_process_student_allocation(courses[i]);
+			set_process_student_allocation(courseIds[i]);
 			
 			
 		} else if(actions[i].equals("clearPrefs")) {
-			clear_preferences(courses[i]);			
+			clear_preferences(courseIds[i]);			
 			
-		} else {
+		} else if(actions[i].equals("summary")) {
+			
+			prefSummaryList = new ArrayList<StudentPrefCountInfo>();
+			Course course = courseRepository.findByCourseId(courseIds[i]);
+			List<Electives> electives = electivesRepository.findByCourse(course);
+			List<PrefNumCountPerElective> countPerElectiveList = studentPrefRepository.findPrefNumCountPerElective();
+			
+			for(Electives e: electives) {
+				StudentPrefCountInfo ps = new StudentPrefCountInfo(0); //initialing all prefCounts = 0
+				ps.setCourseId(e.getElectiveCourseId());
+				ps.setCourseName(e.getElectiveName());
+				
+				for(PrefNumCountPerElective countPerElective : countPerElectiveList) {
+					if(countPerElective.getElective().getElectiveCourseId().equals(e.getElectiveCourseId())) {
+						switch(countPerElective.getPrefNo()) {
+							case 1: ps.setCount1(countPerElective.getCount());	break;
+							case 2: ps.setCount2(countPerElective.getCount());	break;
+							case 3: ps.setCount3(countPerElective.getCount());	break;
+							case 4: ps.setCount4(countPerElective.getCount());	break;													
+						}
+					}
+				}				
+				prefSummaryList.add(ps);
+			}
+			
+			List<StudentPrefCountInfo> computeStudPrefTable = computeStudPrefTable();
+			ModelAndView model = new ModelAndView();
+			model.addObject("studCountInfo",computeStudPrefTable);
+			model.addObject("prefSummaryList",prefSummaryList);
+			model.setViewName("/admin/home");
+			return model;
+		}
+		
+		else {
 			//action = close pref forms
-			Course course = courseRepository.findByCourseId(courses[i]);				
+			
+			Course course = courseRepository.findByCourseId(courseIds[i]);				
 			course.setStudAllocFlag(2);
 			courseRepository.save(course);
-			g_msg = "Preference forms for Course-id: "+courses[i]+" have been closed";
+			g_msg = "Preference forms for Course-id: "+courseIds[i]+" have been closed";
 			g_err_msg = null;
 		}
 		
@@ -473,8 +529,8 @@ public class AdminController {
 
 		//check whether course is open for preferences or not
 		Course course = courseRepository.findByCourseId(electiveIdOption);
-		
-		
+		System.out.println(course.getCourseId()+" "+course.getStudAllocFlag());
+		if(course.getStudAllocFlag()==2) {
 		ArrayList<Electives> all_electives = electivesRepository.findByCourse(course);
 		
 		if(all_electives.size()!=0) {
@@ -501,7 +557,10 @@ public class AdminController {
 			g_err_msg = "No electives found for the course Id: ".concat(electiveIdOption);
 			g_msg = null;
 		}
-		
+		}else {
+			g_err_msg = "Preference forms should be closed before performing allocation.";
+			g_msg = null;
+		}
 		return process_student_allocation(null,g_msg,g_err_msg);
 	}
 	
@@ -559,9 +618,8 @@ public class AdminController {
 				//for each student in reverse 
 				
 				
-				
 				for (StudentAcad studentAcad : studentAcads) {
-					ArrayList<StudentPref> stud = studentPrefRepository.findByUserName(studentAcad.getUserName());
+					ArrayList<StudentPref> stud = studentPrefRepository.findByUserNameAndCourseId(studentAcad.getUserName(),course_id);
 					
 					if(stud.size()!=0) {
 						
@@ -685,7 +743,7 @@ public class AdminController {
 			System.out.println(course.getCourseSem()+" "+course.getCourseYear());
 			System.out.println(department.getDeptId());
 			
-			ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,1);
+			ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlagNot(course.getCourseSem(),course.getCourseYear(),'R',department,1,0);
 
 			for(Course el : elective_ids) {
 				System.out.println(el.getCourseName());
@@ -707,6 +765,10 @@ public class AdminController {
 		ModelAndView model = new ModelAndView();
 		System.out.println(electiveIdOption);
 		studentPrefRepository.deleteByCourseId(electiveIdOption);
+		
+		Course c = courseRepository.findByCourseId(electiveIdOption);
+		c.setStudAllocFlag(0);
+		courseRepository.save(c);
 		
 		ArrayList<Department> departments = departmentRepository.findAll();
 		model.addObject("departments",departments);

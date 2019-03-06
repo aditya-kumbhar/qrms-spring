@@ -38,7 +38,7 @@
 			<h5 class="float-left">Active student elective choice forms</h5>
 		</div>
 		<div class="col-sm">	
-			<a href="/u/admin/getStudPrefDetailsTable" class="btn btn-primary" >View Details</a>
+			<a href="/u/admin/getViewPreferenceDetails" class="btn btn-primary" >View Details</a>
 		</div>
 	</div>
 </div>
@@ -70,19 +70,41 @@
      	<td th:text="${rs.submitCount + '/' + rs.totalStudentCount}"></td>
     	<td>
     	<input type="hidden" th:name="courseId" th:value="${rs.courseId}"></input>
+     	<input type="hidden" th:name="courseName" th:value="${rs.courseName}"></input>
      	<input type="hidden" th:name="courseYear" th:value="${rs.year}"></input>
      	<input type="hidden" th:name="courseSem" th:value="${rs.sem}"></input>
-     	<input type="hidden" th:name="deptId" th:value="${rs.courseId}"></input>  
+     	<input type="hidden" th:name="deptId" th:value="${rs.deptId}"></input>  
     		<select class="form-control" th:name="selectAction" onchange="if(this.value!='none') { SubmitForm('tableForm'); }">
 				<option th:value="none" style="color:#8F8B87" selected>Select action</option>
-				<option th:value="closeForms" style="color:#000">Close forms</option>				
+				<option th:value="closeForms" th:if="${rs.submitCount}!=0" style="color:#000">Close forms</option>				
 				<option th:value="performAllocation" th:if="${rs.submitCount}!=0" style="color:#000">Perform allocation</option>
 				<option th:value="clearPrefs" th:if="${rs.submitCount}!=0" style="color:#000">Clear preferences</option>
+				<option th:value="summary" th:if="${rs.submitCount}!=0" style="color:#000">Preference summary</option>					
 			</select>
     	</td>
    	</tr>
   </tbody>
 </table>
-</form>   
+</form>
+<table th:if="${prefSummaryList}" class="table table-bordered table-hover">
+<thead class="thead">
+    <tr>    
+      <th scope="col">Elective</th>
+      <th scope="col">Preference 1</th>      
+      <th scope="col">Preference 2</th>
+      <th scope="col">Preference 3</th>
+      <th scope="col">Preference 4</th>
+    </tr>
+  </thead>			
+  <tbody>
+    <tr th:each="rs : ${prefSummaryList}">    	
+     	<td th:text="${rs.courseName +' (' + rs.courseId + ')'}"></td>
+     	<td th:text="${rs.count1}"></td>
+     	<td th:text="${rs.count2}"></td>
+     	<td th:text="${rs.count3}"></td>
+     	<td th:text="${rs.count4}"></td>
+   	</tr>
+  </tbody>
+</table>  
 </article>
 </body>
