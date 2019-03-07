@@ -18,27 +18,6 @@
 		    });
 		});
 		
-		function selectYear()
-		{
-			$.ajax({
-		        type: "GET",
-		        contentType: "application/json",
-		        url: '/u/admin/getStudPrefDetailsTable_async',
-		        success: function (data) {
-	               console.log(data);
-	               if ($(data).find('alert').length) {
-	            	   $('#messageDiv').html('');
-	                   $('#messageDiv').html(data);                   
-	               }
-	               else{
-	            	   $('#studPrefTable').html('');
-	                   $('#studPrefTable').html(data);
-	                   
-	              	 }
-	               }
-			});
-		}
-		
 		$(document).ready(function(){
 		    $("#f1").submit(function(){
 		        $("#f2").show();
@@ -56,6 +35,17 @@
 				return false;
 			});
 		});
+		
+		$(document).ready(function(){
+	    	$('#pref').change(function(){
+	    		var current = $('#pref').val();
+	    		if(current!="none"){
+	    			$('.exp').css("display",'');
+	    		} else{
+	    			$('.exp').css("display",'none');
+	    		}
+	    	});
+	    });
 	</script>
 	
 </head>
@@ -193,7 +183,7 @@
 			    Select Year
 			</td>
 			<td>
-				<select class="form-control" th:name="elective_id" th:id="elective_id" onchange="if(this.value!='none') { selectYear('tableForm'); } else $('#f2').hide();" required>
+				<select class="form-control" th:name="elective_id" th:id="elective_id" required>
 					<option th:value="none" style="color:#8F8B87" selected >Select Year</option>
 					<option value="SE" style="color:#000">SE</option>
 					<option value="TE" style="color:#000">TE</option>
@@ -227,13 +217,13 @@
     		</td>
     		<td>
     			<select class="form-control" th:name="course1" th:id="pref">
-					<option th:value="Preference_1" style="color:#8F8B87" selected>Select Course</option>
-					
+					<option th:value="none" style="color:#8F8B87" selected>Select Course</option>
+					<option value="hi">Hi</option>
 				</select>
     		</td>
     	</tr>
     	
-    	<tr>
+    	<tr class="exp" style="display: none">
     		<td>
     			Number of times course taught
     		</td>
@@ -242,7 +232,7 @@
     		</td>
     	</tr>
     	
-    	<tr>
+    	<tr class="exp" style="display: none">
     		<td>
     			Pre1 times
     		</td>
@@ -251,7 +241,7 @@
     		</td>
     	</tr>
     	
-    	<tr>
+    	<tr class="exp" style="display: none">
     		<td>
     			Pre2 times
     		</td>

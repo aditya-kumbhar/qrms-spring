@@ -46,20 +46,20 @@ public class FacultyController {
 		System.out.println(userName);
 		
 
-		FacultyAcad currUserAcad = facultyAcadRepository.findByUserName(userName);
+		//FacultyAcad currUserAcad = facultyAcadRepository.findByUserName(userName);
 		
-		//System.out.println(currUserAcad.getUserName());
+		//System.out.println(currUserAcad.getDepartment());
 		
-		ArrayList<Course> course_ids = courseRepository.findByDepartment(currUserAcad.getDepartment());
+		//ArrayList<Course> course_ids = courseRepository.findByDepartment(currUserAcad.getDepartment());
 		
-		if(course_ids.size()!=0)
-		{
-			model.addObject("course_ids",course_ids);
-			if(msg!=null)
-				model.addObject("msg",msg);
-		}
-		else
-			model.addObject("err_msg","No courses exist");
+//		if(course_ids.size()!=0)
+//		{
+//			model.addObject("course_ids",course_ids);
+//			if(msg!=null)
+//				model.addObject("msg",msg);
+//		}
+//		else
+//			model.addObject("err_msg","No courses exist");
 		
 		model.setViewName("/faculty/facultyPref");
 		
