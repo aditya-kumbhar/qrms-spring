@@ -15,6 +15,29 @@ import javax.persistence.TemporalType;
 @Entity
 public class PasswordResetToken {
 	
+	public PasswordResetToken(PasswordResetToken passwordResetToken) {
+    	this.expiryDate = passwordResetToken.expiryDate;
+    	this.id = passwordResetToken.id;
+    	this.token = passwordResetToken.token;
+    	this.user = passwordResetToken.user;
+    }
+	
+    public PasswordResetToken() {
+    	
+    }
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+  
+    private String token;
+  
+    @OneToOne(targetEntity = Users.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "user_id")
+    private Users user;
+  
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date expiryDate;
 	public Long getId() {
 		return id;
 	}
@@ -58,28 +81,4 @@ public class PasswordResetToken {
 		this.expiryDate = date;
 	
 	}
-	  
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-  
-    private String token;
-  
-    @OneToOne(targetEntity = Users.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id")
-    private Users user;
-  
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date expiryDate;
-
-    public PasswordResetToken() {
-    	
-    }
-    
-    public PasswordResetToken(PasswordResetToken passwordResetToken) {
-    	this.expiryDate = passwordResetToken.expiryDate;
-    	this.id = passwordResetToken.id;
-    	this.token = passwordResetToken.token;
-    	this.user = passwordResetToken.user;
-    }
 }

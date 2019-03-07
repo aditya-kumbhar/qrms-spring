@@ -9,6 +9,27 @@ import javax.persistence.Table;
 @Table(name="student_elective_vacancy_pref_counts")
 public class ElectiveVacancyPrefCounts implements Comparable<ElectiveVacancyPrefCounts>{
 
+	public ElectiveVacancyPrefCounts(String courseId, String electiveId, int vacancyCount, int prefCount) {
+		super();
+		this.courseId = courseId;
+		this.electiveId = electiveId;
+		this.vacancyCount = vacancyCount;
+		this.prefCount = prefCount;
+	}
+
+	public ElectiveVacancyPrefCounts() {
+		
+	}
+	
+	@Override
+	public int compareTo(ElectiveVacancyPrefCounts e) {          
+
+	    return (this.getPrefCount() > e.getPrefCount() ? -1 : 
+
+	            (this.getPrefCount() == e.getPrefCount() ? 0 : 1));     
+
+	 }
+	
 	@Id
 	@Column(name="elective_id")
 	private String electiveId;
@@ -53,27 +74,5 @@ public class ElectiveVacancyPrefCounts implements Comparable<ElectiveVacancyPref
 	public void setPrefCount(int prefCount) {
 		this.prefCount = prefCount;
 	}
-
-	public ElectiveVacancyPrefCounts() {
-		
-	}
-
-	public ElectiveVacancyPrefCounts(String courseId, String electiveId, int vacancyCount, int prefCount) {
-		super();
-		this.courseId = courseId;
-		this.electiveId = electiveId;
-		this.vacancyCount = vacancyCount;
-		this.prefCount = prefCount;
-	}
-
-
-	@Override
-	public int compareTo(ElectiveVacancyPrefCounts e) {          
-
-	    return (this.getPrefCount() > e.getPrefCount() ? -1 : 
-
-	            (this.getPrefCount() == e.getPrefCount() ? 0 : 1));     
-
-	 }
 }
 

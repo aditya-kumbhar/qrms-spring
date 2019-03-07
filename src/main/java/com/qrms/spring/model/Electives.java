@@ -11,11 +11,23 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="electives")
 public class Electives {
+	
+	public Electives(String electiveCourseId, Course course, String electiveName) {
+		super();
+		this.electiveCourseId = electiveCourseId;
+		this.electiveName = electiveName;
+		this.course = course;
+	}
+	
+	public Electives() {
+		
+	}
 	
 	@Id
 	@Column(name="elective_course_id")
@@ -29,10 +41,6 @@ public class Electives {
 	@JoinColumn(name = "course_id")
 	private Course course;
 	
-	//Parent of FK relation to StudentPrefs -- on update/delete cascade
-	@OneToMany(mappedBy="elective",cascade=CascadeType.ALL)
-	Set<StudentPref> studentPrefs = new HashSet<StudentPref>();
-	
 	public Set<StudentAllocCourse> getStudentAllocs() {
 		return studentAllocs;
 	}
@@ -41,6 +49,10 @@ public class Electives {
 		this.studentAllocs = studentAllocs;
 	}
 
+	//Parent of FK relation to StudentPrefs -- on update/delete cascade
+	@OneToMany(mappedBy="elective",cascade=CascadeType.ALL)
+	Set<StudentPref> studentPrefs = new HashSet<StudentPref>();
+	
 	//Parent of FK relation to StudentAllocs -- on update/delete cascade
 	@OneToMany(mappedBy="elective",cascade=CascadeType.ALL)
 	Set<StudentAllocCourse> studentAllocs = new HashSet<StudentAllocCourse>();
@@ -72,24 +84,12 @@ public class Electives {
 	public void setElectiveCourseName(String electiveName) {
 		this.electiveName = electiveName;
 	}
-	
-
-	public Electives() {
 		
-	}
-	
 	public Set<StudentPref> getStudentPrefs() {
 		return studentPrefs;
 	}
 
 	public void setStudentPrefs(Set<StudentPref> studentPrefs) {
 		this.studentPrefs = studentPrefs;
-	}
-
-	public Electives(String electiveCourseId, Course course, String electiveName) {
-		super();
-		this.electiveCourseId = electiveCourseId;
-		this.electiveName = electiveName;
-		this.course = course;
 	}
 }

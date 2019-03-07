@@ -18,6 +18,34 @@ import javax.persistence.Table;
 @Table(name="student_acad")
 public class StudentAcad  implements Comparable <StudentAcad>{
 
+	public StudentAcad(String userName, Users user_dets, Department department, String year, int sem, String div,
+			int shift, String rollno, Float aggMarks, String academicYear) {
+		super();
+		this.userName = userName;
+		this.user_dets = user_dets;
+		this.department = department;
+		this.year = year;
+		this.sem = sem;
+		this.div = div;
+		this.shift = shift;
+		this.rollno = rollno;
+		this.aggMarks = aggMarks;
+		this.academicYear = academicYear;
+	}
+
+	public StudentAcad(){
+		
+	}
+
+	@Override
+	  public int compareTo(StudentAcad s) {          
+
+	    return (this.getAggMarks() > s.getAggMarks() ? -1 : 
+
+	            (this.getAggMarks() == s.getAggMarks() ? 0 : 1));     
+
+	  }
+
 	@Id
 	@Column(name="user_name")
 	private String userName;
@@ -26,14 +54,6 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 	@JoinColumn(name="userName")
 	private Users user_dets;
 
-	public Users getUser_dets() {
-		return user_dets;
-	}
-
-	public void setUser_dets(Users user_dets) {
-		this.user_dets = user_dets;
-	}
-	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "dept_id")
 	private Department department;
@@ -63,15 +83,14 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 	@OneToMany(mappedBy="student",cascade=CascadeType.ALL)
 	Set<StudentAllocCourse> studentAllocs = new HashSet<StudentAllocCourse>();
 	
-		
-	public Set<StudentAllocCourse> getStudentAllocs() {
-		return studentAllocs;
+	public Users getUser_dets() {
+		return user_dets;
 	}
 
-	public void setStudentAllocs(Set<StudentAllocCourse> studentAllocs) {
-		this.studentAllocs = studentAllocs;
+	public void setUser_dets(Users user_dets) {
+		this.user_dets = user_dets;
 	}
-
+	
 	public String getAcademicYear() {
 		return academicYear;
 	}
@@ -144,17 +163,12 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 		this.aggMarks = aggMarks;
 	}
 
-	public StudentAcad(){
-		
+	public Set<StudentAllocCourse> getStudentAllocs() {
+		return studentAllocs;
 	}
-	@Override
-	  public int compareTo(StudentAcad s) {          
 
-	    return (this.getAggMarks() > s.getAggMarks() ? -1 : 
-
-	            (this.getAggMarks() == s.getAggMarks() ? 0 : 1));     
-
-	  }
-
+	public void setStudentAllocs(Set<StudentAllocCourse> studentAllocs) {
+		this.studentAllocs = studentAllocs;
+	}
 	
 }

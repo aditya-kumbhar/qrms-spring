@@ -16,6 +16,22 @@ import javax.persistence.Table;
 @Table(name="faculty_pref")
 public class FacultyPref {
 	
+	public FacultyPref(String userName, String courseId, Electives elective, int prefNo, Integer courseExp,
+			Integer prereq1Exp, Integer prereq2Exp) {
+		super();
+		this.userName = userName;
+		this.courseId = courseId;
+		this.elective = elective;
+		this.prefNo = prefNo;
+		this.courseExp = courseExp;
+		this.prereq1Exp = prereq1Exp;
+		this.prereq2Exp = prereq2Exp;
+	}
+	
+	public FacultyPref() {
+		
+	}
+		
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="id")
@@ -112,15 +128,4 @@ public class FacultyPref {
 		this.prereq2Exp = prereq2Exp;
 	}
 
-	public FacultyPref() {
-		
-	}
-	
-	public FacultyPref(String userName, String courseId, Electives elective, int prefNo) {
-		super();
-		this.userName = userName;
-		this.courseId = courseId;
-		this.elective = elective;
-		this.prefNo = prefNo;
-	}
 }

@@ -15,6 +15,17 @@ import javax.persistence.Table;
 @Table(name="faculty_course_history")
 public class FacultyCourseHistory {
 	
+	public FacultyCourseHistory(FacultyAcad facultyUserName, Course courseTaught,int courseExperience) {
+		super();
+		this.facultyUserName = facultyUserName;
+		this.courseTaught = courseTaught;
+		this.courseExperience = courseExperience;
+	}
+
+	public FacultyCourseHistory() {
+		
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="id")
@@ -61,17 +72,6 @@ public class FacultyCourseHistory {
 
 	public void setCourseTaught(Course courseTaught) {
 		this.courseTaught = courseTaught;
-	}
-
-	public FacultyCourseHistory(FacultyAcad facultyUserName, Course courseTaught,int courseExperience) {
-		super();
-		this.facultyUserName = facultyUserName;
-		this.courseTaught = courseTaught;
-		this.courseExperience = courseExperience;
-	}
-
-	public FacultyCourseHistory() {
-		
 	}
 	
 }

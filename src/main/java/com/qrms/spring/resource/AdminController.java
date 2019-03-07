@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -28,10 +29,14 @@ import com.qrms.spring.queryBeans.PrefNumCountPerElective;
 import com.qrms.spring.queryBeans.StudentCountByYearSem;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.model.Course;
+import com.qrms.spring.model.CompanionCourse;
+import com.qrms.spring.model.CoursePrerequisites;
 import com.qrms.spring.model.Department;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
+import com.qrms.spring.repository.CourseCompanionRespositoy;
+import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
@@ -77,6 +82,12 @@ public class AdminController {
 	@Autowired
 	private ElectivesRepository electivesRepository;
 	
+	@Autowired
+	private CourseCompanionRespositoy courseCompanionRepository;
+	
+	@Autowired
+	private CoursePrerequisitesRepository coursePrerequisitesRepository;
+	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
@@ -115,7 +126,7 @@ public class AdminController {
 	
 	 @RequestMapping(value = "/getStudPrefDetailsTable_async", method = RequestMethod.GET)
 	 public String showPersonaFragment(Model model) {
-		
+		System.out.println("here");
 		List<StudentPrefCountInfo> studCountInfo = computeStudPrefTable();
 		if(studCountInfo.isEmpty()) {
 			model.addAttribute("err_msg","There are no open student elective preference forms");
@@ -365,19 +376,66 @@ public class AdminController {
 	
 	//Handle add course form
 	@RequestMapping(value = "/add_courses", method = RequestMethod.POST)
-	public ModelAndView addCourse(@Valid Course course, String dept) {
+	public ModelAndView addCourse(@Valid Course course, String dept,String companionTheory,String prerequisiteNo1,String prerequisiteNo2) {
 		ModelAndView model = new ModelAndView();
 		
 		Department deptObj = departmentRepository.findByDeptName(dept);
 		course.setDepartment(deptObj);
 		course.setStudAllocFlag(0);
 		
-		model.addObject("msg","Course has been added successfully");
-		model.addObject("course",new Course());
+		System.out.println(companionTheory);
+		System.out.println(prerequisiteNo1+" "+prerequisiteNo2);
+		
+		if(!companionTheory.equals("")) {
+			Optional<Course> thCourse = courseRepository.findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheory(companionTheory,course.getDepartment(),course.getCourseYear(),course.getCourseSem(),1);
+			
+			if(thCourse.isPresent()) {
+				//saving course
+				model.addObject("msg","Course has been added successfully");
+				model.addObject("course",new Course());
+				courseRepository.save(course);
+				
+				CompanionCourse cc = new CompanionCourse(thCourse.get(), course);
+				courseCompanionRepository.save(cc);
+				
+				CompanionCourse ncc = new CompanionCourse(course, thCourse.get());
+				courseCompanionRepository.save(ncc);
+				
+				
+			}
+			else {
+				model.addObject("err_msg","Companion theory course doesn't exist!");
+				model.addObject("course",new Course());
+			}
+		}else if(!prerequisiteNo1.equals("") && !prerequisiteNo2.equals("")) {
+			Optional<Course> pr1Course = courseRepository.findByCourseIdAndDepartmentAndIsTheory(prerequisiteNo1,course.getDepartment(),1);
+			Optional<Course> pr2Course = courseRepository.findByCourseIdAndDepartmentAndIsTheory(prerequisiteNo2,course.getDepartment(),1);
+			
+			if(pr1Course.isPresent() && pr2Course.isPresent()) {
+				CoursePrerequisites cr = new CoursePrerequisites(course.getCourseId(),pr1Course.get(),pr2Course.get());
+				coursePrerequisitesRepository.save(cr);
+				model.addObject("msg","Course has been added successfully");
+				model.addObject("course",new Course());
+				courseRepository.save(course);
+			} else if(!pr1Course.isPresent() && !pr2Course.isPresent()){
+				model.addObject("err_msg","Prerequisite 1 and 2 theory courses don't exist!");
+				model.addObject("course",new Course());
+			}
+			else if(!pr1Course.isPresent()){
+				model.addObject("err_msg","Prerequisite 1 theory course doesn't exist!");
+				model.addObject("course",new Course());
+			} else if(!pr2Course.isPresent()){
+				model.addObject("err_msg","Prerequisite 2 theory course doesn't exist!");
+				model.addObject("course",new Course());
+			}
+		}else {
+			model.addObject("err_msg","Cannot add course, something went wrong!");
+			model.addObject("course",new Course());
+		}
+		
+		
 		model.addObject("departments",departments);
 		model.setViewName("admin/addCourses");
-		
-		courseRepository.save(course);
 		return model;
 	}
 	
