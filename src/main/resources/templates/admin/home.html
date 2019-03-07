@@ -75,25 +75,29 @@
      	<input type="hidden" th:name="courseSem" th:value="${rs.sem}"></input>
      	<input type="hidden" th:name="deptId" th:value="${rs.deptId}"></input>  
     		<select class="form-control" th:name="selectAction" onchange="if(this.value!='none') { SubmitForm('tableForm'); }">
-				<option th:value="none" style="color:#8F8B87" selected>Select action</option>
-				<option th:value="closeForms" th:if="${rs.submitCount}!=0" style="color:#000">Close forms</option>				
-				<option th:value="performAllocation" th:if="${rs.submitCount}!=0" style="color:#000">Perform allocation</option>
-				<option th:value="clearPrefs" th:if="${rs.submitCount}!=0" style="color:#000">Clear preferences</option>
-				<option th:value="summary" th:if="${rs.submitCount}!=0" style="color:#000">Preference summary</option>					
+				<option th:value="none" style="color:#8F8B87" selected>Select action</option>			
+				<option th:value="closeForms" style="color:#000">Close forms</option>				
+				<option th:value="summary" th:if="${rs.submitCount}!=0" style="color:#000">Perform allocation</option>								
+				<option th:value="clearPrefs" style="color:#000">Clear preferences</option>
 			</select>
     	</td>
    	</tr>
   </tbody>
 </table>
 </form>
-<table th:if="${prefSummaryList}" class="table table-bordered table-hover">
-<thead class="thead">
+<form action="/u/admin/changeSeatsAndAllocate"  th:if="${prefSummaryList}" method="POST">
+<div class="row text-center card-body mx-auto">	
+	<h5 th:text="${'Allocation for course '+prefSummaryList.get(0).courseId}"></h5>
+</div>
+<table class="table table-bordered table-hover">
+<thead class="thead-dark">
     <tr>    
-      <th scope="col">Elective</th>
+      <th scope="col" style="width:25%">Elective Name</th>
       <th scope="col">Preference 1</th>      
       <th scope="col">Preference 2</th>
       <th scope="col">Preference 3</th>
       <th scope="col">Preference 4</th>
+      <th scope="col" style="width:15%">Enter seats</th>
     </tr>
   </thead>			
   <tbody>
@@ -103,8 +107,16 @@
      	<td th:text="${rs.count2}"></td>
      	<td th:text="${rs.count3}"></td>
      	<td th:text="${rs.count4}"></td>
+     	<td>
+     	<input type="hidden" name="courseIdList" th:value="${rs.courseId}"/>
+     	<input type="text" name="seatList" class="form-control" style="width:50%" required/>     	
+     	</td>
    	</tr>
   </tbody>
-</table>  
+</table>
+<div class="row text-center card-body">
+<input type="submit" class="btn btn-primary"  value="Run student allocation"/>
+</div>
+</form>  
 </article>
 </body>
