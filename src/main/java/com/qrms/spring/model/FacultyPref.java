@@ -24,6 +24,19 @@ import javax.persistence.Table;
 @Table(name="faculty_pref")
 public class FacultyPref {
 	
+	public FacultyPref(String userName, Course course1, Course course2, Course course3, Course course4) {
+		super();
+		this.userName = userName;
+		this.course1 = course1;
+		this.course2 = course2;
+		this.course3 = course3;
+		this.course4 = course4;
+	}
+	
+	public FacultyPref() {
+		
+	}
+		
 	@Id
 	@Column(name="user_name")
 	private String userName;
@@ -76,16 +89,5 @@ public class FacultyPref {
 		this.course4 = course4;
 	}
 	
-	public FacultyPref() {
-		
-	}
-	
-	public FacultyPref(String userName, Course course1, Course course2, Course course3, Course course4) {
-		super();
-		this.userName = userName;
-		this.course1 = course1;
-		this.course2 = course2;
-		this.course3 = course3;
-		this.course4 = course4;
-	}
+
 }

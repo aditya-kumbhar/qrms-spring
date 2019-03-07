@@ -13,6 +13,18 @@ import javax.persistence.Table;
 @Entity
 @Table(name="student_pref")
 public class StudentPref{
+
+	public StudentPref(String userName, String courseId, Electives elective, int prefNo) {
+		super();
+		this.userName = userName;
+		this.courseId = courseId;
+		this.elective = elective;
+		this.prefNo = prefNo;
+	}
+
+	public StudentPref() {
+		
+	}
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,7 +45,6 @@ public class StudentPref{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "el_pref")
 	private Electives elective;
-	
 	
 	public String getUserName() {
 		return userName;
@@ -67,15 +78,4 @@ public class StudentPref{
 		this.courseId = courseId;
 	}
 
-	public StudentPref(String userName, String courseId, Electives elective, int prefNo) {
-		super();
-		this.userName = userName;
-		this.courseId = courseId;
-		this.elective = elective;
-		this.prefNo = prefNo;
-	}
-
-	public StudentPref() {
-		
-	}
 }

@@ -1,7 +1,7 @@
 package com.qrms.spring.repository;
 
 import java.util.ArrayList;
-
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -27,5 +27,8 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 	ArrayList<Course> findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlagNot(
 			int courseSem, String courseYear, char c, Department department, int i, int j);
 	ArrayList<Course> findByStudAllocFlagNot(int i);
+	Optional<Course> findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheory(String companionTheory,
+			Department department, String courseYear, int courseSem, int i);
+	Optional<Course> findByCourseIdAndDepartmentAndIsTheory(String companionTheory, Department department, int i);
 
 }

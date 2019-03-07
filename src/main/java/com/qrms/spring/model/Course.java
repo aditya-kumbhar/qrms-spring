@@ -13,33 +13,109 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+/*
+ * Columns-
+ * 
+ * courseId
+ * courseName
+ * courseCredits
+ * department
+ * courseType
+ * courseYear
+ * courseSem
+ * studAllocFlag
+ * isTheory
+ * noOfHours
+ *  
+ */
 @Entity
-@Table(name="course")
+@Table(name = "course")
 public class Course {
+
+	public Course(String courseId, String courseName, Integer courseCredits, Department department, char courseType,
+			String courseYear, int courseSem, int studAllocFlag, int isTheory, int noOfHours) {
+		super();
+		this.courseId = courseId;
+		this.courseName = courseName;
+		this.courseCredits = courseCredits;
+		this.department = department;
+		this.courseType = courseType;
+		this.courseYear = courseYear;
+		this.courseSem = courseSem;
+		this.studAllocFlag = studAllocFlag;
+		this.isTheory = isTheory;
+		this.noOfHours = noOfHours;
+	}
+
+	public Course() {
+
+	}
 	
 	@Id
-	@Column(name="course_id")
+	@Column(name = "course_id")
 	private String courseId;
-	
-	@Column(name="course_name")
+
+	@Column(name = "course_name")
 	private String courseName;
-	
-	@Column(name="course_credits")
+
+	@Column(name = "course_credits")
 	private Integer courseCredits;
-	
-	//Child (owner) of FK relation to Department -- do not cascade on delete/update
+
+	// Child   of FK relation to Department -- do not cascade on delete/update
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "dept_id")
 	private Department department;
-	
-	//Parent (owner) of FK relation to Electives -- do not cascade on delete/update
-	@OneToMany(mappedBy="course",cascade=CascadeType.ALL)
+
+	// Parent of FK relation to Electives -- do not cascade on delete/update
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
 	Set<Electives> electives = new HashSet<Electives>();
-	
-	//Parent (owner) of FK relation to StudentAllocs -- do not cascade on delete/update
-	@OneToMany(mappedBy="courseId",cascade=CascadeType.ALL)
+
+	// Parent of FK relation to StudentAllocs -- do not cascade on
+	// delete/update
+	@OneToMany(mappedBy = "courseId", cascade = CascadeType.ALL)
 	Set<StudentAllocCourse> course_Ids = new HashSet<StudentAllocCourse>();
-		
+	
+	// Parent of FK relation to CoursePrerequisites -- do not cascade on
+	// delete/update
+	@OneToMany(mappedBy = "prerequisiteNo1", cascade = CascadeType.ALL)
+	Set<CoursePrerequisites> prereqs1 = new HashSet<CoursePrerequisites>();
+
+	// Parent of FK relation to CoursePrerequisites -- do not cascade on
+	// delete/update
+	@OneToMany(mappedBy = "prerequisiteNo2", cascade = CascadeType.ALL)
+	Set<CoursePrerequisites> prereqs2 = new HashSet<CoursePrerequisites>();
+
+	// Parent of FK relation to CourseCompanion -- do not cascade on
+	// delete/update
+	@OneToMany(mappedBy = "companionCourse", cascade = CascadeType.ALL)
+	Set<CompanionCourse> companionCourses = new HashSet<CompanionCourse>();
+
+	// Parent of FK relation to CourseCompanion -- do not cascade on
+	// delete/update
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+	Set<CompanionCourse> courses = new HashSet<CompanionCourse>();
+	
+	// O: Open Elective, E: Normal Elective R: regular course
+	@Column(name = "course_type")
+	private char courseType;
+
+	@Column(name = "course_year")
+	private String courseYear;
+
+	@Column(name = "course_sem")
+	private int courseSem;
+
+	// 0 = allocation not yet started by admin
+	// 1 = allocation has been started and students can give prefs
+	@Column(name = "stud_allocation_flag")
+	private int studAllocFlag = 0;
+
+	@Column(name = "is_theory")
+	private Integer isTheory;
+
+	@Column(name = "no_of_hours")
+	private Integer noOfHours;
+
 	public Set<StudentAllocCourse> getCourse_Ids() {
 		return course_Ids;
 	}
@@ -48,27 +124,6 @@ public class Course {
 		this.course_Ids = course_Ids;
 	}
 
-	//O: Open Elective, E: Normal Elective R: regular course
-	@Column(name="course_type")
-	private char courseType;
-	
-	@Column(name="course_year")
-	private String courseYear;
-
-	@Column(name="course_sem")
-	private int courseSem;
-	
-	//0 = allocation not yet started by admin
-	//1 = allocation has been started and students can give prefs
-	@Column(name="stud_allocation_flag")
-	private int studAllocFlag=0;
-	
-	@Column(name="is_theory")
-	private Integer isTheory;
-	
-	@Column(name="no_of_hours")
-	private Integer noOfHours;
-	
 	public Integer getIsTheory() {
 		return isTheory;
 	}
@@ -149,6 +204,22 @@ public class Course {
 		this.courseSem = courseSem;
 	}
 	
+	public Set<CoursePrerequisites> getPrereqs1() {
+		return prereqs1;
+	}
+
+	public void setPrereqs1(Set<CoursePrerequisites> prereqs1) {
+		this.prereqs1 = prereqs1;
+	}
+
+	public Set<CoursePrerequisites> getPrereqs2() {
+		return prereqs2;
+	}
+
+	public void setPrereqs2(Set<CoursePrerequisites> prereqs2) {
+		this.prereqs2 = prereqs2;
+	}
+	
 	public Set<Electives> getElectives() {
 		return electives;
 	}
@@ -156,24 +227,21 @@ public class Course {
 	public void setElectives(Set<Electives> electives) {
 		this.electives = electives;
 	}
-	
-	public Course(String courseId, String courseName, Integer courseCredits, Department department, char courseType,
-			String courseYear, int courseSem, int studAllocFlag, int isTheory, int noOfHours) {
-		super();
-		this.courseId = courseId;
-		this.courseName = courseName;
-		this.courseCredits = courseCredits;
-		this.department = department;
-		this.courseType = courseType;
-		this.courseYear = courseYear;
-		this.courseSem = courseSem;
-		this.studAllocFlag = studAllocFlag;
-		this.isTheory = isTheory;
-		this.noOfHours = noOfHours;
+
+	public Set<CompanionCourse> getCompanionCourses() {
+		return companionCourses;
 	}
 
-	public Course() {
-		
+	public void setCompanionCourses(Set<CompanionCourse> companionCourses) {
+		this.companionCourses = companionCourses;
 	}
-	
+
+	public Set<CompanionCourse> getCourses() {
+		return courses;
+	}
+
+	public void setCourses(Set<CompanionCourse> courses) {
+		this.courses = courses;
+	}
+
 }

@@ -19,6 +19,20 @@ import javax.persistence.Table;
 @Table(name="user")
 public class Users {
 	
+	public Users(Users user) {
+		this.userName = user.getUserName();
+		this.email = user.getEmail();
+		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
+		this.roles = user.getRoles();
+		this.active = user.getActive();
+		this.password = user.getPassword();
+	}
+	
+	public Users() {
+		
+	}
+	
 	@Id
 	@Column(name="user_name")
 	private String userName;
@@ -51,20 +65,6 @@ public class Users {
 
 	public void setStudentAcad(StudentAcad studentAcad) {
 		this.studentAcad = studentAcad;
-	}
-
-	public Users() {
-		
-	}
-	
-	public Users(Users user) {
-		this.userName = user.getUserName();
-		this.email = user.getEmail();
-		this.firstName = user.getFirstName();
-		this.lastName = user.getLastName();
-		this.roles = user.getRoles();
-		this.active = user.getActive();
-		this.password = user.getPassword();
 	}
 
 	public String getUserName() {

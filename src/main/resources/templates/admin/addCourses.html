@@ -3,8 +3,6 @@
 <head>
    <th:block th:include="fragments/admin_header.html :: headerfiles"></th:block>
 
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    
     <title>Add Courses</title>
 
 	<link rel="stylesheet" th:href="@{/css/register.css}">
@@ -27,14 +25,6 @@
 	            }
 	        });
 	    });
-
-	    function yesnoCheck(obj) {
-	        if (obj.value=="E" || obj.value=="O") {
-	            document.getElementById('electiveId').style.display = 'block';
-	        }
-	        else document.getElementById('electiveId').style.display = 'none';
-
-	    }
     	
 	    $(document).ready(function () {
 	        $("#submit").click(function () {
@@ -65,19 +55,33 @@
 	                $('#courseType').focus();
 	                
 	                return false;
-	            } else if(document.getElementById('electiveId').style.display === 'block' &&  $('#electiveIdOption').val() == 'none' ){
-	            	alert("Please select Elective number");
-	            	$('#electiveIdOption').focus();
-	            	
-	            	return false;
-	            } else if (isTheory.val() == "-1") {
+	            }else if (isTheory.val() == "-1") {
 	                alert("Please select a course category");
 	                $('#isTheory').focus();
 	                
 	                return false;
+	            } else if(isTheory.val() == "1")  {
+		            	
+	            	if($('#prerequisiteNo1').val()==''){
+		            	alert("Please enter Prerequisite 1 Course ID");
+		            	$('#prerequisiteNo1').focus();
+		            	return false;
+		            	
+		            } else if ($('#prerequisiteNo2').val()==''){
+	            		alert("Please enter Prerequisite 2 Course ID");
+		            	$('#prerequisiteNo2').focus();
+		            	
+		            	return false;
+		           	}
+	            } else if(isTheory.val() == "0"){
+	            	if ($('#companionTheory').val()==''){
+	            		alert("Please enter Companion Theory Course ID");
+		            	$('#companionTheory').focus();
+		            	
+		            	return false;
+	            	}
 	            }
-	            
-	            else return;
+	            return;
 	        });
 	    });
 	    
@@ -104,18 +108,6 @@
     	      }
     	   }); 
     	});
-	    
-	    $(document).ready(function() {
-	    	   $('#electiveIdOption').css('color','#8F8B87');
-	    	   $('#electiveIdOption').change(function() {
-	    	      var current = $('#electiveIdOption').val();
-	    	      if (current != 'none') {
-	    	          $('#electiveIdOption').css('color','black');
-	    	      } else {
-	    	          $('#electiveIdOption').css('color','#8F8B87');
-	    	      }
-	    	   }); 
-	    	});
 	    
 	    $(document).ready(function() {
     	   $('#courseType').css('color','#8F8B87');
@@ -153,7 +145,23 @@
     	   }); 
     	});
 	    
-	    
+	    $(document).ready(function(){
+	    	$('#isTheory').change(function(){
+	    		var current = $('#isTheory').val();
+	    		if(current==0){
+	    			$('.practicalClass').css("display",'');
+	    			$('.theoryClass').css("display",'none');
+	    		}
+	    		else if(current==1){
+	    			$('.practicalClass').css("display",'none');
+	    			$('.theoryClass').css("display",'');
+	    		}
+	    		else{
+	    			$('.practicalClass').css("display",'none');
+	    			$('.theoryClass').css("display",'none');
+	    		}
+	    	});
+	    });
     </script>
     
  
@@ -252,7 +260,7 @@
 				Course Type
 			</td>
 			<td>
-				<select class="form-control" name="courseType" id="courseType" required th:field="*{courseType}" onchange="yesnoCheck(this)">
+				<select class="form-control" name="courseType" id="courseType" required th:field="*{courseType}">
 					<option value="X" style="color:#8F8B87" selected>Course Type</option>
 					<option value="R" style="color:#000">Regular</option>
 					<option value="E" style="color:#000">Normal Elective</option>
@@ -273,7 +281,30 @@
 				</select>
 			</td>
 		</tr>
-		
+		<tr class="practicalClass" style="display: none">
+			<td>
+				Companion Course ID
+			</td>
+			<td>
+				<input id="companionTheory" name="companionTheory" class="form-control" placeholder="Companion Course ID" type="text"/>
+			</td>
+		</tr>
+		<tr class="theoryClass" style="display: none">
+			<td>
+				Enter Prerequisite 1 ID
+			</td>
+			<td>
+				<input id="prerequisiteNo1" name="prerequisiteNo1" class="form-control" placeholder="prerequisite 1 Course ID" type="text"/>
+			</td>
+		</tr>
+		<tr class="theoryClass" style="display: none">
+			<td>
+				Enter Prerequisite 2 ID
+			</td>
+			<td>
+				<input id="prerequisiteNo2" name="prerequisiteNo2" class="form-control" placeholder="prerequisite 2 Course ID" type="text"/>
+			</td>
+		</tr>
 		<tr>
 			<td>
 				Total hours Alloted
@@ -296,6 +327,7 @@
 
 <div class="row text-center mx-auto">
 	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+	<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
 </div>  
 </div>
 </body>
