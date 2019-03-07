@@ -13,6 +13,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -121,6 +122,21 @@ public class AdminController {
 		model.setViewName("/admin/home");
 		return model;		
 	
+	}
+	
+	 @RequestMapping(value = "/getStudPrefDetailsTable_async", method = RequestMethod.GET)
+	 public String showPersonaFragment(Model model) {
+		
+		List<StudentPrefCountInfo> studCountInfo = computeStudPrefTable();
+		if(studCountInfo.isEmpty()) {
+			model.addAttribute("err_msg","There are no open student elective preference forms");
+			return "admin/home:: messageDiv";
+		}
+		else {
+				model.addAttribute("studCountInfo",studCountInfo);
+				return "admin/home:: studPrefTable";
+		}
+		
 	}
 	
 	//function to calculate pref table
