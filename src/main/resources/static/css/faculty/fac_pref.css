@@ -7,7 +7,7 @@ body {
 .sidebar {
   margin: 0;
   padding: 0;
-  width: 350px;
+  width: 405px;
   background-color: #f1f1f1;
   position: fixed;
   height: 100%;
@@ -32,7 +32,7 @@ body {
 }
 
 div.content {
-  margin-left: 350px;
+  margin-left: 405px;
   padding: 1px 16px;
   height: 1000px;
 }
@@ -54,7 +54,7 @@ div.content {
   }
 }
 
-.button {
+.choose {
   padding: 2px 10px;
   font-size: 15px;
   text-align: center;
@@ -67,11 +67,36 @@ div.content {
   box-shadow: 0 2px #999;
 }
 
-.button:hover {background-color: #1EB3CC}
+.choose:hover {background-color: #1EB3CC}
 
-.button:active {
+.choose:active {
   background-color: #1EB3CC;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
+}
+
+.clear {
+  padding: 2px 10px;
+  font-size: 15px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background-color: #FC5B3C;
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 2px #999;
+}
+
+.clear:hover {background-color: #FB9B41}
+
+.clear:active {
+  background-color: #FB9B41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+#f1, #f2 {
+	display:none;
 }
 </style>

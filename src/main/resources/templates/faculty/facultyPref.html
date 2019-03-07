@@ -5,13 +5,59 @@
 	
 	<th:block th:include="fragments/fac_header.html :: headerfiles"></th:block>
 	
-	<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-	
 	<link rel="stylesheet" th:href="@{/css/faculty/fac_pref.css}">
 	<link rel="stylesheet" th:href="@{/css/register.css}">
-	
-	    
 	<title>Faculty Preferences</title>
+	
+	<script>
+		$(document).ready(function(){
+		    $("#p1").click(function(){
+		        $("#f1").show();
+		        $("#f2").hide();
+		        
+		    });
+		});
+		
+		function selectYear()
+		{
+			$.ajax({
+		        type: "GET",
+		        contentType: "application/json",
+		        url: '/u/admin/getStudPrefDetailsTable_async',
+		        success: function (data) {
+	               console.log(data);
+	               if ($(data).find('alert').length) {
+	            	   $('#messageDiv').html('');
+	                   $('#messageDiv').html(data);                   
+	               }
+	               else{
+	            	   $('#studPrefTable').html('');
+	                   $('#studPrefTable').html(data);
+	                   
+	              	 }
+	               }
+			});
+		}
+		
+		$(document).ready(function(){
+		    $("#f1").submit(function(){
+		        $("#f2").show();
+		        return false;
+		    });
+		});
+		
+		function showPref(){
+            var pref = document.getElementById("pref").value;
+            c1.innerHTML= pref;
+        }
+		
+		$(document).ready(function(){
+			$('#f2').submit(function () {
+				return false;
+			});
+		});
+	</script>
+	
 </head>
 
 <div th:replace="fragments/fac_header :: header"></div>
@@ -35,96 +81,102 @@
   <table>
   	<tr>
   		<td colspan=4 align=center>
-  			Give Preferences
+  			<h5>Give Preferences</h5>
   		</td>
   	</tr>
   	<tr>
   		<td>
-  			1
+  			<h6>1</h6>
+  		</td>
+  		<td style="width:250px">
+  			<h6 id="c1"></h6>
   		</td>
   		<td>
-  			<h6>show selected preference here</h6>
+			<button class="choose" id="p1">Choose</button>			
   		</td>
   		<td>
-			<button class="button">Choose</button>			
-  		</td>
-  	</tr>
-  	
-  	<tr>
-  		<td>
-  			2
-  		</td>
-  		<td>
-  			<h6>show selected preference here</h6>
-  		</td>
-  		<td>
-  			<button class="button">Choose</button>	
+			<button class="clear">Clear</button>			
   		</td>
   	</tr>
   	
   	<tr>
   		<td>
-  			3
+  			<h6>2</h6>
   		</td>
   		<td>
-  			<h6>show selected preference here</h6>
+  			<h6 id="c2"></h6>
   		</td>
   		<td>
-  			<button class="button">Choose</button>	
-  		</td>
-  	</tr>
-  	
-  	<tr>
-  		<td>
-  			4
+  			<button class="choose" id="p2">Choose</button>	
   		</td>
   		<td>
-  			<h6>show selected preference here</h6>
-  		</td>
-  		<td>
-  			<button class="button">Choose</button>	
+			<button class="clear">Clear</button>			
   		</td>
   	</tr>
   	
   	<tr>
   		<td>
-  			5
+  			<h6>3</h6>
   		</td>
   		<td>
-  			<h6>show selected preference here</h6>
+  			<h6 id="c3"></h6>
   		</td>
   		<td>
-  			<button class="button">Choose</button>	
-  		</td>
-  	</tr>
-  	
-  	<tr>
-  		<td>
-  			6
+  			<button class="choose" id="p3">Choose</button>	
   		</td>
   		<td>
-  			<h6>show selected preference here</h6>
-  		</td>
-  		<td>
-  			<button class="button">Choose</button>	
+			<button class="clear">Clear</button>			
   		</td>
   	</tr>
   	
   	<tr>
   		<td>
-  			7
+  			<h6>4</h6>
   		</td>
   		<td>
-  			<h6>show selected preference here</h6>
+  			<h6 id="c4"></h6>
   		</td>
   		<td>
-  			<button class="button">Choose</button>	
+  			<button class="choose" id="p4">Choose</button>	
+  		</td>
+  		<td>
+			<button class="clear">Clear</button>			
+  		</td>
+  	</tr>
+  	
+  	<tr>
+  		<td>
+  			<h6>5</h6>
+  		</td>
+  		<td>
+  			<h6 id="c5"></h6>
+  		</td>
+  		<td>
+  			<button class="choose" id="p5">Choose</button>	
+  		</td>
+  		<td>
+			<button class="clear">Clear</button>			
+  		</td>
+  	</tr>
+  	
+  	<tr>
+  		<td>
+  			<h6>6</h6>
+  		</td>
+  		<td>
+  			<h6 id="c6"></h6>
+  		</td>
+  		<td>
+  			<button class="choose" id="p6">Choose</button>	
+  		</td>
+  		<td>
+			<button class="clear">Clear</button>			
   		</td>
   	</tr>
   	
   	<tr>
 		<td colspan=4 align=center>
-       		<button type="submit" id="submit" class="btn btn-primary btn-block"  style="width:150px"> Submit  </button>
+       		<button type="submit" id="submit" class="btn btn-primary btn-block"  style="width:150px; background-color: #2B7526;"> Submit  </button>
     	</td> 	  
 	</tr>
   </table>
@@ -132,17 +184,17 @@
 
 <div class="content">
   <div class="card bg-light">
-<article class="card-body mx-auto">
-	<h4 class="card-title mt-3 text-center">Select Elective-id</h4>
-	<form th:action="@{/u/student/getFacultyPrefs}"  role="form" method="GET">
+  <article class="card-body mx-auto">
+	<form th:action="@{/u/faculty/getFacultyPrefs}"  role="form" method="GET" id="f1">
+	<h4 class="card-title mt-3 text-center">Select Year</h4>
 	<table>
 		<tr>
 			<td>
-			    Select Elective ID
+			    Select Year
 			</td>
 			<td>
-				<select class="form-control" th:name="elective_id" th:id="elective_id"required>
-					<option th:value="Select_elective_id" style="color:#8F8B87" selected>Select Year</option>
+				<select class="form-control" th:name="elective_id" th:id="elective_id" onchange="if(this.value!='none') { selectYear('tableForm'); } else $('#f2').hide();" required>
+					<option th:value="none" style="color:#8F8B87" selected >Select Year</option>
 					<option value="SE" style="color:#000">SE</option>
 					<option value="TE" style="color:#000">TE</option>
 					<option value="BE" style="color:#000">BE</option>
@@ -162,65 +214,56 @@
 </article>	
 <div class="row text-center mx-auto">
 	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+	<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
 </div>
-<article class="card-body mx-auto" th:if="${studentPref}">
 
-	<h4 class="card-title mt-3 text-center">Give preferences for <span th:text="${chosen_course_name + '(' + chosen_course_id + ')' }"></span></h4>
-	
-    <form th:action="@{/u/student/setStudentPrefs}"  role="form" method="POST" th:object="${studentPref}"> 
+<article class="card-body mx-auto" th:fragment="selectPreferenceFragment">
+
+    <form role="form" method="GET" id="f2"> 
     <table>
     	<tr>
     		<td>
-    			Select Preference 1
+    			Select Course
     		</td>
     		<td>
-    			<select class="form-control" th:name="course1" th:id="course1">
-					<option th:value="Preference_1" style="color:#8F8B87" selected>Select Preference 1</option>
-					<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
+    			<select class="form-control" th:name="course1" th:id="pref">
+					<option th:value="Preference_1" style="color:#8F8B87" selected>Select Course</option>
+					
 				</select>
     		</td>
     	</tr>
     	
     	<tr>
     		<td>
-    			Select Preference 2
+    			Number of times course taught
     		</td>
     		<td>
-    			<select class="form-control" th:name="course2" th:id="course2">
-						<option th:value="Preference_2" style="color:#8F8B87" selected>Select Preference 2</option>
-						<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
-					</select>
+				<input id="courseExp"  name="courseExp" class="form-control" placeholder="Course Exp" type="number" min="0" required autofocus/>
     		</td>
     	</tr>
     	
     	<tr>
     		<td>
-    			Select Preference 3
+    			Pre1 times
     		</td>
     		<td>
-    			<select class="form-control" th:name="course3" th:id="course3">
-						<option th:value="Preference_3" style="color:#8F8B87" selected>Select Preference 3</option>
-						<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
-					</select>
+    			<input id="prereq1Exp"  name="prereq1Exp" class="form-control" placeholder="Prerequisite 1 Exp" type="number" min="0" required autofocus/>
     		</td>
     	</tr>
     	
     	<tr>
     		<td>
-    			Select Preference 4
+    			Pre2 times
     		</td>
     		<td>
-    			<select class="form-control" th:name="course4" th:id="course4">
-					<option th:value="Preference_4" style="color:#8F8B87" selected>Select Preference 4</option>
-					<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
-				</select>
+    			<input id="prereq2Exp"  name="prereq2Exp" class="form-control" placeholder="Prerequisite 2 Exp" type="number" min="0" required autofocus/>
     		</td>
     	</tr>
     	
     	<tr>
 			<td colspan=2 align=center>
 				<div class="form-group">
-		        	<button type="submit" id="submit2" class="btn btn-primary btn-block" style="width:165px"> Submit Preferences  </button>
+		        	<button type="submit" id="submit2" class="btn btn-primary btn-block" onclick="showPref()" style="width:165px"> Select Preference  </button>
 		    	</div> <!-- form-group// -->  
 			</td>
 		</tr>
