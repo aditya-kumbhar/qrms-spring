@@ -823,4 +823,75 @@ public class AdminController {
 			model.addObject("err_msg", "No allocations done yet for Course Id: "+electiveIdOption);
 		return model;
 	}
+	
+	//delete course or elective
+	@Transactional
+	@RequestMapping(value="/delete-course-elective",method=RequestMethod.GET)
+	public ModelAndView getDelCourseOrElective(String msg,String err_msg) {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/admin/deleteCourseOrElective");
+		if(msg!=null)
+			model.addObject("msg",msg);
+		else if(err_msg!=null)
+			model.addObject("err_msg",err_msg);
+		return model;
+	}
+	
+	@Transactional
+	@RequestMapping(value="/delete-course-elective",method=RequestMethod.POST)
+	public ModelAndView setDelCourseOrElective(String c_id,String e_id) {
+		String msg = null;
+		String err_msg = null;
+		if(!c_id.equals("")) {
+			System.out.println("course");
+			Course c = courseRepository.findByCourseId(c_id);
+			ArrayList<CoursePrerequisites> cprereq = coursePrerequisitesRepository.findByCourse(c_id);
+			ArrayList<StudentPref> cstudPref = studentPrefRepository.findByCourseIdEquals(c_id);
+			if(c!=null) {
+				courseRepository.delete(c);
+				
+				if(cprereq.size()!=0)
+				{
+					coursePrerequisitesRepository.deleteByCourse(c_id);
+					//msg.concat("Corresponding prerequisites mapping are deleted.\n");
+				}
+				if(cstudPref.size()!=0)
+				{
+					studentPrefRepository.deleteByCourseId(c_id);
+					//msg.concat("Corresponding prerequisites mapping are deleted.\n");
+				}
+				msg = "Course has been deleted successfully.";
+			}else {
+				err_msg = "Specified Course does not exist. Please check again.";
+			}
+		}else if(!e_id.equals("")) {
+			System.out.println("elective");
+			Electives e = electivesRepository.findByElectiveCourseId(e_id);
+			
+			ArrayList<StudentPref> estudPref = studentPrefRepository.findByElective(e);
+			
+			if(e!=null) {
+				if(e.getCourse().getStudAllocFlag()!=0) {
+					err_msg = "Cannot delete the elective as its status is Open or Closed.";
+					
+				}else {
+					
+					electivesRepository.delete(e);
+					if(estudPref.size()!=0) {
+						studentPrefRepository.deleteByCourseId(e_id);
+						//msg.concat("Corresponding prerequisites mapping are deleted.\n");
+					}
+					msg = "Elective has been deleted successfully.";
+				}
+				
+			}else {
+				err_msg = "Specified Elective does not exist. Please check again.";
+			}
+		}else if(c_id.equals("") && e_id.equals("")) {
+			System.out.println("error");
+			err_msg = "Something went wrong.";
+		}
+		
+		return getDelCourseOrElective(msg,err_msg);
+	}
 }
