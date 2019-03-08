@@ -16,9 +16,6 @@
 		oForm.submit();
 	}
 	</script>
-
-	
-
 </head>
 
 <div th:replace="fragments/admin_header :: header"></div>
@@ -42,15 +39,16 @@
 			<h5 class="float-left">Active student elective choice forms</h5>
 		</div>
 		<div class="col-sm">	
-			<a  href="#" class="btn btn-primary" id="viewDetails" >View Details</a>
+			<a href="#" class="btn btn-primary" id="viewDetails" >View Details</a>
 		</div>
 	</div>
 </div>
-<div class="row text-center card-body mx-auto" id="messageDiv" th:fragment="messageDiv">
+<div th:id="messageDiv">
+<div class="row text-center card-body mx-auto" th:fragment="messageDiv">
 	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
-	<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
+	<div class="alert alert-danger" role="alert"  id="err" th:if="${err_msg}" th:utext="${err_msg}"></div>
 </div>
-
+</div>
 <form action="/u/admin/performQuickAction-student" method="post" id="tableForm">
 <div th:id="studPrefTable">
 <table class="table table-bordered table-hover" th:if="${studCountInfo}"  th:fragment="studPrefTable"> 
@@ -135,10 +133,10 @@
 	        contentType: "application/json",
 	        url: '/u/admin/getStudPrefDetailsTable_async',
 	        success: function (data) {
-               console.log(data);
-               if ($(data).find('alert').length) {
+               console.log();
+               if ($(data).find('#err').length) {
             	   $('#messageDiv').html('');
-                   $('#messageDiv').html(data);                   
+            	   $('#messageDiv').html(data);                   
                }
                else{
             	   $('#studPrefTable').html('');
