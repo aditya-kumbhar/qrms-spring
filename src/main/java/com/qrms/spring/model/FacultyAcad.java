@@ -13,6 +13,19 @@ import javax.persistence.Table;
 @Table(name="faculty_acad")
 public class FacultyAcad {
 
+	public FacultyAcad(String userName, Department department, int yearsOfExperience, String qualification,
+			String designation) {
+		super();
+		this.userName = userName;
+		this.department = department;
+		this.yearsOfExperience = yearsOfExperience;
+		this.qualification = qualification;
+		this.designation = designation;
+	}
+
+	public FacultyAcad() {
+	}
+	
 	@Id
 	@Column(name="user_name")
 	private String userName;
@@ -29,19 +42,6 @@ public class FacultyAcad {
 	
 	@Column(name="designation")
 	private String designation;
-
-	public FacultyAcad(String userName, Department department, int yearsOfExperience, String qualification,
-			String designation) {
-		super();
-		this.userName = userName;
-		this.department = department;
-		this.yearsOfExperience = yearsOfExperience;
-		this.qualification = qualification;
-		this.designation = designation;
-	}
-
-	public FacultyAcad() {
-	}
 
 	public String getUserName() {
 		return userName;

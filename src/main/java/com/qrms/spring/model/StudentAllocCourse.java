@@ -1,7 +1,5 @@
 package com.qrms.spring.model;
 
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,7 +12,19 @@ import javax.persistence.Table;
 @Entity
 @Table(name="student_alloc_course")
 public class StudentAllocCourse{
-
+	
+	public StudentAllocCourse(Electives elective, Course courseId,StudentAcad student, int prefNo) {
+		super();
+		this.elective = elective;
+		this.courseId = courseId;
+		this.prefNo = prefNo;
+		this.student = student;
+	}
+	
+	public StudentAllocCourse() {
+		
+	}
+	
 	@javax.persistence.Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="id")
@@ -35,19 +45,6 @@ public class StudentAllocCourse{
 	@Column(name="pref_no")
 	private int prefNo;
 	
-	
-	public StudentAllocCourse() {
-		
-	}
-	
-	public StudentAllocCourse(Electives elective, Course courseId,StudentAcad student, int prefNo) {
-		super();
-		this.elective = elective;
-		this.courseId = courseId;
-		this.prefNo = prefNo;
-		this.student = student;
-	}
-
 	public StudentAcad getStudent() {
 		return student;
 	}
@@ -79,7 +76,6 @@ public class StudentAllocCourse{
 	public void setPrefNo(int prefNo) {
 		this.prefNo = prefNo;
 	}
-
 	
 	public int getId() {
 		return Id;

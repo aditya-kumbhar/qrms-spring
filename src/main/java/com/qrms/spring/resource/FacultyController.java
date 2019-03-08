@@ -13,9 +13,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.FacultyPref;
+import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
+import com.qrms.spring.repository.FacultyAcadRepository;
 
 @Controller
 @RequestMapping("/u/faculty")
@@ -23,6 +25,9 @@ public class FacultyController {
 	
 	@Autowired
 	private FacultyPrefRepository facultyPrefRepository;
+	
+	@Autowired
+	private FacultyAcadRepository facultyAcadRepository;
 	
 	@Autowired
 	private CourseRepository courseRepository;
@@ -33,57 +38,42 @@ public class FacultyController {
 	}
 		
 	@RequestMapping(value = "/getFacultyPrefs", method = RequestMethod.GET)
-	public ModelAndView getFacultyPref() {
+	public ModelAndView getFacultyPref(String msg) {
 		ModelAndView model = new ModelAndView();
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
 		System.out.println(userName);
 		
-		ArrayList<FacultyPref> facultyPrefs = facultyPrefRepository.findByUserName(userName);
+
+		//FacultyAcad currUserAcad = facultyAcadRepository.findByUserName(userName);
 		
-		if(facultyPrefs.size()!=0) {
-			model.addObject("msg","Your preferences for electives have been recorded already!");
-			model.setViewName("faculty/home");
-			return model;
-		}else {
-			//Have to change the below, get courses with semester even or odd depending on the current month
-			ArrayList <Course> courseList = courseRepository.findAll();
-			
-			if(courseList.size()==0) {
-				System.out.println("No courses exist");
-			}else {
-				System.out.println("Courses exist");
-			}
-			model.addObject("courseList", courseList);
-			model.addObject("course1",new String());
-			model.addObject("course2",new String());
-			model.addObject("course3",new String());
-			model.addObject("course4",new String());
-			model.setViewName("faculty/facultyPref");
-			
+		//System.out.println(currUserAcad.getDepartment());
 		
-			return model;
-		}
-	
+		//ArrayList<Course> course_ids = courseRepository.findByDepartment(currUserAcad.getDepartment());
+		
+//		if(course_ids.size()!=0)
+//		{
+//			model.addObject("course_ids",course_ids);
+//			if(msg!=null)
+//				model.addObject("msg",msg);
+//		}
+//		else
+//			model.addObject("err_msg","No courses exist");
+		
+		model.setViewName("/faculty/facultyPref");
+		
+		
+		return model;
 	}
+	
 	
 	@RequestMapping(value = "/setFacultyPrefs", method = RequestMethod.POST)
 	public ModelAndView addPreferences(@Valid String course1,String course2,String course3,String course4) {
 		
 		ModelAndView model = new ModelAndView();
 		
-		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userName = user.getUserName();
 
-		FacultyPref facultyPref = new FacultyPref();
-		facultyPref.setUserName(userName);
-		facultyPref.setCourse1(courseRepository.findByCourseId(course1));
-		facultyPref.setCourse2(courseRepository.findByCourseId(course2));
-		facultyPref.setCourse3(courseRepository.findByCourseId(course3));
-		facultyPref.setCourse4(courseRepository.findByCourseId(course4));
-
-		facultyPrefRepository.save(facultyPref);
 		model.addObject("msg","Your preferences for electives have been recorded!");
 		model.setViewName("faculty/home");
 		return model;

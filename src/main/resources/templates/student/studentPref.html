@@ -37,25 +37,25 @@
 	            var pref4 = $('#course4');
 	            
 	            
-	            if (pref1.val() == "Preference_1") {
+	            if (pref1.val() == "0") {
 	                alert("Please select preference 1");
 	                $('#course1').focus();
 	
 	                return false;
 	            } 
-	            else if (pref2.val() == "Preference_2") {
+	            else if (pref2.val() == "0") {
 	                alert("Please select preference 2");
 	                $('#course2').focus();
 	
 	                return false;
 	            } 
-	            else if (pref3.val() == "Preference_3") {
+	            else if (pref3.val() == "0") {
 	                alert("Please select preference 3");
 	                $('#course3').focus();
 	
 	                return false;
 	            } 
-	            else if (pref4.val() == "Preference_4") {
+	            else if (pref4.val() == "0") {
 	                alert("Please select preference 4");
 	                $('#course4').focus();
 	
@@ -138,7 +138,25 @@
      	   }); 
     	});
 	    
-	    
+	    $(document).ready(function () {
+	        $('#prefInfoClass').on('change', '.pref-class', function () {
+	            // Get the selected options of all positions
+	            console.log("change");
+	            var allSelected = $(".pref-class").map(function () {
+	                return $(this).val();
+	            }).get();
+
+	            // set all enabled
+	            $(".pref-class option").removeAttr("disabled");
+
+	            // Disable selected options in other positions
+	            $(".pref-class option:not(:selected):not([value='0'])").each(function () {
+	                if ($.inArray($(this).val(), allSelected) != -1) {
+	                    $(this).attr('disabled', true);
+	                }
+	            });
+	        });
+	    });
     </script>
     
 </head>
@@ -193,14 +211,16 @@
 	<h4 class="card-title mt-3 text-center">Give preferences for <span th:text="${chosen_course_name + '(' + chosen_course_id + ')' }"></span></h4>
 	
     <form th:action="@{/u/student/setStudentPrefs}"  role="form" method="POST" th:object="${studentPref}"> 
+    
+    <div id="prefInfoClass">
     <table>
     	<tr>
     		<td>
     			Select Preference 1
     		</td>
     		<td>
-    			<select class="form-control" th:name="course1" th:id="course1">
-					<option th:value="Preference_1" style="color:#8F8B87" selected>Select Preference 1</option>
+    			<select class="form-control pref-class" th:name="course1" th:id="course1">
+					<option th:value="0" style="color:#8F8B87" selected>Select Preference 1</option>
 					<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
 				</select>
     		</td>
@@ -211,8 +231,8 @@
     			Select Preference 2
     		</td>
     		<td>
-    			<select class="form-control" th:name="course2" th:id="course2">
-						<option th:value="Preference_2" style="color:#8F8B87" selected>Select Preference 2</option>
+    			<select class="form-control pref-class" th:name="course2" th:id="course2">
+						<option th:value="0" style="color:#8F8B87" selected>Select Preference 2</option>
 						<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
 					</select>
     		</td>
@@ -223,8 +243,8 @@
     			Select Preference 3
     		</td>
     		<td>
-    			<select class="form-control" th:name="course3" th:id="course3">
-						<option th:value="Preference_3" style="color:#8F8B87" selected>Select Preference 3</option>
+    			<select class="form-control pref-class" th:name="course3" th:id="course3">
+						<option th:value="0" style="color:#8F8B87" selected>Select Preference 3</option>
 						<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
 					</select>
     		</td>
@@ -235,8 +255,8 @@
     			Select Preference 4
     		</td>
     		<td>
-    			<select class="form-control" th:name="course4" th:id="course4">
-					<option th:value="Preference_4" style="color:#8F8B87" selected>Select Preference 4</option>
+    			<select class="form-control pref-class" th:name="course4" th:id="course4">
+					<option th:value="0" style="color:#8F8B87" selected>Select Preference 4</option>
 					<option th:each="i : ${courseList}" th:value="${i.electiveCourseId}" th:text="${i.electiveName}" style="color:#000"></option>
 				</select>
     		</td>
@@ -250,7 +270,10 @@
 			</td>
 		</tr>
     </table>
-	</form>
+    
+    </div>
+    
+    </form>
 </article>
 
 <div class="row text-center mx-auto">

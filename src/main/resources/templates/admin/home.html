@@ -128,7 +128,8 @@
 <script>
 
 	$('#viewDetails').on('click', function () {
-	    $.ajax({
+	    console.log("hello");
+		$.ajax({
 	        type: "GET",
 	        contentType: "application/json",
 	        url: '/u/admin/getStudPrefDetailsTable_async',
