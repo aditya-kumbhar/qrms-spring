@@ -13,5 +13,4 @@ public interface ElectivesRepository extends JpaRepository<Electives, Integer>  
 	Electives findByElectiveCourseId(String electiveId);
 	Optional<Electives> findByElectiveName(String electiveName);
 	
-	
 }

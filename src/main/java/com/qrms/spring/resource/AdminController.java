@@ -125,8 +125,8 @@ public class AdminController {
 	}
 	
 	 @RequestMapping(value = "/getStudPrefDetailsTable_async", method = RequestMethod.GET)
-	 public String showPersonaFragment(Model model) {
-		System.out.println("here");
+	 public String getStudPrefDetailsTable(Model model) {
+		
 		List<StudentPrefCountInfo> studCountInfo = computeStudPrefTable();
 		if(studCountInfo.isEmpty()) {
 			model.addAttribute("err_msg","There are no open student elective preference forms");
