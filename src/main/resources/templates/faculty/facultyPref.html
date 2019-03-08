@@ -44,34 +44,19 @@
 		    });
 		});
 		
-		$(document).ready(function(){
-			$('#selectPref').change(function(){
-	    		var current = $('#selectPref').val();
-	    		if(current!="none"){
-	    			$('.exp').css("display",'');
-	    		} else{
-	    			$('.exp').css("display",'none');
-	    		}
-	    	});
-		});
-		
 		function showPref(){
             var pref = document.getElementById("selectPref").value;
             course1.innerHTML= pref;
         }
 		
-		
-		
 		$(document).ready(function(){
-			$('#form1').submit(function () {
+			$('#form1').submit(function() {
 				return false;
 			});
 		});
 		
 		</script>
 
-	
-	
 </head>
 
 <div th:replace="fragments/fac_header :: header"></div>
@@ -225,7 +210,7 @@
 		<tr>
 			<td colspan=2 align=center>
 				<div class="form-group">
-		        	<button type="submit" id="getChoices" class="btn btn-primary btn-block" style="width:150px"> Get Choices  </button>
+		        	<button id="getChoices" class="btn btn-primary btn-block" style="width:150px"> Get Choices  </button>
 		    	</div> <!-- form-group// -->  
 			</td>
 		</tr>
@@ -234,12 +219,12 @@
 </article>	
 
 
-
-<div class="row text-center mx-auto" id="messageDiv" th:fragment="messageDiv">
+<div th:id="messageDiv">
+<div class="row text-center card-body mx-auto" th:fragment="messageDiv">
 	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
-	<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
+	<div class="alert alert-danger" role="alert"  id="err" th:if="${err_msg}" th:utext="${err_msg}"></div>
 </div>
-
+</div>
 
 
 <article class="card-body mx-auto">
@@ -252,9 +237,9 @@
     			Select Course
     		</td>
     		<td>
-    			<select class="form-control" th:name="chosenCourse" th:id="selectPref">
+    			<select class="form-control" th:name="chosenCourse" id="selectPref" onchange="prefChangefun()">
 					<option th:value="none" style="color:#8F8B87" selected>Select Course</option>
-					<option th:each="i : ${resultSet}" th:text="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" th:value="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" style="color:#000"></option>
+					<option th:each="i : ${resultSet}" th:text="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" th:value="${i.elective!=null ? i.elective.electiveCourseId : i.course.courseId" style="color:#000"></option>
 				</select>
     		</td>
     	</tr>
@@ -286,7 +271,7 @@
     		</td>
     	</tr>
     	
-    	<tr>
+    	<tr class="exp" style="display: none">
 			<td colspan=2 align=center>
 				<div class="form-group">
 		        	<button type="submit" id="submit2" class="btn btn-primary btn-block" onclick="showPref()" style="width:165px"> Select Preference  </button>
@@ -314,13 +299,37 @@
 	        data: {year: $('#year').val() },
 	        success: function (response) {
               	console.log(response);
-              	$('#form2').html('');
-               	
-              	$('#form2').html(response);
-              	$('#form2').show();
+              	if ($(response).find('#err').length) {
+             	   $('#messageDiv').html('');
+             	   $('#messageDiv').html(response); 
+             	   $('#form2').hide();
+             	   $('#form2').html('');
+             	   $('#messageDiv').show();
+                }
+                else{
+	              	$('#form2').html('');
+	              	$('#form2').html(response);
+	              	$('#form2').show();
+	             	$('#messageDiv').hide();                   
+
+                }
               }
 		});
 	});
+	
+	//$('#selectPref').change(function () 
+	function prefChangefun()
+	{
+		var selectedPref = $('#selectPref').val();
+		if(selectedPref=='none')
+		{
+			$('.exp').hide();
+		}
+		else
+		{
+			$('.exp').show();
+		}
+	}
 </script>
 </body>
 </html>

@@ -69,27 +69,36 @@ public class FacultyController {
 		ArrayList <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserNameAndYear(currUserAcad.getUserName(),year);
 		
 		if(facultyPrefs.size()==2) {
-			return "faculty/facultyPref :: selectPreferenceFragment";
+			model.addAttribute("err_msg","Cannot give more that 2 preferences for single year");
+			return "faculty/facultyPref :: messageDiv";
 		}
 		else {
 			ArrayList<CourseAndElectives> resultSet = new ArrayList<CourseAndElectives>() ;
 			//change later when admin gives current Sem input
 			ArrayList<Course> regCourses = courseRepository.findByCourseYearAndCourseTypeAndDepartment(year,'R', currUserAcad.getDepartment());
 			ArrayList<Course> elCourses = courseRepository.findByCourseYearAndCourseTypeAndDepartment(year,'E', currUserAcad.getDepartment());
-			for(Course elCourse: elCourses) {
-				ArrayList<Electives> electives = electivesRepository.findByCourse(elCourse);
-				for(Electives el: electives) {
-					CourseAndElectives ce = new CourseAndElectives();
-					ce.setCourse(elCourse);
-					ce.setElective(el);
-					resultSet.add(ce);
-						
-				}				
+			
+			if(regCourses.isEmpty() && elCourses.isEmpty())
+			{
+				model.addAttribute("err_msg","No courses found for the selected year");
+				return "faculty/facultyPref :: messageDiv";
 			}
-			for(Course regCourse: regCourses) {
-				CourseAndElectives ce = new CourseAndElectives();
-				ce.setCourse(regCourse);			
-				resultSet.add(ce);				
+			else {
+				for(Course elCourse: elCourses) {
+					ArrayList<Electives> electives = electivesRepository.findByCourse(elCourse);
+					for(Electives el: electives) {
+						CourseAndElectives ce = new CourseAndElectives();
+						ce.setCourse(elCourse);
+						ce.setElective(el);
+						resultSet.add(ce);
+							
+					}				
+				}
+				for(Course regCourse: regCourses) {
+					CourseAndElectives ce = new CourseAndElectives();
+					ce.setCourse(regCourse);			
+					resultSet.add(ce);				
+				}
 			}
 			model.addAttribute("resultSet",resultSet);
 		}
