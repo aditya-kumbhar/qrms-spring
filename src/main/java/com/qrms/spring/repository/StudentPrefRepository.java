@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.queryBeans.PrefGroupByCourseStudent;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
@@ -32,5 +33,6 @@ public interface StudentPrefRepository extends JpaRepository<StudentPref, Intege
 
 	void deleteByCourseId(String courseId);
 	ArrayList<StudentPref> findByUserNameAndCourseId(String userName,String course_id);
+	ArrayList<StudentPref> findByElective(Electives e);
 
 }

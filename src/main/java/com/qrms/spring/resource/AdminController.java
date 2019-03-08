@@ -125,8 +125,8 @@ public class AdminController {
 	}
 	
 	 @RequestMapping(value = "/getStudPrefDetailsTable_async", method = RequestMethod.GET)
-	 public String showPersonaFragment(Model model) {
-		System.out.println("here");
+	 public String getStudPrefDetailsTable(Model model) {
+		
 		List<StudentPrefCountInfo> studCountInfo = computeStudPrefTable();
 		if(studCountInfo.isEmpty()) {
 			model.addAttribute("err_msg","There are no open student elective preference forms");
@@ -410,23 +410,39 @@ public class AdminController {
 		}else if(!prerequisiteNo1.equals("") && !prerequisiteNo2.equals("")) {
 			Optional<Course> pr1Course = courseRepository.findByCourseIdAndDepartmentAndIsTheory(prerequisiteNo1,course.getDepartment(),1);
 			Optional<Course> pr2Course = courseRepository.findByCourseIdAndDepartmentAndIsTheory(prerequisiteNo2,course.getDepartment(),1);
-			
-			if(pr1Course.isPresent() && pr2Course.isPresent()) {
-				CoursePrerequisites cr = new CoursePrerequisites(course.getCourseId(),pr1Course.get(),pr2Course.get());
+			Optional<Electives> pr1Elective = electivesRepository.findByElectiveName(prerequisiteNo1);
+			Optional<Electives> pr2Elective = electivesRepository.findByElectiveName(prerequisiteNo2);
+						
+			if(pr1Course.isPresent() && pr2Course.isPresent() && !pr1Elective.isPresent() && !pr2Elective.isPresent()) {
+				CoursePrerequisites cr = new CoursePrerequisites(course.getCourseId(),0,0,prerequisiteNo1,prerequisiteNo2);
+				courseRepository.save(course);
 				coursePrerequisitesRepository.save(cr);
 				model.addObject("msg","Course has been added successfully");
 				model.addObject("course",new Course());
+				
+			} else if(!pr1Course.isPresent() && !pr2Course.isPresent() && pr1Elective.isPresent() && pr2Elective.isPresent()){
+				CoursePrerequisites cr = new CoursePrerequisites(course.getCourseId(),1,1,prerequisiteNo1,prerequisiteNo2);
 				courseRepository.save(course);
-			} else if(!pr1Course.isPresent() && !pr2Course.isPresent()){
+				coursePrerequisitesRepository.save(cr);
+				model.addObject("msg","Course has been added successfully");
+				model.addObject("course",new Course());
+				
+			}else if(pr1Course.isPresent() && pr2Course.isPresent() && pr1Elective.isPresent() && pr2Elective.isPresent()){
+				model.addObject("err_msg", "Ambiguous Ids entered.");
+				model.addObject("course",new Course());
+				
+			} else if(!pr1Course.isPresent() && !pr2Course.isPresent() && !pr1Elective.isPresent() && !pr2Elective.isPresent()){
 				model.addObject("err_msg","Prerequisite 1 and 2 theory courses don't exist!");
-				model.addObject("course",new Course());
-			}
-			else if(!pr1Course.isPresent()){
+				model.addObject("course",new Course());	
+				
+			}else if(!pr1Course.isPresent() && !pr1Elective.isPresent()){
 				model.addObject("err_msg","Prerequisite 1 theory course doesn't exist!");
-				model.addObject("course",new Course());
-			} else if(!pr2Course.isPresent()){
+				model.addObject("course",new Course());	
+				
+			}else if(!pr2Course.isPresent() && !pr2Elective.isPresent()){
 				model.addObject("err_msg","Prerequisite 2 theory course doesn't exist!");
 				model.addObject("course",new Course());
+				
 			}
 		}else {
 			model.addObject("err_msg","Cannot add course, something went wrong!");
@@ -822,5 +838,76 @@ public class AdminController {
 		else
 			model.addObject("err_msg", "No allocations done yet for Course Id: "+electiveIdOption);
 		return model;
+	}
+	
+	//delete course or elective
+	@Transactional
+	@RequestMapping(value="/delete-course-elective",method=RequestMethod.GET)
+	public ModelAndView getDelCourseOrElective(String msg,String err_msg) {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/admin/deleteCourseOrElective");
+		if(msg!=null)
+			model.addObject("msg",msg);
+		else if(err_msg!=null)
+			model.addObject("err_msg",err_msg);
+		return model;
+	}
+	
+	@Transactional
+	@RequestMapping(value="/delete-course-elective",method=RequestMethod.POST)
+	public ModelAndView setDelCourseOrElective(String c_id,String e_id) {
+		String msg = null;
+		String err_msg = null;
+		if(!c_id.equals("")) {
+			System.out.println("course");
+			Course c = courseRepository.findByCourseId(c_id);
+			ArrayList<CoursePrerequisites> cprereq = coursePrerequisitesRepository.findByCourseId(c_id);
+			ArrayList<StudentPref> cstudPref = studentPrefRepository.findByCourseIdEquals(c_id);
+			if(c!=null) {
+				courseRepository.delete(c);
+				
+				if(cprereq.size()!=0)
+				{
+					coursePrerequisitesRepository.deleteByCourseId(c_id);
+					//msg.concat("Corresponding prerequisites mapping are deleted.\n");
+				}
+				if(cstudPref.size()!=0)
+				{
+					studentPrefRepository.deleteByCourseId(c_id);
+					//msg.concat("Corresponding prerequisites mapping are deleted.\n");
+				}
+				msg = "Course has been deleted successfully.";
+			}else {
+				err_msg = "Specified Course does not exist. Please check again.";
+			}
+		}else if(!e_id.equals("")) {
+			System.out.println("elective");
+			Electives e = electivesRepository.findByElectiveCourseId(e_id);
+			
+			ArrayList<StudentPref> estudPref = studentPrefRepository.findByElective(e);
+			
+			if(e!=null) {
+				if(e.getCourse().getStudAllocFlag()!=0) {
+					err_msg = "Cannot delete the elective as its status is Open or Closed.";
+					
+				}else {
+					
+					electivesRepository.delete(e);
+					if(estudPref.size()!=0) {
+						studentPrefRepository.deleteByCourseId(e_id);
+						//msg.concat("Corresponding prerequisites mapping are deleted.\n");
+					}
+					msg = "Elective has been deleted successfully.";
+				}
+				
+			}else {
+				err_msg = "Specified Elective does not exist. Please check again.";
+			}
+		}else if(c_id.equals("") && e_id.equals("")) {
+			System.out.println("error");
+			err_msg = "Something went wrong.";
+		}
+		
+		return getDelCourseOrElective(msg,err_msg);
 	}
 }

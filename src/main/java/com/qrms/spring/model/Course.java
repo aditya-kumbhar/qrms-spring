@@ -75,16 +75,6 @@ public class Course {
 	@OneToMany(mappedBy = "courseId", cascade = CascadeType.ALL)
 	Set<StudentAllocCourse> course_Ids = new HashSet<StudentAllocCourse>();
 	
-	// Parent of FK relation to CoursePrerequisites -- do not cascade on
-	// delete/update
-	@OneToMany(mappedBy = "prerequisiteNo1", cascade = CascadeType.ALL)
-	Set<CoursePrerequisites> prereqs1 = new HashSet<CoursePrerequisites>();
-
-	// Parent of FK relation to CoursePrerequisites -- do not cascade on
-	// delete/update
-	@OneToMany(mappedBy = "prerequisiteNo2", cascade = CascadeType.ALL)
-	Set<CoursePrerequisites> prereqs2 = new HashSet<CoursePrerequisites>();
-
 	// Parent of FK relation to CourseCompanion -- do not cascade on
 	// delete/update
 	@OneToMany(mappedBy = "companionCourse", cascade = CascadeType.ALL)
@@ -202,22 +192,6 @@ public class Course {
 
 	public void setCourseSem(int courseSem) {
 		this.courseSem = courseSem;
-	}
-	
-	public Set<CoursePrerequisites> getPrereqs1() {
-		return prereqs1;
-	}
-
-	public void setPrereqs1(Set<CoursePrerequisites> prereqs1) {
-		this.prereqs1 = prereqs1;
-	}
-
-	public Set<CoursePrerequisites> getPrereqs2() {
-		return prereqs2;
-	}
-
-	public void setPrereqs2(Set<CoursePrerequisites> prereqs2) {
-		this.prereqs2 = prereqs2;
 	}
 	
 	public Set<Electives> getElectives() {

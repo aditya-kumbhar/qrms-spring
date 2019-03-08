@@ -50,18 +50,20 @@ INSERT INTO `course` VALUES ('410252',3,'Elective 3',8,'E','BE',1,3,0,'CS'),('41
 /*insert values in electives table*/
 INSERT INTO `electives` VALUES ('410252A','Adv Digital Signal Processing','410252'),('410252B','Compilers','410252'),('410252C','ERTOS','410252'),('410252D','SCOA','410252'),('410253A','Software Defined Networks','410253'),('410253B','Human Computer Interface','410253'),('410253C','Cloud Computing','410253'),('410253D','Open Elective','410253');
 
-/*insert values in student_acad*/
-insert into student_acad(user_name) values('stud1');
-insert into student_acad(user_name) values('stud2');
-insert into student_acad(user_name) values('stud3');
-insert into student_acad(user_name) values('stud4');
-insert into student_acad(user_name) values('stud5');
-insert into student_acad(user_name) values('stud6');
 
-/*update student_acad table*/
-update student_acad set agg_marks=80,division="B",rollno="BECOB210",semester=8,shift=1,year="BE",dept_id="CS" where user_name="stud1";
-update student_acad set agg_marks=85,division="B",rollno="BECOB211",semester=8,shift=1,year="BE",dept_id="CS" where user_name="stud2";
-update student_acad set agg_marks=90,division="B",rollno="BECOB212",semester=8,shift=1,year="BE",dept_id="CS" where user_name="stud3";
-update student_acad set agg_marks=95,division="B",rollno="BECOB213",semester=8,shift=1,year="BE",dept_id="CS" where user_name="stud4";
-update student_acad set agg_marks=100,division="B",rollno="BECOB214",semester=8,shift=1,year="BE",dept_id="CS" where user_name="stud5";
-update student_acad set agg_marks=75,division="B",rollno="BECOB215",semester=8,shift=1,year="BE",dept_id="CS" where user_name="stud6";
+/*insert values in student_acad table*/
+insert into student_acad values("stud1",80,"B","BECOB210",8,1,"BE","CS");
+insert into student_acad values("stud2",85,"B","BECOB211",8,1,"BE","CS")
+insert into student_acad values("stud3",90,"B","BECOB212",8,1,"BE","CS")
+insert into student_acad values("stud4",95,"B","BECOB213",8,1,"BE","CS")
+insert into student_acad values("stud5",70,"B","BECOB214",8,1,"BE","CS")
+insert into student_acad values("stud6",75,"B","BECOB215",8,1,"BE","CS")
+
+
+/*insert values in faculty_acad table*/
+insert into faculty_acad values('fac1','Professor','PHD',10,'CS');
+insert into faculty_acad values('fac2','Professor','PHD',10,'CS');
+insert into faculty_acad values('fac3','Associate Professor','BTECH',7,'CS');
+insert into faculty_acad values('fac4','Associate Professor','BTECH',7,'CS');
+insert into faculty_acad values('fac5','Assistant Professor','MTECH',4,'CS');
+insert into faculty_acad values('fac6','Assistant Professor','MTECH',4,'CS');
