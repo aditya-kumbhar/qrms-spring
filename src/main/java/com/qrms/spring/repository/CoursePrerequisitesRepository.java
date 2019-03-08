@@ -8,7 +8,7 @@ import com.qrms.spring.model.CoursePrerequisites;
 
 
 public interface CoursePrerequisitesRepository extends JpaRepository<CoursePrerequisites, Integer> {
-	ArrayList<CoursePrerequisites> findByCourse(String c_id);
+	ArrayList<CoursePrerequisites> findByCourseId(String c_id);
 
-	void deleteByCourse(String c_id);
+	void deleteByCourseId(String c_id);
 }
