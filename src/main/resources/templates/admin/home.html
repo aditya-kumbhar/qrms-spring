@@ -11,13 +11,11 @@
 	<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
    	
 	<script>
-	function SubmitForm(formId){
-		var oForm = document.getElementById(formId);
-		oForm.submit();
-	}
+		function SubmitForm(formId){
+			var oForm = document.getElementById(formId);
+			oForm.submit();
+		}
 	</script>
-
-	
 
 </head>
 
@@ -46,10 +44,15 @@
 		</div>
 	</div>
 </div>
+
+
+
 <div class="row text-center card-body mx-auto" id="messageDiv" th:fragment="messageDiv">
 	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
 	<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
 </div>
+
+
 
 <form action="/u/admin/performQuickAction-student" method="post" id="tableForm">
 <div th:id="studPrefTable">
@@ -92,6 +95,9 @@
 </table>
 </div>
 </form>
+
+
+
 <form action="/u/admin/changeSeatsAndAllocate"  th:if="${prefSummaryList}" method="POST">
 <div class="row text-center card-body mx-auto">	
 	<h5 th:text="${'Allocation for course '+prefSummaryList.get(0).courseId}"></h5>
@@ -130,7 +136,7 @@
 <script>
 
 	$('#viewDetails').on('click', function () {
-	    console.log("hello");
+	    //console.log("hello");
 		$.ajax({
 	        type: "GET",
 	        contentType: "application/json",

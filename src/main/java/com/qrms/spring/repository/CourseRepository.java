@@ -31,5 +31,8 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 	Optional<Course> findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheory(String companionTheory,
 			Department department, String courseYear, int courseSem, int i);
 	Optional<Course> findByCourseIdAndDepartmentAndIsTheory(String companionTheory, Department department, int i);
+	ArrayList<Course> findByDepartmentAndCourseType(Department department, char c);
+	ArrayList<Course> findByCourseYear(String year);
+	ArrayList<Course> findByCourseYearAndCourseTypeAndDepartment(String year, char c, Department department);
 
 }

@@ -8,5 +8,7 @@ import com.qrms.spring.model.FacultyPref;
 
 public interface FacultyPrefRepository extends JpaRepository<FacultyPref, Integer>{
 	ArrayList<FacultyPref> findByUserName(String user_name);
+
+	ArrayList<FacultyPref> findByUserNameAndYear(String userName, String year);
 	
 }

@@ -7,46 +7,70 @@
 	
 	<link rel="stylesheet" th:href="@{/css/faculty/fac_pref.css}">
 	<link rel="stylesheet" th:href="@{/css/register.css}">
+	<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
 	<title>Faculty Preferences</title>
-	
+
 	<script>
 		$(document).ready(function(){
-		    $("#p1").click(function(){
-		        $("#f1").show();
-		        $("#f2").hide();
-		        
+		    $("#pref1").click(function(){
+		        $("#form1").show();
+		        $("#form2").hide();
+		        $("#heading").hide();
+		    });
+		    $("#pref2").click(function(){
+		        $("#form1").show();
+		        $("#form2").hide();
+		        $("#heading").hide();
+		    });
+		    $("#pref3").click(function(){
+		        $("#form1").show();
+		        $("#form2").hide();
+		        $("#heading").hide();
+		    });
+		    $("#pref4").click(function(){
+		        $("#form1").show();
+		        $("#form2").hide();
+		        $("#heading").hide();
+		    });
+		    $("#pref5").click(function(){
+		        $("#form1").show();
+		        $("#form2").hide();
+		        $("#heading").hide();
+		    });
+		    $("#pref6").click(function(){
+		        $("#form1").show();
+		        $("#form2").hide();
+		        $("#heading").hide();
 		    });
 		});
 		
 		$(document).ready(function(){
-		    $("#f1").submit(function(){
-		        $("#f2").show();
-		        return false;
-		    });
-		});
-		
-		function showPref(){
-            var pref = document.getElementById("pref").value;
-            c1.innerHTML= pref;
-        }
-		
-		$(document).ready(function(){
-			$('#f2').submit(function () {
-				return false;
-			});
-		});
-		
-		$(document).ready(function(){
-	    	$('#pref').change(function(){
-	    		var current = $('#pref').val();
+			$('#selectPref').change(function(){
+	    		var current = $('#selectPref').val();
 	    		if(current!="none"){
 	    			$('.exp').css("display",'');
 	    		} else{
 	    			$('.exp').css("display",'none');
 	    		}
 	    	});
-	    });
-	</script>
+		});
+		
+		function showPref(){
+            var pref = document.getElementById("selectPref").value;
+            course1.innerHTML= pref;
+        }
+		
+		
+		
+		$(document).ready(function(){
+			$('#form1').submit(function () {
+				return false;
+			});
+		});
+		
+		</script>
+
+	
 	
 </head>
 
@@ -67,6 +91,8 @@
 
 <body>
 
+
+
 <div class="sidebar">
   <table>
   	<tr>
@@ -74,15 +100,16 @@
   			<h5>Give Preferences</h5>
   		</td>
   	</tr>
+  	
   	<tr>
   		<td>
   			<h6>1</h6>
   		</td>
   		<td style="width:250px">
-  			<h6 id="c1"></h6>
+  			<h6 id="course1"></h6>
   		</td>
   		<td>
-			<button class="choose" id="p1">Choose</button>			
+			<button class="choose" id="pref1">Choose</button>			
   		</td>
   		<td>
 			<button class="clear">Clear</button>			
@@ -94,10 +121,10 @@
   			<h6>2</h6>
   		</td>
   		<td>
-  			<h6 id="c2"></h6>
+  			<h6 id="course2"></h6>
   		</td>
   		<td>
-  			<button class="choose" id="p2">Choose</button>	
+  			<button class="choose" id="pref2">Choose</button>	
   		</td>
   		<td>
 			<button class="clear">Clear</button>			
@@ -109,10 +136,10 @@
   			<h6>3</h6>
   		</td>
   		<td>
-  			<h6 id="c3"></h6>
+  			<h6 id="course3"></h6>
   		</td>
   		<td>
-  			<button class="choose" id="p3">Choose</button>	
+  			<button class="choose" id="pref3">Choose</button>	
   		</td>
   		<td>
 			<button class="clear">Clear</button>			
@@ -124,10 +151,10 @@
   			<h6>4</h6>
   		</td>
   		<td>
-  			<h6 id="c4"></h6>
+  			<h6 id="course4"></h6>
   		</td>
   		<td>
-  			<button class="choose" id="p4">Choose</button>	
+  			<button class="choose" id="pref4">Choose</button>	
   		</td>
   		<td>
 			<button class="clear">Clear</button>			
@@ -139,10 +166,10 @@
   			<h6>5</h6>
   		</td>
   		<td>
-  			<h6 id="c5"></h6>
+  			<h6 id="course5"></h6>
   		</td>
   		<td>
-  			<button class="choose" id="p5">Choose</button>	
+  			<button class="choose" id="pref5">Choose</button>	
   		</td>
   		<td>
 			<button class="clear">Clear</button>			
@@ -154,10 +181,10 @@
   			<h6>6</h6>
   		</td>
   		<td>
-  			<h6 id="c6"></h6>
+  			<h6 id="course6"></h6>
   		</td>
   		<td>
-  			<button class="choose" id="p6">Choose</button>	
+  			<button class="choose" id="pref6">Choose</button>	
   		</td>
   		<td>
 			<button class="clear">Clear</button>			
@@ -172,18 +199,21 @@
   </table>
 </div>
 
-<div class="content">
+
+
+<div class="content"  >
   <div class="card bg-light">
   <article class="card-body mx-auto">
-	<form th:action="@{/u/faculty/getFacultyPrefs}"  role="form" method="GET" id="f1">
-	<h4 class="card-title mt-3 text-center">Select Year</h4>
+  	<h4 id="heading">Press the choose button to select preferences</h4>
+	<form role="form" id="form1">
+	<h4 class="card-title mt-3 text-center">Select Course Year</h4>
 	<table>
 		<tr>
 			<td>
 			    Select Year
 			</td>
 			<td>
-				<select class="form-control" th:name="elective_id" th:id="elective_id" required>
+				<select class="form-control" th:name="year" th:id="year" required>
 					<option th:value="none" style="color:#8F8B87" selected >Select Year</option>
 					<option value="SE" style="color:#000">SE</option>
 					<option value="TE" style="color:#000">TE</option>
@@ -195,30 +225,36 @@
 		<tr>
 			<td colspan=2 align=center>
 				<div class="form-group">
-		        	<button type="submit" id="submit1" class="btn btn-primary btn-block" style="width:150px"> Get Choices  </button>
+		        	<button type="submit" id="getChoices" class="btn btn-primary btn-block" style="width:150px"> Get Choices  </button>
 		    	</div> <!-- form-group// -->  
 			</td>
 		</tr>
 	</table>
 	</form>
 </article>	
-<div class="row text-center mx-auto">
+
+
+
+<div class="row text-center mx-auto" id="messageDiv" th:fragment="messageDiv">
 	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
 	<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
 </div>
 
-<article class="card-body mx-auto" th:fragment="selectPreferenceFragment">
 
-    <form role="form" method="GET" id="f2"> 
-    <table>
+
+<article class="card-body mx-auto">
+    <form role="form" method="GET" id="form2" th:fragment="selectPreferenceFragment"> 
+    <h4 class="card-title mt-3 text-center card-body mx-auto">Give preferences for <span th:text="${chosen_year_name}"></span> courses</h4>
+    <div th:id="selectPreferenceFragment">
+    <table >
     	<tr>
     		<td>
     			Select Course
     		</td>
     		<td>
-    			<select class="form-control" th:name="course1" th:id="pref">
+    			<select class="form-control" th:name="chosenCourse" th:id="selectPref">
 					<option th:value="none" style="color:#8F8B87" selected>Select Course</option>
-					<option value="hi">Hi</option>
+					<option th:each="i : ${resultSet}" th:text="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" th:value="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" style="color:#000"></option>
 				</select>
     		</td>
     	</tr>
@@ -258,6 +294,7 @@
 			</td>
 		</tr>
     </table>
+    </div>
 	</form>
 </article>
 
@@ -267,5 +304,23 @@
 </div>
 </div>
 
+<script>
+	$('#getChoices').click(function(){
+		console.log('ajax: '+$('#year').val());
+		$.ajax({
+	        type: "GET",
+	        contentType: "application/json",
+	        url: '/u/faculty/getFacPrefForm',
+	        data: {year: $('#year').val() },
+	        success: function (response) {
+              	console.log(response);
+              	$('#form2').html('');
+               	
+              	$('#form2').html(response);
+              	$('#form2').show();
+              }
+		});
+	});
+</script>
 </body>
 </html>

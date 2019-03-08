@@ -17,7 +17,7 @@ import javax.persistence.Table;
 public class FacultyPref {
 	
 	public FacultyPref(String userName, String courseId, Electives elective, int prefNo, Integer courseExp,
-			Integer prereq1Exp, Integer prereq2Exp) {
+			Integer prereq1Exp, Integer prereq2Exp, String year) {
 		super();
 		this.userName = userName;
 		this.courseId = courseId;
@@ -26,6 +26,7 @@ public class FacultyPref {
 		this.courseExp = courseExp;
 		this.prereq1Exp = prereq1Exp;
 		this.prereq2Exp = prereq2Exp;
+		this.year = year;
 	}
 	
 	public FacultyPref() {
@@ -64,6 +65,18 @@ public class FacultyPref {
 	@Column(name="prereq2_exp")
 	private Integer prereq2Exp;
 	
+	//year
+	@Column(name="year")
+	private String year;
+	
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
 	public int getId() {
 		return id;
 	}
