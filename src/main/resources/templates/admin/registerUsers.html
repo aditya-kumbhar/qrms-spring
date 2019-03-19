@@ -42,14 +42,14 @@
 	 	            var sem = $('#sem');
 	 	            var dept = $('#dept');
 	 	            var shift = $('#shift');
-	 	            
+	 	        
 	 	           if (dept.val() == "none") {
-		                alert("Please select a course department");
+		                alert("Please select a department");
 		                $('#dept').focus();
 		                
 		                return false;
 		            }  else if (year.val() == "none") {
-		                alert("Please select a course year");
+		                alert("Please select year");
 		                $('#year').focus();
 		                
 		               return false;
@@ -64,6 +64,30 @@
 						return false;
 		            }
 	            }
+	            else if(document.getElementById('facultyForm').style.display == ''){
+	 	            var dept = $('#dept1');
+		 	       	var des = $('#facDesignation');
+		 	       	var qual = $('#facQualification');
+	
+	 	          	if (dept.val() == "none") {
+		                alert("Please select department");
+		                $('#dept').focus();
+		                
+		                return false;
+		            } else if(des.val() == "none"){
+		            	alert("Please select faculty designation");
+		                des.focus();
+		            	
+		                return false;
+		            } else if (qual.val() == "none") {
+		                alert("Please select faculty qualification");
+		               	qual.focus();
+		                
+		               return false;
+		            } 
+	 	          	
+	            }
+	            
 	            else return;
 	        });
 	    });
@@ -73,12 +97,31 @@
     	   $('#role').change(function() {
     	      var current = $('#role').val();
     	      if(current == 'STUDENT'){
-  	              document.getElementById('studentForm').style.display = '';
-	  	   
+    	    	  document.getElementById('facultyForm').style.display = 'none';
+    	    	  document.getElementById('studentForm').style.display = '';
+    	    	  $("#facExp").prop('required',false);
+    	    	  $("#division").prop('required',true);
+    	    	  $("#rollno").prop('required',true);
+    	    	  $("#cgpa").prop('required',true);
+    	    	  
+    	      }
+    	      else if(current == 'FACULTY'){
+    	    	  document.getElementById('studentForm').style.display = 'none';
+    	    	  document.getElementById('facultyForm').style.display = '';
+    	    	  $("#facExp").prop('required',true);
+    	    	  $("#division").prop('required',false);
+    	    	  $("#rollno").prop('required',false);
+    	    	  $("#cgpa").prop('required',false);
+    	    	  
     	      }
     	      else{
+    	    	  document.getElementById('facultyForm').style.display = 'none';
     	    	  document.getElementById('studentForm').style.display = 'none';
-	  	          
+    	    	  $("#facExp").prop('required',false);
+    	    	  $("#division").prop('required',false);
+    	    	  $("#rollno").prop('required',false);
+    	    	  $("#cgpa").prop('required',false);
+    	    	  
     	      }
     	      
     	      if (current != 'selectrole') {
@@ -277,9 +320,59 @@
 				Aggregate Marks
 			</td>
 			<td>
-				<input type="number" step="0.01" th:field="${student.aggMarks}" class ="form-control" placeholder="Aggregate CGPA" autofocus/>			
+				<input type="number" step="0.01" th:field="${student.aggMarks}" class ="form-control" placeholder="Aggregate CGPA" id="cgpa" autofocus/>			
 			</td>
 		</tr> 
+		</tbody>
+		
+		<!--Faculty form  -->
+		<tbody id="facultyForm" style="display: none">
+		<tr>
+			<td>
+				Select Department
+			</td>
+			<td>
+				<select class="form-control" th:id="dept1" th:name="dept1" autofocus>
+					<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+					<option th:each="dept : ${department}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Designation
+			</td>
+			<td>
+				<select  class ="form-control"  autofocus th:id="facDesignation" th:name="facDesignation">
+					<option value="none" style="color:#8F8B87">Select Designation</option>
+					<option value="prof" style="color:#000">Professor</option>
+					<option value="assistant prof" style="color:#000">Asst. Professor</option>
+					<option value="associate prof" style="color:#000">Assoc. Professor</option>					
+				</select>			
+				
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Qualification
+			</td>
+			<td>
+				<select  class ="form-control" autofocus th:id="facQualification" th:name="facQualification">
+					<option value="none" style="color:#8F8B87">Select Qualification</option>
+					<option value="prof" style="color:#000">PhD</option>
+					<option value="assistant prof" style="color:#000">ME/M.Tech</option>
+				</select>	
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Experience
+			</td>
+			<td>
+				<input type="number" class ="form-control" placeholder="Experience (in years)" autofocus th:id="facExp" th:name="facExp"/>								
+			</td>
+		</tr>
+		
 		</tbody>
 		
 		<tr>
@@ -290,7 +383,8 @@
 	    	</td> 	  
 		</tr>
 		
-		</table>                                           
+		</table>
+		                                           
 	</form>
 </article>
 

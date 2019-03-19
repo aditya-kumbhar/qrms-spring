@@ -301,7 +301,7 @@ public class AdminController {
 	
 	//Display register user form
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
-	public ModelAndView registerUsers() {
+	public ModelAndView registerUsers(String msg, String err_msg) {
 		ModelAndView model = new ModelAndView();
 		Users user = new Users();
 		roles = roleRepository.findAll();
@@ -311,24 +311,36 @@ public class AdminController {
 		model.addObject("roles",roles);
 		model.addObject("department", departments);
 		model.setViewName("admin/registerUsers");
+		
+		if(msg == null && err_msg!=null) {
+			model.addObject("errmsg",err_msg);
+		}
+		else if(msg !=null && err_msg==null) {
+			model.addObject("msg",msg);
+		}
 		return model;
 	}
 	
 	//Handle register user form
 	@RequestMapping(value = "/register_users", method = RequestMethod.POST)
-	public ModelAndView createUser(@Valid Users user, String role, StudentAcad student,String dept) {
+	public ModelAndView createUser(@Valid Users user, String role, StudentAcad student,String dept,
+			String dept1, Integer facExp, String facDesignation, String facQualification
+			) {
 		ModelAndView model = new ModelAndView();	
 		Role userRole = roleRepository.findByRole(role);
 		user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
-		
+		System.out.println(role);
 		//check unique email
 		String email = user.getEmail();
 		if(!userDetails.isUniqueEmail(email)) {
-			model.addObject("errmsg","A user is already registered with the given email");
-			model.addObject("user",new Users());
-			model.addObject("roles",roles);
-			model.setViewName("admin/registerUsers");
-			return model;
+			String errmsg = "A user is already registered with the given email";
+			//			model.addObject("errmsg","A user is already registered with the given email");
+//			model.addObject("user",new Users());
+//			model.addObject("roles",roles);
+//			model.addObject("student",new StudentAcad());
+//			
+//			model.setViewName("admin/registerUsers");
+			return registerUsers(null,errmsg);
 		}
 		
 		userDetails.saveUser(user);
@@ -347,9 +359,16 @@ public class AdminController {
 			faculty = new FacultyAcad();
 			System.out.println("Adding user to facultyAcad");
 			faculty.setUserName(user.getUserName());
+			Department department = departmentRepository.findByDeptId(dept1);
+			
+			faculty.setDepartment(department);
+			faculty.setDesignation(facDesignation);
+			faculty.setQualification(facQualification);
+			faculty.setYearsOfExperience(facExp);
 			facultyAcadRepository.save(faculty);
 			
 		}
+		
 		departments = departmentRepository.findAll();
 		
 		model.addObject("msg","User has been successfully registered");

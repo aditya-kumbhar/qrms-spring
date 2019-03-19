@@ -35,7 +35,7 @@ public class FacultyAcad {
 	private Department department;
 	
 	@Column(name="years_of_experience")
-	private int yearsOfExperience;
+	private Integer yearsOfExperience;
 	
 	@Column(name="qualification")
 	private String qualification;
@@ -59,11 +59,11 @@ public class FacultyAcad {
 		this.department = department;
 	}
 
-	public int getYearsOfExperience() {
+	public Integer getYearsOfExperience() {
 		return yearsOfExperience;
 	}
 
-	public void setYearsOfExperience(int yearsOfExperience) {
+	public void setYearsOfExperience(Integer yearsOfExperience) {
 		this.yearsOfExperience = yearsOfExperience;
 	}
 

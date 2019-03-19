@@ -18,20 +18,20 @@ import javax.persistence.Table;
 @Table(name="student_acad")
 public class StudentAcad  implements Comparable <StudentAcad>{
 
-	public StudentAcad(String userName, Users user_dets, Department department, String year, int sem, String div,
-			int shift, String rollno, Float aggMarks, String academicYear) {
-		super();
-		this.userName = userName;
-		this.user_dets = user_dets;
-		this.department = department;
-		this.year = year;
-		this.sem = sem;
-		this.div = div;
-		this.shift = shift;
-		this.rollno = rollno;
-		this.aggMarks = aggMarks;
-		this.academicYear = academicYear;
-	}
+//	public StudentAcad(String userName, Users user_dets, Department department, String year, int sem, String div,
+//			int shift, String rollno, Float aggMarks, String academicYear) {
+//		super();
+//		this.userName = userName;
+//		this.user_dets = user_dets;
+//		this.department = department;
+//		this.year = year;
+//		this.sem = sem;
+//		this.div = div;
+//		this.shift = shift;
+//		this.rollno = rollno;
+//		this.aggMarks = aggMarks;
+//		this.academicYear = academicYear;
+//	}
 
 	public StudentAcad(){
 		
@@ -50,9 +50,9 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 	@Column(name="user_name")
 	private String userName;
 	
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name="userName")
-	private Users user_dets;
+//	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//	@JoinColumn(name="userName")
+//	private Users user_dets;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "dept_id")
@@ -83,14 +83,14 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 	@OneToMany(mappedBy="student",cascade=CascadeType.ALL)
 	Set<StudentAllocCourse> studentAllocs = new HashSet<StudentAllocCourse>();
 	
-	public Users getUser_dets() {
-		return user_dets;
-	}
-
-	public void setUser_dets(Users user_dets) {
-		this.user_dets = user_dets;
-	}
-	
+//	public Users getUser_dets() {
+//		return user_dets;
+//	}
+//
+//	public void setUser_dets(Users user_dets) {
+//		this.user_dets = user_dets;
+//	}
+//	
 	public String getAcademicYear() {
 		return academicYear;
 	}

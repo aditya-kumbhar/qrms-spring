@@ -56,16 +56,16 @@ public class Users {
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_name"))
 	private Set<Role> roles;
 	
-	@OneToOne(mappedBy="user_dets",cascade = CascadeType.ALL)
-	StudentAcad studentAcad = new StudentAcad();
-			
-	public StudentAcad getStudentAcad() {
-		return studentAcad;
-	}
-
-	public void setStudentAcad(StudentAcad studentAcad) {
-		this.studentAcad = studentAcad;
-	}
+//	@OneToOne(mappedBy="user_dets",cascade = CascadeType.ALL)
+//	StudentAcad studentAcad = new StudentAcad();
+//			
+//	public StudentAcad getStudentAcad() {
+//		return studentAcad;
+//	}
+//
+//	public void setStudentAcad(StudentAcad studentAcad) {
+//		this.studentAcad = studentAcad;
+//	}
 
 	public String getUserName() {
 		return userName;
