@@ -103,6 +103,15 @@ public class FacultyController {
 		
 		return "faculty/facultyPref :: selectPreferenceFragment";
 	}
+	
+	@RequestMapping(value = "/givePreference", method = RequestMethod.GET)
+	public String givePreference(Model model, String selectPref) {
+		//Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		System.out.println(selectPref);
+		
+		return "hi";
+	}
+	
 	/*
 	@RequestMapping(value = "/getFacultyPrefs", method = RequestMethod.GET)
 	public ModelAndView studentPref(String year) {

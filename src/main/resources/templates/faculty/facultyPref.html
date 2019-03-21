@@ -11,46 +11,37 @@
 	<title>Faculty Preferences</title>
 
 	<script>
+	$(document).ready(function () {
+        $("#getChoices").click(function () {
+            var cyear = $('#year');
+            if (cyear.val() == "none") {
+                alert("Please select a course year");
+                $('#year').focus();
+                
+               return false;
+            } 
+            return;
+        });
+    });
+	
+	
 		$(document).ready(function(){
-		    $("#pref1").click(function(){
+		    $(".choose").click(function(){
 		        $("#form1").show();
 		        $("#form2").hide();
 		        $("#heading").hide();
-		    });
-		    $("#pref2").click(function(){
-		        $("#form1").show();
-		        $("#form2").hide();
-		        $("#heading").hide();
-		    });
-		    $("#pref3").click(function(){
-		        $("#form1").show();
-		        $("#form2").hide();
-		        $("#heading").hide();
-		    });
-		    $("#pref4").click(function(){
-		        $("#form1").show();
-		        $("#form2").hide();
-		        $("#heading").hide();
-		    });
-		    $("#pref5").click(function(){
-		        $("#form1").show();
-		        $("#form2").hide();
-		        $("#heading").hide();
-		    });
-		    $("#pref6").click(function(){
-		        $("#form1").show();
-		        $("#form2").hide();
-		        $("#heading").hide();
-		    });
+		    });  
 		});
 		
-		function showPref(){
-            var pref = document.getElementById("selectPref").value;
-            course1.innerHTML= pref;
-        }
 		
 		$(document).ready(function(){
 			$('#form1').submit(function() {
+				return false;
+			});
+		});
+		
+		$(document).ready(function(){
+			$('#form2').submit(function() {
 				return false;
 			});
 		});
@@ -228,7 +219,7 @@
 
 
 <article class="card-body mx-auto">
-    <form role="form" method="GET" id="form2" th:fragment="selectPreferenceFragment"> 
+    <form role="form" id="form2" th:fragment="selectPreferenceFragment"> 
     <h4 class="card-title mt-3 text-center card-body mx-auto">Give preferences for <span th:text="${chosen_year_name}"></span> courses</h4>
     <div th:id="selectPreferenceFragment">
     <table>
@@ -239,7 +230,7 @@
     		<td>
     			<select class="form-control" th:name="chosenCourse" id="selectPref" onchange="prefChangefun()">
 					<option th:value="none" style="color:#8F8B87" selected>Select Course</option>
-					<option th:each="i : ${resultSet}" th:text="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" th:value="${i.elective!=null ? i.elective.electiveCourseId : i.course.courseId" style="color:#000"></option>
+					<option th:each="i : ${resultSet}" th:text="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" th:value="${i.elective!=null ? i.elective.electiveCourseId : i.course.courseId}" style="color:#000"></option>
 				</select>
     		</td>
     	</tr>
@@ -274,7 +265,7 @@
     	<tr class="exp" style="display: none">
 			<td colspan=2 align=center>
 				<div class="form-group">
-		        	<button type="submit" id="submit2" class="btn btn-primary btn-block" onclick="showPref()" style="width:165px"> Select Preference  </button>
+		        	<button id="givePref" class="btn btn-primary btn-block" style="width:165px"> Select Preference  </button>
 		    	</div> <!-- form-group// -->  
 			</td>
 		</tr>
@@ -313,6 +304,24 @@
 	             	$('#messageDiv').hide();                   
 
                 }
+              }
+		});
+	});
+	
+	$('#givePref').click(function(){
+		console.log("hi");
+		console.log('ajax: '+$('#selectPref').val());
+		$.ajax({
+	        type: "GET",
+	        contentType: "application/json",
+	        url: '/u/faculty/givePreference',
+	        data: {selectPref: $('#selectPref').val() },
+	        success: function (response) {
+              	console.log(response);
+              	$('#form1').hide();
+              	$('#form2').hide();
+              	$('#course1').html(response);
+             	$('#messageDiv').hide();                   
               }
 		});
 	});
