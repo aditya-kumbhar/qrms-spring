@@ -11,13 +11,21 @@
 	<title>Faculty Preferences</title>
 
 	<script>
-		var a
+		var setChoice;
+		var clearChoice
 		$(document).ready(function(){
 		    $(".choose").click(function(){
 		        $("#form1").show();
 		        $("#form2").hide();
 		        $("#heading").hide();
-		        a = this.id;
+		        setChoice = this.id;
+		    });  
+		});
+		
+		$(document).ready(function(){
+		    $(".clear").click(function(){
+		    	clearChoice = this.id;
+		        $('#'+clearChoice).html("");
 		    });  
 		});
 		
@@ -58,6 +66,7 @@
 
 
 <div class="sidebar">
+  
   <table>
   	<tr>
   		<td colspan=4 align=center>
@@ -76,7 +85,7 @@
 			<button class="choose" id="pref1">Choose</button>			
   		</td>
   		<td>
-			<button class="clear">Clear</button>			
+			<button class="clear" id="pref1">Clear</button>			
   		</td>
   	</tr>
   	
@@ -91,7 +100,7 @@
   			<button class="choose" id="pref2">Choose</button>	
   		</td>
   		<td>
-			<button class="clear">Clear</button>			
+			<button class="clear" id="pref2">Clear</button>			
   		</td>
   	</tr>
   	
@@ -106,7 +115,7 @@
   			<button class="choose" id="pref3">Choose</button>	
   		</td>
   		<td>
-			<button class="clear">Clear</button>			
+			<button class="clear" id="pref3">Clear</button>			
   		</td>
   	</tr>
   	
@@ -121,7 +130,7 @@
   			<button class="choose" id="pref4">Choose</button>	
   		</td>
   		<td>
-			<button class="clear">Clear</button>			
+			<button class="clear" id="pref4">Clear</button>			
   		</td>
   	</tr>
   	
@@ -136,7 +145,7 @@
   			<button class="choose" id="pref5">Choose</button>	
   		</td>
   		<td>
-			<button class="clear">Clear</button>			
+			<button class="clear" id="pref5">Clear</button>			
   		</td>
   	</tr>
   	
@@ -151,7 +160,7 @@
   			<button class="choose" id="pref6">Choose</button>	
   		</td>
   		<td>
-			<button class="clear">Clear</button>			
+			<button class="clear" id="pref6">Clear</button>			
   		</td>
   	</tr>
   	
@@ -161,6 +170,7 @@
     	</td> 	  
 	</tr>
   </table>
+  
 </div>
 
 
@@ -306,6 +316,14 @@
 	
 	function givePrefs()
 	{
+		var cexp = $('#courseExp');
+		var prereq1exp = $('#prereq1Exp');
+		var prereq2exp = $('#prereq2Exp');
+        if (cexp.val() == "none" || prereq1exp.val() == "" || prereq2exp.val() == "") {
+            alert("Please enter all the fields");
+          
+           return false;
+        } 
 		console.log('ajax: '+$('#selectPref').val());
 		$.ajax({
 	        type: "GET",
@@ -314,10 +332,10 @@
 	        data: {selectPref: $('#selectPref').val() },
 	        success: function (response) {
               	console.log(response);
-              	console.log(a);
+              	console.log(setChoice);
               	$('#form1').hide();
               	$('#form2').hide();
-              	$('#'+a).html(response);
+              	$('#'+setChoice).html(response);
              	$('#messageDiv').hide();
              	$("#heading").show();
               }

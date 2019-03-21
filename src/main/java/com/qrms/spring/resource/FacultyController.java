@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.FacultyPref;
+import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Course;
+import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.Users;
@@ -113,6 +115,41 @@ public class FacultyController {
 		
 		return selectPref;
 	}
+	
+	//--------------------------------------------------------------------------------------
+	//MODIFY THIS
+	//--------------------------------------------------------------------------------------
+//	@RequestMapping(value = "/setFacultyPrefs", method = RequestMethod.POST)
+//	public ModelAndView addPreferences(String course1,String course2,String course3,String course4,String course5, String course6) {
+//		
+//		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//		String userName = user.getUserName();
+//		
+//		
+//		
+//		Electives electives[] = {electivesRepository.findByElectiveCourseId(course1),electivesRepository.findByElectiveCourseId(course2),electivesRepository.findByElectiveCourseId(course3),electivesRepository.findByElectiveCourseId(course4)};
+//		
+//		for(int i = 0;i<4;i++) {
+//			System.out.println(electives[i].getElectiveCourseId());
+//			FacultyPref facultyPref = new StudentPref(userName,electives[i].getCourse().getCourseId(),electives[i],i+1);					
+//			facultyPrefRepository.save(facultyPref);
+//		}
+//
+//		
+//		System.out.println(electivesRepository.findByElectiveCourseId(course1).getElectiveCourseId());
+//		
+//		ElectiveVacancyPrefCounts electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findByElectiveId(electivesRepository.findByElectiveCourseId(course1).getElectiveCourseId());
+//		
+//		int prefCount = electiveVacancyPrefCounts.getPrefCount();
+//		
+//		System.out.println(prefCount);
+//		electiveVacancyPrefCounts.setPrefCount(++prefCount);
+//
+//		electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);
+//		
+//		return getElectiveId("Your preferences for electives have been recorded!");
+//		
+//	}
 	
 	/*
 	@RequestMapping(value = "/getFacultyPrefs", method = RequestMethod.GET)
