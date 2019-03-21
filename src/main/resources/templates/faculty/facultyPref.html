@@ -265,7 +265,7 @@
     	<tr class="exp" style="display: none">
 			<td colspan=2 align=center>
 				<div class="form-group">
-		        	<button id="givePref" class="btn btn-primary btn-block" style="width:165px"> Select Preference  </button>
+		        	<button id="givePref" class="btn btn-primary btn-block" onclick="givePrefs" style="width:165px"> Select Preference  </button>
 		    	</div> <!-- form-group// -->  
 			</td>
 		</tr>
@@ -308,7 +308,8 @@
 		});
 	});
 	
-	$('#givePref').click(function(){
+	function givePrefs()
+	{
 		console.log("hi");
 		console.log('ajax: '+$('#selectPref').val());
 		$.ajax({
@@ -324,7 +325,7 @@
              	$('#messageDiv').hide();                   
               }
 		});
-	});
+	}
 	
 	//$('#selectPref').change(function () 
 	function prefChangefun()
