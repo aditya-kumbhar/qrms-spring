@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.FacultyPref;
+import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
@@ -62,8 +63,15 @@ public class FacultyController {
 		String userName = user.getUserName();
 		System.out.println(userName);
 		
-		model.setViewName("/faculty/facultyPref");
+		FacultyAcad currUserAcad = facultyAcadRepository.findByUserName(userName);
 		
+		ArrayList <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserName(currUserAcad.getUserName());
+		if(facultyPrefs.size()!=0) 
+		{
+			model.addObject("err_msg","You have already submitted your preferences. Please wait until allocation process takes place.");
+		}
+		
+		model.setViewName("/faculty/facultyPref");
 		return model;
 	}
 	

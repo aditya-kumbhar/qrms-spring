@@ -237,6 +237,15 @@
 <div class="row text-center card-body mx-auto" th:fragment="messageDiv">
 	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
 	<div class="alert alert-danger" role="alert"  id="err" th:if="${err_msg}" th:utext="${err_msg}"></div>
+	
+	<script>
+		if ($('#err').length) {
+	 	   $('.sidebar').hide();
+	 	   $('#form2').hide();
+	 	   $('#messageDiv').show();   
+		}
+	</script>
+	
 </div>
 </div>
 
@@ -351,6 +360,7 @@
              	   $('#form2').hide();
              	   $('#form2').html('');
              	   $('#messageDiv').show();
+             	   
                 }
                 else{
 	              	$('#form2').html('');
