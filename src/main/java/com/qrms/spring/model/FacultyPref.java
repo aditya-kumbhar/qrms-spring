@@ -16,12 +16,12 @@ import javax.persistence.Table;
 @Table(name="faculty_pref")
 public class FacultyPref {
 	
-	public FacultyPref(String userName, String courseId, Electives elective, int prefNo, Integer courseExp,
+	public FacultyPref(String userName, String courseId, String electiveId, int prefNo, Integer courseExp,
 			Integer prereq1Exp, Integer prereq2Exp, String year) {
 		super();
 		this.userName = userName;
 		this.courseId = courseId;
-		this.elective = elective;
+		this.electiveId = electiveId;
 		this.prefNo = prefNo;
 		this.courseExp = courseExp;
 		this.prereq1Exp = prereq1Exp;
@@ -44,11 +44,9 @@ public class FacultyPref {
 	//course id
 	@Column(name="course_id")
 	private String courseId;
-		
-	//Child (owner) of FK relation to Electives -- do not cascade on delete/update	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "electiveId")
-	private Electives elective;
+	
+	@Column(name="elective_id")
+	private String electiveId;
 	
 	@Column(name="pref_no")
 	private int prefNo;
@@ -101,12 +99,12 @@ public class FacultyPref {
 		this.courseId = courseId;
 	}
 
-	public Electives getElective() {
-		return elective;
+	public String getElectiveId() {
+		return electiveId;
 	}
 
-	public void setElective(Electives elective) {
-		this.elective = elective;
+	public void setElectiveId(String elective) {
+		this.electiveId = elective;
 	}
 
 	public int getPrefNo() {

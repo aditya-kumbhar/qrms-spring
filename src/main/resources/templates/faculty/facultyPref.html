@@ -12,13 +12,16 @@
 
 	<script>
 		var setChoice;
-		var clearChoice
+		var clearChoice;
+		var inputChoice;
+		var prefData = [];
 		$(document).ready(function(){
 		    $(".choose").click(function(){
 		        $("#form1").show();
 		        $("#form2").hide();
 		        $("#heading").hide();
 		        setChoice = this.id;
+		        inputChoice = 'input' + this.id;
 		    });  
 		});
 		
@@ -166,10 +169,11 @@
   	
   	<tr>
 		<td colspan=4 align=center>
-       		<button type="submit" id="submit" class="btn btn-primary btn-block"  style="width:150px; background-color: #2B7526;"> Submit  </button>
+       		<button type="submit" id="submit" class="btn btn-primary btn-block" onclick="submitPrefs()"  style="width:150px; background-color: #2B7526;">Submit</button>
     	</td> 	  
 	</tr>
   </table>
+ 
   
 </div>
 
@@ -228,7 +232,7 @@
     		<td>
     			<select class="form-control" th:name="chosenCourse" id="selectPref" onchange="prefChangefun()">
 					<option th:value="none" style="color:#8F8B87" selected>Select Course</option>
-					<option th:each="i : ${resultSet}" th:text="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" th:value="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" style="color:#000"></option>
+					<option th:each="i : ${resultSet}" th:text="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" th:value="${i.elective!=null ? i.elective.electiveCourseId : i.course.courseId}" style="color:#000"></option>
 				</select>
     		</td>
     	</tr>
@@ -295,7 +299,6 @@
 	        url: '/u/faculty/getFacPrefForm',
 	        data: {year: $('#year').val() },
 	        success: function (response) {
-              	console.log(response);
               	if ($(response).find('#err').length) {
              	   $('#messageDiv').html('');
              	   $('#messageDiv').html(response); 
@@ -324,21 +327,61 @@
           
            return false;
         } 
-		console.log('ajax: '+$('#selectPref').val());
+		
+       	$('#form1').hide();
+       	$('#form2').hide();
+       	$('#'+setChoice).html($('#selectPref').val());
+       	var cId = $('#selectPref').val();
+       	var cExp = $('#courseExp').val();
+       	var pr1Exp = $('#prereq1Exp').val();
+       	var pr2Exp = $('#prereq2Exp').val();
+       	var year = $('#year').val();
+       	
+       	var ind = setChoice[setChoice.length-1];
+       	prefData[ind]={
+       		"prefNo":ind,
+       		"courseId":cId,
+       		"courseExp":cExp,
+       		"prereq1Exp":pr1Exp,
+       		"prereq2Exp":pr2Exp,       		
+       		"year":year									       	
+       	};
+       	
+       	
+       	
+       	console.log(prefData);
+       	
+      	$('#messageDiv').hide();
+      	$("#heading").show();
+
+	}
+	
+	function submitPrefs()
+	{
+		console.log(prefData);
+		var facultyPrefs = [];
+		
+		for(var i in prefData) {
+			facultyPrefs.push(prefData[i]);
+		}
+		
+		console.log(facultyPrefs);
+		
+		facultyPrefs = JSON.stringify({
+			'facultyPrefs': facultyPrefs
+		});
+		
 		$.ajax({
-	        type: "GET",
+	        type: "POST",
 	        contentType: "application/json",
-	        url: '/u/faculty/givePreference',
-	        data: {selectPref: $('#selectPref').val() },
+	        url: '/u/faculty/setFacPrefs',
+	        data: facultyPrefs,
+	        dataType: 'html',
+	        mimeType: 'application/json',
 	        success: function (response) {
-              	console.log(response);
-              	console.log(setChoice);
-              	$('#form1').hide();
-              	$('#form2').hide();
-              	$('#'+setChoice).html(response);
-             	$('#messageDiv').hide();
-             	$("#heading").show();
-              }
+	        	alert("Preferences set successfully")
+	        }
+    
 		});
 	}
 	

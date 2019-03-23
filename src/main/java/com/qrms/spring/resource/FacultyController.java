@@ -1,12 +1,17 @@
 package com.qrms.spring.resource;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,10 +25,13 @@ import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.CourseAndElectives;
+import com.qrms.spring.queryBeans.FacPrefsList;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
+
+import org.json.JSONObject;
 
 @Controller
 @RequestMapping("/u/faculty")
@@ -109,7 +117,7 @@ public class FacultyController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/givePreference", method = RequestMethod.GET)
-	public String givePreference(Model model, String selectPref) {
+	public String givePreference(Model model, String selectPref, int courseExp, int prereq1Exp, int prereq2Exp) {
 		//Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		System.out.println(selectPref);
 		
@@ -119,37 +127,33 @@ public class FacultyController {
 	//--------------------------------------------------------------------------------------
 	//MODIFY THIS
 	//--------------------------------------------------------------------------------------
-//	@RequestMapping(value = "/setFacultyPrefs", method = RequestMethod.POST)
-//	public ModelAndView addPreferences(String course1,String course2,String course3,String course4,String course5, String course6) {
-//		
-//		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//		String userName = user.getUserName();
-//		
-//		
-//		
-//		Electives electives[] = {electivesRepository.findByElectiveCourseId(course1),electivesRepository.findByElectiveCourseId(course2),electivesRepository.findByElectiveCourseId(course3),electivesRepository.findByElectiveCourseId(course4)};
-//		
-//		for(int i = 0;i<4;i++) {
-//			System.out.println(electives[i].getElectiveCourseId());
-//			FacultyPref facultyPref = new StudentPref(userName,electives[i].getCourse().getCourseId(),electives[i],i+1);					
-//			facultyPrefRepository.save(facultyPref);
-//		}
-//
-//		
-//		System.out.println(electivesRepository.findByElectiveCourseId(course1).getElectiveCourseId());
-//		
-//		ElectiveVacancyPrefCounts electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findByElectiveId(electivesRepository.findByElectiveCourseId(course1).getElectiveCourseId());
-//		
-//		int prefCount = electiveVacancyPrefCounts.getPrefCount();
-//		
-//		System.out.println(prefCount);
-//		electiveVacancyPrefCounts.setPrefCount(++prefCount);
-//
-//		electiveVacancyPrefCountsRepository.save(electiveVacancyPrefCounts);
-//		
-//		return getElectiveId("Your preferences for electives have been recorded!");
-//		
-//	}
+	@ResponseBody
+	@RequestMapping(value = "/setFacPrefs", method = RequestMethod.POST)
+	public String setFacPreferences(Model model, @RequestBody FacPrefsList facultyPrefs ) {
+		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userName = user.getUserName();
+		
+		List<FacultyPref> prefArray = facultyPrefs.getFacultyPrefs();
+		
+		for(FacultyPref fp : prefArray) {
+			fp.setUserName(userName);
+			
+			Course c = courseRepository.findByCourseId(fp.getCourseId());
+			if(c==null)
+			{
+				fp.setElectiveId(fp.getCourseId());
+				fp.setCourseId(null);
+			}
+			else
+			{
+				fp.setElectiveId(null);
+			}
+			facultyPrefRepository.save(fp);
+		}
+		
+		return "success";
+		
+	}
 	
 	/*
 	@RequestMapping(value = "/getFacultyPrefs", method = RequestMethod.GET)
