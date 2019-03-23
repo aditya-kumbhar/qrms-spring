@@ -75,42 +75,36 @@ public class FacultyController {
 		
 		FacultyAcad currUserAcad = facultyAcadRepository.findByUserName(userName);
 		
-		ArrayList <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserNameAndYear(currUserAcad.getUserName(),year);
+		//ArrayList <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserNameAndYear(currUserAcad.getUserName(),year);
 		
-		if(facultyPrefs.size()==2) {
-			model.addAttribute("err_msg","Cannot give more that 2 preferences for single year");
+		ArrayList<CourseAndElectives> resultSet = new ArrayList<CourseAndElectives>() ;
+		//change later when admin gives current Sem input
+		ArrayList<Course> regCourses = courseRepository.findByCourseYearAndCourseTypeAndDepartment(year,'R', currUserAcad.getDepartment());
+		ArrayList<Course> elCourses = courseRepository.findByCourseYearAndCourseTypeAndDepartment(year,'E', currUserAcad.getDepartment());
+		
+		if(regCourses.isEmpty() && elCourses.isEmpty())
+		{
+			model.addAttribute("err_msg","No courses found for the selected year");
 			return "faculty/facultyPref :: messageDiv";
 		}
 		else {
-			ArrayList<CourseAndElectives> resultSet = new ArrayList<CourseAndElectives>() ;
-			//change later when admin gives current Sem input
-			ArrayList<Course> regCourses = courseRepository.findByCourseYearAndCourseTypeAndDepartment(year,'R', currUserAcad.getDepartment());
-			ArrayList<Course> elCourses = courseRepository.findByCourseYearAndCourseTypeAndDepartment(year,'E', currUserAcad.getDepartment());
-			
-			if(regCourses.isEmpty() && elCourses.isEmpty())
-			{
-				model.addAttribute("err_msg","No courses found for the selected year");
-				return "faculty/facultyPref :: messageDiv";
-			}
-			else {
-				for(Course elCourse: elCourses) {
-					ArrayList<Electives> electives = electivesRepository.findByCourse(elCourse);
-					for(Electives el: electives) {
-						CourseAndElectives ce = new CourseAndElectives();
-						ce.setCourse(elCourse);
-						ce.setElective(el);
-						resultSet.add(ce);
-							
-					}				
-				}
-				for(Course regCourse: regCourses) {
+			for(Course elCourse: elCourses) {
+				ArrayList<Electives> electives = electivesRepository.findByCourse(elCourse);
+				for(Electives el: electives) {
 					CourseAndElectives ce = new CourseAndElectives();
-					ce.setCourse(regCourse);			
-					resultSet.add(ce);				
-				}
+					ce.setCourse(elCourse);
+					ce.setElective(el);
+					resultSet.add(ce);
+						
+				}				
 			}
-			model.addAttribute("resultSet",resultSet);
+			for(Course regCourse: regCourses) {
+				CourseAndElectives ce = new CourseAndElectives();
+				ce.setCourse(regCourse);			
+				resultSet.add(ce);				
+			}
 		}
+		model.addAttribute("resultSet",resultSet);
 		
 		return "faculty/facultyPref :: selectPreferenceFragment";
 	}

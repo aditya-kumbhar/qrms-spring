@@ -15,13 +15,20 @@
 		var clearChoice;
 		var inputChoice;
 		var prefData = [];
+		var SE=0, TE=0, BE=0;
 		$(document).ready(function(){
 		    $(".choose").click(function(){
+		        setChoice = this.id;
+		        
+		        var ind = setChoice[setChoice.length-1];
+		        if(prefData[ind])
+		        {
+		        	alert("You first need to clear the selected choice");
+		        	return;
+		        }
 		        $("#form1").show();
 		        $("#form2").hide();
 		        $("#heading").hide();
-		        setChoice = this.id;
-		        inputChoice = 'input' + this.id;
 		    });  
 		});
 		
@@ -29,6 +36,20 @@
 		    $(".clear").click(function(){
 		    	clearChoice = this.id;
 		        $('#'+clearChoice).html("");
+		        
+		        var ind = clearChoice[clearChoice.length-1];
+		        if(prefData[ind].year=="BE")
+		        	BE--;
+		        if(prefData[ind].year=="TE")
+		        	TE--;
+		        if(prefData[ind].year=="SE")
+		        	SE--;
+		        
+		        prefData[ind]=null;
+		        
+		        $("#form1").hide();
+		        $("#form2").hide();
+		        $('#messageDiv').hide();
 		    });  
 		});
 		
@@ -284,14 +305,39 @@
 
 <script>
 	$('#getChoices').click(function(){
-		var cyear = $('#year');
-        if (cyear.val() == "none") {
+		var cyear = $('#year').val();
+        if (cyear == "none") {
             alert("Please select a course year");
             $('#year').focus();
             
            return false;
         } 
 		console.log('ajax: '+$('#year').val());
+		
+		if(cyear=="BE")
+		{
+			if(BE>=2)
+			{
+				alert("Maximum preference for selected year reached. Cannot give more than 2 preferences for a single year");
+				return;
+			}
+		}
+		if(cyear=="TE")
+		{
+			if(TE>=2)
+			{
+				alert("Maximum preference for selected year reached. Cannot give more than 2 preferences for a single year");
+				return;
+			}
+		}
+		if(cyear=="SE")
+		{
+			if(SE>=2)
+			{
+				alert("Maximum preference for selected year reached. Cannot give more than 2 preferences for a single year");
+				return;
+			}
+		}
 		
 		$.ajax({
 	        type: "GET",
@@ -328,6 +374,16 @@
            return false;
         } 
 		
+        var cyear = $('#year').val(); 
+        if(cyear=="BE")
+			BE++;
+		if(cyear=="TE")
+			TE++;
+		if(cyear=="SE")
+			SE++;
+		
+		console.log(BE);
+        
        	$('#form1').hide();
        	$('#form2').hide();
        	$('#'+setChoice).html($('#selectPref').val());
