@@ -21,12 +21,14 @@ import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Course;
+import com.qrms.spring.model.CoursePrerequisites;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.CourseAndElectives;
 import com.qrms.spring.queryBeans.FacPrefsList;
+import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
@@ -49,6 +51,9 @@ public class FacultyController {
 	
 	@Autowired
 	private CourseRepository courseRepository;
+	
+	@Autowired
+	private CoursePrerequisitesRepository coursePrerequisitesRepository;
 	
 	@GetMapping("/home")
 	public String facultyHome() {
@@ -98,16 +103,59 @@ public class FacultyController {
 		else {
 			for(Course elCourse: elCourses) {
 				ArrayList<Electives> electives = electivesRepository.findByCourse(elCourse);
+				
 				for(Electives el: electives) {
+					CoursePrerequisites cp = coursePrerequisitesRepository.findByCourseId(elCourse.getCourseId());
 					CourseAndElectives ce = new CourseAndElectives();
+
+					if(cp == null) {
+						ce.setPreReq1("Not found");
+						ce.setPreReq2("Not found");
+					}
+					else {
+						String prereq1,prereq2;
+						
+						if(cp.getIsPrereq1Elective() == 1)
+							prereq1 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo1()).getElectiveName();				
+						else
+							prereq1 = courseRepository.findByCourseId(cp.getPrerequisiteNo1()).getCourseName();
+						if(cp.getIsPrereq2Elective() == 1)
+							prereq2 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo2()).getElectiveName();				
+						else
+							prereq2 = courseRepository.findByCourseId(cp.getPrerequisiteNo2()).getCourseName();
+					
+						ce.setPreReq1(prereq1);
+						ce.setPreReq2(prereq2);						
+					}
+					
 					ce.setCourse(elCourse);
 					ce.setElective(el);
+							
 					resultSet.add(ce);
-						
+					
 				}				
 			}
 			for(Course regCourse: regCourses) {
 				CourseAndElectives ce = new CourseAndElectives();
+				CoursePrerequisites cp = coursePrerequisitesRepository.findByCourseId(regCourse.getCourseId());
+				if(cp == null) {
+					ce.setPreReq1("Not found");
+					ce.setPreReq2("Not found");
+				}
+				else {
+					String prereq1,prereq2;
+					
+					if(cp.getIsPrereq1Elective() == 1)
+						prereq1 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo1()).getElectiveName();				
+					else
+						prereq1 = courseRepository.findByCourseId(cp.getPrerequisiteNo1()).getCourseName();
+					if(cp.getIsPrereq2Elective() == 1)
+						prereq2 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo2()).getElectiveName();				
+					else
+						prereq2 = courseRepository.findByCourseId(cp.getPrerequisiteNo2()).getCourseName();				
+					ce.setPreReq1(prereq1);
+					ce.setPreReq2(prereq2);						
+				}
 				ce.setCourse(regCourse);			
 				resultSet.add(ce);				
 			}

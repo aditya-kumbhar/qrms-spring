@@ -250,7 +250,7 @@
 </div>
 
 
-<article class="card-body mx-auto">
+<article class="card-body mx-auto" id="article2">
     <form role="form" id="form2" th:fragment="selectPreferenceFragment"> 
     <h4 class="card-title mt-3 text-center card-body mx-auto">Give preferences for <span th:text="${chosen_year_name}"></span> courses</h4>
     <div th:id="selectPreferenceFragment">
@@ -260,37 +260,42 @@
     			Select Course
     		</td>
     		<td>
-    			<select class="form-control" th:name="chosenCourse" id="selectPref" onchange="prefChangefun()">
+    			<select class="form-control" th:name="chosenCourse" id="selectPref">
 					<option th:value="none" style="color:#8F8B87" selected>Select Course</option>
-					<option th:each="i : ${resultSet}" th:text="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" th:value="${i.elective!=null ? i.elective.electiveCourseId : i.course.courseId}" style="color:#000"></option>
+					<option th:each="i : ${resultSet}" th:text="${i.elective!=null ? i.elective.electiveName +'('+i.elective.electiveCourseId +')' : i.course.courseName +'('+i.course.courseId +')'}" 
+					th:value="${i.elective!=null ? i.elective.electiveCourseId : i.course.courseId}" 
+					th:attr="data-pr1=${i.preReq1},data-pr2=${i.preReq2}" style="color:#000">
+					</option>
 				</select>
     		</td>
     	</tr>
-    	
+    	<!--  ${i.elective!=null ? i.elective.electiveCourseId : i.course.courseId}-->
     	<tr class="exp" style="display: none">
     		<td>
     			Number of times course taught
     		</td>
     		<td>
-				<input id="courseExp"  name="courseExp" class="form-control" placeholder="Course Exp" type="number" min="0" required autofocus/>
+				<input id="courseExp"  name="courseExp" class="form-control" placeholder="Course Experience (in yrs)" type="number" min="0" required autofocus/>
+    		</td>
+    	</tr>
+    	<tr class="exp" style="display: none">
+    		<td colspan=2><h5 class="card-title mt-3 text-center card-body mx-auto">Prerequisite experience</h5></td>
+    	</tr>
+    	<tr class="exp" style="display: none">
+    		<td id = "prereq1">
+    			
+    		</td>
+    		<td>
+    			<input id="prereq1Exp"  name="prereq1Exp" class="form-control" placeholder="Prerequisite 1 experience (in yrs)" type="number" min="0" required autofocus/>
     		</td>
     	</tr>
     	
     	<tr class="exp" style="display: none">
-    		<td>
-    			Pre1 times
+    		<td id ="prereq2">
+    			
     		</td>
     		<td>
-    			<input id="prereq1Exp"  name="prereq1Exp" class="form-control" placeholder="Prerequisite 1 Exp" type="number" min="0" required autofocus/>
-    		</td>
-    	</tr>
-    	
-    	<tr class="exp" style="display: none">
-    		<td>
-    			Pre2 times
-    		</td>
-    		<td>
-    			<input id="prereq2Exp"  name="prereq2Exp" class="form-control" placeholder="Prerequisite 2 Exp" type="number" min="0" required autofocus/>
+    			<input id="prereq2Exp"  name="prereq2Exp" class="form-control" placeholder="Prerequisite 2 experience (in yrs)" type="number" min="0" required autofocus/>
     		</td>
     	</tr>
     	
@@ -450,20 +455,24 @@
     
 		});
 	}
+	</script>
 	
+	<script>
 	//$('#selectPref').change(function () 
-	function prefChangefun()
-	{
-		var selectedPref = $('#selectPref').val();
-		if(selectedPref=='none')
-		{
+	$('#article2').on("change","select",function(){
+		if($(this).val()=='none'){
 			$('.exp').hide();
 		}
-		else
-		{
+		else{
 			$('.exp').show();
+			console.log($(this).find(':selected').attr('data-pr1'));
+			var prereq1 = $(this).find(':selected').attr('data-pr1');
+			var prereq2 = $(this).find(':selected').attr('data-pr2');
+			$('#prereq1').text(prereq1);
+			$('#prereq2').text(prereq2);
 		}
-	}
-</script>
+		
+	});
+	</script>
 </body>
 </html>
