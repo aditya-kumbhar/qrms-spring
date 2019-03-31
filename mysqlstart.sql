@@ -53,11 +53,11 @@ INSERT INTO `electives` VALUES ('410252A','Adv Digital Signal Processing','41025
 
 /*insert values in student_acad table*/
 insert into student_acad values("stud1",80,"B","BECOB210",8,1,"BE","CS");
-insert into student_acad values("stud2",85,"B","BECOB211",8,1,"BE","CS")
-insert into student_acad values("stud3",90,"B","BECOB212",8,1,"BE","CS")
-insert into student_acad values("stud4",95,"B","BECOB213",8,1,"BE","CS")
-insert into student_acad values("stud5",70,"B","BECOB214",8,1,"BE","CS")
-insert into student_acad values("stud6",75,"B","BECOB215",8,1,"BE","CS")
+insert into student_acad values("stud2",85,"B","BECOB211",8,1,"BE","CS");
+insert into student_acad values("stud3",90,"B","BECOB212",8,1,"BE","CS");
+insert into student_acad values("stud4",95,"B","BECOB213",8,1,"BE","CS");
+insert into student_acad values("stud5",70,"B","BECOB214",8,1,"BE","CS");
+insert into student_acad values("stud6",75,"B","BECOB215",8,1,"BE","CS");
 
 
 /*insert values in faculty_acad table*/

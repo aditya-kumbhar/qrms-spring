@@ -76,9 +76,6 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 	@Column(name="agg_marks")
 	private Float aggMarks;
 	
-	@Column(name="academic_year")
-	private String academicYear;
-
 	//Parent of FK relation to StudentAlloc -- on update/delete cascade
 	@OneToMany(mappedBy="student",cascade=CascadeType.ALL)
 	Set<StudentAllocCourse> studentAllocs = new HashSet<StudentAllocCourse>();
@@ -91,14 +88,6 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 //		this.user_dets = user_dets;
 //	}
 //	
-	public String getAcademicYear() {
-		return academicYear;
-	}
-
-	public void setAcademicYear(String academicYear) {
-		this.academicYear = academicYear;
-	}
-
 	public String getUserName() {
 		return userName;
 	}
