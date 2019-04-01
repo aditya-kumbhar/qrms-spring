@@ -2,11 +2,9 @@ package com.qrms.spring.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -33,6 +31,12 @@ import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.queryBeans.CourseAndElectives;
 import com.qrms.spring.queryBeans.CombinedCourseElective;
 import com.qrms.spring.queryBeans.StudentUsers;
+import com.qrms.spring.queryBeans.FacultyPrefChainedComparator;
+import com.qrms.spring.queryBeans.FacultyPrefNoComparator;
+import com.qrms.spring.queryBeans.FacultyPrefPrereqExp2Comparator;
+import com.qrms.spring.queryBeans.FacultyPrefPrereqExp1Comparator;
+import com.qrms.spring.queryBeans.FacultyPrefCourseExpComparator;
+
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CompanionCourse;
 import com.qrms.spring.model.CoursePrerequisites;
@@ -1008,59 +1012,63 @@ public class AdminController {
 //	public ModelAndView
 	
 	public void allocFaculty(int oddOrEven) {
-		//ModelAndView model = new ModelAndView();
 		
 		//find all the courses
 		
 		HashMap<String, int[]> desigHours =  new HashMap<>();
-		desigHours.put("Professor", new int[] {8,10});
-		desigHours.put("Associate Professor", new int[] {12,14});
-		desigHours.put("Assistant Professor", new int[] {16,18});
 		
 		List<FacultyAcad> allFacs = facultyAcadRepository.findAll();
 		
-		HashMap <String,Integer> facHours = new HashMap<>();
-		
+		HashMap <String,Integer> facAllotedHours = new HashMap<>();
+		HashMap <String,int[]> facLimits = new HashMap<>();
 		for(FacultyAcad f:allFacs) {
-			facHours.put(f.getUserName(), 0);
+			facAllotedHours.put(f.getUserName(), 0);
+			facLimits.put(f.getUserName(), desigHours.get(f.getDesignation()));
 		}
 		
+		ArrayList<FacultyAllocCourse> alloc = new ArrayList<>();
 		
-		ArrayList<CourseAndElectives> allCourses = new ArrayList<CourseAndElectives>();
 		ArrayList<CombinedCourseElective> courses = new ArrayList<>();
 		
 		if(oddOrEven==0) {
 			ArrayList<Course> allOddCourses = courseRepository.findOddSemCoursesAndCourseTypeReg();
 			ArrayList<Electives> allOddElectives = electivesRepository.findOddSemCoursesAndCourseTypeNotReg();
 			for(Course c:allOddCourses)
-				allCourses.add(new CourseAndElectives(c));
+			{
+				CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear());
+				courses.add(co);
+			}
 			for(Electives e:allOddElectives)
-				allCourses.add(new CourseAndElectives(e));
+			{
+				CombinedCourseElective ce = new CombinedCourseElective(e.getElectiveCourseId(),1,e.getCourse().getNoOfHours(),e.getCourse().getCourseYear());
+				courses.add(ce);
+			}
 		}else if(oddOrEven==1){
 			ArrayList<Course> allEvenCourses = courseRepository.findEvenSemCoursesAndCourseTypeReg();
 			ArrayList<Electives> allEvenElectives = electivesRepository.findEvenSemCoursesAndCourseTypeNotReg();
 			for(Course c:allEvenCourses)
-				allCourses.add(new CourseAndElectives(c));
+				{
+					CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear());
+					courses.add(co);
+				}
 			for(Electives e:allEvenElectives)
-				allCourses.add(new CourseAndElectives(e));
+			{
+				CombinedCourseElective ce = new CombinedCourseElective(e.getElectiveCourseId(),1,e.getCourse().getNoOfHours(),e.getCourse().getCourseYear());
+				courses.add(ce);
+			}
 		}else {
 			ArrayList<Course> allEvenAndOddCourses = courseRepository.findByCourseType('R');
 			List<Electives> allElectives = electivesRepository.findAll();
 			for(Course c:allEvenAndOddCourses)
-				allCourses.add(new CourseAndElectives(c));
-			for(Electives e:allElectives)
-				allCourses.add(new CourseAndElectives(e));
-		}
-		
-		for(CourseAndElectives ce:allCourses) {
-			if(ce.getElective()==null) {
-				CombinedCourseElective c = new CombinedCourseElective(ce.getCourse().getCourseId(),0,ce.getCourse().getNoOfHours(),ce.getCourse().getCourseYear());
-				courses.add(c);
-			}else {
-				CombinedCourseElective c = new CombinedCourseElective(ce.getElective().getElectiveCourseId(),1,ce.getElective().getCourse().getNoOfHours(),ce.getElective().getCourse().getCourseYear());
-				courses.add(c);
+			{
+				CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear());
+				courses.add(co);
 			}
-			
+			for(Electives e:allElectives)
+			{
+				CombinedCourseElective ce = new CombinedCourseElective(e.getElectiveCourseId(),1,e.getCourse().getNoOfHours(),e.getCourse().getCourseYear());
+				courses.add(ce);
+			}
 		}
 		
 		for(CombinedCourseElective c:courses) {
@@ -1104,54 +1112,85 @@ public class AdminController {
 				fpref = facultyPrefRepository.findByCourseId(c.getId());
 			}
 			
-			Collections.sort(fpref);
+			Collections.sort(fpref,new FacultyPrefChainedComparator(new FacultyPrefNoComparator(),new FacultyPrefPrereqExp1Comparator(),new FacultyPrefPrereqExp2Comparator()));
+			
+			for (FacultyPref fp : fpref) {
+				
+				int currPrefCurrentHours = facAllotedHours.get(fp.getUserName());
+				
+				if(currPrefCurrentHours + c.getNoOfHours() <= facLimits.get(fp.getUserName())[1])
+				{
+					facAllotedHours.replace(fp.getUserName(), currPrefCurrentHours+c.getNoOfHours());
+					//add to the result array
+					
+					FacultyAllocCourse f = new FacultyAllocCourse();
+					f.setCourseId(c.getId());
+					f.setIsElective(c.getIsElective());
+					f.setNoOfHours(c.getNoOfHours());
+					f.setPrefNo(fp.getPrefNo());
+					f.setUserName(fp.getUserName());
+					f.setYear(c.getYear());
+					
+					alloc.add(f);
+					break;
+				}
+			
+			} 
 			
 //			facultyPrefRepository.findById(fpref.)
+//			
+//
+//			int i = 1;
+//			
+//			int pno = 1;
+//			
+//			ArrayList<FacultyPref> samePref = new ArrayList<>();
+//			
+//			while(i!=fpref.size() && pno==fpref.get(i).getPrefNo()) {
+//				
+//				samePref.add(fpref.get(i));
+//				i+=1;
+//				
+//				if(i!=fpref.size() && pno!=fpref.get(i).getPrefNo()) {
+//					
+//					
+//					if(samePref.size()==1) {
+//						
+//						//String userName, int prefNo, String courseId, int noOfHours, int isElective,String year
+//						
+//						FacultyPref currPref = samePref.get(0);
+//						FacultyAllocCourse f = new FacultyAllocCourse();
+//						f.setCourseId(c.getId());
+//						f.setIsElective(c.getIsElective());
+//						f.setNoOfHours(c.getNoOfHours());
+//						f.setPrefNo(currPref.getPrefNo());
+//						f.setUserName(currPref.getUserName());
+//						f.setYear(c.getYear());
+//						
+//						int currPrefCurrentHours = facAllotedHours.get(currPref.getUserName());
+//						
+//						if(currPrefCurrentHours + c.getNoOfHours() <= facLimits.get(currPref.getUserName())[1])
+//						{
+//							facAllotedHours.replace(currPref.getUserName(), currPrefCurrentHours+c.getNoOfHours());
+//							//add to the result array
+//							alloc.add(f);
+//						}
+//						
+//						
+//					}else {
+//						//compare exp
+//						
+//					}
+//					
+//					samePref = new ArrayList<>();
+//					pno+=1;
+//				}
+//			}
+//			
 			
-
-			int i = 1;
-			
-			int pno = 1;
-			
-			ArrayList<FacultyPref> samePref = new ArrayList<>();
-			
-			while(i!=fpref.size() && pno==fpref.get(i).getPrefNo()) {
-				samePref.add(fpref.get(i));
-				i+=1;
-				if(i!=fpref.size() && pno!=fpref.get(i).getPrefNo()) {
-					//allocate the course
-					
-					if(samePref.size()==1) {
-						//alloc to that faculty
-						//String userName, int prefNo, String courseId, int noOfHours, int isElective,String year
-						
-						FacultyPref currPref = samePref.get(0);
-						FacultyAllocCourse f = new FacultyAllocCourse();
-						f.setCourseId(c.getId());
-						f.setIsElective(c.getIsElective());
-						f.setNoOfHours(c.getNoOfHours());
-						f.setPrefNo(currPref.getPrefNo());
-						f.setUserName(currPref.getUserName());
-						f.setYear(c.getYear());
-						
-						//if(facHours.get(currPref.getUserName()))
-						{
-							facHours.replace(currPref.getUserName(), facHours.get(samePref.get(0).getUserName())+c.getNoOfHours());
-						}
-						
-					}else {
-						//compare exp
-					}
-					
-					samePref = new ArrayList<>();
-					pno+=1;
-				}
-			}
 			
 		}
-		
-		//
-		
-		//return model;
+
+			
 	}
 }

@@ -67,3 +67,8 @@ insert into faculty_acad values('fac3','Associate Professor','BTECH',7,'CS');
 insert into faculty_acad values('fac4','Associate Professor','BTECH',7,'CS');
 insert into faculty_acad values('fac5','Assistant Professor','MTECH',4,'CS');
 insert into faculty_acad values('fac6','Assistant Professor','MTECH',4,'CS');
+
+/*insert values in designation_to_hours table*/
+insert into designation_to_hours values("Professor",8,10);
+insert into designation_to_hours values("Associate Professor",12,14);
+insert into designation_to_hours values("Assistant Professor",12,14);

@@ -1,5 +1,9 @@
 package com.qrms.spring.model;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +14,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="faculty_pref")
-public class FacultyPref implements Comparable <FacultyPref>{
+public class FacultyPref{
 	
 	public FacultyPref(String userName, String courseId, String electiveId, int prefNo, Integer courseExp,
 			Integer prereq1Exp, Integer prereq2Exp, String year) {
@@ -135,12 +139,15 @@ public class FacultyPref implements Comparable <FacultyPref>{
 		this.prereq2Exp = prereq2Exp;
 	}
 
-	@Override
-	public int compareTo(FacultyPref s) {
-		// TODO Auto-generated method stub
-		return (this.getPrefNo() > s.getPrefNo() ? -1 : 
+//	@Override
+//	public int compareTo(FacultyPref s) {
+//		// TODO Auto-generated method stub
+//		return (this.getPrefNo() > s.getPrefNo() ? -1 : 
+//
+//            (this.getPrefNo() == s.getPrefNo() ? 0 : 1));
+//	}
 
-            (this.getPrefNo() == s.getPrefNo() ? 0 : 1));
-	}
-
+	
+	
 }
+
