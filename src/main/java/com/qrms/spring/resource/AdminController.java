@@ -406,7 +406,13 @@ public class AdminController {
 		System.out.println(companionTheory);
 		System.out.println(prerequisiteNo1+" "+prerequisiteNo2);
 		
-		if(!companionTheory.equals("")) {
+		if(companionTheory.equals("") && prerequisiteNo1.equals("") && prerequisiteNo2.equals("")) {
+			model.addObject("msg","Course has been added successfully");
+			model.addObject("course",new Course());
+			courseRepository.save(course);
+		}
+		
+		else if(!companionTheory.equals("")) {
 			Optional<Course> thCourse = courseRepository.findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheory(companionTheory,course.getDepartment(),course.getCourseYear(),course.getCourseSem(),1);
 			
 			if(thCourse.isPresent()) {
@@ -415,10 +421,10 @@ public class AdminController {
 				model.addObject("course",new Course());
 				courseRepository.save(course);
 				
-				CompanionCourse cc = new CompanionCourse(thCourse.get(), course);
+				CompanionCourse cc = new CompanionCourse(thCourse.get().getCourseId(), course.getCourseId());
 				courseCompanionRepository.save(cc);
 				
-				CompanionCourse ncc = new CompanionCourse(course, thCourse.get());
+				CompanionCourse ncc = new CompanionCourse(course.getCourseId(), thCourse.get().getCourseId());
 				courseCompanionRepository.save(ncc);
 				
 				
@@ -493,10 +499,13 @@ public class AdminController {
 	
 	//Handle add elective form
 	@RequestMapping(value="/add_elective",method=RequestMethod.POST)
-	public ModelAndView set_all_elective(String suffix, Electives elective,String courseId) {
+	public ModelAndView set_all_elective(String suffix, Electives elective,String courseId, String companionTheory,String prerequisiteNo1,String prerequisiteNo2) {
 		
 		ModelAndView model = new ModelAndView();
 		System.out.println("checkL-"+courseId);
+		System.out.println(companionTheory);
+		System.out.println(prerequisiteNo1);
+		System.out.println(prerequisiteNo2);
 		elective.setElectiveCourseId(courseId.concat(suffix));
 		Course course = courseRepository.findByCourseId(courseId);
 		elective.setCourse(course);
@@ -506,14 +515,77 @@ public class AdminController {
 			model.addObject("msg","Elective with same name already exists");
 		}
 		else {
-			model.addObject("msg","Elective added successfully");		
+			
+			if(!companionTheory.equals("")) {
+				Optional<Course> thCourse = courseRepository.findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheory(companionTheory,course.getDepartment(),course.getCourseYear(),course.getCourseSem(),1);
+				Electives compElective = electivesRepository.findByElectiveCourseId(companionTheory);
+				
+				if(thCourse.isPresent() && compElective==null) {
+					electivesRepository.save(elective);
+					CompanionCourse cc = new CompanionCourse(thCourse.get().getCourseId(), elective.getElectiveCourseId());
+					courseCompanionRepository.save(cc);
+					
+					CompanionCourse ncc = new CompanionCourse(elective.getElectiveCourseId(), thCourse.get().getCourseId());
+					courseCompanionRepository.save(ncc);	
+					
+					model.addObject("msg","Elective has been added successfully");
+
+				}
+				else if(!thCourse.isPresent() && compElective!=null) {
+					electivesRepository.save(elective);
+					CompanionCourse cc = new CompanionCourse(compElective.getElectiveCourseId(), elective.getElectiveCourseId());
+					courseCompanionRepository.save(cc);
+					
+					CompanionCourse ncc = new CompanionCourse(elective.getElectiveCourseId(), compElective.getElectiveCourseId());
+					courseCompanionRepository.save(ncc);
+					model.addObject("msg","Elective has been added successfully");
+				}
+				else {
+					model.addObject("err_msg","Companion theory course doesn't exist!");
+					model.addObject("course",new Course());
+				}
+			}else if(!prerequisiteNo1.equals("") && !prerequisiteNo2.equals("")) {
+				Optional<Course> pr1Course = courseRepository.findByCourseIdAndDepartmentAndIsTheory(prerequisiteNo1,course.getDepartment(),1);
+				Optional<Course> pr2Course = courseRepository.findByCourseIdAndDepartmentAndIsTheory(prerequisiteNo2,course.getDepartment(),1);
+				Electives pr1Elective = electivesRepository.findByElectiveCourseId(prerequisiteNo1);
+				Electives pr2Elective = electivesRepository.findByElectiveCourseId(prerequisiteNo2);
+			
+				if(pr1Course.isPresent() && pr2Course.isPresent() && pr1Elective ==null && pr2Elective ==null) {
+					electivesRepository.save(elective);
+					CoursePrerequisites cr = new CoursePrerequisites(elective.getElectiveCourseId(),0,0,prerequisiteNo1,prerequisiteNo2);
+					coursePrerequisitesRepository.save(cr);
+					model.addObject("msg","Elective has been added successfully");
+					
+				} else if(!pr1Course.isPresent() && !pr2Course.isPresent() && pr1Elective !=null && pr2Elective !=null){
+					electivesRepository.save(elective);
+					CoursePrerequisites cr = new CoursePrerequisites(elective.getElectiveCourseId(),1,1,prerequisiteNo1,prerequisiteNo2);
+					coursePrerequisitesRepository.save(cr);
+					model.addObject("msg","Elective has been added successfully");
+					
+				}else if(pr1Course.isPresent() && pr2Course.isPresent() && pr1Elective !=null && pr2Elective !=null){
+					model.addObject("err_msg", "Ambiguous Ids entered.");
+					
+				} else if(!pr1Course.isPresent() && !pr2Course.isPresent() && pr1Elective ==null && pr2Elective ==null){
+					model.addObject("err_msg","Prerequisite 1 and 2 theory courses don't exist!");
+					
+				}else if(!pr1Course.isPresent() && pr1Elective==null){
+					model.addObject("err_msg","Prerequisite 1 theory course doesn't exist!");
+					
+				}else if(!pr2Course.isPresent() && pr2Elective==null){
+					model.addObject("err_msg","Prerequisite 2 theory course doesn't exist!");
+					
+				}
+			}else {
+				model.addObject("err_msg","Cannot add course, something went wrong!");
+			}
+			//model.addObject("msg","Elective added successfully");		
 		}
-		electivesRepository.save(elective);
+		
 		
 		ArrayList<Course> electivesList = courseRepository.findByCourseTypeNot('R');
 		
 		model.addObject("electivesList",electivesList);
-		model.addObject("elective",elective);
+		model.addObject("elective",new Electives());
 		
 		model.setViewName("/admin/addElective");
 		return model;

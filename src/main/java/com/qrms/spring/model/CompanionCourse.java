@@ -1,5 +1,6 @@
 package com.qrms.spring.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,7 +19,7 @@ import javax.persistence.Table;
 @Table(name="companion_course")
 public class CompanionCourse {
 
-	public CompanionCourse(Course course, Course companionCourse) {
+	public CompanionCourse(String course, String companionCourse) {
 		super();
 		this.course = course;
 		this.companionCourse = companionCourse;
@@ -32,13 +33,11 @@ public class CompanionCourse {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="course_id")
-	private Course course;
+	@Column(name="course_id")
+	private String course;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "companion_course")
-	private Course companionCourse;
+	@Column(name = "companion_course")
+	private String companionCourse;
 
 	public int getId() {
 		return id;
@@ -48,19 +47,19 @@ public class CompanionCourse {
 		this.id = id;
 	}
 
-	public Course getCourse() {
+	public String getCourse() {
 		return course;
 	}
 
-	public void setCourse(Course course) {
+	public void setCourse(String course) {
 		this.course = course;
 	}
 
-	public Course getCompanionCourse() {
+	public String getCompanionCourse() {
 		return companionCourse;
 	}
 
-	public void setCompanionCourse(Course companionCourse) {
+	public void setCompanionCourse(String companionCourse) {
 		this.companionCourse = companionCourse;
 	}
 }
