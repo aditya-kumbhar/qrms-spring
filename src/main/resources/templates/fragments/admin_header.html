@@ -36,8 +36,14 @@
 			 	<a class="nav-link" th:href="@{/u/admin/home}" id="home-nav">Home</a>
 		      </li>
 		    
-		      <li class="nav-item">
-		  	    <a class="nav-link" th:href="@{/u/admin/register}" id="registerUsers-nav">Register Users</a>
+		      <li class="nav-item dropdown">
+		  	    <a class="nav-link dropdown-toggle" href="#" id="courseDrop" data-toggle="dropdown">
+			     Users
+			 	</a>
+			 	<div class="dropdown-menu">
+		  	    	<a class="dropdown-item" th:href="@{/u/admin/register}" id="registerUsers-nav">Register Users</a>
+		  	    	<a class="dropdown-item" th:href="@{/u/admin/viewUsers}" id="viewUsers-nav">View Users</a>
+		  	    </div>
 		      </li>
 			  
 			  <li class="nav-item dropdown">
@@ -48,7 +54,7 @@
 			     <a class="dropdown-item" th:href="@{/u/admin/add-course}" id="addCourse-nav">Add Courses</a>
 			     <a class="dropdown-item" th:href="@{/u/admin/add-elective}" id="addElective-nav">Add Electives</a>
 		   		 <a class="dropdown-item" th:href="@{/u/admin/delete-course-elective}" id="delElective-nav">Delete Course/Elective</a>
-			   	
+
 			   	</div>
 			  </li>
 			  

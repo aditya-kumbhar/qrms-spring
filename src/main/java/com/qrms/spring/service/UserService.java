@@ -1,6 +1,4 @@
 package com.qrms.spring.service;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.qrms.spring.model.Users;
 
 public interface UserService {
