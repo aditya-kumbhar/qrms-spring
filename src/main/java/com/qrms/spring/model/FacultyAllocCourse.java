@@ -93,10 +93,9 @@ public class FacultyAllocCourse {
 		this.year = year;
 	}
 
-	public FacultyAllocCourse(int id, String userName, int prefNo, String courseId, int noOfHours, int isElective,
+	public FacultyAllocCourse(String userName, int prefNo, String courseId, int noOfHours, int isElective,
 			String year) {
 		super();
-		this.id = id;
 		this.userName = userName;
 		this.prefNo = prefNo;
 		this.courseId = courseId;

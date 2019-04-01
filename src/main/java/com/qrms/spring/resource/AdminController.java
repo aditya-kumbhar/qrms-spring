@@ -40,6 +40,7 @@ import com.qrms.spring.model.Department;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
+import com.qrms.spring.model.FacultyAllocCourse;
 import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.repository.CourseCompanionRespositoy;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
@@ -48,6 +49,7 @@ import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
+import com.qrms.spring.repository.FacultyAllocCourseRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
@@ -110,6 +112,8 @@ public class AdminController {
 	@Autowired
 	private FacultyPrefRepository facultyPrefRepository;
 	
+	@Autowired
+	private FacultyAllocCourseRepository facultyAllocCourseRepository;
 	
 	private FacultyAcad faculty;
 	
@@ -125,7 +129,7 @@ public class AdminController {
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
-		allocFaculty(1);
+		//allocFaculty(1);
 		return getViewAdminHome(null);
 	}
 	
@@ -943,6 +947,13 @@ public class AdminController {
 		
 		List<FacultyAcad> allFacs = facultyAcadRepository.findAll();
 		
+		HashMap <String,Integer> facHours = new HashMap<>();
+		
+		for(FacultyAcad f:allFacs) {
+			facHours.put(f.getUserName(), 0);
+		}
+		
+		
 		ArrayList<CourseAndElectives> allCourses = new ArrayList<CourseAndElectives>();
 		ArrayList<CombinedCourseElective> courses = new ArrayList<>();
 		
@@ -1025,9 +1036,46 @@ public class AdminController {
 			
 //			facultyPrefRepository.findById(fpref.)
 			
-			for(FacultyPref fp:fpref) {
-				//
+
+			int i = 1;
+			
+			int pno = 1;
+			
+			ArrayList<FacultyPref> samePref = new ArrayList<>();
+			
+			while(i!=fpref.size() && pno==fpref.get(i).getPrefNo()) {
+				samePref.add(fpref.get(i));
+				i+=1;
+				if(i!=fpref.size() && pno!=fpref.get(i).getPrefNo()) {
+					//allocate the course
+					
+					if(samePref.size()==1) {
+						//alloc to that faculty
+						//String userName, int prefNo, String courseId, int noOfHours, int isElective,String year
+						
+						FacultyPref currPref = samePref.get(0);
+						FacultyAllocCourse f = new FacultyAllocCourse();
+						f.setCourseId(c.getId());
+						f.setIsElective(c.getIsElective());
+						f.setNoOfHours(c.getNoOfHours());
+						f.setPrefNo(currPref.getPrefNo());
+						f.setUserName(currPref.getUserName());
+						f.setYear(c.getYear());
+						
+						//if(facHours.get(currPref.getUserName()))
+						{
+							facHours.replace(currPref.getUserName(), facHours.get(samePref.get(0).getUserName())+c.getNoOfHours());
+						}
+						
+					}else {
+						//compare exp
+					}
+					
+					samePref = new ArrayList<>();
+					pno+=1;
+				}
 			}
+			
 		}
 		
 		//
