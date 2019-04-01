@@ -1,8 +1,10 @@
 package com.qrms.spring.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Optional;
+import java.util.Set;
 
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import com.qrms.spring.model.CustomUserDetails;
 import com.qrms.spring.model.PasswordResetToken;
+import com.qrms.spring.model.Role;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.repository.PasswordResetTokenRepository;
 import com.qrms.spring.repository.UsersRepository;
@@ -207,6 +210,13 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	public void savePassword(Users user, String password) {
 		user.setPassword(bCryptPasswordEncoder().encode(password));
 		usersRepository.save(user);
+	}
+
+	@Override
+	public ArrayList<Users> findByRole(Set<Role> role) {
+		// TODO Auto-generated method stub
+		ArrayList<Users> users = usersRepository.findByRoles(role);
+		return users;
 	}
 
 	

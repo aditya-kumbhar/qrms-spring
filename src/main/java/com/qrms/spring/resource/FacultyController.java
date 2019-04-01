@@ -1,10 +1,8 @@
 package com.qrms.spring.resource;
 
-import java.io.IOException;
-import java.text.ParseException;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,11 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.FacultyPref;
-import com.qrms.spring.model.StudentAcad;
-import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CoursePrerequisites;
-import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.Users;
@@ -34,7 +29,6 @@ import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
 
-import org.json.JSONObject;
 
 @Controller
 @RequestMapping("/u/faculty")
@@ -73,7 +67,7 @@ public class FacultyController {
 		ArrayList <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserName(currUserAcad.getUserName());
 		if(facultyPrefs.size()!=0) 
 		{
-			model.addObject("err_msg","You have already submitted your preferences. Please wait until allocation process takes place.");
+			model.addObject("pref_submitted_msg","You have already submitted your preferences. Please wait until allocation process takes place.");
 		}
 		
 		model.setViewName("/faculty/facultyPref");

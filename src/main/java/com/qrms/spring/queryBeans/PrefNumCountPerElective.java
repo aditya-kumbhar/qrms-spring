@@ -32,5 +32,11 @@ public class PrefNumCountPerElective {
 		this.prefNo = prefNo;
 		this.elective = elective;
 	}
+	public String getElectiveId() {
+		return electiveId;
+	}
+	public void setElectiveId(String electiveId) {
+		this.electiveId = electiveId;
+	}
 	
 }
