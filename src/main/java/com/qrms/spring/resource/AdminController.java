@@ -2,11 +2,14 @@ package com.qrms.spring.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -15,10 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Role;
@@ -26,7 +27,7 @@ import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.StudentAllocCourse;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
-import com.qrms.spring.queryBeans.FacPrefsList;
+import com.qrms.spring.queryBeans.FacultyUsers;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.queryBeans.StudentUsers;
@@ -49,6 +50,7 @@ import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.StudentAllocCourseRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
+import com.qrms.spring.service.FacultyAcadService;
 import com.qrms.spring.service.StudentAcadServiceImpl;
 import com.qrms.spring.service.StudentPrefServiceImpl;
 
@@ -61,6 +63,9 @@ public class AdminController {
 	
 	@Autowired
 	private StudentPrefServiceImpl studPrefService;
+	
+	@Autowired
+	private FacultyAcadService facAcadService;
 	
 	@Autowired
 	private StudentAcadServiceImpl studAcadService;
@@ -157,15 +162,7 @@ public class AdminController {
 	
 		return getViewAdminHome(studPrefService.computeStudPrefTable());		
 	}
-	
-//	@GetMapping("/getViewPreferenceDetails")
-//	public ModelAndView getViewPreferenceDetails() {		
-//		g_err_msg = null;
-//		g_msg = null;
-//		return getViewAdminHome(studPrefService.computeStudPrefTable());		
-//		
-//	}
-	
+		
 	@Transactional
 	@RequestMapping(value = "/performQuickAction-student", method = RequestMethod.POST)
 	public ModelAndView studentAllocQuickAction(String courseId,  String selectAction, String courseName) {
@@ -255,12 +252,32 @@ public class AdminController {
 		Department department = departmentRepository.findByDeptId(dept);
 		ArrayList<StudentUsers> studUsersList= studAcadService.getStudentList(department, year);
 		model.addAttribute("studUsersList",studUsersList);
-		return "admin/viewUsers:: usersTable";
+		return "admin/viewUsers:: studTable";
 	}
 	
-	
+	@RequestMapping(value="/viewAdmins", method = RequestMethod.GET)
+	public String viewAdmins(Model model) {
 		
+		Set<Role> adminRole = new HashSet<Role>();
+		adminRole.add(new Role(1,"ADMIN"));
+		ArrayList<Users> adminUsers = userDetails.findByRole(adminRole);
+		model.addAttribute("adminUsersList",adminUsers);
+		return "admin/viewUsers:: adminsTable";
 	
+	}
+	
+
+	@RequestMapping(value="/viewFaculty", method = RequestMethod.POST)
+	public String viewFaculty(Model model,String dept) {
+		
+		Department department = departmentRepository.findByDeptId(dept);
+		ArrayList<FacultyUsers> facUsersList= facAcadService.getFacultyList(department);
+		
+		model.addAttribute("facultyUsersList",facUsersList);
+		return "admin/viewUsers:: facultyTable";
+	
+	}
+		
 	@Transactional
 	@RequestMapping(value = "/changeSeatsAndAllocate", method = RequestMethod.POST)
 	public ModelAndView changeSeatsAndAllocate(String courseIdList, String seatList) {

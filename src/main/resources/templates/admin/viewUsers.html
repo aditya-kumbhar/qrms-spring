@@ -12,6 +12,13 @@
     <script>
 	  
 	    $(document).ready(function () {
+	    	
+	    	$('#adminTableArticle').hide();
+	        $('#studTableArticle').hide();
+	        $('#viewAdminForm').hide();
+	        $('#viewFacForm').hide();
+	    	$('#viewStudentForm').hide();
+
 	        $("#viewStudentsButton").click(function () {
 	
 	            var dept = $('#dept');
@@ -35,14 +42,49 @@
 	     	 	        url: '/u/admin/viewStudents',
 	     	 	        data: { dept: dept.val(), year: year.val()},
 	     	 	        success: function (data) {
-	     	 	        	$("#usersTable").html('');
-	     	 	        	$("#usersTable").html(data);
+	     	 	        	$('#adminTableArticle').hide();
+	     	 	        	$('#studTableArticle').show();
+	     	 	        	$("#studTable").html('');
+	     	 	        	$("#studTable").html(data);
 	     	 	     		
-	     	                }
+	     	               }
 	     	 		});
 	            	
 	            }
  	   		
+	        });
+	        
+	        $("#viewAdminsButton").click(function (){
+	        	$.ajax({
+     	 	        type: "GET",
+     	 	        url: '/u/admin/viewAdmins',
+     	 	        
+     	 	        success: function (data) {
+
+     	 	        	$('#studTableArticle').hide();
+     	 	        	$('#adminTableArticle').show();
+     	 	        	$("#adminsTable").html('');
+     	 	        	$("#adminsTable").html(data);
+     	 	     		
+     	               }
+     	 		});
+	        });
+	        
+	        $("#viewFacultyButton").click(function (){
+	        	 var dept = $('#facdept');
+		           
+	        	$.ajax({
+     	 	        type: "POST",
+     	 	        url: '/u/admin/viewFaculty',
+     	 	      	data: { dept: dept.val()},
+   	 	        	success: function (data) {
+     	 	        	$('#studTableArticle').hide();
+     	 	        	$('#adminTableArticle').hide();
+     	 	        	$('#facultyTableArticle').show();
+     	 	        	$("#facultyTable").html('');
+     	 	        	$("#facultyTable").html(data);     	 	     		
+     	               }
+     	 		});
 	        });
 	    });
 	    
@@ -51,19 +93,20 @@
     	   $('#role').change(function() {
     	      var current = $('#role').val();
     	      if(current == 'STUDENT'){
-    	//    	  document.getElementById('facultyForm').style.display = 'none';
-    	    	  document.getElementById('viewStudentForm').style.display = '';
+    	    	  $('#viewAdminForm').hide();
+    	    	  $('#viewStudentForm').show();
+    	    	  $('#viewFacForm').hide();
     	    	  
     	      }
     	      else if(current == 'FACULTY'){
-    	    	  document.getElementById('viewStudentForm').style.display = 'none';
-    	  //  	  document.getElementById('facultyForm').style.display = '';
-    	    	  
+    	    	  $('#viewAdminForm').hide();
+    	    	  $('#viewStudentForm').hide();
+    	    	  $('#viewFacForm').show();
     	      }
     	      else{
-    	    //	  document.getElementById('facultyForm').style.display = 'none';
-    	    	  document.getElementById('viewStudentForm').style.display = 'none';
-    	    	  
+    	    	  $('#viewAdminForm').show();
+    	    	  $('#viewStudentForm').hide();
+    	    	  $('#viewFacForm').hide();
     	      }
     	      
     	      if (current != 'selectrole') {
@@ -133,7 +176,7 @@
 				</select>
 			</td>
 		</tr>
-		<tbody id="viewStudentForm" style="display: none">
+		<tbody id="viewStudentForm">
 		<tr>
 			<td>
 				Select Department
@@ -167,12 +210,41 @@
 	    		</div> <!-- form-group// -->  
 	    	</td> 	  
 		</tr>		
-		</tbody>	
+		</tbody>
+		<tbody id="viewAdminForm">
+			<tr>
+			<td colspan=2 align=center>
+				<div class="form-group">
+       					<button  class="btn btn-primary" id="viewAdminsButton">View</button>	        		
+	    		</div> <!-- form-group// -->  
+	    	</td> 	  
+		</tr>			
+		</tbody>
+		<tbody id="viewFacForm">
+		<tr>
+			<td>
+				Select Department
+			</td>
+			<td>
+				<select class="form-control" th:id="facdept" th:name="facdept" autofocus>
+					<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+					<option th:each="dept : ${department}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 align=center>
+				<div class="form-group">
+       					<button  class="btn btn-primary" id="viewFacultyButton">View</button>	        		
+	    		</div> <!-- form-group// -->  
+	    	</td> 	  
+		</tr>		
+		</tbody>		
 	</table>
 </article>
-<article class="card-body mx-auto">
+<article class="card-body mx-auto" id="studTableArticle">
 
-	<div id="usersTable" th:fragment="usersTable">
+	<div id="studTable" th:fragment="studTable">
 	<table class="table table-bordered table-hover" th:if="${studUsersList}"> 
 	  <thead class="thead-dark">
 	    <tr>    
@@ -182,7 +254,7 @@
 	      <th scope="col">User Name</th>
 	      <th scope="col">Division</th>
 	      <th scope="col">Shift</th>
-	      <th scope="col">Aggr. Marks</th>
+	      <th scope="col">CGPA</th>
 	      <th scope="col">Email</th>	      
 	    </tr>
 	  </thead>			
@@ -198,12 +270,59 @@
 	    	<td th:text="${rs.email}"></td>
 	   	</tr>
 	  </tbody>
-</table>
-	
-	</div>
-	
-	
-		                                         
+	</table>	
+	</div>		                                         
+</article>
+<article class="card-body mx-auto" id="adminTableArticle">
+	<div id="adminsTable" th:fragment="adminsTable">
+	<table class="table table-bordered table-hover" th:if="${adminUsersList}"> 
+	  <thead class="thead-dark">
+	    <tr>    
+    	  <th scope="col">Sr. No</th>	      
+	      <th scope="col">Name</th>      
+	      <th scope="col">User Name</th>
+	      <th scope="col">Email</th>	      
+	    </tr>
+	  </thead>			
+	  <tbody>
+	    <tr th:each="rs,iterStat : ${adminUsersList}">	    	
+	     	<td th:text="${iterStat.count}"></td>
+	     	<td th:text="${rs.firstName} + ' ' + ${rs.lastName}"></td>
+	     	<td th:text="${rs.userName}"></td>
+	    	<td th:text="${rs.email}"></td>
+	   	</tr>
+	  </tbody>
+	</table>	
+	</div>	
+</article>
+<article class="card-body mx-auto" id="facultyTableArticle">
+	<div id="facultyTable" th:fragment="facultyTable">
+	<table class="table table-bordered table-hover" th:if="${facultyUsersList}"> 
+	  <thead class="thead-dark">
+	    <tr>    
+    	  <th scope="col">Sr. No</th>	      
+	      <th scope="col">Name</th>      
+	      <th scope="col">User Name</th>
+	      <th scope="col">Email</th>
+	      <th scope="col">Designation</th>	
+	      <th scope="col">Experience</th>
+	      <th scope="col">Qualification</th>
+	            
+	    </tr>
+	  </thead>			
+	  <tbody>
+	    <tr th:each="rs,iterStat : ${facultyUsersList}">	    	
+	     	<td th:text="${iterStat.count}"></td>
+	     	<td th:text="${rs.name}"></td>
+	     	<td th:text="${rs.userName}"></td>
+	    	<td th:text="${rs.email}"></td>
+	    	<td th:text="${rs.designation}"></td>
+	   		<td th:text="${rs.exp}"></td>
+	   		<td th:text="${rs.qualification}"></td>
+	   	</tr>
+	  </tbody>
+	</table>	
+	</div>	
 </article>
 
 <div class="row text-center card-body mx-auto">
