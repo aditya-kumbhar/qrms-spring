@@ -62,19 +62,19 @@
 	                return false;
 	            } else if(isTheory.val() == "1")  {
 		            	
-	            	if($('#prerequisiteNo1').val()==''){
+	            	if($('#prerequisiteNo1').val()=='' && $('#courseType').val()=='R'){
 		            	alert("Please enter Prerequisite 1 Course ID");
 		            	$('#prerequisiteNo1').focus();
 		            	return false;
 		            	
-		            } else if ($('#prerequisiteNo2').val()==''){
+		            } else if ($('#prerequisiteNo2').val()=='' && $('#courseType').val()=='R'){
 	            		alert("Please enter Prerequisite 2 Course ID");
 		            	$('#prerequisiteNo2').focus();
 		            	
 		            	return false;
 		           	}
 	            } else if(isTheory.val() == "0"){
-	            	if ($('#companionTheory').val()==''){
+	            	if ($('#companionTheory').val()=='' && $('#courseType').val()=='R'){
 	            		alert("Please enter Companion Theory Course ID");
 		            	$('#companionTheory').focus();
 		            	
@@ -113,30 +113,35 @@
     	   $('#courseType').css('color','#8F8B87');
     	   $('#courseType').change(function() {
     	      var current = $('#courseType').val();
-    	      if (current != 'X') {
-    	          $('#courseType').css('color','black');
-    	          
-    	          if (current != 'R') {
-	    	          var theory = $('#isTheory').val();
-		    		  if(theory==0) {
-		    		  	  $('.practicalClass').css("display",'');
-		    		  	  $('.theoryClass').css("display",'none');
-		    		  }
-		    		  else if(theory==1) {
-		    			  $('.practicalClass').css("display",'none');
-		    			  $('.theoryClass').css("display",'');
-		    		  }
-		    		  else {
-		    			  $('.practicalClass').css("display",'none');
-		    			  $('.theoryClass').css("display",'none');
-		    		  }
-    	          }
-    	      } else {
-    	          $('#courseType').css('color','#8F8B87');
+    	      if(current=='E')
+    	      {
+    	    	  $('#courseType').css('color','black');
+    	    	  $('.practicalClass').css("display",'none');
+    			  $('.theoryClass').css("display",'none');
     	      }
-    	      
-    	      
-	    		 
+    	      else if(current=='R')
+    	      {
+    	    	  $('#courseType').css('color','black');
+    	    	  var theory = $('#isTheory').val();
+	    		  if(theory==0) {
+	    		  	  $('.practicalClass').css("display",'');
+	    		  	  $('.theoryClass').css("display",'none');
+	    		  }
+	    		  else if(theory==1) {
+	    			  $('.practicalClass').css("display",'none');
+	    			  $('.theoryClass').css("display",'');
+	    		  }
+	    		  else {
+	    			  $('.practicalClass').css("display",'none');
+	    			  $('.theoryClass').css("display",'none');
+	    		  }
+    	      }
+    	      else 
+    	      {
+    	    	  $('#courseType').css('color','#8F8B87');
+    			  $('.practicalClass').css("display",'none');
+    			  $('.theoryClass').css("display",'none');
+		      }
     	   }); 
     	});
 	    
@@ -182,6 +187,11 @@
 		    			$('.practicalClass').css("display",'none');
 		    			$('.theoryClass').css("display",'none');
 		    		}
+	    		}
+	    		else
+	    		{
+	    			$('.practicalClass').css("display",'none');
+	    			$('.theoryClass').css("display",'none');
 	    		}
 	    	});
 	    });
