@@ -1,13 +1,16 @@
 package com.qrms.spring.repository;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.Department;
+import com.qrms.spring.queryBeans.StudentCountByYearSem;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Integer> {
@@ -34,5 +37,37 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 	ArrayList<Course> findByDepartmentAndCourseType(Department department, char c);
 	ArrayList<Course> findByCourseYear(String year);
 	ArrayList<Course> findByCourseYearAndCourseTypeAndDepartment(String year, char c, Department department);
-
+	
+	//JPQL
+	@Query("SELECT "+
+			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+			"FROM Course c "+
+			"WHERE c.courseSem%2=0 and c.courseType='R'")
+	ArrayList<Course> findEvenSemCoursesAndCourseTypeReg();
+	
+	//JPQL
+	@Query("SELECT "+
+			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+			"FROM Course c "+
+			"WHERE c.courseSem%2<>0 and c.courseType='R'")
+	ArrayList<Course> findOddSemCoursesAndCourseTypeReg();
+	
+	//JPQL
+	@Query("SELECT "+
+			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+			"FROM Course c "+
+			"WHERE c.courseSem%2<>0 and c.courseType<>'R'")
+	ArrayList<Course> findOddSemCoursesAndCourseTypeNotReg();
+	
+	//JPQL
+		@Query("SELECT "+
+				"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+				"FROM Course c "+
+				"WHERE c.courseSem%2=0 and c.courseType<>'R'")
+		ArrayList<Course> findEvenSemCoursesAndCourseTypeNotReg();
+	
+		ArrayList<Course> findByCourseType(char c);
+	
+		
+		
 }

@@ -28,6 +28,8 @@ import com.qrms.spring.queryBeans.PrefGroupByCourseStudent;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
 import com.qrms.spring.queryBeans.StudentCountByYearSem;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
+import com.qrms.spring.queryBeans.CourseAndElectives;
+import com.qrms.spring.queryBeans.CombinedCourseElective;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CompanionCourse;
 import com.qrms.spring.model.CoursePrerequisites;
@@ -35,6 +37,7 @@ import com.qrms.spring.model.Department;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
+import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.repository.CourseCompanionRespositoy;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
@@ -42,6 +45,7 @@ import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
+import com.qrms.spring.repository.FacultyPrefRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.StudentAllocCourseRepository;
@@ -88,6 +92,10 @@ public class AdminController {
 	@Autowired
 	private CoursePrerequisitesRepository coursePrerequisitesRepository;
 	
+	@Autowired
+	private FacultyPrefRepository facultyPrefRepository;
+	
+	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
@@ -100,7 +108,7 @@ public class AdminController {
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
-		
+		allocFaculty(1);
 		return getViewAdminHome(null);
 	}
 	
@@ -928,5 +936,113 @@ public class AdminController {
 		}
 		
 		return getDelCourseOrElective(msg,err_msg);
+	}
+
+
+//	@RequestMapping(value="/allocFaculty",method=RequestMethod.POST)
+//	public ModelAndView
+	
+	public void allocFaculty(int oddOrEven) {
+		//ModelAndView model = new ModelAndView();
+		
+		//find all the courses
+		
+		HashMap<String, int[]> desigHours =  new HashMap<>();
+		desigHours.put("Professor", new int[] {8,10});
+		desigHours.put("Associate Professor", new int[] {12,14});
+		desigHours.put("Assistant Professor", new int[] {16,18});
+		
+		List<FacultyAcad> allFacs = facultyAcadRepository.findAll();
+		
+		ArrayList<CourseAndElectives> allCourses = new ArrayList<CourseAndElectives>();
+		ArrayList<CombinedCourseElective> courses = new ArrayList<>();
+		
+		if(oddOrEven==0) {
+			ArrayList<Course> allOddCourses = courseRepository.findOddSemCoursesAndCourseTypeReg();
+			ArrayList<Electives> allOddElectives = electivesRepository.findOddSemCoursesAndCourseTypeNotReg();
+			for(Course c:allOddCourses)
+				allCourses.add(new CourseAndElectives(c));
+			for(Electives e:allOddElectives)
+				allCourses.add(new CourseAndElectives(e));
+		}else if(oddOrEven==1){
+			ArrayList<Course> allEvenCourses = courseRepository.findEvenSemCoursesAndCourseTypeReg();
+			ArrayList<Electives> allEvenElectives = electivesRepository.findEvenSemCoursesAndCourseTypeNotReg();
+			for(Course c:allEvenCourses)
+				allCourses.add(new CourseAndElectives(c));
+			for(Electives e:allEvenElectives)
+				allCourses.add(new CourseAndElectives(e));
+		}else {
+			ArrayList<Course> allEvenAndOddCourses = courseRepository.findByCourseType('R');
+			List<Electives> allElectives = electivesRepository.findAll();
+			for(Course c:allEvenAndOddCourses)
+				allCourses.add(new CourseAndElectives(c));
+			for(Electives e:allElectives)
+				allCourses.add(new CourseAndElectives(e));
+		}
+		
+		for(CourseAndElectives ce:allCourses) {
+			if(ce.getElective()==null) {
+				CombinedCourseElective c = new CombinedCourseElective(ce.getCourse().getCourseId(),0,ce.getCourse().getNoOfHours(),ce.getCourse().getCourseYear());
+				courses.add(c);
+			}else {
+				CombinedCourseElective c = new CombinedCourseElective(ce.getElective().getElectiveCourseId(),1,ce.getElective().getCourse().getNoOfHours(),ce.getElective().getCourse().getCourseYear());
+				courses.add(c);
+			}
+			
+		}
+		
+		for(CombinedCourseElective c:courses) {
+			System.out.println(c.getId());
+		}
+		
+		//sort by BE,TE,SE,FE
+		
+		ArrayList<CombinedCourseElective> sortedCourses = new ArrayList<>();
+		
+		for(CombinedCourseElective c:courses) {
+			if(c.getYear()=="BE") {
+				sortedCourses.add(c);
+			}
+		}
+		for(CombinedCourseElective c:courses) {
+			if(c.getYear()=="TE") {
+				sortedCourses.add(c);
+			}
+		}
+		for(CombinedCourseElective c:courses) {
+			if(c.getYear()=="SE") {
+				sortedCourses.add(c);
+			}
+		}
+		for(CombinedCourseElective c:courses) {
+			if(c.getYear()=="FE") {
+				sortedCourses.add(c);
+			}
+		}
+		
+		//iterate over all the courses
+		
+		for(CombinedCourseElective c:sortedCourses) {
+			
+			ArrayList<FacultyPref> fpref=new ArrayList<>();
+			
+			if(c.getIsElective()==1) {
+				fpref = facultyPrefRepository.findByElectiveId(c.getId());
+			}else {
+				fpref = facultyPrefRepository.findByCourseId(c.getId());
+			}
+			
+			Collections.sort(fpref);
+			
+//			facultyPrefRepository.findById(fpref.)
+			
+			for(FacultyPref fp:fpref) {
+				//
+			}
+		}
+		
+		//
+		
+		//return model;
 	}
 }
