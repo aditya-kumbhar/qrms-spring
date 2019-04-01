@@ -67,7 +67,7 @@ public class FacultyController {
 		ArrayList <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserName(currUserAcad.getUserName());
 		if(facultyPrefs.size()!=0) 
 		{
-			model.addObject("err_msg","You have already submitted your preferences. Please wait until allocation process takes place.");
+			model.addObject("pref_submitted_msg","You have already submitted your preferences. Please wait until allocation process takes place.");
 		}
 		
 		model.setViewName("/faculty/facultyPref");
