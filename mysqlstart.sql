@@ -2,7 +2,7 @@
 /*2) Run the application via STS*/
 /*3) Inside terminal run this file only after running the application*/
 /*	 3.1) cd into project directory*/
-/*	 3.2) Type command: mysql -u username -p database_name < mysqlqrms.sql*/
+/*	 3.2) Type command: mysql -u root -p qrmsdb < mysqlstart.sql*/
 
 use qrmsdb;
 

@@ -2,11 +2,14 @@ package com.qrms.spring.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -24,10 +27,12 @@ import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.StudentAllocCourse;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.Users;
-import com.qrms.spring.queryBeans.PrefGroupByCourseStudent;
+import com.qrms.spring.queryBeans.FacultyUsers;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
-import com.qrms.spring.queryBeans.StudentCountByYearSem;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
+import com.qrms.spring.queryBeans.CourseAndElectives;
+import com.qrms.spring.queryBeans.CombinedCourseElective;
+import com.qrms.spring.queryBeans.StudentUsers;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CompanionCourse;
 import com.qrms.spring.model.CoursePrerequisites;
@@ -35,6 +40,7 @@ import com.qrms.spring.model.Department;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
+import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.repository.CourseCompanionRespositoy;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
@@ -42,11 +48,15 @@ import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
+import com.qrms.spring.repository.FacultyPrefRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.StudentAllocCourseRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
+import com.qrms.spring.service.FacultyAcadService;
+import com.qrms.spring.service.StudentAcadServiceImpl;
+import com.qrms.spring.service.StudentPrefServiceImpl;
 
 @Controller
 @RequestMapping("/u/admin")
@@ -54,6 +64,15 @@ public class AdminController {
 	
 	@Autowired
 	private CustomUserDetailsService userDetails;
+	
+	@Autowired
+	private StudentPrefServiceImpl studPrefService;
+	
+	@Autowired
+	private FacultyAcadService facAcadService;
+	
+	@Autowired
+	private StudentAcadServiceImpl studAcadService;
 	
 	@Autowired
 	private RoleRepository roleRepository;
@@ -88,6 +107,10 @@ public class AdminController {
 	@Autowired
 	private CoursePrerequisitesRepository coursePrerequisitesRepository;
 	
+	@Autowired
+	private FacultyPrefRepository facultyPrefRepository;
+	
+	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
@@ -95,12 +118,14 @@ public class AdminController {
 	private List<Role> roles; 
 	
 	private String g_msg,g_err_msg;
+	
 	private List<StudentPrefCountInfo> prefSummaryList;
+	
 	
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
-		
+		allocFaculty(1);
 		return getViewAdminHome(null);
 	}
 	
@@ -127,7 +152,7 @@ public class AdminController {
 	 @RequestMapping(value = "/getStudPrefDetailsTable_async", method = RequestMethod.GET)
 	 public String getStudPrefDetailsTable(Model model) {
 		
-		List<StudentPrefCountInfo> studCountInfo = computeStudPrefTable();
+		List<StudentPrefCountInfo> studCountInfo = studPrefService.computeStudPrefTable();
 		if(studCountInfo.isEmpty()) {
 			model.addAttribute("err_msg","There are no open student elective preference forms");
 			return "admin/home:: messageDiv";
@@ -139,81 +164,13 @@ public class AdminController {
 		
 	}
 	
-	//function to calculate pref table
-	private List<StudentPrefCountInfo> computeStudPrefTable() {
-		List<StudentCountByYearSem> totalStudentCount;
-		List<PrefGroupByCourseStudent> prefsPerElective;
-		List<StudentPrefCountInfo> studCountInfo = new ArrayList<StudentPrefCountInfo>();
-	
-		totalStudentCount = studentAcadRepository.findStudentCountByYearSemDept();
-		prefsPerElective = studentPrefRepository.findPrefsGroupByCourseStudent();
-		Course c;
-		
-		List<Course> openCourses = courseRepository.findByStudAllocFlagNot(0);
-		
-		for(PrefGroupByCourseStudent p: prefsPerElective) {
-			c = courseRepository.findByCourseId(p.getCourseId());
-			
-			for(StudentCountByYearSem s: totalStudentCount) {
-			
-				if(s.getSem() == c.getCourseSem() && s.getYear().equals(c.getCourseYear())) {
-					StudentPrefCountInfo si = new StudentPrefCountInfo();
-					si.setCourseId(c.getCourseId());
-					si.setCourseName(c.getCourseName());
-					si.setDeptId(c.getDepartment().getDeptId());
-					si.setSem(c.getCourseSem());
-					si.setSubmitCount(p.getCount());
-					si.setTotalStudentCount(s.getCount());
-					si.setYear(c.getCourseYear());
-					studCountInfo.add(si);
-					openCourses.remove(c);
-					break;
-				}
-			}
-		}
-		
-		for(Course openCourse: openCourses) {
-			StudentPrefCountInfo si = new StudentPrefCountInfo();
-			si.setCourseId(openCourse.getCourseId());
-			si.setCourseName(openCourse.getCourseName());
-			si.setDeptId(openCourse.getDepartment().getDeptId());
-			si.setSem(openCourse.getCourseSem());
-			si.setSubmitCount(0);
-			for(StudentCountByYearSem s: totalStudentCount) {
-				if(s.getSem() == openCourse.getCourseSem() && s.getYear().equals(openCourse.getCourseYear())) {
-					si.setTotalStudentCount(s.getCount());
-					break;
-				}
-			}
-			si.setYear(openCourse.getCourseYear());
-			studCountInfo.add(si);
-			
-		}
-		if(prefSummaryList!=null) {
-			for(StudentPrefCountInfo ps: prefSummaryList) {
-				System.out.println(ps.getCourseName()+" "+ps.getCount1()+" "+ps.getCount2()+" "+ps.getCount3()+" "+ps.getCount4());
-			}
-		}
-		
-		return studCountInfo;
-	}
 	
 	@GetMapping("/getStudPrefDetailsTable")
 	public ModelAndView getStudPrefDetailsTable() {		
 	
-		return getViewAdminHome(computeStudPrefTable());		
-		
+		return getViewAdminHome(studPrefService.computeStudPrefTable());		
 	}
-	
-	@GetMapping("/getViewPreferenceDetails")
-	public ModelAndView getViewPreferenceDetails() {		
-		g_err_msg = null;
-		g_msg = null;
-		return getViewAdminHome(computeStudPrefTable());		
 		
-	}
-	
-	//Display register user form
 	@Transactional
 	@RequestMapping(value = "/performQuickAction-student", method = RequestMethod.POST)
 	public ModelAndView studentAllocQuickAction(String courseId,  String selectAction, String courseName) {
@@ -256,9 +213,9 @@ public class AdminController {
 				prefSummaryList.add(ps);
 			}
 			
-			List<StudentPrefCountInfo> computeStudPrefTable = computeStudPrefTable();
+			List<StudentPrefCountInfo> studentPrefInfo = studPrefService.computeStudPrefTable();
 			ModelAndView model = new ModelAndView();
-			model.addObject("studCountInfo",computeStudPrefTable);
+			model.addObject("studCountInfo",studentPrefInfo);
 			model.addObject("prefSummaryList",prefSummaryList);
 			model.setViewName("/admin/home");
 			return model;
@@ -283,6 +240,52 @@ public class AdminController {
 		return getStudPrefDetailsTable();
 	}
 	
+	
+	@RequestMapping(value="/viewUsers", method = RequestMethod.GET)
+	public ModelAndView viewUsers() {
+		ModelAndView model = new ModelAndView();
+		departments = departmentRepository.findAll();
+		roles = roleRepository.findAll();
+		
+		model.addObject("roles",roles);
+		model.addObject("department",departments);
+		model.setViewName("admin/viewUsers");
+		return model;
+	}
+	
+	
+	@RequestMapping(value="/viewStudents", method = RequestMethod.POST)
+	public String viewStudents(Model model,  String year, String dept ) {
+		
+		Department department = departmentRepository.findByDeptId(dept);
+		ArrayList<StudentUsers> studUsersList= studAcadService.getStudentList(department, year);
+		model.addAttribute("studUsersList",studUsersList);
+		return "admin/viewUsers:: studTable";
+	}
+	
+	@RequestMapping(value="/viewAdmins", method = RequestMethod.GET)
+	public String viewAdmins(Model model) {
+		
+		Set<Role> adminRole = new HashSet<Role>();
+		adminRole.add(new Role(1,"ADMIN"));
+		ArrayList<Users> adminUsers = userDetails.findByRole(adminRole);
+		model.addAttribute("adminUsersList",adminUsers);
+		return "admin/viewUsers:: adminsTable";
+	
+	}
+	
+
+	@RequestMapping(value="/viewFaculty", method = RequestMethod.POST)
+	public String viewFaculty(Model model,String dept) {
+		
+		Department department = departmentRepository.findByDeptId(dept);
+		ArrayList<FacultyUsers> facUsersList= facAcadService.getFacultyList(department);
+		
+		model.addAttribute("facultyUsersList",facUsersList);
+		return "admin/viewUsers:: facultyTable";
+	
+	}
+		
 	@Transactional
 	@RequestMapping(value = "/changeSeatsAndAllocate", method = RequestMethod.POST)
 	public ModelAndView changeSeatsAndAllocate(String courseIdList, String seatList) {
@@ -334,12 +337,6 @@ public class AdminController {
 		String email = user.getEmail();
 		if(!userDetails.isUniqueEmail(email)) {
 			String errmsg = "A user is already registered with the given email";
-			//			model.addObject("errmsg","A user is already registered with the given email");
-//			model.addObject("user",new Users());
-//			model.addObject("roles",roles);
-//			model.addObject("student",new StudentAcad());
-//			
-//			model.setViewName("admin/registerUsers");
 			return registerUsers(null,errmsg);
 		}
 		
@@ -1000,5 +997,113 @@ public class AdminController {
 		}
 		
 		return getDelCourseOrElective(msg,err_msg);
+	}
+
+
+//	@RequestMapping(value="/allocFaculty",method=RequestMethod.POST)
+//	public ModelAndView
+	
+	public void allocFaculty(int oddOrEven) {
+		//ModelAndView model = new ModelAndView();
+		
+		//find all the courses
+		
+		HashMap<String, int[]> desigHours =  new HashMap<>();
+		desigHours.put("Professor", new int[] {8,10});
+		desigHours.put("Associate Professor", new int[] {12,14});
+		desigHours.put("Assistant Professor", new int[] {16,18});
+		
+		List<FacultyAcad> allFacs = facultyAcadRepository.findAll();
+		
+		ArrayList<CourseAndElectives> allCourses = new ArrayList<CourseAndElectives>();
+		ArrayList<CombinedCourseElective> courses = new ArrayList<>();
+		
+		if(oddOrEven==0) {
+			ArrayList<Course> allOddCourses = courseRepository.findOddSemCoursesAndCourseTypeReg();
+			ArrayList<Electives> allOddElectives = electivesRepository.findOddSemCoursesAndCourseTypeNotReg();
+			for(Course c:allOddCourses)
+				allCourses.add(new CourseAndElectives(c));
+			for(Electives e:allOddElectives)
+				allCourses.add(new CourseAndElectives(e));
+		}else if(oddOrEven==1){
+			ArrayList<Course> allEvenCourses = courseRepository.findEvenSemCoursesAndCourseTypeReg();
+			ArrayList<Electives> allEvenElectives = electivesRepository.findEvenSemCoursesAndCourseTypeNotReg();
+			for(Course c:allEvenCourses)
+				allCourses.add(new CourseAndElectives(c));
+			for(Electives e:allEvenElectives)
+				allCourses.add(new CourseAndElectives(e));
+		}else {
+			ArrayList<Course> allEvenAndOddCourses = courseRepository.findByCourseType('R');
+			List<Electives> allElectives = electivesRepository.findAll();
+			for(Course c:allEvenAndOddCourses)
+				allCourses.add(new CourseAndElectives(c));
+			for(Electives e:allElectives)
+				allCourses.add(new CourseAndElectives(e));
+		}
+		
+		for(CourseAndElectives ce:allCourses) {
+			if(ce.getElective()==null) {
+				CombinedCourseElective c = new CombinedCourseElective(ce.getCourse().getCourseId(),0,ce.getCourse().getNoOfHours(),ce.getCourse().getCourseYear());
+				courses.add(c);
+			}else {
+				CombinedCourseElective c = new CombinedCourseElective(ce.getElective().getElectiveCourseId(),1,ce.getElective().getCourse().getNoOfHours(),ce.getElective().getCourse().getCourseYear());
+				courses.add(c);
+			}
+			
+		}
+		
+		for(CombinedCourseElective c:courses) {
+			System.out.println(c.getId());
+		}
+		
+		//sort by BE,TE,SE,FE
+		
+		ArrayList<CombinedCourseElective> sortedCourses = new ArrayList<>();
+		
+		for(CombinedCourseElective c:courses) {
+			if(c.getYear()=="BE") {
+				sortedCourses.add(c);
+			}
+		}
+		for(CombinedCourseElective c:courses) {
+			if(c.getYear()=="TE") {
+				sortedCourses.add(c);
+			}
+		}
+		for(CombinedCourseElective c:courses) {
+			if(c.getYear()=="SE") {
+				sortedCourses.add(c);
+			}
+		}
+		for(CombinedCourseElective c:courses) {
+			if(c.getYear()=="FE") {
+				sortedCourses.add(c);
+			}
+		}
+		
+		//iterate over all the courses
+		
+		for(CombinedCourseElective c:sortedCourses) {
+			
+			ArrayList<FacultyPref> fpref=new ArrayList<>();
+			
+			if(c.getIsElective()==1) {
+				fpref = facultyPrefRepository.findByElectiveId(c.getId());
+			}else {
+				fpref = facultyPrefRepository.findByCourseId(c.getId());
+			}
+			
+			Collections.sort(fpref);
+			
+//			facultyPrefRepository.findById(fpref.)
+			
+			for(FacultyPref fp:fpref) {
+				//
+			}
+		}
+		
+		//
+		
+		//return model;
 	}
 }

@@ -9,6 +9,13 @@ public class CourseAndElectives {
 	private Electives elective;	
 	private String preReq1,preReq2;
 	
+	public CourseAndElectives(Course c){
+		this.course = c;
+	}
+	public CourseAndElectives(Electives e){
+		this.elective=e;
+	}
+	
 	public String getPreReq1() {
 		return preReq1;
 	}
