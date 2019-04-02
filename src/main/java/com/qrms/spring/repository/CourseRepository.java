@@ -65,6 +65,10 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 		ArrayList<Course> findEvenSemCoursesAndCourseTypeNotReg();
 	
 		ArrayList<Course> findByCourseType(char c);
+		Optional<Course> findByCourseIdAndDepartmentAndIsTheoryAndCourseType(String prerequisiteNo1,
+				Department department, int i, char c);
+		Optional<Course> findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheoryAndCourseType(
+				String companionTheory, Department department, String courseYear, int courseSem, int i, char c);
 	
 		
 		

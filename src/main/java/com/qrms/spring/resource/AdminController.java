@@ -439,10 +439,9 @@ public class AdminController {
 			model.addObject("msg","Course has been added successfully");
 			model.addObject("course",new Course());
 			courseRepository.save(course);
-		}
-		
+		} 
 		else if(!companionTheory.equals("")) {
-			Optional<Course> thCourse = courseRepository.findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheory(companionTheory,course.getDepartment(),course.getCourseYear(),course.getCourseSem(),1);
+			Optional<Course> thCourse = courseRepository.findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheoryAndCourseType(companionTheory,course.getDepartment(),course.getCourseYear(),course.getCourseSem(),1,'R');
 			
 			if(thCourse.isPresent()) {
 				//saving course
@@ -463,43 +462,45 @@ public class AdminController {
 				model.addObject("course",new Course());
 			}
 		}else if(!prerequisiteNo1.equals("") && !prerequisiteNo2.equals("")) {
-			Optional<Course> pr1Course = courseRepository.findByCourseIdAndDepartmentAndIsTheory(prerequisiteNo1,course.getDepartment(),1);
-			Optional<Course> pr2Course = courseRepository.findByCourseIdAndDepartmentAndIsTheory(prerequisiteNo2,course.getDepartment(),1);
-			Electives pr1Elective = electivesRepository.findByElectiveCourseId(prerequisiteNo1);
-			Electives pr2Elective = electivesRepository.findByElectiveCourseId(prerequisiteNo2);
+			Optional<Course> pr1Course = courseRepository.findByCourseIdAndDepartmentAndIsTheoryAndCourseType(prerequisiteNo1,course.getDepartment(),1,'R');
+			Optional<Course> pr2Course = courseRepository.findByCourseIdAndDepartmentAndIsTheoryAndCourseType(prerequisiteNo2,course.getDepartment(),1,'R');
 		
-			if(pr1Course.isPresent() && pr2Course.isPresent() && pr1Elective ==null && pr2Elective ==null) {
+			if(pr1Course.isPresent() && pr2Course.isPresent()) {
 				CoursePrerequisites cr = new CoursePrerequisites(course.getCourseId(),0,0,prerequisiteNo1,prerequisiteNo2);
 				courseRepository.save(course);
 				coursePrerequisitesRepository.save(cr);
 				model.addObject("msg","Course has been added successfully");
 				model.addObject("course",new Course());
 				
-			} else if(!pr1Course.isPresent() && !pr2Course.isPresent() && pr1Elective !=null && pr2Elective !=null){
-				CoursePrerequisites cr = new CoursePrerequisites(course.getCourseId(),1,1,prerequisiteNo1,prerequisiteNo2);
+			} else if(!pr1Course.isPresent() && !pr2Course.isPresent()){
+				model.addObject("err_msg","Prerequisite 1 and 2 theory courses don't exist!");
+				model.addObject("course",new Course());	
+				
+			}else if(!pr1Course.isPresent()){
+				model.addObject("err_msg","Prerequisite 1 theory course doesn't exist!");
+				model.addObject("course",new Course());	
+				
+			}else if(!pr2Course.isPresent()){
+				model.addObject("err_msg","Prerequisite 2 theory course doesn't exist!");
+				model.addObject("course",new Course());
+				
+			}
+		} else if(!prerequisiteNo1.equals("") && prerequisiteNo2.equals("")) {
+			Optional<Course> pr1Course = courseRepository.findByCourseIdAndDepartmentAndIsTheoryAndCourseType(prerequisiteNo1,course.getDepartment(),1,'R');
+			
+			if(pr1Course.isPresent()) {
+				CoursePrerequisites cr = new CoursePrerequisites(course.getCourseId(),0,-1,prerequisiteNo1,"NA");
 				courseRepository.save(course);
 				coursePrerequisitesRepository.save(cr);
 				model.addObject("msg","Course has been added successfully");
 				model.addObject("course",new Course());
 				
-			}else if(pr1Course.isPresent() && pr2Course.isPresent() && pr1Elective !=null && pr2Elective !=null){
-				model.addObject("err_msg", "Ambiguous Ids entered.");
-				model.addObject("course",new Course());
-				
-			} else if(!pr1Course.isPresent() && !pr2Course.isPresent() && pr1Elective ==null && pr2Elective ==null){
-				model.addObject("err_msg","Prerequisite 1 and 2 theory courses don't exist!");
-				model.addObject("course",new Course());	
-				
-			}else if(!pr1Course.isPresent() && pr1Elective==null){
+			} else if(!pr1Course.isPresent()){
 				model.addObject("err_msg","Prerequisite 1 theory course doesn't exist!");
 				model.addObject("course",new Course());	
 				
-			}else if(!pr2Course.isPresent() && pr2Elective==null){
-				model.addObject("err_msg","Prerequisite 2 theory course doesn't exist!");
-				model.addObject("course",new Course());
-				
 			}
-		}else {
+		} else {
 			model.addObject("err_msg","Cannot add course, something went wrong!");
 			model.addObject("course",new Course());
 		}
@@ -539,28 +540,19 @@ public class AdminController {
 		Course course = courseRepository.findByCourseId(courseId);
 		elective.setCourse(course);
 		
-		if(electivesRepository.findByElectiveName(elective.getElectiveName()).isPresent()) {
-			System.out.println("Elective with same name already exists");
-			model.addObject("msg","Elective with same name already exists");
+		if(electivesRepository.findByElectiveName(elective.getElectiveName()).isPresent() || electivesRepository.findByElectiveCourseId(elective.getElectiveCourseId())!=null) {
+			System.out.println("Elective with same name or ID already exists");
+			model.addObject("err_msg","Elective with same name or ID already exists");
 		}
 		else {
-			
-			if(!companionTheory.equals("")) {
-				Optional<Course> thCourse = courseRepository.findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheory(companionTheory,course.getDepartment(),course.getCourseYear(),course.getCourseSem(),1);
+			if(companionTheory.equals("") && prerequisiteNo1.equals("") && prerequisiteNo2.equals("")) {
+				model.addObject("msg","Elective has been added successfully");
+				electivesRepository.save(elective);
+			} 
+			else if(!companionTheory.equals("")) {
 				Electives compElective = electivesRepository.findByElectiveCourseId(companionTheory);
 				
-				if(thCourse.isPresent() && compElective==null) {
-					electivesRepository.save(elective);
-					CompanionCourse cc = new CompanionCourse(thCourse.get().getCourseId(), elective.getElectiveCourseId());
-					courseCompanionRepository.save(cc);
-					
-					CompanionCourse ncc = new CompanionCourse(elective.getElectiveCourseId(), thCourse.get().getCourseId());
-					courseCompanionRepository.save(ncc);	
-					
-					model.addObject("msg","Elective has been added successfully");
-
-				}
-				else if(!thCourse.isPresent() && compElective!=null) {
+				if(compElective!=null) {
 					electivesRepository.save(elective);
 					CompanionCourse cc = new CompanionCourse(compElective.getElectiveCourseId(), elective.getElectiveCourseId());
 					courseCompanionRepository.save(cc);
@@ -574,24 +566,40 @@ public class AdminController {
 					model.addObject("course",new Course());
 				}
 			}else if(!prerequisiteNo1.equals("") && !prerequisiteNo2.equals("")) {
-				Optional<Course> pr1Course = courseRepository.findByCourseIdAndDepartmentAndIsTheory(prerequisiteNo1,course.getDepartment(),1);
-				Optional<Course> pr2Course = courseRepository.findByCourseIdAndDepartmentAndIsTheory(prerequisiteNo2,course.getDepartment(),1);
+				Optional<Course> pr1Course = courseRepository.findByCourseIdAndDepartmentAndIsTheoryAndCourseType(prerequisiteNo1,course.getDepartment(),1,'R');
+				Optional<Course> pr2Course = courseRepository.findByCourseIdAndDepartmentAndIsTheoryAndCourseType(prerequisiteNo2,course.getDepartment(),1,'R');
 				Electives pr1Elective = electivesRepository.findByElectiveCourseId(prerequisiteNo1);
 				Electives pr2Elective = electivesRepository.findByElectiveCourseId(prerequisiteNo2);
 			
+				//both preq are regular
 				if(pr1Course.isPresent() && pr2Course.isPresent() && pr1Elective ==null && pr2Elective ==null) {
 					electivesRepository.save(elective);
 					CoursePrerequisites cr = new CoursePrerequisites(elective.getElectiveCourseId(),0,0,prerequisiteNo1,prerequisiteNo2);
 					coursePrerequisitesRepository.save(cr);
 					model.addObject("msg","Elective has been added successfully");
 					
+				//both preq	are electives
 				} else if(!pr1Course.isPresent() && !pr2Course.isPresent() && pr1Elective !=null && pr2Elective !=null){
 					electivesRepository.save(elective);
 					CoursePrerequisites cr = new CoursePrerequisites(elective.getElectiveCourseId(),1,1,prerequisiteNo1,prerequisiteNo2);
 					coursePrerequisitesRepository.save(cr);
 					model.addObject("msg","Elective has been added successfully");
 					
-				}else if(pr1Course.isPresent() && pr2Course.isPresent() && pr1Elective !=null && pr2Elective !=null){
+				//first is regular and second is elective	
+				} else if(pr1Course.isPresent() && !pr2Course.isPresent() && pr1Elective ==null && pr2Elective !=null){
+					electivesRepository.save(elective);
+					CoursePrerequisites cr = new CoursePrerequisites(elective.getElectiveCourseId(),0,1,prerequisiteNo1,prerequisiteNo2);
+					coursePrerequisitesRepository.save(cr);
+					model.addObject("msg","Elective has been added successfully");
+					
+				//first is elective and second is regular
+				} else if(!pr1Course.isPresent() && pr2Course.isPresent() && pr1Elective !=null && pr2Elective ==null){
+					electivesRepository.save(elective);
+					CoursePrerequisites cr = new CoursePrerequisites(elective.getElectiveCourseId(),1,0,prerequisiteNo1,prerequisiteNo2);
+					coursePrerequisitesRepository.save(cr);
+					model.addObject("msg","Elective has been added successfully");
+					
+				} else if(pr1Course.isPresent() && pr2Course.isPresent() && pr1Elective !=null && pr2Elective !=null){
 					model.addObject("err_msg", "Ambiguous Ids entered.");
 					
 				} else if(!pr1Course.isPresent() && !pr2Course.isPresent() && pr1Elective ==null && pr2Elective ==null){
@@ -604,7 +612,30 @@ public class AdminController {
 					model.addObject("err_msg","Prerequisite 2 theory course doesn't exist!");
 					
 				}
-			}else {
+			} else if(!prerequisiteNo1.equals("") && prerequisiteNo2.equals("")) {
+				Optional<Course> pr1Course = courseRepository.findByCourseIdAndDepartmentAndIsTheoryAndCourseType(prerequisiteNo1,course.getDepartment(),1,'R');
+				Electives pr1Elective = electivesRepository.findByElectiveCourseId(prerequisiteNo1);
+
+				if(pr1Course.isPresent() && pr1Elective==null) {
+					CoursePrerequisites cr = new CoursePrerequisites(elective.getElectiveCourseId(),0,-1,prerequisiteNo1,"NA");
+					electivesRepository.save(elective);
+					coursePrerequisitesRepository.save(cr);
+					model.addObject("msg","Elective has been added successfully");
+					
+				} else if(!pr1Course.isPresent() && pr1Elective!=null) {
+					CoursePrerequisites cr = new CoursePrerequisites(elective.getElectiveCourseId(),1,-1,prerequisiteNo1,"NA");
+					electivesRepository.save(elective);
+					coursePrerequisitesRepository.save(cr);
+					model.addObject("msg","Elective has been added successfully");
+					
+				} else if(!pr1Course.isPresent() && pr1Elective==null){
+					model.addObject("err_msg","Prerequisite 1 theory course doesn't exist!");
+					
+				} else if(pr1Course.isPresent() && pr1Elective!=null) {
+					model.addObject("err_msg","Ambigious Ids entered");
+				}
+			}
+			else {
 				model.addObject("err_msg","Cannot add course, something went wrong!");
 			}
 			//model.addObject("msg","Elective added successfully");		

@@ -99,24 +99,30 @@ public class FacultyController {
 				ArrayList<Electives> electives = electivesRepository.findByCourse(elCourse);
 				
 				for(Electives el: electives) {
-					CoursePrerequisites cp = coursePrerequisitesRepository.findByCourseId(elCourse.getCourseId());
+					System.out.println(elCourse.getCourseId());
+					CoursePrerequisites cp = coursePrerequisitesRepository.findByCourseId(el.getElectiveCourseId());
 					CourseAndElectives ce = new CourseAndElectives();
 
 					if(cp == null) {
-						ce.setPreReq1("Not found");
-						ce.setPreReq2("Not found");
+						ce.setPreReq1("NA");
+						ce.setPreReq2("NA");
 					}
 					else {
 						String prereq1,prereq2;
 						
 						if(cp.getIsPrereq1Elective() == 1)
 							prereq1 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo1()).getElectiveName();				
-						else
+						else if(cp.getIsPrereq1Elective() == 0)
 							prereq1 = courseRepository.findByCourseId(cp.getPrerequisiteNo1()).getCourseName();
+						else
+							prereq1 = "NA";	
+						
 						if(cp.getIsPrereq2Elective() == 1)
 							prereq2 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo2()).getElectiveName();				
-						else
+						else if(cp.getIsPrereq1Elective() == 0)
 							prereq2 = courseRepository.findByCourseId(cp.getPrerequisiteNo2()).getCourseName();
+						else
+							prereq2="NA";
 					
 						ce.setPreReq1(prereq1);
 						ce.setPreReq2(prereq2);						
@@ -133,20 +139,25 @@ public class FacultyController {
 				CourseAndElectives ce = new CourseAndElectives();
 				CoursePrerequisites cp = coursePrerequisitesRepository.findByCourseId(regCourse.getCourseId());
 				if(cp == null) {
-					ce.setPreReq1("Not found");
-					ce.setPreReq2("Not found");
+					ce.setPreReq1("NA");
+					ce.setPreReq2("NA");
 				}
 				else {
 					String prereq1,prereq2;
 					
 					if(cp.getIsPrereq1Elective() == 1)
 						prereq1 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo1()).getElectiveName();				
-					else
+					else if(cp.getIsPrereq1Elective() == 0)
 						prereq1 = courseRepository.findByCourseId(cp.getPrerequisiteNo1()).getCourseName();
+					else
+						prereq1="NA";
 					if(cp.getIsPrereq2Elective() == 1)
 						prereq2 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo2()).getElectiveName();				
+					else if(cp.getIsPrereq1Elective() == 0)
+						prereq2 = courseRepository.findByCourseId(cp.getPrerequisiteNo2()).getCourseName();	
 					else
-						prereq2 = courseRepository.findByCourseId(cp.getPrerequisiteNo2()).getCourseName();				
+						prereq2="NA";
+					
 					ce.setPreReq1(prereq1);
 					ce.setPreReq2(prereq2);						
 				}

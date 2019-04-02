@@ -16,6 +16,7 @@
 		var inputChoice;
 		var prefData = [];
 		var SE=0, TE=0, BE=0;
+		var prereq1, prereq2;
 		$(document).ready(function(){
 		    $(".choose").click(function(){
 		        setChoice = this.id;
@@ -271,7 +272,7 @@
     		</td>
     	</tr>
     	<!--  ${i.elective!=null ? i.elective.electiveCourseId : i.course.courseId}-->
-    	<tr class="exp" style="display: none">
+    	<tr class="cexp" style="display: none">
     		<td>
     			Number of times course taught
     		</td>
@@ -279,10 +280,10 @@
 				<input id="courseExp"  name="courseExp" class="form-control" placeholder="Course Experience (in yrs)" type="number" min="0" required autofocus/>
     		</td>
     	</tr>
-    	<tr class="exp" style="display: none">
+    	<tr class="preqexp" style="display: none">
     		<td colspan=2><h5 class="card-title mt-3 text-center card-body mx-auto">Prerequisite experience</h5></td>
     	</tr>
-    	<tr class="exp" style="display: none">
+    	<tr class="preq1exp" style="display: none">
     		<td id = "prereq1">
     			
     		</td>
@@ -291,7 +292,7 @@
     		</td>
     	</tr>
     	
-    	<tr class="exp" style="display: none">
+    	<tr class="preq2exp" style="display: none">
     		<td id ="prereq2">
     			
     		</td>
@@ -300,7 +301,7 @@
     		</td>
     	</tr>
     	
-    	<tr class="exp" style="display: none">
+    	<tr class="sub" style="display: none">
 			<td colspan=2 align=center>
 				<div class="form-group">
 		        	<button id="givePref" class="btn btn-primary btn-block" onclick="givePrefs()" style="width:165px"> Select Preference  </button>
@@ -384,11 +385,26 @@
 		var cexp = $('#courseExp');
 		var prereq1exp = $('#prereq1Exp');
 		var prereq2exp = $('#prereq2Exp');
-        if (cexp.val() == "none" || prereq1exp.val() == "" || prereq2exp.val() == "") {
-            alert("Please enter all the fields");
-          
-           return false;
-        } 
+		if(prereq1!="NA" && prereq2!="NA") {
+	        if (cexp.val() == "none" || prereq1exp.val() == "" || prereq2exp.val() == "") {
+	            alert("Please enter all the fields");
+	          
+	           return false;
+	        } 
+		} else if(prereq1!="NA" && prereq2=="NA") {
+			if (cexp.val() == "none" || prereq1exp.val() == "") {
+	            alert("Please enter all the fields");
+	          
+	           return false;
+	        } 
+		} else if(prereq1=="NA" && prereq2=="NA") {
+			if (cexp.val() == "none") {
+	            alert("Please enter course experience");
+	          
+	           return false;
+	        } 
+		}
+	      
 		
         var cyear = $('#year').val(); 
         if(cyear=="BE")
@@ -469,6 +485,7 @@
 	        mimeType: 'application/json',
 	        success: function (response) {
 	        	alert("Preferences set successfully");
+	        	window.location.replace("http://127.0.0.1:8080/u/faculty/givePreferenceChoice");
 	        }
     
 		});
@@ -482,12 +499,40 @@
 			$('.exp').hide();
 		}
 		else{
-			$('.exp').show();
+			$('.cexp').show();
 			console.log($(this).find(':selected').attr('data-pr1'));
-			var prereq1 = $(this).find(':selected').attr('data-pr1');
-			var prereq2 = $(this).find(':selected').attr('data-pr2');
-			$('#prereq1').text(prereq1);
-			$('#prereq2').text(prereq2);
+			prereq1 = $(this).find(':selected').attr('data-pr1');
+			prereq2 = $(this).find(':selected').attr('data-pr2');
+			console.log("Pr1:- "+prereq1);
+			console.log("Pr2:- "+prereq2);
+			if(prereq1 == "NA" && prereq2 == "NA") {
+				$('.cexp').show();
+				$('.preqexp').hide();
+				$('.preq1exp').hide();
+				$('.preq2exp').hide();
+				$('.sub').show();
+				$('#prereq1').text("");
+				$('#prereq2').text("");
+				
+			} else if(prereq1 != "NA" && prereq2 == "NA") {
+				$('.cexp').show();
+				$('.preqexp').show();
+				$('.preq1exp').show();
+				$('.preq2exp').hide();
+				$('.sub').show();
+				$('#prereq1').text(prereq1);
+				$('#prereq2').text("");
+				
+			} else if(prereq1 != "NA" && prereq2 != "NA") {
+				$('.cexp').show();
+				$('.preqexp').show();
+				$('.preq1exp').show();
+				$('.preq2exp').show();
+				$('.sub').show();
+				$('#prereq1').text(prereq1);
+				$('#prereq2').text(prereq2);
+			}
+			
 		}
 		
 	});
