@@ -28,14 +28,12 @@ import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.FacultyUsers;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
-import com.qrms.spring.queryBeans.CourseAndElectives;
 import com.qrms.spring.queryBeans.CombinedCourseElective;
 import com.qrms.spring.queryBeans.StudentUsers;
 import com.qrms.spring.queryBeans.FacultyPrefChainedComparator;
 import com.qrms.spring.queryBeans.FacultyPrefNoComparator;
 import com.qrms.spring.queryBeans.FacultyPrefPrereqExp2Comparator;
 import com.qrms.spring.queryBeans.FacultyPrefPrereqExp1Comparator;
-import com.qrms.spring.queryBeans.FacultyPrefCourseExpComparator;
 
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CompanionCourse;
@@ -173,16 +171,33 @@ public class AdminController {
 		
 	}
 	
+//************Departments Page****************
 	@GetMapping("/getDepartmentsPage")
 	public ModelAndView getDepartmentsPage() {
 		ModelAndView model = new ModelAndView();
 		departments = departmentRepository.findAll();
 		
 		model.addObject("departments", departments);
+		model.addObject("newDept", new Department());
 		model.setViewName("admin/departments");
 		return model;
 	}
 	
+	@RequestMapping(value = "/addDept", method = RequestMethod.POST)
+	public ModelAndView addDept(Department newDept) {
+		departmentRepository.save(newDept);
+		return getDepartmentsPage();
+	}
+	
+	@GetMapping("/manageDept")
+	public String getManageDept(Model model, String dept) {
+		Department department = departmentRepository.findByDeptId(dept);
+		System.out.println(dept);
+		model.addAttribute("manageDept",department);
+		return "admin/departments:: manageDeptFragment";
+	}
+	
+//***************end departments page************	
 	@GetMapping("/getStudPrefDetailsTable")
 	public ModelAndView getStudPrefDetailsTable() {		
 	

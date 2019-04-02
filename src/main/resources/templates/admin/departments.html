@@ -8,14 +8,11 @@
 
     <!-- Custom styles for this template -->
    	<link th:href="@{/css/admin/admin_home.css}" rel="stylesheet">
+  	<link rel="stylesheet" th:href="@{/css/admin/admin_dept.css}">
+   	
 	<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
    	
-	<script>
-		function SubmitForm(formId){
-			var oForm = document.getElementById(formId);
-			oForm.submit();
-		}
-	</script>
+	
 </head>
 
 <div th:replace="fragments/admin_header :: header"></div>
@@ -32,21 +29,82 @@
 	document.getElementById("dept-nav").className+=" active";		
 </script>
 
-
 <div class="sidebar">
   
-  <table>
-	<tr th:each="dept : ${departments}">
-		<td th:text="${dept.deptName} + '('+${dept.deptId}+')'"></td>
-	</tr>  	
+  <table class="table table-bordered table-hover" style="width:350px" >
+  <thead>
   	<tr>
-		<td colspan=4 align=center>
-       		<button type="submit" id="submit" class="btn btn-primary btn-block" onclick="addDept()"  style="width:150px; background-color: #2B7526;">Add Department</button>
+  		<td colspan =2 align=center>
+  		<h4>Departments</h4>
+  		</td>
+  	</tr>
+  </thead>
+  <tr th:each="dept,iterStat: ${departments}">
+		<td style="width:350px">
+			<h6 th:text="${dept.deptName + ' ('+ dept.deptId+')'}" ></h6>
+		</td>
+		
+		<td>
+			<button class="btn btn-primary" name="manageButton" th:id="${dept.deptId}">Manage</button>
+		</td>		
+	</tr>
+	 </table>
+	<form id="addDeptForm" action="/u/admin/addDept" method="POST">
+	<table style="border: 1px solid #000000; width:350px" cellpadding="5">  	
+  	<tr>
+  		<td colspan=2 align=center>
+			<h6>Add New Department</h6>
+		</td>
+  	</tr>
+  	<tr>
+  		<td>
+			Department Name
+		</td>
+  		<td>
+   			<input id="deptName"  name="deptName" th:field="${newDept.deptName}" class="form-control"  type="text" required autofocus/>
+   		</td>
+  	</tr>
+  	
+  	<tr>
+  		<td>
+			Department ID
+		</td>
+  		<td>
+   			<input id="deptId"  name="deptId" th:field="${newDept.deptId}" class="form-control" type="text" required autofocus/>
+   		</td>
+  	</tr>
+  	<tr>
+		<td  align=center  colspan=2>
+       		<button type="submit" id="submit" class="btn btn-primary btn-block"  style="width:150px; background-color: #2B7526;">Add Department</button>
     	</td> 	  
 	</tr>
-  </table>
- 
-  
+	</table> 
+  </form>
 </div>
-
+<div class="content">
+  <div class="card bg-light">
+  <div th:fragment="manageDeptFragment" id="manageDeptFragment">
+  	<h3 th:if="${manageDept}" th:text="${manageDept.deptName}"></h3>
+  
+  </div>
+	</div>
+</div>
+<script>
+		 $("[name='manageButton']").click(function(){
+			 var curDept = this.id;
+			 $.ajax({
+			        type: "GET",
+			        contentType: "application/json",
+			        url: '/u/admin/manageDept',
+			        data: { dept : curDept},
+			        dataType: 'html',
+			        mimeType: 'application/json',
+			        success: function (response) {
+			        	$('#manageDeptFragment').html('');
+			        	$('#manageDeptFragment').html(response);
+			        }
+		    
+				});
+		 });
+	</script>
 </body>

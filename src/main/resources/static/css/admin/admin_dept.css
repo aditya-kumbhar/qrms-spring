@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 375px;
+  background-color: #f1f1f1;
+  position: fixed;
+  overflow-y: scroll;
+  margin-top: 60px;
+  top: 0;
+  bottom: 0;
+}
+div.content {
+  margin-left: 375px;
+  padding: 1px 16px;
+  height: 1000px;
+  position: relative;
+}
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
