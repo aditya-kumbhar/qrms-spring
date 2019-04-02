@@ -1,8 +1,5 @@
 package com.qrms.spring.model;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

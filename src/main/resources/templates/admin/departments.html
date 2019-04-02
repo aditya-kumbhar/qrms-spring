@@ -1,0 +1,52 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<th:block th:include="fragments/admin_header.html :: headerfiles"></th:block>
+    
+    <title>Departments</title>
+
+    <!-- Custom styles for this template -->
+   	<link th:href="@{/css/admin/admin_home.css}" rel="stylesheet">
+	<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
+   	
+	<script>
+		function SubmitForm(formId){
+			var oForm = document.getElementById(formId);
+			oForm.submit();
+		}
+	</script>
+</head>
+
+<div th:replace="fragments/admin_header :: header"></div>
+<body>
+<!-- script to turn nav link active -->
+<script type="text/javascript">
+	var navBar = document.getElementById("nav-bar");		
+	var current = navBar.getElementsByClassName("active");
+    // If there's any other active nav, make it inactive
+    if (current.length > 0) { 
+      current[0].className = current[0].className.replace(" active", "");
+    }
+	//set current page nav as active
+	document.getElementById("dept-nav").className+=" active";		
+</script>
+
+
+<div class="sidebar">
+  
+  <table>
+	<tr th:each="dept : ${departments}">
+		<td th:text="${dept.deptName} + '('+${dept.deptId}+')'"></td>
+	</tr>  	
+  	<tr>
+		<td colspan=4 align=center>
+       		<button type="submit" id="submit" class="btn btn-primary btn-block" onclick="addDept()"  style="width:150px; background-color: #2B7526;">Add Department</button>
+    	</td> 	  
+	</tr>
+  </table>
+ 
+  
+</div>
+
+</body>
