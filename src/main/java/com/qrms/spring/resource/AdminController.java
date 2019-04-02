@@ -42,6 +42,7 @@ import com.qrms.spring.model.CompanionCourse;
 import com.qrms.spring.model.CoursePrerequisites;
 import com.qrms.spring.model.Department;
 import com.qrms.spring.model.DesignationToHours;
+import com.qrms.spring.model.Divisions;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
@@ -52,6 +53,7 @@ import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.DesignationToHoursRepository;
+import com.qrms.spring.repository.DivisionsRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
@@ -123,6 +125,9 @@ public class AdminController {
 	
 	@Autowired
 	private DesignationToHoursRepository designationToHoursRepository;
+	
+	@Autowired
+	private DivisionsRepository divisionsRepository;
 	
 	private FacultyAcad faculty;
 	
@@ -1026,7 +1031,7 @@ public class AdminController {
 //	@RequestMapping(value="/allocFaculty",method=RequestMethod.POST)
 //	public ModelAndView
 	
-	public void allocFaculty(int oddOrEven) {
+	public void allocFaculty(int oddOrEven,Department dept) {
 		
 		//find all the courses
 		
@@ -1039,9 +1044,10 @@ public class AdminController {
 		}
 		
 		
-		List<FacultyAcad> allFacs = facultyAcadRepository.findAll();
+		List<FacultyAcad> allFacs = facultyAcadRepository.findByDepartmentEquals(dept);
 		
 		HashMap <String,Integer> facAllotedHours = new HashMap<>();
+		
 		HashMap <String,int[]> facLimits = new HashMap<>();
 		for(FacultyAcad f:allFacs) {
 			facAllotedHours.put(f.getUserName(), 0);
@@ -1050,19 +1056,34 @@ public class AdminController {
 		
 		ArrayList<FacultyAllocCourse> alloc = new ArrayList<>();
 		ArrayList<CombinedCourseElective> unAlloc = new ArrayList<>();
-		
 		ArrayList<CombinedCourseElective> courses = new ArrayList<>();
+		
+		List<Divisions> divisionNeeds = divisionsRepository.findByDepartment(dept);
+		
+		HashMap<String,Integer> divAlloted = new HashMap<>();
+		for(Divisions d:divisionNeeds) {
+			divAlloted.put(d.getDivId(), 0);
+		}
 		
 		if(oddOrEven==0) {
 			ArrayList<Course> allOddCourses = courseRepository.findOddSemCoursesAndCourseTypeReg();
 			ArrayList<Electives> allOddElectives = electivesRepository.findOddSemCoursesAndCourseTypeNotReg();
 			for(Course c:allOddCourses)
 			{
-				CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear());
+				int dNo=0;
+				
+				for(Divisions d:divisionNeeds) {
+					
+					if(d.getDepartment()==dept && d.getYear()==c.getCourseYear()) {
+						dNo+=1;
+					}
+				}
+				CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear(),dNo,c.getIsTheory());
 				courses.add(co);
 			}
 			for(Electives e:allOddElectives)
 			{
+				
 				CombinedCourseElective ce = new CombinedCourseElective(e.getElectiveCourseId(),1,e.getCourse().getNoOfHours(),e.getCourse().getCourseYear());
 				courses.add(ce);
 			}
@@ -1071,7 +1092,15 @@ public class AdminController {
 			ArrayList<Electives> allEvenElectives = electivesRepository.findEvenSemCoursesAndCourseTypeNotReg();
 			for(Course c:allEvenCourses)
 				{
-					CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear());
+				int dNo=0;
+				
+				for(Divisions d:divisionNeeds) {
+					
+					if(d.getDepartment()==dept && d.getYear()==c.getCourseYear()) {
+						dNo+=1;
+					}
+				}
+					CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear(),dNo,c.getIsTheory());
 					courses.add(co);
 				}
 			for(Electives e:allEvenElectives)
@@ -1084,7 +1113,15 @@ public class AdminController {
 			List<Electives> allElectives = electivesRepository.findAll();
 			for(Course c:allEvenAndOddCourses)
 			{
-				CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear());
+				int dNo=0;
+				
+				for(Divisions d:divisionNeeds) {
+					
+					if(d.getDepartment()==dept && d.getYear()==c.getCourseYear()) {
+						dNo+=1;
+					}
+				}
+				CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear(),dNo,c.getIsTheory());
 				courses.add(co);
 			}
 			for(Electives e:allElectives)
@@ -1129,114 +1166,92 @@ public class AdminController {
 		
 		for(CombinedCourseElective c:sortedCourses) {
 			
-			ArrayList<FacultyPref> fpref=new ArrayList<>();
+			String year;
+			Integer isTheory;
 			
-			if(c.getIsElective()==1) {
-				fpref = facultyPrefRepository.findByElectiveId(c.getId());
+			if(c.getIsElective()==0) {
+				Course course;
+				course = courseRepository.findByCourseId(c.getId());
+				year = course.getCourseYear();
+				isTheory = course.getIsTheory();
 			}else {
-				fpref = facultyPrefRepository.findByCourseId(c.getId());
+				Electives elective;
+				elective = electivesRepository.findByElectiveCourseId(c.getId());
+				year = elective.getCourse().getCourseYear();
+				isTheory = elective.getCourse().getIsTheory();
 			}
 			
-			Collections.sort(fpref,new FacultyPrefChainedComparator(new FacultyPrefNoComparator(),new FacultyPrefCourseExpComparator(),new FacultyPrefPrereqExp1Comparator(),new FacultyPrefPrereqExp2Comparator()));
-			
-			int flag = 0;
-			
-			System.out.println("ok1");
-			for (FacultyPref fp : fpref) {
+			if(isTheory==1) {
+
+				ArrayList<FacultyPref> fpref=new ArrayList<>();
 				
-				int currPrefCurrentHours = facAllotedHours.get(fp.getUserName());
-			
-//				System.out.println(c.getNoOfHours());
-//				System.out.println(fp.getUserName());
-//				System.out.println(facLimits.get(fp.getUserName()));
-//				System.out.println(facLimits.get(fp.getUserName())[1]);
-//				System.out.println();
-				
-				if(currPrefCurrentHours + c.getNoOfHours() <= facLimits.get(fp.getUserName())[1])
-				{
-					facAllotedHours.replace(fp.getUserName(), currPrefCurrentHours+c.getNoOfHours());
-					//add to the result array
-					
-					FacultyAllocCourse f = new FacultyAllocCourse();
-					f.setCourseId(c.getId());
-					f.setIsElective(c.getIsElective());
-					f.setNoOfHours(c.getNoOfHours());
-					f.setPrefNo(fp.getPrefNo());
-					f.setUserName(fp.getUserName());
-					f.setYear(c.getYear());
-					
-					alloc.add(f);
-					break;
+				if(c.getIsElective()==1) {
+					fpref = facultyPrefRepository.findByElectiveId(c.getId());
+				}else {
+					fpref = facultyPrefRepository.findByCourseId(c.getId());
 				}
-				System.out.println("ok2");
-			
-			} 
-			
-			if (flag==0) {
-				unAlloc.add(c);
+				
+				Collections.sort(fpref,new FacultyPrefChainedComparator(new FacultyPrefNoComparator(),new FacultyPrefCourseExpComparator(),new FacultyPrefPrereqExp1Comparator(),new FacultyPrefPrereqExp2Comparator()));
+				
+				int flag = 0;
+				
+				System.out.println("ok1");
+				
+				
+				
+				
+				while()
+				for (FacultyPref fp : fpref) {
+					
+					int currPrefCurrentHours = facAllotedHours.get(fp.getUserName());
+				
+//					System.out.println(c.getNoOfHours());
+//					System.out.println(fp.getUserName());
+//					System.out.println(facLimits.get(fp.getUserName()));
+//					System.out.println(facLimits.get(fp.getUserName())[1]);
+//					System.out.println();
+					
+					if(currPrefCurrentHours + c.getNoOfHours() <= facLimits.get(fp.getUserName())[1])
+					{
+						facAllotedHours.replace(fp.getUserName(), currPrefCurrentHours+c.getNoOfHours());
+						//add to the result array
+						
+						FacultyAllocCourse f = new FacultyAllocCourse();
+						f.setCourseId(c.getId());
+						f.setIsElective(c.getIsElective());
+						f.setNoOfHours(c.getNoOfHours());
+						f.setPrefNo(fp.getPrefNo());
+						f.setUserName(fp.getUserName());
+						f.setYear(c.getYear());
+						
+						alloc.add(f);
+						break;
+					}
+					System.out.println("ok2");
+				
+				} 
+				
+				if (flag==0) {
+					unAlloc.add(c);
+				}
+				
+							
 			}
-			
-			
-//			facultyPrefRepository.findById(fpref.)
-//			
-//
-//			int i = 1;
-//			
-//			int pno = 1;
-//			
-//			ArrayList<FacultyPref> samePref = new ArrayList<>();
-//			
-//			while(i!=fpref.size() && pno==fpref.get(i).getPrefNo()) {
-//				
-//				samePref.add(fpref.get(i));
-//				i+=1;
-//				
-//				if(i!=fpref.size() && pno!=fpref.get(i).getPrefNo()) {
-//					
-//					
-//					if(samePref.size()==1) {
-//						
-//						//String userName, int prefNo, String courseId, int noOfHours, int isElective,String year
-//						
-//						FacultyPref currPref = samePref.get(0);
-//						FacultyAllocCourse f = new FacultyAllocCourse();
-//						f.setCourseId(c.getId());
-//						f.setIsElective(c.getIsElective());
-//						f.setNoOfHours(c.getNoOfHours());
-//						f.setPrefNo(currPref.getPrefNo());
-//						f.setUserName(currPref.getUserName());
-//						f.setYear(c.getYear());
-//						
-//						int currPrefCurrentHours = facAllotedHours.get(currPref.getUserName());
-//						
-//						if(currPrefCurrentHours + c.getNoOfHours() <= facLimits.get(currPref.getUserName())[1])
-//						{
-//							facAllotedHours.replace(currPref.getUserName(), currPrefCurrentHours+c.getNoOfHours());
-//							//add to the result array
-//							alloc.add(f);
-//						}
-//						
-//						
-//					}else {
-//						//compare exp
-//						
-//					}
-//					
-//					samePref = new ArrayList<>();
-//					pno+=1;
-//				}
-//			}
-//			
-			
-			
-		}
-		
+			else {
+				//if lab
+			}
+
+			}
 		for(FacultyAllocCourse af:alloc) {
 			System.out.println(af.getUserName()+" "+af.getCourseId());
 		}
 		for(CombinedCourseElective c:unAlloc) {
 			System.out.println(c.getId()+" "+c.getIsElective());
 		}
-					
+		
+		for(CombinedCourseElective c:unAlloc) {
+			//allocate these
+		}
+
 	}
 }

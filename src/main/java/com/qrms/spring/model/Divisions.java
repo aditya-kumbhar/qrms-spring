@@ -39,6 +39,18 @@ public class Divisions {
 		return year;
 	}
 
+	public String getDivId() {
+		return divId;
+	}
+
+	public void setDivId(String divId) {
+		this.divId = divId;
+	}
+
+	public void setDivName(char divName) {
+		this.divName = divName;
+	}
+
 	public void setYear(String year) {
 		this.year = year;
 	}
