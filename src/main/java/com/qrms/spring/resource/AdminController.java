@@ -143,7 +143,7 @@ public class AdminController {
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
-		allocFaculty(1);
+		//allocFaculty(1);
 		return getViewAdminHome(null);
 	}
 	
@@ -1066,223 +1066,226 @@ public class AdminController {
 		
 		//find all the courses
 		
-		HashMap<String, int[]> desigHours =  new HashMap<>();
 		
-		List<DesignationToHours> desigList = designationToHoursRepository.findAll();
+//		
+//		HashMap<String, int[]> desigHours =  new HashMap<>();
+//		List<DesignationToHours> desigList = designationToHoursRepository.findAll();
+//		for(DesignationToHours d:desigList) {
+//			desigHours.put(d.getDesignation(), new int[] {d.getMinLimit(),d.getMaxLimit()});
+//		}
+//		
+//		
+//		List<FacultyAcad> allFacs = facultyAcadRepository.findByDepartmentEquals(dept);
+//		HashMap <String,Integer> facAllotedHours = new HashMap<>();
+//		HashMap <String,int[]> facLimits = new HashMap<>();
+//		for(FacultyAcad f:allFacs) {
+//			facAllotedHours.put(f.getUserName(), 0);
+//			facLimits.put(f.getUserName(), desigHours.get(f.getDesignation()));
+//		}
+//		
+//		//faculty to course allocation
+//		ArrayList<FacultyAllocCourse> alloc = new ArrayList<>();
+//		
+//		//unallocated courses
+//		ArrayList<CombinedCourseElective> unAlloc = new ArrayList<>();
+//		ArrayList<CombinedCourseElective> courses = new ArrayList<>();
+//		
+//		//divisions for each year sem
+//		List<Divisions> divisionNeeds = divisionsRepository.findByDepartment(dept);
+//		HashMap<String,Integer> divAlloted = new HashMap<>();
+//		for(Divisions d:divisionNeeds) {
+//			divAlloted.put(d.getDivId(), 0);
+//		}
+//		
+//		if(oddOrEven==0) {
+//			ArrayList<Course> allOddCourses = courseRepository.findOddSemCoursesAndCourseTypeReg();
+//			ArrayList<Electives> allOddElectives = electivesRepository.findOddSemCoursesAndCourseTypeNotReg();
+//			for(Course c:allOddCourses)
+//			{
+//				int dNo=0;
+//				
+//				for(Divisions d:divisionNeeds) {
+//					
+//					if(d.getDepartment()==dept && d.getYear()==c.getCourseYear()) {
+//						dNo+=1;
+//					}
+//				}
+//				CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear(),dNo,c.getIsTheory());
+//				courses.add(co);
+//			}
+//			for(Electives e:allOddElectives)
+//			{
+//				
+//				CombinedCourseElective ce = new CombinedCourseElective(e.getElectiveCourseId(),1,e.getCourse().getNoOfHours(),e.getCourse().getCourseYear());
+//				courses.add(ce);
+//			}
+//		}else if(oddOrEven==1){
+//			ArrayList<Course> allEvenCourses = courseRepository.findEvenSemCoursesAndCourseTypeReg();
+//			ArrayList<Electives> allEvenElectives = electivesRepository.findEvenSemCoursesAndCourseTypeNotReg();
+//			for(Course c:allEvenCourses)
+//				{
+//				int dNo=0;
+//				
+//				for(Divisions d:divisionNeeds) {
+//					
+//					if(d.getDepartment()==dept && d.getYear()==c.getCourseYear()) {
+//						dNo+=1;
+//					}
+//				}
+//					CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear(),dNo,c.getIsTheory());
+//					courses.add(co);
+//				}
+//			for(Electives e:allEvenElectives)
+//			{
+//				CombinedCourseElective ce = new CombinedCourseElective(e.getElectiveCourseId(),1,e.getCourse().getNoOfHours(),e.getCourse().getCourseYear());
+//				courses.add(ce);
+//			}
+//		}else {
+//			ArrayList<Course> allEvenAndOddCourses = courseRepository.findByCourseType('R');
+//			List<Electives> allElectives = electivesRepository.findAll();
+//			for(Course c:allEvenAndOddCourses)
+//			{
+//				int dNo=0;
+//				
+//				for(Divisions d:divisionNeeds) {
+//					
+//					if(d.getDepartment()==dept && d.getYear()==c.getCourseYear()) {
+//						dNo+=1;
+//					}
+//				}
+//				CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear(),dNo,c.getIsTheory());
+//				courses.add(co);
+//			}
+//			for(Electives e:allElectives)
+//			{
+//				CombinedCourseElective ce = new CombinedCourseElective(e.getElectiveCourseId(),1,e.getCourse().getNoOfHours(),e.getCourse().getCourseYear());
+//				courses.add(ce);
+//			}
+//		}
+//		
+//		for(CombinedCourseElective c:courses) {
+//			System.out.println(c.getId());
+//		}
+//		
+//		//sort by BE,TE,SE,FE
+//		
+//		ArrayList<CombinedCourseElective> sortedCourses = new ArrayList<>();
+//		
+//		for(CombinedCourseElective c:courses) {
+//			System.out.println(c.getYear());
+//			if(c.getYear().equals("BE")) {
+//				sortedCourses.add(c);
+//			}
+//		}
+//		for(CombinedCourseElective c:courses) {
+//			if(c.getYear().equals("TE")) {
+//				sortedCourses.add(c);
+//			}
+//		}
+//		for(CombinedCourseElective c:courses) {
+//			if(c.getYear().equals("SE")) {
+//				sortedCourses.add(c);
+//			}
+//		}
+//		for(CombinedCourseElective c:courses) {
+//			if(c.getYear().equals("FE")) {
+//				sortedCourses.add(c);
+//			}
+//		}
+//		System.out.println(courses.size());
+//		
+//		//iterate over all the courses
+//		
+//		for(CombinedCourseElective c:sortedCourses) {
+//			
+//			String year;
+//			Integer isTheory;
+//			
+//			if(c.getIsElective()==0) {
+//				Course course;
+//				course = courseRepository.findByCourseId(c.getId());
+//				year = course.getCourseYear();
+//				isTheory = course.getIsTheory();
+//			}else {
+//				Electives elective;
+//				elective = electivesRepository.findByElectiveCourseId(c.getId());
+//				year = elective.getCourse().getCourseYear();
+//				isTheory = elective.getCourse().getIsTheory();
+//			}
+//			
+//			if(isTheory==1) {
+//
+//				ArrayList<FacultyPref> fpref=new ArrayList<>();
+//				
+//				if(c.getIsElective()==1) {
+//					fpref = facultyPrefRepository.findByElectiveId(c.getId());
+//				}else {
+//					fpref = facultyPrefRepository.findByCourseId(c.getId());
+//				}
+//				
+//				Collections.sort(fpref,new FacultyPrefChainedComparator(new FacultyPrefNoComparator(),new FacultyPrefCourseExpComparator(),new FacultyPrefPrereqExp1Comparator(),new FacultyPrefPrereqExp2Comparator()));
+//				
+//				int flag = 0;
+//				
+//				System.out.println("ok1");
+//				
+//				
+//				
+//				
+//				
+//				for (FacultyPref fp : fpref) {
+//					
+//					int currPrefCurrentHours = facAllotedHours.get(fp.getUserName());
+//				
+////					System.out.println(c.getNoOfHours());
+////					System.out.println(fp.getUserName());
+////					System.out.println(facLimits.get(fp.getUserName()));
+////					System.out.println(facLimits.get(fp.getUserName())[1]);
+////					System.out.println();
+//					
+//					if(currPrefCurrentHours + c.getNoOfHours() <= facLimits.get(fp.getUserName())[1])
+//					{
+//						facAllotedHours.replace(fp.getUserName(), currPrefCurrentHours+c.getNoOfHours());
+//						//add to the result array
+//						
+//						FacultyAllocCourse f = new FacultyAllocCourse();
+//						f.setCourseId(c.getId());
+//						f.setIsElective(c.getIsElective());
+//						f.setNoOfHours(c.getNoOfHours());
+//						f.setPrefNo(fp.getPrefNo());
+//						f.setUserName(fp.getUserName());
+//						f.setYear(c.getYear());
+//						
+//						alloc.add(f);
+//						break;
+//					}
+//					System.out.println("ok2");
+//				
+//				} 
+//				
+//				if (flag==0) {
+//					unAlloc.add(c);
+//				}
+//				
+//							
+//			}
+//			else {
+//				//if lab
+//			}
+//
+//			}
+//		for(FacultyAllocCourse af:alloc) {
+//			System.out.println(af.getUserName()+" "+af.getCourseId());
+//		}
+//		for(CombinedCourseElective c:unAlloc) {
+//			System.out.println(c.getId()+" "+c.getIsElective());
+//		}
+//		
+//		for(CombinedCourseElective c:unAlloc) {
+//			//allocate these
+//		}
 		
-		for(DesignationToHours d:desigList) {
-			desigHours.put(d.getDesignation(), new int[] {d.getMinLimit(),d.getMaxLimit()});
-		}
 		
 		
-		List<FacultyAcad> allFacs = facultyAcadRepository.findByDepartmentEquals(dept);
-		
-		HashMap <String,Integer> facAllotedHours = new HashMap<>();
-		
-		HashMap <String,int[]> facLimits = new HashMap<>();
-		for(FacultyAcad f:allFacs) {
-			facAllotedHours.put(f.getUserName(), 0);
-			facLimits.put(f.getUserName(), desigHours.get(f.getDesignation()));
-		}
-		
-		ArrayList<FacultyAllocCourse> alloc = new ArrayList<>();
-		ArrayList<CombinedCourseElective> unAlloc = new ArrayList<>();
-		ArrayList<CombinedCourseElective> courses = new ArrayList<>();
-		
-		List<Divisions> divisionNeeds = divisionsRepository.findByDepartment(dept);
-		
-		HashMap<String,Integer> divAlloted = new HashMap<>();
-		for(Divisions d:divisionNeeds) {
-			divAlloted.put(d.getDivId(), 0);
-		}
-		
-		if(oddOrEven==0) {
-			ArrayList<Course> allOddCourses = courseRepository.findOddSemCoursesAndCourseTypeReg();
-			ArrayList<Electives> allOddElectives = electivesRepository.findOddSemCoursesAndCourseTypeNotReg();
-			for(Course c:allOddCourses)
-			{
-				int dNo=0;
-				
-				for(Divisions d:divisionNeeds) {
-					
-					if(d.getDepartment()==dept && d.getYear()==c.getCourseYear()) {
-						dNo+=1;
-					}
-				}
-				CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear(),dNo,c.getIsTheory());
-				courses.add(co);
-			}
-			for(Electives e:allOddElectives)
-			{
-				
-				CombinedCourseElective ce = new CombinedCourseElective(e.getElectiveCourseId(),1,e.getCourse().getNoOfHours(),e.getCourse().getCourseYear());
-				courses.add(ce);
-			}
-		}else if(oddOrEven==1){
-			ArrayList<Course> allEvenCourses = courseRepository.findEvenSemCoursesAndCourseTypeReg();
-			ArrayList<Electives> allEvenElectives = electivesRepository.findEvenSemCoursesAndCourseTypeNotReg();
-			for(Course c:allEvenCourses)
-				{
-				int dNo=0;
-				
-				for(Divisions d:divisionNeeds) {
-					
-					if(d.getDepartment()==dept && d.getYear()==c.getCourseYear()) {
-						dNo+=1;
-					}
-				}
-					CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear(),dNo,c.getIsTheory());
-					courses.add(co);
-				}
-			for(Electives e:allEvenElectives)
-			{
-				CombinedCourseElective ce = new CombinedCourseElective(e.getElectiveCourseId(),1,e.getCourse().getNoOfHours(),e.getCourse().getCourseYear());
-				courses.add(ce);
-			}
-		}else {
-			ArrayList<Course> allEvenAndOddCourses = courseRepository.findByCourseType('R');
-			List<Electives> allElectives = electivesRepository.findAll();
-			for(Course c:allEvenAndOddCourses)
-			{
-				int dNo=0;
-				
-				for(Divisions d:divisionNeeds) {
-					
-					if(d.getDepartment()==dept && d.getYear()==c.getCourseYear()) {
-						dNo+=1;
-					}
-				}
-				CombinedCourseElective co = new CombinedCourseElective(c.getCourseId(),0,c.getNoOfHours(),c.getCourseYear(),dNo,c.getIsTheory());
-				courses.add(co);
-			}
-			for(Electives e:allElectives)
-			{
-				CombinedCourseElective ce = new CombinedCourseElective(e.getElectiveCourseId(),1,e.getCourse().getNoOfHours(),e.getCourse().getCourseYear());
-				courses.add(ce);
-			}
-		}
-		
-		for(CombinedCourseElective c:courses) {
-			System.out.println(c.getId());
-		}
-		
-		//sort by BE,TE,SE,FE
-		
-		ArrayList<CombinedCourseElective> sortedCourses = new ArrayList<>();
-		
-		for(CombinedCourseElective c:courses) {
-			System.out.println(c.getYear());
-			if(c.getYear().equals("BE")) {
-				sortedCourses.add(c);
-			}
-		}
-		for(CombinedCourseElective c:courses) {
-			if(c.getYear().equals("TE")) {
-				sortedCourses.add(c);
-			}
-		}
-		for(CombinedCourseElective c:courses) {
-			if(c.getYear().equals("SE")) {
-				sortedCourses.add(c);
-			}
-		}
-		for(CombinedCourseElective c:courses) {
-			if(c.getYear().equals("FE")) {
-				sortedCourses.add(c);
-			}
-		}
-		System.out.println(courses.size());
-		
-		//iterate over all the courses
-		
-		for(CombinedCourseElective c:sortedCourses) {
-			
-			String year;
-			Integer isTheory;
-			
-			if(c.getIsElective()==0) {
-				Course course;
-				course = courseRepository.findByCourseId(c.getId());
-				year = course.getCourseYear();
-				isTheory = course.getIsTheory();
-			}else {
-				Electives elective;
-				elective = electivesRepository.findByElectiveCourseId(c.getId());
-				year = elective.getCourse().getCourseYear();
-				isTheory = elective.getCourse().getIsTheory();
-			}
-			
-			if(isTheory==1) {
-
-				ArrayList<FacultyPref> fpref=new ArrayList<>();
-				
-				if(c.getIsElective()==1) {
-					fpref = facultyPrefRepository.findByElectiveId(c.getId());
-				}else {
-					fpref = facultyPrefRepository.findByCourseId(c.getId());
-				}
-				
-				Collections.sort(fpref,new FacultyPrefChainedComparator(new FacultyPrefNoComparator(),new FacultyPrefCourseExpComparator(),new FacultyPrefPrereqExp1Comparator(),new FacultyPrefPrereqExp2Comparator()));
-				
-				int flag = 0;
-				
-				System.out.println("ok1");
-				
-				
-				
-				
-				while()
-				for (FacultyPref fp : fpref) {
-					
-					int currPrefCurrentHours = facAllotedHours.get(fp.getUserName());
-				
-//					System.out.println(c.getNoOfHours());
-//					System.out.println(fp.getUserName());
-//					System.out.println(facLimits.get(fp.getUserName()));
-//					System.out.println(facLimits.get(fp.getUserName())[1]);
-//					System.out.println();
-					
-					if(currPrefCurrentHours + c.getNoOfHours() <= facLimits.get(fp.getUserName())[1])
-					{
-						facAllotedHours.replace(fp.getUserName(), currPrefCurrentHours+c.getNoOfHours());
-						//add to the result array
-						
-						FacultyAllocCourse f = new FacultyAllocCourse();
-						f.setCourseId(c.getId());
-						f.setIsElective(c.getIsElective());
-						f.setNoOfHours(c.getNoOfHours());
-						f.setPrefNo(fp.getPrefNo());
-						f.setUserName(fp.getUserName());
-						f.setYear(c.getYear());
-						
-						alloc.add(f);
-						break;
-					}
-					System.out.println("ok2");
-				
-				} 
-				
-				if (flag==0) {
-					unAlloc.add(c);
-				}
-				
-							
-			}
-			else {
-				//if lab
-			}
-
-			}
-		for(FacultyAllocCourse af:alloc) {
-			System.out.println(af.getUserName()+" "+af.getCourseId());
-		}
-		for(CombinedCourseElective c:unAlloc) {
-			System.out.println(c.getId()+" "+c.getIsElective());
-		}
-		
-		for(CombinedCourseElective c:unAlloc) {
-			//allocate these
-		}
-
 	}
 }
