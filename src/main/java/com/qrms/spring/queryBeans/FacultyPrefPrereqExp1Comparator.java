@@ -8,6 +8,6 @@ public class FacultyPrefPrereqExp1Comparator implements Comparator<FacultyPref> 
 		 
 	    @Override
 	    public int compare(FacultyPref f1, FacultyPref f2) {
-	        return f1.getPrereq1Exp() - f2.getPrereq1Exp();
+	        return f2.getPrereq1Exp() - f1.getPrereq1Exp();
 	    }
 }

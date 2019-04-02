@@ -41,6 +41,7 @@ import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CompanionCourse;
 import com.qrms.spring.model.CoursePrerequisites;
 import com.qrms.spring.model.Department;
+import com.qrms.spring.model.DesignationToHours;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
@@ -50,6 +51,7 @@ import com.qrms.spring.repository.CourseCompanionRespositoy;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
+import com.qrms.spring.repository.DesignationToHoursRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
@@ -119,6 +121,9 @@ public class AdminController {
 	@Autowired
 	private FacultyAllocCourseRepository facultyAllocCourseRepository;
 	
+	@Autowired
+	private DesignationToHoursRepository designationToHoursRepository;
+	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
@@ -133,7 +138,7 @@ public class AdminController {
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
-		//allocFaculty(1);
+		allocFaculty(1);
 		return getViewAdminHome(null);
 	}
 	
@@ -1017,6 +1022,13 @@ public class AdminController {
 		
 		HashMap<String, int[]> desigHours =  new HashMap<>();
 		
+		List<DesignationToHours> desigList = designationToHoursRepository.findAll();
+		
+		for(DesignationToHours d:desigList) {
+			desigHours.put(d.getDesignation(), new int[] {d.getMinLimit(),d.getMaxLimit()});
+		}
+		
+		
 		List<FacultyAcad> allFacs = facultyAcadRepository.findAll();
 		
 		HashMap <String,Integer> facAllotedHours = new HashMap<>();
@@ -1027,6 +1039,7 @@ public class AdminController {
 		}
 		
 		ArrayList<FacultyAllocCourse> alloc = new ArrayList<>();
+		ArrayList<CombinedCourseElective> unAlloc = new ArrayList<>();
 		
 		ArrayList<CombinedCourseElective> courses = new ArrayList<>();
 		
@@ -1080,25 +1093,27 @@ public class AdminController {
 		ArrayList<CombinedCourseElective> sortedCourses = new ArrayList<>();
 		
 		for(CombinedCourseElective c:courses) {
-			if(c.getYear()=="BE") {
+			System.out.println(c.getYear());
+			if(c.getYear().equals("BE")) {
 				sortedCourses.add(c);
 			}
 		}
 		for(CombinedCourseElective c:courses) {
-			if(c.getYear()=="TE") {
+			if(c.getYear().equals("TE")) {
 				sortedCourses.add(c);
 			}
 		}
 		for(CombinedCourseElective c:courses) {
-			if(c.getYear()=="SE") {
+			if(c.getYear().equals("SE")) {
 				sortedCourses.add(c);
 			}
 		}
 		for(CombinedCourseElective c:courses) {
-			if(c.getYear()=="FE") {
+			if(c.getYear().equals("FE")) {
 				sortedCourses.add(c);
 			}
 		}
+		System.out.println(courses.size());
 		
 		//iterate over all the courses
 		
@@ -1112,11 +1127,20 @@ public class AdminController {
 				fpref = facultyPrefRepository.findByCourseId(c.getId());
 			}
 			
-			Collections.sort(fpref,new FacultyPrefChainedComparator(new FacultyPrefNoComparator(),new FacultyPrefPrereqExp1Comparator(),new FacultyPrefPrereqExp2Comparator()));
+			Collections.sort(fpref,new FacultyPrefChainedComparator(new FacultyPrefNoComparator(),new FacultyPrefCourseExpComparator(),new FacultyPrefPrereqExp1Comparator(),new FacultyPrefPrereqExp2Comparator()));
 			
+			int flag = 0;
+			
+			System.out.println("ok1");
 			for (FacultyPref fp : fpref) {
 				
 				int currPrefCurrentHours = facAllotedHours.get(fp.getUserName());
+			
+//				System.out.println(c.getNoOfHours());
+//				System.out.println(fp.getUserName());
+//				System.out.println(facLimits.get(fp.getUserName()));
+//				System.out.println(facLimits.get(fp.getUserName())[1]);
+//				System.out.println();
 				
 				if(currPrefCurrentHours + c.getNoOfHours() <= facLimits.get(fp.getUserName())[1])
 				{
@@ -1134,8 +1158,14 @@ public class AdminController {
 					alloc.add(f);
 					break;
 				}
+				System.out.println("ok2");
 			
 			} 
+			
+			if (flag==0) {
+				unAlloc.add(c);
+			}
+			
 			
 //			facultyPrefRepository.findById(fpref.)
 //			
@@ -1190,7 +1220,13 @@ public class AdminController {
 			
 			
 		}
-
-			
+		
+		for(FacultyAllocCourse af:alloc) {
+			System.out.println(af.getUserName()+" "+af.getCourseId());
+		}
+		for(CombinedCourseElective c:unAlloc) {
+			System.out.println(c.getId()+" "+c.getIsElective());
+		}
+					
 	}
 }
