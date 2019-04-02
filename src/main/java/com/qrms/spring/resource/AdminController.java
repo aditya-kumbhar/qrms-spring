@@ -162,8 +162,9 @@ public class AdminController {
 	
 	}
 	
-	 @RequestMapping(value = "/getStudPrefDetailsTable_async", method = RequestMethod.GET)
-	 public String getStudPrefDetailsTable(Model model) {
+		
+	@RequestMapping(value = "/getStudPrefDetailsTable_async", method = RequestMethod.GET)
+	public String getStudPrefDetailsTable(Model model) {
 		
 		List<StudentPrefCountInfo> studCountInfo = studPrefService.computeStudPrefTable();
 		if(studCountInfo.isEmpty()) {
@@ -177,6 +178,15 @@ public class AdminController {
 		
 	}
 	
+	@GetMapping("/getDepartmentsPage")
+	public ModelAndView getDepartmentsPage() {
+		ModelAndView model = new ModelAndView();
+		departments = departmentRepository.findAll();
+		
+		model.addObject("departments", departments);
+		model.setViewName("admin/departments");
+		return model;
+	}
 	
 	@GetMapping("/getStudPrefDetailsTable")
 	public ModelAndView getStudPrefDetailsTable() {		
