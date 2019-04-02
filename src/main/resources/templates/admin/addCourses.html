@@ -60,16 +60,24 @@
 	                $('#isTheory').focus();
 	                
 	                return false;
-	            } else if(isTheory.val() == "1")  {
+	            } else if(isTheory.val() == "1" && $('#courseType').val()=='R')  {
 		            	
-	            	if($('#prerequisiteNo1').val()=='' && $('#courseType').val()=='R'){
-		            	alert("Please enter Prerequisite 1 Course ID");
+	            	if($('#prerequisiteNo1').val()=='' && $('#prerequisiteNo2').val()==''){
+	            		if(confirm('Are you sure the course has no prerequisites?'))
+	            			return true;
 		            	$('#prerequisiteNo1').focus();
 		            	return false;
 		            	
-		            } else if ($('#prerequisiteNo2').val()=='' && $('#courseType').val()=='R'){
-	            		alert("Please enter Prerequisite 2 Course ID");
+		            } else if ($('#prerequisiteNo2').val()==''){
+		            	if(confirm('Are you sure the course has only one prerequisites?'))
+	            			return true;
 		            	$('#prerequisiteNo2').focus();
+		            	return false;
+		            	
+		            	return false;
+		           	} else if ($('#prerequisiteNo1').val()=='' && $('#prerequisiteNo2').val()!=''){
+		            	alert("If atleast one prerequisite exists then prerequisite 1 field cannot be empty");
+		            	$('#prerequisiteNo1').focus();
 		            	
 		            	return false;
 		           	}

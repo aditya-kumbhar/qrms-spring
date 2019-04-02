@@ -10,7 +10,7 @@
 	<link rel="stylesheet" th:href="@{/css/register.css}">
 	
     <script>
-    	
+    	var theoryCheck;
 	    $(document).ready(function () {
 	        $("#submit").click(function () {
 	        	
@@ -21,7 +21,37 @@
 	                $('#courseId').focus();
 	                
 	                return false;
-	            }  
+	            } else if(theoryCheck)  {
+		            	
+	            	if($('#prerequisiteNo1').val()=='' && $('#prerequisiteNo2').val()==''){
+	            		if(confirm('Are you sure the course has no prerequisites?'))
+	            			return true;
+	           
+		            	$('#prerequisiteNo1').focus();
+		            	return false;
+		            	
+		            } else if ($('#prerequisiteNo2').val()==''){
+		            	if(confirm('Are you sure the course has only one prerequisites?'))
+	            			return true;
+		            	
+		            	$('#prerequisiteNo2').focus();
+		            	return false;
+		            	
+		            	return false;
+		           	} else if ($('#prerequisiteNo1').val()=='' && $('#prerequisiteNo2').val()!=''){
+		            	alert("If atleast one prerequisite exists then prerequisite 1 field cannot be empty");
+		            	$('#prerequisiteNo1').focus();
+		            	
+		            	return false;
+		           	}
+	            } else if(!theoryCheck) {
+	            	if ($('#companionTheory').val()==''){
+	            		alert("Please enter Companion Theory Course ID");
+		            	$('#companionTheory').focus();
+		            	
+		            	return false;
+	            	}
+	            }
 	            
 	            else return;
 	        });
@@ -150,7 +180,7 @@ $('#article1').on("change","select",function(){
 	}
 	else{
 		console.log($(this).find(':selected').attr('istheo'));
-		var theoryCheck = $(this).find(':selected').attr('istheo');
+		theoryCheck = $(this).find(':selected').attr('istheo');
 		if(theoryCheck==1) {
 			$('.practicalClass').css("display",'none');
 			$('.theoryClass').css("display",'');
