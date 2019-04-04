@@ -39,6 +39,7 @@ import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CompanionCourse;
 import com.qrms.spring.model.CoursePrerequisites;
 import com.qrms.spring.model.Department;
+import com.qrms.spring.model.Divisions;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
@@ -48,6 +49,7 @@ import com.qrms.spring.repository.CourseCompanionRespositoy;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
+import com.qrms.spring.repository.DivisionsRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
@@ -117,6 +119,9 @@ public class AdminController {
 	@Autowired
 	private FacultyAllocCourseRepository facultyAllocCourseRepository;
 	
+	@Autowired
+	private DivisionsRepository divisionsRepository;
+	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
@@ -171,7 +176,7 @@ public class AdminController {
 		
 	}
 	
-//************Departments Page****************
+//****************** Departments Page *******************
 	@GetMapping("/getDepartmentsPage")
 	public ModelAndView getDepartmentsPage() {
 		ModelAndView model = new ModelAndView();
@@ -192,12 +197,23 @@ public class AdminController {
 	@GetMapping("/manageDept")
 	public String getManageDept(Model model, String dept) {
 		Department department = departmentRepository.findByDeptId(dept);
-		System.out.println(dept);
 		model.addAttribute("manageDept",department);
+		model.addAttribute("div", new Divisions());
 		return "admin/departments:: manageDeptFragment";
 	}
 	
-//***************end departments page************	
+	@RequestMapping(value = "/addDivision", method = RequestMethod.POST)
+	String addDivision(Model model, Divisions div, String dept) {
+		div.setDepartment(departmentRepository.findByDeptId(dept));
+		String divId =  div.getYear() + div.getDepartment().getDeptId();
+		div.setDivId(divId);
+		divisionsRepository.save(div);
+		model.addAttribute("msg","Division added in "+div.getYear()+"-"+div.getDepartment().getDeptName());
+		return "admin/departments:: messageDiv";
+	}
+
+//***************end departments page***************
+	
 	@GetMapping("/getStudPrefDetailsTable")
 	public ModelAndView getStudPrefDetailsTable() {		
 	
@@ -643,10 +659,8 @@ public class AdminController {
 		
 		
 		ArrayList<Course> electivesList = courseRepository.findByCourseTypeNot('R');
-		
 		model.addObject("electivesList",electivesList);
 		model.addObject("elective",new Electives());
-		
 		model.setViewName("/admin/addElective");
 		return model;
 		
