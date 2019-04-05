@@ -12,8 +12,8 @@ import javax.persistence.Table;
 public class PracticalList {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="batch_id")
-	private int batchId;
+	@Column(name="b_id")
+	private int bId;
 	
 	@Column(name="lab_id")
 	private String labId;
@@ -24,23 +24,35 @@ public class PracticalList {
 	@Column(name="faculty_id")
 	private String facultyId;
 
+	@Column(name="no_of_hours")
+	private int noOfHours;
+	
 	public PracticalList() {
 		super();
 	}
 
-	public PracticalList(String labId, String labName, String facultyId) {
+	public PracticalList(String labId, String labName, String facultyId,int noOfHours) {
 		super();
 		this.labId = labId;
 		this.labName = labName;
 		this.facultyId = facultyId;
+		this.noOfHours = noOfHours;
 	}
 
-	public int getBatchId() {
-		return batchId;
+	public int getNoOfHours() {
+		return noOfHours;
 	}
 
-	public void setBatchId(int batchId) {
-		this.batchId = batchId;
+	public void setNoOfHours(int noOfHours) {
+		this.noOfHours = noOfHours;
+	}
+
+	public int getBId() {
+		return bId;
+	}
+
+	public void setBId(int bId) {
+		this.bId = bId;
 	}
 
 	public String getLabId() {

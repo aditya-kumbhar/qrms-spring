@@ -25,15 +25,27 @@ public class CourseList {
 	@Column(name="faculty_id")
 	private String facultyId;
 	
+	@Column(name="no_of_hours")
+	private int noOfHours;
+	
 	public CourseList() {
 		
 	}
 	
-	public CourseList(String courseId, char divisionName, String facultyId) {
+	public CourseList(String courseId, char divisionName, String facultyId,int noOfHours) {
 		super();
 		this.courseId = courseId;
 		this.divisionName = divisionName;
 		this.facultyId = facultyId;
+		this.noOfHours = noOfHours;
+	}
+
+	public int getNoOfHours() {
+		return noOfHours;
+	}
+
+	public void setNoOfHours(int noOfHours) {
+		this.noOfHours = noOfHours;
 	}
 
 	public int getDivisionId() {

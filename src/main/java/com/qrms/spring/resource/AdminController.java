@@ -35,6 +35,7 @@ import com.qrms.spring.model.CourseList;
 import com.qrms.spring.comparators.DivisionsChainedComparator;
 import com.qrms.spring.comparators.DivisionsYearComparator;
 import com.qrms.spring.comparators.FacultyPrefChainedComparator;
+import com.qrms.spring.comparators.FacultyPrefCourseExpComparator;
 import com.qrms.spring.comparators.FacultyPrefNoComparator;
 import com.qrms.spring.comparators.FacultyPrefPrereqExp1Comparator;
 import com.qrms.spring.comparators.FacultyPrefPrereqExp2Comparator;
@@ -49,6 +50,7 @@ import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.FacultyAllocCourse;
 import com.qrms.spring.model.FacultyPref;
+import com.qrms.spring.model.PracticalList;
 import com.qrms.spring.repository.CourseCompanionRespositoy;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
@@ -1124,22 +1126,34 @@ public class AdminController {
 		List<ElectiveBatches> electiveNeeds = electiveBatchesRepository.findByDepartment(dept);
 		
 		Collections.sort(divisionNeeds,new DivisionsChainedComparator(new DivisionsYearComparator()));
-		
+			
 		//theory courses for that sem
 		
 		ArrayList<CourseList> courseList = new ArrayList<>();
 		
+		ArrayList<PracticalList> practicalList = new ArrayList<>();
+		
+		String labNames[] = new String [] {"1","2","3","4"};
 		
 		if(oddOrEven==0) {
 			ArrayList<Course> allOddTheoryCourses = courseRepository.findOddSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(dept);
 			
+			System.out.println("odd");
 			
 			
 			for(Course c:allOddTheoryCourses)
 			{
 				for(Divisions d:divisionNeeds) {
-					if(d.getDepartment()==c.getDepartment() && d.getYear()==c.getCourseYear())
-						courseList.add(new CourseList(c.getCourseId(),d.getDivName(),""));
+					if(d.getDepartment().equals(c.getDepartment()) && d.getYear().equals(c.getCourseYear()))
+						courseList.add(new CourseList(c.getCourseId(),d.getDivName(),"",c.getNoOfHours()));
+				}
+				
+				CompanionCourse cc = courseCompanionRepository.findByCourse(c.getCourseId());
+				if(cc!=null) {
+					//lab
+					for(String s:labNames) {
+						practicalList.add(new PracticalList(cc.getCompanionCourse(), s, "",courseRepository.findByCourseId(cc.getCompanionCourse()).getNoOfHours()));
+					}
 				}
 			}
 			
@@ -1153,22 +1167,46 @@ public class AdminController {
 				{
 					for(ElectiveBatches eb:electiveNeeds) {
 						
-						if(e.getElectiveCourseId()==eb.getElectiveId() && eb.getDepartment()==c.getDepartment() && eb.getYear()==c.getCourseYear())
-							courseList.add(new CourseList(c.getCourseId(),eb.getDivisionName(),""));
+						if(e.getElectiveCourseId().equals(eb.getElectiveId()) && eb.getDepartment().equals(c.getDepartment()) && eb.getYear().equals(c.getCourseYear()))
+							courseList.add(new CourseList(e.getElectiveCourseId(),eb.getDivisionName(),"",c.getNoOfHours()));
+					}
+				}
+				
+				CompanionCourse cc = courseCompanionRepository.findByCourse(c.getCourseId());
+				if(cc!=null) {
+					//lab
+					for(String s:labNames) {
+						practicalList.add(new PracticalList(cc.getCompanionCourse(), s, "",courseRepository.findByCourseId(cc.getCompanionCourse()).getNoOfHours()));
 					}
 				}
 			}
 			
+			
+			
 		}else if(oddOrEven==1){
 			ArrayList<Course> allOddTheoryCourses = courseRepository.findEvenSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(dept);
+			System.out.println("even");
+			
 			
 			
 			
 			for(Course c:allOddTheoryCourses)
 			{
+				System.out.println(c.getCourseId());
 				for(Divisions d:divisionNeeds) {
-					if(d.getDepartment()==c.getDepartment() && d.getYear()==c.getCourseYear())
-						courseList.add(new CourseList(c.getCourseId(),d.getDivName(),""));
+					System.out.println(d.getDepartment().getDeptId()+" "+c.getDepartment().getDeptId());
+					System.out.println(d.getYear()+" "+c.getCourseYear());
+					if(d.getDepartment().equals(c.getDepartment()) && d.getYear().equals(c.getCourseYear()))
+						courseList.add(new CourseList(c.getCourseId(),d.getDivName(),"",c.getNoOfHours()));
+				}
+				
+				CompanionCourse cc = courseCompanionRepository.findByCourse(c.getCourseId());
+				if(cc!=null) {
+					//lab
+					System.out.println("pract exists");
+					for(String s:labNames) {
+						practicalList.add(new PracticalList(cc.getCompanionCourse(), s, "",courseRepository.findByCourseId(cc.getCompanionCourse()).getNoOfHours()));
+					}
 				}
 			}
 			
@@ -1181,18 +1219,93 @@ public class AdminController {
 				for(Electives e:allOddTheoryElectives)
 				{
 					for(ElectiveBatches eb:electiveNeeds) {
-						if(eb.getDepartment()==c.getDepartment() && eb.getYear()==c.getCourseYear())
-							courseList.add(new CourseList(c.getCourseId(),eb.getDivisionName(),""));
+						if(eb.getDepartment().equals(c.getDepartment()) && eb.getYear().equals(c.getCourseYear()))
+							courseList.add(new CourseList(e.getElectiveCourseId(),eb.getDivisionName(),"",c.getNoOfHours()));
+					}			
+				}
+				
+				CompanionCourse cc = courseCompanionRepository.findByCourse(c.getCourseId());
+				if(cc!=null) {
+					//lab
+					for(String s:labNames) {
+						practicalList.add(new PracticalList(cc.getCompanionCourse(), s, "",courseRepository.findByCourseId(cc.getCompanionCourse()).getNoOfHours()));
 					}
 				}
 			}
 		}
 		
+		System.out.println("course list");
+		for(CourseList c:courseList)
+			System.out.println(c.getCourseId()+" "+c.getDivisionName()+" "+c.getFacultyId());
+		
+		System.out.println("practical list");
+		for(PracticalList p:practicalList)
+			System.out.println(p.getLabId()+" "+p.getLabName()+" "+p.getFacultyId());
+		
+		for(CourseList c:courseList) {
+			System.out.println("for "+c.getCourseId());
+			
+			 
+				ArrayList<FacultyPref> fpref=new ArrayList<>();
+				
+				fpref = facultyPrefRepository.findByElectiveId(c.getCourseId());
+				if(fpref.size()==0) {
+					fpref = facultyPrefRepository.findByCourseId(c.getCourseId());
+				}
+				
+				Collections.sort(fpref,new FacultyPrefChainedComparator(new FacultyPrefNoComparator(),new FacultyPrefCourseExpComparator(),new FacultyPrefPrereqExp1Comparator(),new FacultyPrefPrereqExp2Comparator()));
+				
+				
+				for (FacultyPref fp : fpref) {
+					if(facAllotedHours.get(fp.getUserName()) >= facLimits.get(fp.getUserName())[1])
+						continue;
+					
+					if(c.getFacultyId().equals("")) {
+						
+						
+						if(facAllotedHours.get(fp.getUserName()) + c.getNoOfHours() <= facLimits.get(fp.getUserName())[1]) {
+							c.setFacultyId(fp.getUserName());
+							facAllotedHours.replace(fp.getUserName(), facAllotedHours.get(fp.getUserName()) + c.getNoOfHours());
+						} 
+						
+					}
+					
+					if(facAllotedHours.get(fp.getUserName()) >= facLimits.get(fp.getUserName())[1])
+						continue;
+							
+					for(PracticalList p:practicalList) {
+						System.out.println(p.getLabId());
+						if(courseCompanionRepository.findByCourse(p.getLabId()).getCompanionCourse().equals(c.getCourseId()) && p.getFacultyId().equals("")) {
+//							System.out.println(facAllotedHours.get(fp.getUserName()) + p.getNoOfHours());
+//							System.out.println(facLimits.get(fp.getUserName())[1]);
+							
+							if(facAllotedHours.get(fp.getUserName()) + p.getNoOfHours() <= facLimits.get(fp.getUserName())[1]) {
+								
+								p.setFacultyId(fp.getUserName());
+								//System.out.println(p.getFacultyId());
+								facAllotedHours.replace(fp.getUserName(), facAllotedHours.get(fp.getUserName()) + p.getNoOfHours());
+								
+							}else {
+								break;
+							}
+						}
+					}
+					
+					
+					}
+				}
+				
+			
+		
+		System.out.println("course list");
+		for(CourseList c:courseList)
+			System.out.println(c.getCourseId()+" "+c.getDivisionName()+" "+c.getFacultyId()+" "+c.getNoOfHours());
+		
+		System.out.println("practical list");
+		for(PracticalList p:practicalList)
+			System.out.println(p.getLabId()+" "+p.getLabName()+" "+p.getFacultyId()+" "+p.getNoOfHours());
 		
 		
-		
-		
-//		
 //		HashMap<String, int[]> desigHours =  new HashMap<>();
 //		List<DesignationToHours> desigList = designationToHoursRepository.findAll();
 //		for(DesignationToHours d:desigList) {
