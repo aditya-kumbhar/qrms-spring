@@ -44,7 +44,7 @@ INSERT INTO `department` VALUES ('CS','Computer Department'),('MH','Mechanical D
 
 
 /*insert values in course table*/
-INSERT INTO `course` VALUES ('410252',3,'Elective 3',8,'E','BE',1,3,0,'CS'),('410253',3,'Elective 4',8,'E','BE',1,3,0,'CS');
+INSERT INTO `course` VALUES ('410252',3,'Elective 3',8,'E','BE',1,3,0,'CS'),('410253',3,'Elective 4',8,'E','BE',1,3,0,'CS'),('410253',3,'Elective 4',8,'E','BE',1,3,0,'CS');
 
 
 /*insert values in electives table*/

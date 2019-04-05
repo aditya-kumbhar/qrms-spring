@@ -17,7 +17,6 @@ import javax.persistence.Table;
 public class CompanionCourse {
 
 	public CompanionCourse(String course, String companionCourse) {
-		super();
 		this.course = course;
 		this.companionCourse = companionCourse;
 	}
@@ -28,6 +27,7 @@ public class CompanionCourse {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name="id")
 	private int id;
 
 	@Column(name="course_id")

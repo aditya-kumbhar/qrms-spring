@@ -1,4 +1,4 @@
-package com.qrms.spring.queryBeans;
+package com.qrms.spring.comparators;
 
 import java.util.Comparator;
 
@@ -8,6 +8,6 @@ public class FacultyPrefCourseExpComparator implements Comparator<FacultyPref> {
 	 
     @Override
     public int compare(FacultyPref f1, FacultyPref f2) {
-        return f1.getCourseExp() - f2.getCourseExp();
+        return f2.getCourseExp() - f1.getCourseExp();
     }
 }
