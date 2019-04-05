@@ -40,29 +40,92 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 	@Query("SELECT "+
 			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
 			"FROM Course c "+
-			"WHERE c.courseSem%2=0 and c.courseType='R'")
-	ArrayList<Course> findEvenSemCoursesAndCourseTypeReg();
-	
-	//JPQL
-	@Query("SELECT "+
-			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
-			"FROM Course c "+
-			"WHERE c.courseSem%2<>0 and c.courseType='R'")
-	ArrayList<Course> findOddSemCoursesAndCourseTypeReg();
-	
-	//JPQL
-	@Query("SELECT "+
-			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
-			"FROM Course c "+
-			"WHERE c.courseSem%2<>0 and c.courseType<>'R'")
-	ArrayList<Course> findOddSemCoursesAndCourseTypeNotReg();
+			"WHERE c.courseSem%2=0 and c.courseType='R' and c.department=?1")
+	ArrayList<Course> findEvenSemCoursesAndCourseTypeRegAndDepartment(Department dept);
 	
 	//JPQL
 		@Query("SELECT "+
 				"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
 				"FROM Course c "+
-				"WHERE c.courseSem%2=0 and c.courseType<>'R'")
-		ArrayList<Course> findEvenSemCoursesAndCourseTypeNotReg();
+				"WHERE c.courseSem%2=0 and c.courseType='R' and c.isTheory=0 and c.department=?1")
+		ArrayList<Course> findEvenSemCoursesAndCourseTypeRegAndIsTheoryNotAndDepartment(Department dept);
+		
+	//JPQL
+		@Query("SELECT "+
+				"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+				"FROM Course c "+
+				"WHERE c.courseSem%2<>0 and c.courseType='R' and c.isTheory=0 and c.department=?1")
+		ArrayList<Course> findOddSemCoursesAndCourseTypeRegAndIsTheoryNotAndDepartment(Department dept);
+		
+	//JPQL
+		@Query("SELECT "+
+				"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+				"FROM Course c "+
+				"WHERE c.courseSem%2=0 and c.courseType='R' and c.isTheory=1")
+		ArrayList<Course> findEvenSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(Department dept);
+		
+	//JPQL
+	@Query("SELECT "+
+			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+			"FROM Course c "+
+			"WHERE c.courseSem%2<>0 and c.courseType='R' and c.isTheory=1 and c.department=?1")
+	ArrayList<Course> findOddSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(Department dept);
+	
+	//JPQL
+	@Query("SELECT "+
+			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+			"FROM Course c "+
+			"WHERE c.courseSem%2<>0 and c.courseType='R' and c.department=?1")
+	ArrayList<Course> findOddSemCoursesAndCourseTypeRegAndDepartment(Department dept);
+	
+	
+	
+	
+	
+	
+	//JPQL
+	@Query("SELECT "+
+			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+			"FROM Course c "+
+			"WHERE c.courseSem%2<>0 and c.courseType<>'R' and c.department=?1")
+	ArrayList<Course> findOddSemCoursesAndCourseTypeNotRegAndDepartment(Department dept);
+	
+	//JPQL
+	@Query("SELECT "+
+			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+			"FROM Course c "+
+			"WHERE c.courseSem%2=0 and c.courseType<>'R' and c.department=?1")
+	ArrayList<Course> findEvenSemCoursesAndCourseTypeNotRegAndDepartment(Department dept);
+	
+	
+	
+	//JPQL
+	@Query("SELECT "+
+			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+			"FROM Course c "+
+			"WHERE c.courseSem%2=0 and c.courseType<>'R' and c.isTheory=0 and c.department=?1")
+	ArrayList<Course> findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryNotAndDepartment(Department dept);
+		
+	//JPQL
+		@Query("SELECT "+
+				"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+				"FROM Course c "+
+				"WHERE c.courseSem%2<>0 and c.courseType<>'R' and c.isTheory=0 and c.department=?1")
+		ArrayList<Course> findOddSemCoursesAndCourseTypeNotRegAndIsTheoryNotAndDepartment(Department dept);
+		
+	//JPQL
+		@Query("SELECT "+
+				"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+				"FROM Course c "+
+				"WHERE c.courseSem%2=0 and c.courseType<>'R' and c.isTheory=1")
+		ArrayList<Course> findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(Department dept);
+		
+	//JPQL
+	@Query("SELECT "+
+			"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+			"FROM Course c "+
+			"WHERE c.courseSem%2<>0 and c.courseType<>'R' and c.isTheory=1 and c.department=?1")
+	ArrayList<Course> findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(Department dept);
 	
 		ArrayList<Course> findByCourseType(char c);
 		Optional<Course> findByCourseIdAndDepartmentAndIsTheoryAndCourseType(String prerequisiteNo1,

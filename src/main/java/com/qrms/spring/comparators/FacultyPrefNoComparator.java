@@ -1,4 +1,4 @@
-package com.qrms.spring.queryBeans;
+package com.qrms.spring.comparators;
 
 import java.util.Comparator;
 

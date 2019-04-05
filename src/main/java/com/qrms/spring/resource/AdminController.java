@@ -30,17 +30,20 @@ import com.qrms.spring.queryBeans.PrefNumCountPerElective;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.queryBeans.CombinedCourseElective;
 import com.qrms.spring.queryBeans.StudentUsers;
-import com.qrms.spring.queryBeans.FacultyPrefChainedComparator;
-import com.qrms.spring.queryBeans.FacultyPrefNoComparator;
-import com.qrms.spring.queryBeans.FacultyPrefPrereqExp2Comparator;
-import com.qrms.spring.queryBeans.FacultyPrefPrereqExp1Comparator;
-
 import com.qrms.spring.model.Course;
+import com.qrms.spring.model.CourseList;
+import com.qrms.spring.comparators.DivisionsChainedComparator;
+import com.qrms.spring.comparators.DivisionsYearComparator;
+import com.qrms.spring.comparators.FacultyPrefChainedComparator;
+import com.qrms.spring.comparators.FacultyPrefNoComparator;
+import com.qrms.spring.comparators.FacultyPrefPrereqExp1Comparator;
+import com.qrms.spring.comparators.FacultyPrefPrereqExp2Comparator;
 import com.qrms.spring.model.CompanionCourse;
 import com.qrms.spring.model.CoursePrerequisites;
 import com.qrms.spring.model.Department;
 import com.qrms.spring.model.DesignationToHours;
 import com.qrms.spring.model.Divisions;
+import com.qrms.spring.model.ElectiveBatches;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
@@ -52,6 +55,7 @@ import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.DesignationToHoursRepository;
 import com.qrms.spring.repository.DivisionsRepository;
+import com.qrms.spring.repository.ElectiveBatchesRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
@@ -127,6 +131,9 @@ public class AdminController {
 	@Autowired
 	private DivisionsRepository divisionsRepository;
 	
+	@Autowired
+	private ElectiveBatchesRepository electiveBatchesRepository;
+	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
@@ -141,7 +148,7 @@ public class AdminController {
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
-		//allocFaculty(1);
+		allocFaculty(1,departmentRepository.findByDeptId("CS"));
 		return getViewAdminHome(null);
 	}
 	
@@ -1080,6 +1087,100 @@ public class AdminController {
 	public void allocFaculty(int oddOrEven,Department dept) {
 		
 		//find all the courses
+		
+		//get data of designation and faculty for that department
+		
+		//designationToHours objects list
+		List<DesignationToHours> desigList = designationToHoursRepository.findAll();
+		//all faculty list for that department
+		List<FacultyAcad> allFacs = facultyAcadRepository.findByDepartmentEquals(dept);
+		
+		
+		//designation to min max hours hashmap
+		HashMap<String, int[]> desigHours =  new HashMap<>();
+		for(DesignationToHours d:desigList) {
+			desigHours.put(d.getDesignation(), new int[] {d.getMinLimit(),d.getMaxLimit()});
+		}
+		//faculty to min hours max hours hashmap, faculty to alloted hours hashmap
+		HashMap <String,Integer> facAllotedHours = new HashMap<>();
+		HashMap <String,int[]> facLimits = new HashMap<>();
+		for(FacultyAcad f:allFacs) {
+			facAllotedHours.put(f.getUserName(), 0);
+			facLimits.put(f.getUserName(), desigHours.get(f.getDesignation()));
+		}
+		
+		//divisions for each year sem
+		List<Divisions> divisionNeeds = divisionsRepository.findByDepartment(dept);
+
+		List<ElectiveBatches> electiveNeeds = electiveBatchesRepository.findByDepartment(dept);
+		
+		Collections.sort(divisionNeeds,new DivisionsChainedComparator(new DivisionsYearComparator()));
+		
+		//theory courses for that sem
+		
+		ArrayList<CourseList> courseList = new ArrayList<>();
+		
+		
+		if(oddOrEven==0) {
+			ArrayList<Course> allOddTheoryCourses = courseRepository.findOddSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(dept);
+			
+			
+			
+			for(Course c:allOddTheoryCourses)
+			{
+				for(Divisions d:divisionNeeds) {
+					if(d.getDepartment()==c.getDepartment() && d.getYear()==c.getCourseYear())
+						courseList.add(new CourseList(c.getCourseId(),d.getDivName(),""));
+				}
+			}
+			
+			
+			ArrayList<Course> allOddTheoryElectiveCourses = courseRepository.findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(dept);
+			
+			for(Course c:allOddTheoryElectiveCourses) {
+				ArrayList<Electives> allOddTheoryElectives = electivesRepository.findByCourse(c);
+				
+				for(Electives e:allOddTheoryElectives)
+				{
+					for(ElectiveBatches eb:electiveNeeds) {
+						
+						if(e.getElectiveCourseId()==eb.getElectiveId() && eb.getDepartment()==c.getDepartment() && eb.getYear()==c.getCourseYear())
+							courseList.add(new CourseList(c.getCourseId(),eb.getDivisionName(),""));
+					}
+				}
+			}
+			
+		}else if(oddOrEven==1){
+			ArrayList<Course> allOddTheoryCourses = courseRepository.findEvenSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(dept);
+			
+			
+			
+			for(Course c:allOddTheoryCourses)
+			{
+				for(Divisions d:divisionNeeds) {
+					if(d.getDepartment()==c.getDepartment() && d.getYear()==c.getCourseYear())
+						courseList.add(new CourseList(c.getCourseId(),d.getDivName(),""));
+				}
+			}
+			
+			
+			ArrayList<Course> allOddTheoryElectiveCourses = courseRepository.findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(dept);
+			
+			for(Course c:allOddTheoryElectiveCourses) {
+				ArrayList<Electives> allOddTheoryElectives = electivesRepository.findByCourse(c);
+				
+				for(Electives e:allOddTheoryElectives)
+				{
+					for(ElectiveBatches eb:electiveNeeds) {
+						if(eb.getDepartment()==c.getDepartment() && eb.getYear()==c.getCourseYear())
+							courseList.add(new CourseList(c.getCourseId(),eb.getDivisionName(),""));
+					}
+				}
+			}
+		}
+		
+		
+		
 		
 		
 //		
