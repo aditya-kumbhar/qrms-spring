@@ -8,7 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-//year, dept, noOfbatches, div
+//year, dept, noOfbatches, divName, divId
 @Entity
 @Table(name="divisions")
 public class Divisions {
@@ -29,7 +29,7 @@ public class Divisions {
 	private Integer noOfBatches;
 	
 	@Column(name = "div_name")
-	private char divName;
+	private Character divName;
 
 	public Divisions() {
 		
@@ -71,11 +71,11 @@ public class Divisions {
 		this.noOfBatches = noOfBatches;
 	}
 
-	public char getDivName() {
+	public Character getDivName() {
 		return divName;
 	}
 
-	public void setDiv(char divName) {
+	public void setDivName(Character divName) {
 		this.divName = divName;
 	}
 
