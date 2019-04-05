@@ -205,7 +205,7 @@ public class AdminController {
 	@RequestMapping(value = "/addDivision", method = RequestMethod.POST)
 	String addDivision(Model model, Divisions div, String dept) {
 		div.setDepartment(departmentRepository.findByDeptId(dept));
-		String divId =  div.getYear() + div.getDepartment().getDeptId();
+		String divId =  div.getYear() + div.getDepartment().getDeptId() + div.getDivName();
 		div.setDivId(divId);
 		divisionsRepository.save(div);
 		model.addAttribute("msg","Division added in "+div.getYear()+"-"+div.getDepartment().getDeptName());
@@ -376,7 +376,7 @@ public class AdminController {
 	//Handle register user form
 	@RequestMapping(value = "/register_users", method = RequestMethod.POST)
 	public ModelAndView createUser(@Valid Users user, String role, StudentAcad student,String dept,
-			String dept1, Integer facExp, String facDesignation, String facQualification
+			String dept1, Integer facExp, String facDesignation, String facQualification, String divName
 			) {
 		ModelAndView model = new ModelAndView();	
 		Role userRole = roleRepository.findByRole(role);
@@ -389,18 +389,23 @@ public class AdminController {
 			return registerUsers(null,errmsg);
 		}
 		
-		userDetails.saveUser(user);
-
-		if(role.equals("STUDENT")) {
 		
+		if(role.equals("STUDENT")) {
+		//TODO
 			System.out.println("Adding user to studAcad");
-			student.setUserName(user.getUserName());
 			Department department = departmentRepository.findByDeptId(dept);
 			student.setDepartment(department);
-			studentAcadRepository.save(student);
-			
+			if(studAcadService.validateAndSetStudDiv(student,divName)) {
+				userDetails.saveUser(user);	
+				student.setUserName(user.getUserName());
+				studentAcadRepository.save(student);				
+			}
+			else 
+				return registerUsers(null,"Invalid division");
 		}
 		else if(role.equals("FACULTY")) {
+	
+			userDetails.saveUser(user);
 			
 			faculty = new FacultyAcad();
 			System.out.println("Adding user to facultyAcad");
@@ -414,9 +419,11 @@ public class AdminController {
 			facultyAcadRepository.save(faculty);
 			
 		}
+		else {
+			userDetails.saveUser(user);
+		}
 		
 		departments = departmentRepository.findAll();
-		
 		model.addObject("msg","User has been successfully registered");
 		model.addObject("user",new Users());
 		model.addObject("roles",roles);

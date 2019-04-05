@@ -63,8 +63,9 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 	@Column(name="semester")
 	private int sem;
 	
-	@Column(name="division")
-	private String div;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "div_id")
+	private Divisions div;
 	
 	@Column(name="shift")
 	private int shift;
@@ -119,11 +120,11 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 		this.sem = sem;
 	}
 
-	public String getDiv() {
+	public Divisions getDiv() {
 		return div;
 	}
 
-	public void setDiv(String div) {
+	public void setDiv(Divisions div) {
 		this.div = div;
 	}
 

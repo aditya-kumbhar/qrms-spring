@@ -302,7 +302,7 @@
 				Division
 			</td>
 			<td>
-				<input id="division" th:field="${student.div}" class="form-control" placeholder="Division" type="text" autofocus/>
+				<input id="division" th:name="divName" class="form-control" placeholder="Division" type="text" autofocus/>
 			</td>
 		</tr>
 		
@@ -311,7 +311,7 @@
 				Roll no.
 			</td>
 			<td>
-				<input id="rollno" th:field="${student.rollno}" class="form-control" placeholder="Roll number" type="text" autofocus/>
+				<input id="rollno" th:field="${student.rollno}" class="form-control" placeholder="Format: 101,102.." pattern="[0-9]{3}" type="text" autofocus/>
 			</td>
 		</tr>
 		

@@ -6,4 +6,6 @@ import com.qrms.spring.model.Divisions;
 
 public interface DivisionsRepository extends JpaRepository<Divisions, Integer>{
 
+	Divisions findByDivId(String divId);
+
 }
