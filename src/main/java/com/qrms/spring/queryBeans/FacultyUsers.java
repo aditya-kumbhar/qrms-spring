@@ -5,7 +5,7 @@ public class FacultyUsers {
 	private String userName;
 	private String designation;
 	private String email;
-	private Integer exp;
+	private Double exp;
 	private String qualification;
 	
 	public String getName() {
@@ -32,10 +32,10 @@ public class FacultyUsers {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public Integer getExp() {
+	public Double getExp() {
 		return exp;
 	}
-	public void setExp(Integer exp) {
+	public void setExp(Double exp) {
 		this.exp = exp;
 	}
 	public String getQualification() {

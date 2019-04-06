@@ -390,7 +390,7 @@ public class AdminController {
 	//Handle register user form
 	@RequestMapping(value = "/register_users", method = RequestMethod.POST)
 	public ModelAndView createUser(@Valid Users user, String role, StudentAcad student,String dept,
-			String dept1, Integer facExp, String facDesignation, String facQualification, String divName
+			String dept1, Double facExp, String facDesignation, String facQualification, String divName
 			) {
 		ModelAndView model = new ModelAndView();	
 		Role userRole = roleRepository.findByRole(role);

@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Table(name="faculty_acad")
 public class FacultyAcad {
 
-	public FacultyAcad(String userName, Department department, int yearsOfExperience, String qualification,
+	public FacultyAcad(String userName, Department department, double yearsOfExperience, String qualification,
 			String designation) {
 		super();
 		this.userName = userName;
@@ -35,7 +35,7 @@ public class FacultyAcad {
 	private Department department;
 	
 	@Column(name="years_of_experience")
-	private Integer yearsOfExperience;
+	private Double yearsOfExperience;
 	
 	@Column(name="qualification")
 	private String qualification;
@@ -59,11 +59,11 @@ public class FacultyAcad {
 		this.department = department;
 	}
 
-	public Integer getYearsOfExperience() {
+	public Double getYearsOfExperience() {
 		return yearsOfExperience;
 	}
 
-	public void setYearsOfExperience(Integer yearsOfExperience) {
+	public void setYearsOfExperience(Double yearsOfExperience) {
 		this.yearsOfExperience = yearsOfExperience;
 	}
 
