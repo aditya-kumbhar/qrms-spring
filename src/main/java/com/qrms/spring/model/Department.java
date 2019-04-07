@@ -41,4 +41,7 @@ public class Department {
 		this.deptName = deptName;
 	}
 	
+	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+	Set<Resource> resources = new HashSet<Resource>();
+	
 }

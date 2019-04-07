@@ -1,10 +1,15 @@
 package com.qrms.spring.resource;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -12,6 +17,13 @@ import java.util.Set;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import org.apache.poi.ss.formula.functions.Column;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +36,7 @@ import com.qrms.spring.model.Role;
 import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.StudentAllocCourse;
 import com.qrms.spring.model.StudentPref;
+import com.qrms.spring.model.TimeSlots;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.FacultyUsers;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
@@ -67,6 +80,7 @@ import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.StudentAllocCourseRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
+import com.qrms.spring.repository.TimeSlotsRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
 import com.qrms.spring.service.FacultyAcadService;
 import com.qrms.spring.service.StudentAcadServiceImpl;
@@ -136,6 +150,9 @@ public class AdminController {
 	@Autowired
 	private ElectiveBatchesRepository electiveBatchesRepository;
 
+	@Autowired
+	private TimeSlotsRepository timeSlotsRepository;
+	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
@@ -151,6 +168,7 @@ public class AdminController {
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
 		allocFaculty(1,departmentRepository.findByDeptId("CS"));
+		readTT();
 		return getViewAdminHome(null);
 	}
 	
@@ -1533,4 +1551,95 @@ public class AdminController {
 		
 		
 	}
+	
+	void readTT() {
+		
+		
+		HashMap<Integer,String> timeSlots = new HashMap<>();
+		
+		File myFile = new File("/home/bharati/Documents/monday.xlsx");
+        FileInputStream fis;
+        
+        List<TimeSlots> time = timeSlotsRepository.findAll();
+        
+		try {
+			fis = new FileInputStream(myFile);
+		    // Finds the workbook instance for XLSX file
+			XSSFWorkbook myWorkBook;
+			myWorkBook = new XSSFWorkbook (fis);
+			
+			// Return first sheet from the XLSX workbook
+	        XSSFSheet mySheet = myWorkBook.getSheetAt(0);
+	        
+	        
+	        Row row0 = mySheet.getRow(0);
+	        
+	        Iterator<Cell> c = row0.cellIterator();
+	        c.next();
+	        while(c.hasNext()) {
+	        	Cell cNext = c.next();
+	        	timeSlots.put(cNext.getColumnIndex(),cNext.getStringCellValue());
+	        }
+	        
+	        
+	        
+	        // Get iterator to all the rows in current sheet
+	        Iterator<Row> rowIterator = mySheet.iterator();
+	        
+	        rowIterator.next();
+	        
+	        // Traversing over each row of XLSX file
+	        while (rowIterator.hasNext()) {
+	            Row row = rowIterator.next();
+	
+	            // For each row, iterate through each columns
+//	            Iterator<Cell> cellIterator = row.cellIterator();
+//	            
+//	            cellIterator.next();
+//	            
+//	            while (cellIterator.hasNext()) {
+//	
+//	            	
+//	                Cell cell = cellIterator.next();
+//	                
+//	                if(Cell.CELL_TYPE_BLANK != cell.getCellType())
+//                	{
+//	                	System.out.println(cell.getRowIndex()+" "+cell.getColumnIndex());
+//    	    	        System.out.print(cell.getStringCellValue() + "\t");
+//                	}else {
+//                		l
+//                	}
+//	                
+//	            }
+//	            System.out.println("");
+	            
+	            Cell cprev = row.cellIterator().next();
+	            
+	            for(int i:timeSlots.keySet()) {
+	            	
+	            	if(row.getCell(i)==null) {
+	            		
+//	            		time.add(new TimeSlots(startTime, endTime, resourceId, seatsOccupied))
+	            	}
+	            	else if(row.getCell(i).equals("") || row.getCell(i).getCellType()==Cell.CELL_TYPE_BLANK) {
+	            		
+	            	}else {
+	            		
+	            	}
+	            }
+	        }
+	        System.out.println(mySheet.getRow(2).getCell(3));
+	        myWorkBook.close();
+	        
+		}catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       
+	}
+	
 }
+
