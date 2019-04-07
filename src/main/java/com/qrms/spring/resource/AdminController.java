@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +41,7 @@ import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.StudentAllocCourse;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.TimeSlots;
+import com.qrms.spring.model.TimeTable;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.FacultyUsers;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
@@ -81,6 +86,7 @@ import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.StudentAllocCourseRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.repository.TimeSlotsRepository;
+import com.qrms.spring.repository.TimeTableRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
 import com.qrms.spring.service.FacultyAcadService;
 import com.qrms.spring.service.StudentAcadServiceImpl;
@@ -153,6 +159,9 @@ public class AdminController {
 	@Autowired
 	private TimeSlotsRepository timeSlotsRepository;
 	
+	@Autowired
+	private TimeTableRepository timeTableRepository;
+	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
@@ -163,7 +172,10 @@ public class AdminController {
 	
 	private List<StudentPrefCountInfo> prefSummaryList;
 	
-	
+	private static final DateFormat TWELVE_TF = new SimpleDateFormat("hh:mma");
+	// Replace with kk:mm if you want 1-24 interval
+	private static final DateFormat TWENTY_FOUR_TF = new SimpleDateFormat("HH:mm");
+
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
@@ -1552,6 +1564,12 @@ public class AdminController {
 		
 	}
 	
+	public static String convertTo24HoursFormat(String twelveHourTime)
+	        throws ParseException {
+	    return TWENTY_FOUR_TF.format(
+	            TWELVE_TF.parse(twelveHourTime));
+	  }
+	
 	void readTT() {
 		
 		
@@ -1560,7 +1578,7 @@ public class AdminController {
 		File myFile = new File("/home/bharati/Documents/monday.xlsx");
         FileInputStream fis;
         
-        List<TimeSlots> time = timeSlotsRepository.findAll();
+        List<TimeTable> timetable = timeTableRepository.findAll();
         
 		try {
 			fis = new FileInputStream(myFile);
@@ -1579,6 +1597,10 @@ public class AdminController {
 	        while(c.hasNext()) {
 	        	Cell cNext = c.next();
 	        	timeSlots.put(cNext.getColumnIndex(),cNext.getStringCellValue());
+	        	String arr[] = cNext.getStringCellValue().split(" to ");
+        		String startTime = convertTo24HoursFormat(arr[0]);
+        		String endTime = convertTo24HoursFormat(arr[1]);
+        		System.out.println(startTime+" "+endTime);
 	        }
 	        
 	        
@@ -1621,10 +1643,13 @@ public class AdminController {
 	            		
 //	            		time.add(new TimeSlots(startTime, endTime, resourceId, seatsOccupied))
 	            	}
-	            	else if(row.getCell(i).equals("") || row.getCell(i).getCellType()==Cell.CELL_TYPE_BLANK) {
+	            	else if(row.getCell(i).getStringCellValue().equals("") || row.getCell(i).getCellType()==Cell.CELL_TYPE_BLANK) {
 	            		
 	            	}else {
 	            		
+//	            		String str = timeSlots.get(row.getCell(i).getColumnIndex()); 
+	            		
+//	            		timetable.add(new TimeTable(startTime, endTime, resourceId, seatsOccupied, day, department))
 	            	}
 	            }
 	        }
@@ -1635,6 +1660,9 @@ public class AdminController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

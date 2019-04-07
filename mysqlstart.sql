@@ -29,7 +29,7 @@ insert into user values('stud8',1,'stud8@gmail.com','Student','Student','student
 insert into user values('stud9',1,'stud9@gmail.com','Student','Student','student');
 insert into user values('stud10',1,'stud10@gmail.com','Student','Student','student');
 insert into user values('stud11',1,'stud11@gmail.com','Student','Student','student');
-insert into user values('stud12,1,'stud12@gmail.com','Student','Student','student');
+insert into user values('stud12',1,'stud12@gmail.com','Student','Student','student');
 insert into user values('stud13',1,'stud13@gmail.com','Student','Student','student');
 insert into user values('stud14',1,'stud14@gmail.com','Student','Student','student');
 insert into user values('stud15',1,'stud15@gmail.com','Student','Student','student');
@@ -270,60 +270,60 @@ INSERT into course_prerequisites values ('210245',-1,-1,'NA','NA');
 
 /*COMPANION_COURSE TABLE*/
 /*BE sem2*/
-INSERT into companion_course values ('410250','410254');
-INSERT into companion_course values ('410251','410254');
-INSERT into companion_course values ('410252A','410255');
-INSERT into companion_course values ('410252B','410255');
-INSERT into companion_course values ('410252C','410255');
-INSERT into companion_course values ('410252D','410255');
-INSERT into companion_course values ('410253A','410255');
-INSERT into companion_course values ('410253B','410255');
-INSERT into companion_course values ('410253C','410255');
-INSERT into companion_course values ('410253D','410255');
+INSERT into companion_course values (1,'410250','410254');
+INSERT into companion_course values (2,'410251','410254');
+INSERT into companion_course values (3,'410252A','410255');
+INSERT into companion_course values (4,'410252B','410255');
+INSERT into companion_course values (5,'410252C','410255');
+INSERT into companion_course values (6,'410252D','410255');
+INSERT into companion_course values (7,'410253A','410255');
+INSERT into companion_course values (8,'410253B','410255');
+INSERT into companion_course values (9,'410253C','410255');
+INSERT into companion_course values (10,'410253D','410255');
 
 /*BE sem1*/
-INSERT into companion_course values ('410241','410246');
-INSERT into companion_course values ('410242','410246');
-INSERT into companion_course values ('410243','410246');
-INSERT into companion_course values ('410244A','410247');
-INSERT into companion_course values ('410244B','410247');
-INSERT into companion_course values ('410244C','410247');
-INSERT into companion_course values ('410244D','410247');
-INSERT into companion_course values ('410245A','410247');
-INSERT into companion_course values ('410245B','410247');
-INSERT into companion_course values ('421245C','410247');
-INSERT into companion_course values ('410245D','410247');
+INSERT into companion_course values (11,'410241','410246');
+INSERT into companion_course values (12,'410242','410246');
+INSERT into companion_course values (13,'410243','410246');
+INSERT into companion_course values (14,'410244A','410247');
+INSERT into companion_course values (15,'410244B','410247');
+INSERT into companion_course values (16,'410244C','410247');
+INSERT into companion_course values (17,'410244D','410247');
+INSERT into companion_course values (18,'410245A','410247');
+INSERT into companion_course values (19,'410245B','410247');
+INSERT into companion_course values (20,'421245C','410247');
+INSERT into companion_course values (21,'410245D','410247');
 
 /*TE sem2*/
-INSERT into companion_course values ('310251','310257');
-INSERT into companion_course values ('310252','310258');
-INSERT into companion_course values ('310254','310256');
-INSERT into companion_course values ('310257','310251');
-INSERT into companion_course values ('310258','310252');
-INSERT into companion_course values ('310256','310254');
+INSERT into companion_course values (22,'310251','310257');
+INSERT into companion_course values (23,'310252','310258');
+INSERT into companion_course values (24,'310254','310256');
+INSERT into companion_course values (25,'310257','310251');
+INSERT into companion_course values (26,'310258','310252');
+INSERT into companion_course values (27,'310256','310254');
 
 /*TE sem1*/
-INSERT into companion_course values ('310242','310247');
-INSERT into companion_course values ('310245','310248');
-INSERT into companion_course values ('310247','310242');
-INSERT into companion_course values ('310248','310245');
+INSERT into companion_course values (28,'310242','310247');
+INSERT into companion_course values (29,'310245','310248');
+INSERT into companion_course values (30,'310247','310242');
+INSERT into companion_course values (31,'310248','310245');
 
 /*SE sem2*/
-INSERT into companion_course values ('210251','210255');
-INSERT into companion_course values ('210252','210256');
-INSERT into companion_course values ('210253','210257');
-INSERT into companion_course values ('210255','210251');
-INSERT into companion_course values ('210256','210252');
-INSERT into companion_course values ('210257','210253');
+INSERT into companion_course values (32,'210251','210255');
+INSERT into companion_course values (33,'210252','210256');
+INSERT into companion_course values (34,'210253','210257');
+INSERT into companion_course values (35,'210255','210251');
+INSERT into companion_course values (36,'210256','210252');
+INSERT into companion_course values (37,'210257','210253');
 
 
 /*SE sem1*/
-INSERT into companion_course values ('210242','210246');
-INSERT into companion_course values ('210243','210247');
-INSERT into companion_course values ('210245','210248');
-INSERT into companion_course values ('210246','210242');
-INSERT into companion_course values ('210247','210243');
-INSERT into companion_course values ('210248','210245');
+INSERT into companion_course values (38,'210242','210246');
+INSERT into companion_course values (39,'210243','210247');
+INSERT into companion_course values (40,'210245','210248');
+INSERT into companion_course values (41,'210246','210242');
+INSERT into companion_course values (42,'210247','210243');
+INSERT into companion_course values (43,'210248','210245');
 
 
 
@@ -418,12 +418,12 @@ insert into designation_to_hours values("Assistant Professor",18,16);
 insert into divisions values('BECOA','A',4,'BE','CO');
 insert into divisions values('BECOB','B',4,'BE','CO');
 insert into divisions values('BECOC','C',4,'BE','CO');
-insert into divisions values('TECOB','A',4,'TE','CO');
+insert into divisions values('TECOA','A',4,'TE','CO');
 insert into divisions values('TECOB','B',4,'TE','CO');
-insert into divisions values('TECOB','C',4,'TE','CO');
-insert into divisions values('SECOB','A',4,'SE','CO');
+insert into divisions values('TECOC','C',4,'TE','CO');
+insert into divisions values('SECOA','A',4,'SE','CO');
 insert into divisions values('SECOB','B',4,'SE','CO');
-insert into divisions values('SECOB','C',4,'SE','CO');
+insert into divisions values('SECOC','C',4,'SE','CO');
 
 
 
