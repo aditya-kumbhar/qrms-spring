@@ -19,7 +19,7 @@ public class TimeTable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="tid")
-	private String tid;
+	private int tid;
 	
 	//startTime
 	//endTime
@@ -92,6 +92,10 @@ public class TimeTable {
 
 	public void setDepartment(Department department) {
 		this.department = department;
+	}
+	
+	public TimeTable() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public TimeTable(Time startTime, Time endTime, Resource resourceId, int seatsOccupied, String day,

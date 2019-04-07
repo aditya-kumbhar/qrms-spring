@@ -34,6 +34,10 @@ public class Resource {
 	@Column(name="resource_capacity")
 	private int resourceCapacity;
 	
+	public Resource() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public Resource(String resourceId, String resourceName, Department department, Users resourceIncharge,
 			int resourceCapacity) {
 		super();

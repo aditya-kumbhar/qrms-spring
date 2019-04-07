@@ -11,12 +11,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -29,6 +31,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,6 +72,7 @@ import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.FacultyAllocCourse;
 import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.model.PracticalList;
+import com.qrms.spring.model.Resource;
 import com.qrms.spring.repository.CourseCompanionRespositoy;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
@@ -81,6 +85,7 @@ import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
 import com.qrms.spring.repository.FacultyAllocCourseRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
+import com.qrms.spring.repository.ResourceRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.StudentAllocCourseRepository;
@@ -162,6 +167,9 @@ public class AdminController {
 	@Autowired
 	private TimeTableRepository timeTableRepository;
 	
+	@Autowired
+	private ResourceRepository resourceRepository;
+	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
@@ -180,7 +188,7 @@ public class AdminController {
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
 		allocFaculty(1,departmentRepository.findByDeptId("CS"));
-		readTT();
+		readTT("CS","Monday");
 		return getViewAdminHome(null);
 	}
 	
@@ -1570,15 +1578,20 @@ public class AdminController {
 	            TWELVE_TF.parse(twelveHourTime));
 	  }
 	
-	void readTT() {
+	void readTT(String dept,String day) {
+		Department department = departmentRepository.findByDeptId(dept);
 		
-		
-		HashMap<Integer,String> timeSlots = new HashMap<>();
+		HashMap<Integer,Time[]> timeSlots = new HashMap<>();
 		
 		File myFile = new File("/home/bharati/Documents/monday.xlsx");
         FileInputStream fis;
         
         List<TimeTable> timetable = timeTableRepository.findAll();
+        
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm");
+        
+       
+		List<Resource> resources = resourceRepository.findByDepartment(department);
         
 		try {
 			fis = new FileInputStream(myFile);
@@ -1596,14 +1609,17 @@ public class AdminController {
 	        c.next();
 	        while(c.hasNext()) {
 	        	Cell cNext = c.next();
-	        	timeSlots.put(cNext.getColumnIndex(),cNext.getStringCellValue());
-	        	String arr[] = cNext.getStringCellValue().split(" to ");
+	        	
+	        	String arr[] = cNext.getStringCellValue().trim().split(" to ");
         		String startTime = convertTo24HoursFormat(arr[0]);
         		String endTime = convertTo24HoursFormat(arr[1]);
-        		System.out.println(startTime+" "+endTime);
+        		DateFormat formatter = new SimpleDateFormat("HH:mm");
+				timeSlots.put(cNext.getColumnIndex(),new Time[] {new Time(formatter.parse(startTime).getTime()),new Time(formatter.parse(endTime).getTime())});
 	        }
 	        
-	        
+	        for(int i:timeSlots.keySet()) {
+	        	System.out.println(i+" "+timeSlots.get(i)[0]+" "+timeSlots.get(i)[1]);
+	        }
 	        
 	        // Get iterator to all the rows in current sheet
 	        Iterator<Row> rowIterator = mySheet.iterator();
@@ -1613,47 +1629,59 @@ public class AdminController {
 	        // Traversing over each row of XLSX file
 	        while (rowIterator.hasNext()) {
 	            Row row = rowIterator.next();
-	
-	            // For each row, iterate through each columns
-//	            Iterator<Cell> cellIterator = row.cellIterator();
-//	            
-//	            cellIterator.next();
-//	            
-//	            while (cellIterator.hasNext()) {
-//	
-//	            	
-//	                Cell cell = cellIterator.next();
-//	                
-//	                if(Cell.CELL_TYPE_BLANK != cell.getCellType())
-//                	{
-//	                	System.out.println(cell.getRowIndex()+" "+cell.getColumnIndex());
-//    	    	        System.out.print(cell.getStringCellValue() + "\t");
-//                	}else {
-//                		l
-//                	}
-//	                
-//	            }
-//	            System.out.println("");
 	            
 	            Cell cprev = row.cellIterator().next();
 	            
+	            if(cprev.getStringCellValue().equals("END") || cprev.getStringCellValue().equals("") || cprev.getCellType()==Cell.CELL_TYPE_BLANK) {
+	            	break;
+	            }
+	            
 	            for(int i:timeSlots.keySet()) {
 	            	
+	            	Time[] slot = timeSlots.get(i);
 	            	if(row.getCell(i)==null) {
 	            		
-//	            		time.add(new TimeSlots(startTime, endTime, resourceId, seatsOccupied))
 	            	}
 	            	else if(row.getCell(i).getStringCellValue().equals("") || row.getCell(i).getCellType()==Cell.CELL_TYPE_BLANK) {
 	            		
 	            	}else {
-	            		
-//	            		String str = timeSlots.get(row.getCell(i).getColumnIndex()); 
-	            		
-//	            		timetable.add(new TimeTable(startTime, endTime, resourceId, seatsOccupied, day, department))
+	            		String delim = " \n\t";
+	            		//System.out.println(row.getCell(i).getStringCellValue());
+	            		StringTokenizer st= new StringTokenizer(row.getCell(i).getStringCellValue().trim(),delim);
+	            		int j=1;
+	            		while(st.hasMoreTokens()) {
+	            			if(j==2) {
+	            				
+	            				String str = st.nextToken().trim();
+//		            			System.out.println(j+" "+"this token "+str);
+		            			
+		            			if(str.contains(",")) {
+		            				String[] temp = str.split(",");
+		            				for(String temps:temp) {
+		            					Resource r = resourceRepository.findByResourceId(dept.concat(temps));
+			            				timetable.add(new TimeTable(slot[0], slot[1], r, r.getResourceCapacity(), day, department));
+		            				}
+		            			}else {
+		            				//System.out.println("token "+str+" "+dept.concat(str)+" "+slot[0]+" "+slot[1]);
+		            				Resource r = resourceRepository.findByResourceId(dept.concat(str));
+		            				timetable.add(new TimeTable(slot[0], slot[1], r, r.getResourceCapacity(), day, department));
+//		            				System.out.println("ok");
+		            				
+	            				}
+		            			j=0;
+	            			}else {
+	            				if(st.hasMoreTokens()) {st.nextToken();}
+		            			j++;
+	            			}
+	            		}
 	            	}
 	            }
 	        }
-	        System.out.println(mySheet.getRow(2).getCell(3));
+	        
+	        for(TimeTable tt:timetable) {
+	        	timeTableRepository.save(tt);
+	        }
+	        
 	        myWorkBook.close();
 	        
 		}catch (FileNotFoundException e) {
