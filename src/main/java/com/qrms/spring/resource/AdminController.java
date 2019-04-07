@@ -1698,7 +1698,7 @@ public class AdminController {
        
 	}
 	
-	@Scheduled(cron="0 0 * * *")
+	@Scheduled(cron="0 30 * * *")
 	public void hourlyUpdate() {
 		//change all entries from current time slots to old
 		//find entries from timeslots and timetable to current time slots

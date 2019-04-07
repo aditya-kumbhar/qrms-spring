@@ -58,6 +58,9 @@ public class Resource {
 
 	@OneToMany(mappedBy = "resourceId", cascade = CascadeType.ALL)
 	Set<TimeSlots> timeSlots = new HashSet<TimeSlots>();
+	
+	@OneToMany(mappedBy = "resourceId", cascade = CascadeType.ALL)
+	Set<OldTimeSlots> oldTimeSlots = new HashSet<OldTimeSlots>();
 
 	public String getResourceId() {
 		return resourceId;
