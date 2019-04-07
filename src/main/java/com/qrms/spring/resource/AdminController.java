@@ -405,7 +405,6 @@ public class AdminController {
 		
 		
 		if(role.equals("STUDENT")) {
-		//TODO
 			System.out.println("Adding user to studAcad");
 			Department department = departmentRepository.findByDeptId(dept);
 			student.setDepartment(department);
@@ -1112,13 +1111,14 @@ public class AdminController {
 		List<DesignationToHours> desigList = designationToHoursRepository.findAll();
 		//all faculty list for that department
 		List<FacultyAcad> allFacs = facultyAcadRepository.findByDepartmentEquals(dept);
-		
+		//TODO
 		
 		//designation to min max hours hashmap
 		HashMap<String, int[]> desigHours =  new HashMap<>();
 		for(DesignationToHours d:desigList) {
 			desigHours.put(d.getDesignation(), new int[] {d.getMinLimit(),d.getMaxLimit()});
 		}
+		
 		//faculty to min hours max hours hashmap, faculty to alloted hours hashmap
 		HashMap <String,Integer> facAllotedHours = new HashMap<>();
 		HashMap <String,int[]> facLimits = new HashMap<>();
@@ -1131,7 +1131,7 @@ public class AdminController {
 		List<Divisions> divisionNeeds = divisionsRepository.findByDepartment(dept);
 
 		List<ElectiveBatches> electiveNeeds = electiveBatchesRepository.findByDepartment(dept);
-		
+				
 		Collections.sort(divisionNeeds,new DivisionsChainedComparator(new DivisionsYearComparator()));
 			
 		//theory courses for that sem
