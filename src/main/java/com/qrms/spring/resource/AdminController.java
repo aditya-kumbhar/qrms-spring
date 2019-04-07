@@ -32,6 +32,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -188,7 +189,7 @@ public class AdminController {
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
 		allocFaculty(1,departmentRepository.findByDeptId("CS"));
-		readTT("CS","Monday");
+		readTT("CO","Monday");
 		return getViewAdminHome(null);
 	}
 	
@@ -1696,6 +1697,13 @@ public class AdminController {
 		}
        
 	}
+	
+	@Scheduled(cron="0 0 * * *")
+	public void hourlyUpdate() {
+		//change all entries from current time slots to old
+		//find entries from timeslots and timetable to current time slots
+	}
+	
 	
 }
 

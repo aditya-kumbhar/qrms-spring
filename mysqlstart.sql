@@ -120,7 +120,7 @@ insert into user_role values('stud31',3),('stud32',3),('stud33',3),('stud34',3),
 
 
 /*DEPARTMENT TABLE*/
-INSERT INTO `department` VALUES ('CS','Computer Department'),('ME','Mechanical Department'),('EN','EnTC Department'),('IT','IT Department'),('CI','Civil Department');
+INSERT INTO `department` VALUES ('CO','Computer Department'),('ME','Mechanical Department'),('EN','EnTC Department'),('IT','IT Department'),('CI','Civil Department');
 
 
 
@@ -426,23 +426,23 @@ insert into divisions values('SECOB','B',4,'SE','CO');
 insert into divisions values('SECOC','C',4,'SE','CO');
 
 /*Resource Table*/
-insert into resource values('CS101',80,"101","CS","fac1");
-insert into resource values('CS111',80,"111","CS","fac1");
-insert into resource values('CS201',80,"201","CS","fac1");
-insert into resource values('CS202',80,"202","CS","fac1");
-insert into resource values('CS203',80,"203","CS","fac1");
-insert into resource values('CS204',80,"204","CS","fac1");
-insert into resource values('CS205A',25,'205A',"CS","fac2");
-insert into resource values('CS205B',25,'205B',"CS","fac3");
-insert into resource values('CS205C',25,'205C',"CS","fac4");
-insert into resource values('CS206',25,'206',"CS","fac5");
-insert into resource values('CS207',25,'207',"CS","fac6");
-insert into resource values('CS210',25,'210',"CS","fac7");
-insert into resource values('CS212A',25,'212A',"CS","fac8");
-insert into resource values('CS212B',25,'212B',"CS","fac9");
-insert into resource values('CS212C',25,'212C',"CS","fac10");
-insert into resource values('CS112A',25,'112A',"CS","fac11");
-insert into resource values('CS112B',25,'112B',"CS","fac12");
-insert into resource values('CS112C',25,'112C',"CS","fac13");
-insert into resource values('CS007',25,'007',"CS","fac14");
+insert into resource values('CO101',80,"101","CS","fac1");
+insert into resource values('CO111',80,"111","CS","fac1");
+insert into resource values('CO201',80,"201","CS","fac1");
+insert into resource values('CO202',80,"202","CS","fac1");
+insert into resource values('CO203',80,"203","CS","fac1");
+insert into resource values('CO204',80,"204","CS","fac1");
+insert into resource values('CO205A',25,'205A',"CS","fac2");
+insert into resource values('CO205B',25,'205B',"CS","fac3");
+insert into resource values('CO205C',25,'205C',"CS","fac4");
+insert into resource values('CO206',25,'206',"CS","fac5");
+insert into resource values('CO207',25,'207',"CS","fac6");
+insert into resource values('CO210',25,'210',"CS","fac7");
+insert into resource values('CO212A',25,'212A',"CS","fac8");
+insert into resource values('CO212B',25,'212B',"CS","fac9");
+insert into resource values('CO212C',25,'212C',"CS","fac10");
+insert into resource values('CO112A',25,'112A',"CS","fac11");
+insert into resource values('CO112B',25,'112B',"CS","fac12");
+insert into resource values('CO112C',25,'112C',"CS","fac13");
+insert into resource values('CO007',25,'007',"CS","fac14");
 
