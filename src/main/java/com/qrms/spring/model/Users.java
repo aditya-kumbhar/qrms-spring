@@ -1,5 +1,6 @@
 package com.qrms.spring.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -109,7 +111,10 @@ public class Users {
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
-
+	
+	@OneToMany(mappedBy = "resourceIncharge", cascade = CascadeType.ALL)
+	Set<Resource> resources = new HashSet<Resource>();
+	
 	
 	
 }

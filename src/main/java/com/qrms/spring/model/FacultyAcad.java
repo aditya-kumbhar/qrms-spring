@@ -1,5 +1,6 @@
 package com.qrms.spring.model;
 
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -82,5 +83,7 @@ public class FacultyAcad {
 	public void setDesignation(String designation) {
 		this.designation = designation;
 	}
+	
+	
 	
 }

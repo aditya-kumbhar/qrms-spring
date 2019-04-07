@@ -1,18 +1,37 @@
 package com.qrms.spring.resource;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import org.apache.poi.ss.formula.functions.Column;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +43,8 @@ import com.qrms.spring.model.Role;
 import com.qrms.spring.model.StudentAcad;
 import com.qrms.spring.model.StudentAllocCourse;
 import com.qrms.spring.model.StudentPref;
+import com.qrms.spring.model.TimeSlots;
+import com.qrms.spring.model.TimeTable;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.FacultyUsers;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
@@ -51,6 +72,7 @@ import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.FacultyAllocCourse;
 import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.model.PracticalList;
+import com.qrms.spring.model.Resource;
 import com.qrms.spring.repository.CourseCompanionRespositoy;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
@@ -63,10 +85,13 @@ import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
 import com.qrms.spring.repository.FacultyAllocCourseRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
+import com.qrms.spring.repository.ResourceRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.StudentAllocCourseRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
+import com.qrms.spring.repository.TimeSlotsRepository;
+import com.qrms.spring.repository.TimeTableRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
 import com.qrms.spring.service.FacultyAcadService;
 import com.qrms.spring.service.StudentAcadServiceImpl;
@@ -136,6 +161,15 @@ public class AdminController {
 	@Autowired
 	private ElectiveBatchesRepository electiveBatchesRepository;
 
+	@Autowired
+	private TimeSlotsRepository timeSlotsRepository;
+	
+	@Autowired
+	private TimeTableRepository timeTableRepository;
+	
+	@Autowired
+	private ResourceRepository resourceRepository;
+	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
@@ -146,11 +180,15 @@ public class AdminController {
 	
 	private List<StudentPrefCountInfo> prefSummaryList;
 	
-	
+	private static final DateFormat TWELVE_TF = new SimpleDateFormat("hh:mma");
+	// Replace with kk:mm if you want 1-24 interval
+	private static final DateFormat TWENTY_FOUR_TF = new SimpleDateFormat("HH:mm");
+
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
 		allocFaculty(1,departmentRepository.findByDeptId("CS"));
+		readTT("CS","Monday");
 		return getViewAdminHome(null);
 	}
 	
@@ -1533,4 +1571,131 @@ public class AdminController {
 		
 		
 	}
+	
+	public static String convertTo24HoursFormat(String twelveHourTime)
+	        throws ParseException {
+	    return TWENTY_FOUR_TF.format(
+	            TWELVE_TF.parse(twelveHourTime));
+	  }
+	
+	void readTT(String dept,String day) {
+		Department department = departmentRepository.findByDeptId(dept);
+		
+		HashMap<Integer,Time[]> timeSlots = new HashMap<>();
+		
+		File myFile = new File("/home/bharati/Documents/monday.xlsx");
+        FileInputStream fis;
+        
+        List<TimeTable> timetable = timeTableRepository.findAll();
+        
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm");
+        
+       
+		List<Resource> resources = resourceRepository.findByDepartment(department);
+        
+		try {
+			fis = new FileInputStream(myFile);
+		    // Finds the workbook instance for XLSX file
+			XSSFWorkbook myWorkBook;
+			myWorkBook = new XSSFWorkbook (fis);
+			
+			// Return first sheet from the XLSX workbook
+	        XSSFSheet mySheet = myWorkBook.getSheetAt(0);
+	        
+	        
+	        Row row0 = mySheet.getRow(0);
+	        
+	        Iterator<Cell> c = row0.cellIterator();
+	        c.next();
+	        while(c.hasNext()) {
+	        	Cell cNext = c.next();
+	        	
+	        	String arr[] = cNext.getStringCellValue().trim().split(" to ");
+        		String startTime = convertTo24HoursFormat(arr[0]);
+        		String endTime = convertTo24HoursFormat(arr[1]);
+        		DateFormat formatter = new SimpleDateFormat("HH:mm");
+				timeSlots.put(cNext.getColumnIndex(),new Time[] {new Time(formatter.parse(startTime).getTime()),new Time(formatter.parse(endTime).getTime())});
+	        }
+	        
+	        for(int i:timeSlots.keySet()) {
+	        	System.out.println(i+" "+timeSlots.get(i)[0]+" "+timeSlots.get(i)[1]);
+	        }
+	        
+	        // Get iterator to all the rows in current sheet
+	        Iterator<Row> rowIterator = mySheet.iterator();
+	        
+	        rowIterator.next();
+	        
+	        // Traversing over each row of XLSX file
+	        while (rowIterator.hasNext()) {
+	            Row row = rowIterator.next();
+	            
+	            Cell cprev = row.cellIterator().next();
+	            
+	            if(cprev.getStringCellValue().equals("END") || cprev.getStringCellValue().equals("") || cprev.getCellType()==Cell.CELL_TYPE_BLANK) {
+	            	break;
+	            }
+	            
+	            for(int i:timeSlots.keySet()) {
+	            	
+	            	Time[] slot = timeSlots.get(i);
+	            	if(row.getCell(i)==null) {
+	            		
+	            	}
+	            	else if(row.getCell(i).getStringCellValue().equals("") || row.getCell(i).getCellType()==Cell.CELL_TYPE_BLANK) {
+	            		
+	            	}else {
+	            		String delim = " \n\t";
+	            		//System.out.println(row.getCell(i).getStringCellValue());
+	            		StringTokenizer st= new StringTokenizer(row.getCell(i).getStringCellValue().trim(),delim);
+	            		int j=1;
+	            		while(st.hasMoreTokens()) {
+	            			if(j==2) {
+	            				
+	            				String str = st.nextToken().trim();
+//		            			System.out.println(j+" "+"this token "+str);
+		            			
+		            			if(str.contains(",")) {
+		            				String[] temp = str.split(",");
+		            				for(String temps:temp) {
+		            					Resource r = resourceRepository.findByResourceId(dept.concat(temps));
+			            				timetable.add(new TimeTable(slot[0], slot[1], r, r.getResourceCapacity(), day, department));
+		            				}
+		            			}else {
+		            				//System.out.println("token "+str+" "+dept.concat(str)+" "+slot[0]+" "+slot[1]);
+		            				Resource r = resourceRepository.findByResourceId(dept.concat(str));
+		            				timetable.add(new TimeTable(slot[0], slot[1], r, r.getResourceCapacity(), day, department));
+//		            				System.out.println("ok");
+		            				
+	            				}
+		            			j=0;
+	            			}else {
+	            				if(st.hasMoreTokens()) {st.nextToken();}
+		            			j++;
+	            			}
+	            		}
+	            	}
+	            }
+	        }
+	        
+	        for(TimeTable tt:timetable) {
+	        	timeTableRepository.save(tt);
+	        }
+	        
+	        myWorkBook.close();
+	        
+		}catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       
+	}
+	
 }
+

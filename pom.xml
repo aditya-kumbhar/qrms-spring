@@ -89,8 +89,21 @@
 		    <artifactId>json</artifactId>
 		    <version>20180813</version>
 		</dependency>
+	
+		<dependency>
+	        <groupId>org.apache.poi</groupId>
+	        <artifactId>poi</artifactId>
+	        <version>3.11-beta2</version>
+    	</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>3.11</version>
+		</dependency>
 
-
+		
+		
 	</dependencies>
 	
 	<build>
