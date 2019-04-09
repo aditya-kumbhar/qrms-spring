@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CoursePrerequisites;
+import com.qrms.spring.model.Department;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.Users;
@@ -25,8 +26,11 @@ import com.qrms.spring.queryBeans.CourseAndElectives;
 import com.qrms.spring.queryBeans.FacPrefsList;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
+import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
+import com.qrms.spring.service.BookingsService;
+import com.qrms.spring.service.BookingsServiceImpl;
 import com.qrms.spring.repository.FacultyAcadRepository;
 
 
@@ -49,11 +53,21 @@ public class FacultyController {
 	@Autowired
 	private CoursePrerequisitesRepository coursePrerequisitesRepository;
 	
+	@Autowired
+	private BookingsServiceImpl bookingsService;
+	
 	@GetMapping("/home")
 	public String facultyHome() {
 		return "faculty/home";
 	}
-		
+	
+	@RequestMapping(value = "/viewTT",method = RequestMethod.GET)
+	public ModelAndView viewTT() {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/faculty/viewTT");
+		return model;
+	}
+	
 	@RequestMapping(value = "/givePreferenceChoice", method = RequestMethod.GET)
 	public ModelAndView facultyPref(String msg) {
 		ModelAndView model = new ModelAndView();
@@ -245,5 +259,22 @@ public class FacultyController {
 		
 		
 	}*/
-
+	
+	@RequestMapping(value="/bookings",method=RequestMethod.GET)
+	public ModelAndView getRequirements() {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/faculty/bookings");
+		ArrayList<Department> depts = bookingsService.listDepartments();
+		model.addObject("departments", depts);
+		return model;
+	}
+	
+	@RequestMapping(value="/setbookings",method=RequestMethod.POST)
+	public ModelAndView setRequirements() {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/faculty/bookings");
+		ArrayList<Department> depts = bookingsService.listDepartments();
+		model.addObject("departments", depts);		
+		return model;
+	}
 }

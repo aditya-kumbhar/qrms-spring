@@ -1,5 +1,6 @@
 package com.qrms.spring.resource;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,6 +9,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.logging.ConsoleHandler;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -30,6 +33,7 @@ import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -97,6 +101,7 @@ import com.qrms.spring.service.CustomUserDetailsService;
 import com.qrms.spring.service.FacultyAcadService;
 import com.qrms.spring.service.StudentAcadServiceImpl;
 import com.qrms.spring.service.StudentPrefServiceImpl;
+import com.qrms.spring.service.TimeSlotsService;
 
 @Controller
 @RequestMapping("/u/admin")
@@ -113,6 +118,9 @@ public class AdminController {
 	
 	@Autowired
 	private StudentAcadServiceImpl studAcadService;
+//	
+//	@Autowired
+//	private TimeSlotsService timeSlotsService;
 	
 	@Autowired
 	private RoleRepository roleRepository;
@@ -185,6 +193,9 @@ public class AdminController {
 	// Replace with kk:mm if you want 1-24 interval
 	private static final DateFormat TWENTY_FOUR_TF = new SimpleDateFormat("HH:mm");
 
+	
+	
+	
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
@@ -1698,11 +1709,25 @@ public class AdminController {
        
 	}
 	
-	@Scheduled(cron="0 30 * * *")
-	public void hourlyUpdate() {
-		//change all entries from current time slots to old
-		//find entries from timeslots and timetable to current time slots
-	}
+//	private Date nextDate; 
+//	
+//	@Scheduled(cron="0 30 * * *")
+//	public void halfhourlyUpdate() throws Exception{
+//		//change all entries from current time slots to old
+//		//find entries from timeslots and timetable to current time slots
+//		
+//		//cron="0 30 * * *"
+//		try{
+//			CronExpression exp = new CronExpression("0 30 * * *");
+//			Instant nextTime = exp.getTimeBefore(Date.from(Instant.now())).toInstant();
+//			
+//		}catch (ParseException e) {
+//	         System.out.println("Could not parse cron expression: "+" "+ e.toString());
+//	        }
+//		timeSlotsService.updateTimeSlots();
+//		
+//		
+//	}
 	
 	
 }
