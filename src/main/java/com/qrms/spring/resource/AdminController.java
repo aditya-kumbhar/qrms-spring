@@ -188,8 +188,8 @@ public class AdminController {
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
-		allocFaculty(1,departmentRepository.findByDeptId("CS"));
-		readTT("CO","Monday");
+		allocFaculty(1,departmentRepository.findByDeptId("CO"));
+		//readTT("CO","Monday");
 		return getViewAdminHome(null);
 	}
 	
@@ -1139,7 +1139,7 @@ public class AdminController {
 
 //	@RequestMapping(value="/allocFaculty",method=RequestMethod.POST)
 //	public ModelAndView
-	
+	// 0 -- odd, 1 -- even
 	public void allocFaculty(int oddOrEven,Department dept) {
 		
 		//find all the courses
@@ -1173,117 +1173,69 @@ public class AdminController {
 				
 		Collections.sort(divisionNeeds,new DivisionsChainedComparator(new DivisionsYearComparator()));
 		
-		for(Divisions d: divisionNeeds) {
-			System.out.println(d.getDivId());
+		
+		//theory courses for that sem
+		
+		ArrayList<CourseList> courseList = new ArrayList<>();
+		
+		ArrayList<PracticalList> practicalList = new ArrayList<>();
+		
+		String labNames[] = new String [] {"1","2","3","4"};
+		ArrayList<Course> allTheoryCourses;
+		ArrayList<Course> allTheoryElectiveCourses;
+		
+		if(oddOrEven==0) { //odd
+			allTheoryCourses = courseRepository.findOddSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(dept);
+			allTheoryElectiveCourses = courseRepository.findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(dept);
+		}
+		else {	//even
+			allTheoryCourses = courseRepository.findEvenSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(dept);
+			allTheoryElectiveCourses = courseRepository.findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(dept);
+		}
+		
+		for(Divisions d:divisionNeeds) {
+			for(Course c:allTheoryCourses)
+			{
+				if(d.getDepartment().equals(c.getDepartment()) && d.getYear().equals(c.getCourseYear())) {
+					courseList.add(new CourseList(c.getCourseId(),d.getDivId(),"",c.getNoOfHours()));
+					CompanionCourse cc = courseCompanionRepository.findByCourse(c.getCourseId());
+					if(cc!=null) {
+						//lab
+						for(String s:labNames) {
+							practicalList.add(new PracticalList(c.getCourseId(), s, "",courseRepository.findByCourseId(c.getCourseId()).getNoOfHours()));
+						}
+					}
+				}
+			}
 		}
 			
-		//theory courses for that sem
-//		
-//		ArrayList<CourseList> courseList = new ArrayList<>();
-//		
-//		ArrayList<PracticalList> practicalList = new ArrayList<>();
-//		
-//		String labNames[] = new String [] {"1","2","3","4"};
-//		
-//		if(oddOrEven==0) {
-//			ArrayList<Course> allOddTheoryCourses = courseRepository.findOddSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(dept);
-//			
-//			System.out.println("odd");
-//			
-//			
-//			for(Course c:allOddTheoryCourses)
-//			{
-//				for(Divisions d:divisionNeeds) {
-//					if(d.getDepartment().equals(c.getDepartment()) && d.getYear().equals(c.getCourseYear()))
-//						courseList.add(new CourseList(c.getCourseId(),d.getDivName(),"",c.getNoOfHours()));
-//				}
-//				
-//				CompanionCourse cc = courseCompanionRepository.findByCourse(c.getCourseId());
-//				if(cc!=null) {
-//					//lab
-//					for(String s:labNames) {
-//						practicalList.add(new PracticalList(cc.getCompanionCourse(), s, "",courseRepository.findByCourseId(cc.getCompanionCourse()).getNoOfHours()));
-//					}
-//				}
-//			}
+						
+		for(Course c:allTheoryElectiveCourses) {
+			ArrayList<Electives> allTheoryElectives = electivesRepository.findByCourse(c);
+				
+			for(Electives e:allTheoryElectives)
+			{
+				for(ElectiveBatches eb:electiveNeeds) {
+					
+					if(e.getElectiveCourseId().equals(eb.getElectiveId()) && eb.getDepartment().equals(c.getDepartment()) && eb.getYear().equals(c.getCourseYear()))
+						courseList.add(new CourseList(e.getElectiveCourseId(),eb.getBatchId(),"",c.getNoOfHours()));
+				}
+			}
+				
+			CompanionCourse cc = courseCompanionRepository.findByCourse(c.getCourseId());
+			if(cc!=null) {
+				//lab
+				for(String s:labNames) {
+					practicalList.add(new PracticalList(c.getCourseId(), s, "",courseRepository.findByCourseId(cc.getCompanionCourse()).getNoOfHours()));
+				}
+			}
+		}
+		
+		
+			
 //			
 //			
-//			ArrayList<Course> allOddTheoryElectiveCourses = courseRepository.findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(dept);
-//			
-//			for(Course c:allOddTheoryElectiveCourses) {
-//				ArrayList<Electives> allOddTheoryElectives = electivesRepository.findByCourse(c);
-//				
-//				for(Electives e:allOddTheoryElectives)
-//				{
-//					for(ElectiveBatches eb:electiveNeeds) {
-//						
-//						if(e.getElectiveCourseId().equals(eb.getElectiveId()) && eb.getDepartment().equals(c.getDepartment()) && eb.getYear().equals(c.getCourseYear()))
-//							courseList.add(new CourseList(e.getElectiveCourseId(),eb.getDivisionName(),"",c.getNoOfHours()));
-//					}
-//				}
-//				
-//				CompanionCourse cc = courseCompanionRepository.findByCourse(c.getCourseId());
-//				if(cc!=null) {
-//					//lab
-//					for(String s:labNames) {
-//						practicalList.add(new PracticalList(cc.getCompanionCourse(), s, "",courseRepository.findByCourseId(cc.getCompanionCourse()).getNoOfHours()));
-//					}
-//				}
-//			}
-//			
-//			
-//			
-//		}else if(oddOrEven==1){
-//			ArrayList<Course> allOddTheoryCourses = courseRepository.findEvenSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(dept);
-//			System.out.println("even");
-//			
-//			
-//			
-//			
-//			for(Course c:allOddTheoryCourses)
-//			{
-//				System.out.println(c.getCourseId());
-//				for(Divisions d:divisionNeeds) {
-//					System.out.println(d.getDepartment().getDeptId()+" "+c.getDepartment().getDeptId());
-//					System.out.println(d.getYear()+" "+c.getCourseYear());
-//					if(d.getDepartment().equals(c.getDepartment()) && d.getYear().equals(c.getCourseYear()))
-//						courseList.add(new CourseList(c.getCourseId(),d.getDivName(),"",c.getNoOfHours()));
-//				}
-//				
-//				CompanionCourse cc = courseCompanionRepository.findByCourse(c.getCourseId());
-//				if(cc!=null) {
-//					//lab
-//					System.out.println("pract exists");
-//					for(String s:labNames) {
-//						practicalList.add(new PracticalList(cc.getCompanionCourse(), s, "",courseRepository.findByCourseId(cc.getCompanionCourse()).getNoOfHours()));
-//					}
-//				}
-//			}
-//			
-//			
-//			ArrayList<Course> allOddTheoryElectiveCourses = courseRepository.findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(dept);
-//			
-//			for(Course c:allOddTheoryElectiveCourses) {
-//				ArrayList<Electives> allOddTheoryElectives = electivesRepository.findByCourse(c);
-//				
-//				for(Electives e:allOddTheoryElectives)
-//				{
-//					for(ElectiveBatches eb:electiveNeeds) {
-//						if(eb.getDepartment().equals(c.getDepartment()) && eb.getYear().equals(c.getCourseYear()))
-//							courseList.add(new CourseList(e.getElectiveCourseId(),eb.getDivisionName(),"",c.getNoOfHours()));
-//					}			
-//				}
-//				
-//				CompanionCourse cc = courseCompanionRepository.findByCourse(c.getCourseId());
-//				if(cc!=null) {
-//					//lab
-//					for(String s:labNames) {
-//						practicalList.add(new PracticalList(cc.getCompanionCourse(), s, "",courseRepository.findByCourseId(cc.getCompanionCourse()).getNoOfHours()));
-//					}
-//				}
-//			}
-//		}
-//		
+//	
 //		System.out.println("course list");
 //		for(CourseList c:courseList)
 //			System.out.println(c.getCourseId()+" "+c.getDivisionName()+" "+c.getFacultyId());
@@ -1295,7 +1247,6 @@ public class AdminController {
 //		for(CourseList c:courseList) {
 //			System.out.println("for "+c.getCourseId());
 //			
-//			 
 //				ArrayList<FacultyPref> fpref=new ArrayList<>();
 //				
 //				fpref = facultyPrefRepository.findByElectiveId(c.getCourseId());
@@ -1305,13 +1256,11 @@ public class AdminController {
 //				
 //				Collections.sort(fpref,new FacultyPrefChainedComparator(new FacultyPrefNoComparator(),new FacultyPrefCourseExpComparator(),new FacultyPrefPrereqExp1Comparator(),new FacultyPrefPrereqExp2Comparator()));
 //				
-//				
 //				for (FacultyPref fp : fpref) {
 //					if(facAllotedHours.get(fp.getUserName()) >= facLimits.get(fp.getUserName())[1])
 //						continue;
 //					
 //					if(c.getFacultyId().equals("")) {
-//						
 //						
 //						if(facAllotedHours.get(fp.getUserName()) + c.getNoOfHours() <= facLimits.get(fp.getUserName())[1]) {
 //							c.setFacultyId(fp.getUserName());

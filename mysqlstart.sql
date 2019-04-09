@@ -130,8 +130,12 @@ INSERT INTO `course` VALUES ('410250',3,'Machine Learning',8,'R','BE',1,3,0,'CO'
 INSERT INTO `course` VALUES ('410251',3,'Information and Cyber Security',8,'R','BE',1,3,0,'CO');
 INSERT INTO `course` VALUES ('410252',3,'Elective 3',8,'E','BE',1,3,0,'CO');
 INSERT INTO `course` VALUES ('410253',3,'Elective 4	',8,'E','BE',1,3,0,'CO');
-INSERT INTO `course` VALUES ('410254',2,'Laboratory Practice 3',8,'R','BE',0,4,0,'CO');
-INSERT INTO `course` VALUES ('410255',2,'Laboratory Practice 4',8,'E','BE',0,4,0,'CO');
+-- INSERT INTO `course` VALUES ('410254',2,'Laboratory Practice 3',8,'R','BE',0,4,0,'CO');
+-- INSERT INTO `course` VALUES ('410255',2,'Laboratory Practice 4',8,'E','BE',0,4,0,'CO');
+INSERT INTO `course` VALUES ('410254A',1,'LP3-Machine Learning',8,'R','BE',0,2,0,'CO');
+INSERT INTO `course` VALUES ('410254B',1,'LP3-Information and Cyber Security',8,'R','BE',0,2,0,'CO');
+INSERT INTO `course` VALUES ('410255A',1,'LP4-Elective 3',8,'E','BE',0,2,0,'CO');
+INSERT INTO `course` VALUES ('410255B',1,'LP4-Elective 4',8,'E','BE',0,2,0,'CO');
 
 /*BE sem1*/
 INSERT INTO `course` VALUES ('410241',4,'High Performance Computing',7,'R','BE',1,4,0,'CO');
@@ -139,8 +143,13 @@ INSERT INTO `course` VALUES ('410242',3,'Artificial Intelligence and Robotics',7
 INSERT INTO `course` VALUES ('410243',3,'Data Analytics',7,'R','BE',1,3,0,'CO');
 INSERT INTO `course` VALUES ('410244',3,'Elective 1',7,'E','BE',1,3,0,'CO');
 INSERT INTO `course` VALUES ('410245',3,'Elective 2',7,'E','BE',1,3,0,'CS');
-INSERT INTO `course` VALUES ('410246',2,'Laboratory Practice 1',7,'R','BE',0,4,0,'CO');
-INSERT INTO `course` VALUES ('410247',2,'Laboratory Practice 2',7,'E','BE',0,4,0,'CO');
+-- INSERT INTO `course` VALUES ('410246',2,'Laboratory Practice 1',7,'R','BE',0,4,0,'CO');
+-- INSERT INTO `course` VALUES ('410247',2,'Laboratory Practice 2',7,'E','BE',0,4,0,'CO');
+INSERT INTO `course` VALUES ('410246A',1,'LP1-Data Analytics',7,'R','BE',0,2,0,'CO');
+INSERT INTO `course` VALUES ('410246B',1,'LP1-Artificial Intelligence and Robotics',7,'R','BE',0,2,0,'CO');
+INSERT INTO `course` VALUES ('410247A',1,'LP2-Elective 1',7,'E','BE',0,2,0,'CO');
+INSERT INTO `course` VALUES ('410247B',1,'LP2-Elective 2',7,'E','BE',0,2,0,'CO');
+
 
 /*TE sem2*/
 INSERT INTO `course` VALUES ('310250',4,'Design and Analysis of Algorithms',6,'R','TE',1,4,0,'CO');
@@ -158,7 +167,8 @@ INSERT INTO `course` VALUES ('310242',3,'Database Management System',5,'R','TE',
 INSERT INTO `course` VALUES ('310243',3,'Software Engineering and Project Management',5,'R','TE',1,3,0,'CO');
 INSERT INTO `course` VALUES ('310244',3,'Information Systems and Engineering Economics',5,'R','TE',1,3,0,'CO');
 INSERT INTO `course` VALUES ('310245',4,'Computer Networks',5,'R','TE',1,4,0,'CO');
-INSERT INTO `course` VALUES ('310246',4,'Skill Development Lab',5,'R','TE',0,6,0,'CO');
+INSERT INTO `course` VALUES ('310246',4,'Skill Development Lab',5,'R','TE',0,4,0,'CO');
+INSERT INTO `course` VALUES ('310246A',0,'Skill Development Lab (Tut)',5,'R','TE',1,2,0,'CO');
 INSERT INTO `course` VALUES ('310247',2,'DBMS Lab',5,'R','TE',0,4,0,'CO');
 INSERT INTO `course` VALUES ('310248',1,'CN Lab',5,'R','TE',0,2,0,'CO');
 
@@ -206,9 +216,32 @@ INSERT INTO `electives` VALUES ('410245D','Mobile Communication','410245');
 
 /*BE sem1 elective1*/
 INSERT INTO `electives` VALUES ('410244A','Digital Signal Processing','410244');
-INSERT INTO `electives` VALUES ('410244B','SOftware Architecture and Design','410244');
+INSERT INTO `electives` VALUES ('410244B','Software Architecture and Design','410244');
 INSERT INTO `electives` VALUES ('410244C','Pervasive and Ubiquitous Computing','410244');
 INSERT INTO `electives` VALUES ('410244D','Data Mining and Warehousing','410244');
+
+
+/*BE sem2 elective_batches -- will be populated during student allocation*/
+
+-- SCOA(1), Compilers(1), ERTOS(1)
+INSERT INTO `elective_batches` VALUES('BECOEL3-A','410252B','BE','CO');
+INSERT INTO `elective_batches` VALUES('BECOEL3-B','410252C','BE','CO');
+INSERT INTO `elective_batches` VALUES('BECOEL3-C','410252D','BE','CO');
+
+-- HCI(2), CC(1)
+INSERT INTO `elective_batches` VALUES('BECOEL4-A','410253B','BE','CO');
+INSERT INTO `elective_batches` VALUES('BECOEL4-B','410253B','BE','CO');
+INSERT INTO `elective_batches` VALUES('BECOEL4-C','410253C','BE','CO');
+
+/*BE sem1 elective_batches*/
+-- STQA(3)
+INSERT INTO `elective_batches` VALUES('BECOEL1-A','410245B','BE','CO');
+INSERT INTO `elective_batches` VALUES('BECOEL1-B','410245B','BE','CO');
+INSERT INTO `elective_batches` VALUES('BECOEL1-C','410245B','BE','CO');
+-- DMW(3)
+INSERT INTO `elective_batches` VALUES('BECOEL2-A','410244D','BE','CO');
+INSERT INTO `elective_batches` VALUES('BECOEL2-B','410244D','BE','CO');
+INSERT INTO `elective_batches` VALUES('BECOEL2-C','410244D','BE','CO');
 
 
 
@@ -268,62 +301,61 @@ INSERT into course_prerequisites values ('210245',-1,-1,'NA','NA');
 
 
 
-/*COMPANION_COURSE TABLE*/
+/*COMPANION_COURSE TABLE (ID,Course, Practical)*/
 /*BE sem2*/
-INSERT into companion_course values (1,'410250','410254');
-INSERT into companion_course values (2,'410251','410254');
-INSERT into companion_course values (3,'410252A','410255');
-INSERT into companion_course values (4,'410252B','410255');
-INSERT into companion_course values (5,'410252C','410255');
-INSERT into companion_course values (6,'410252D','410255');
-INSERT into companion_course values (7,'410253A','410255');
-INSERT into companion_course values (8,'410253B','410255');
-INSERT into companion_course values (9,'410253C','410255');
-INSERT into companion_course values (10,'410253D','410255');
+INSERT into companion_course values (1,'410250','410254A');
+INSERT into companion_course values (2,'410251','410254B');
+INSERT into companion_course values (3,'410252A','410255A');
+INSERT into companion_course values (4,'410252B','410255A');
+INSERT into companion_course values (5,'410252C','410255A');
+INSERT into companion_course values (6,'410252D','410255A');
+INSERT into companion_course values (7,'410253A','410255B');
+INSERT into companion_course values (8,'410253B','410255B');
+INSERT into companion_course values (9,'410253C','410255B');
+INSERT into companion_course values (10,'410253D','410255B');
 
 /*BE sem1*/
-INSERT into companion_course values (11,'410241','410246');
-INSERT into companion_course values (12,'410242','410246');
-INSERT into companion_course values (13,'410243','410246');
-INSERT into companion_course values (14,'410244A','410247');
-INSERT into companion_course values (15,'410244B','410247');
-INSERT into companion_course values (16,'410244C','410247');
-INSERT into companion_course values (17,'410244D','410247');
-INSERT into companion_course values (18,'410245A','410247');
-INSERT into companion_course values (19,'410245B','410247');
-INSERT into companion_course values (20,'421245C','410247');
-INSERT into companion_course values (21,'410245D','410247');
+INSERT into companion_course values (12,'410242','410246A');
+INSERT into companion_course values (13,'410243','410246B');
+INSERT into companion_course values (14,'410244A','410247A');
+INSERT into companion_course values (15,'410244B','410247A');
+INSERT into companion_course values (16,'410244C','410247A');
+INSERT into companion_course values (17,'410244D','410247A');
+INSERT into companion_course values (18,'410245A','410247B');
+INSERT into companion_course values (19,'410245B','410247B');
+INSERT into companion_course values (20,'421245C','410247B');
+INSERT into companion_course values (21,'410245D','410247B');
 
 /*TE sem2*/
 INSERT into companion_course values (22,'310251','310257');
 INSERT into companion_course values (23,'310252','310258');
 INSERT into companion_course values (24,'310254','310256');
-INSERT into companion_course values (25,'310257','310251');
-INSERT into companion_course values (26,'310258','310252');
-INSERT into companion_course values (27,'310256','310254');
+-- INSERT into companion_course values (25,'310257','310251');
+-- INSERT into companion_course values (26,'310258','310252');
+-- INSERT into companion_course values (27,'310256','310254');
 
 /*TE sem1*/
 INSERT into companion_course values (28,'310242','310247');
 INSERT into companion_course values (29,'310245','310248');
-INSERT into companion_course values (30,'310247','310242');
-INSERT into companion_course values (31,'310248','310245');
+-- INSERT into companion_course values (30,'310247','310242');
+-- INSERT into companion_course values (31,'310248','310245');
 
 /*SE sem2*/
 INSERT into companion_course values (32,'210251','210255');
 INSERT into companion_course values (33,'210252','210256');
 INSERT into companion_course values (34,'210253','210257');
-INSERT into companion_course values (35,'210255','210251');
-INSERT into companion_course values (36,'210256','210252');
-INSERT into companion_course values (37,'210257','210253');
+-- INSERT into companion_course values (35,'210255','210251');
+-- INSERT into companion_course values (36,'210256','210252');
+-- INSERT into companion_course values (37,'210257','210253');
 
 
 /*SE sem1*/
 INSERT into companion_course values (38,'210242','210246');
 INSERT into companion_course values (39,'210243','210247');
 INSERT into companion_course values (40,'210245','210248');
-INSERT into companion_course values (41,'210246','210242');
-INSERT into companion_course values (42,'210247','210243');
-INSERT into companion_course values (43,'210248','210245');
+-- INSERT into companion_course values (41,'210246','210242');
+-- INSERT into companion_course values (42,'210247','210243');
+-- INSERT into companion_course values (43,'210248','210245');
 
 
 
@@ -426,23 +458,23 @@ insert into divisions values('SECOB','B',4,'SE','CO');
 insert into divisions values('SECOC','C',4,'SE','CO');
 
 /*Resource Table*/
-insert into resource values('CO101',80,"101","CS","fac1");
-insert into resource values('CO111',80,"111","CS","fac1");
-insert into resource values('CO201',80,"201","CS","fac1");
-insert into resource values('CO202',80,"202","CS","fac1");
-insert into resource values('CO203',80,"203","CS","fac1");
-insert into resource values('CO204',80,"204","CS","fac1");
-insert into resource values('CO205A',25,'205A',"CS","fac2");
-insert into resource values('CO205B',25,'205B',"CS","fac3");
-insert into resource values('CO205C',25,'205C',"CS","fac4");
-insert into resource values('CO206',25,'206',"CS","fac5");
-insert into resource values('CO207',25,'207',"CS","fac6");
-insert into resource values('CO210',25,'210',"CS","fac7");
-insert into resource values('CO212A',25,'212A',"CS","fac8");
-insert into resource values('CO212B',25,'212B',"CS","fac9");
-insert into resource values('CO212C',25,'212C',"CS","fac10");
-insert into resource values('CO112A',25,'112A',"CS","fac11");
-insert into resource values('CO112B',25,'112B',"CS","fac12");
-insert into resource values('CO112C',25,'112C',"CS","fac13");
-insert into resource values('CO007',25,'007',"CS","fac14");
+insert into resource values('CO101',80,"101","CO","fac1");
+insert into resource values('CO111',80,"111","CO","fac1");
+insert into resource values('CO201',80,"201","CO","fac1");
+insert into resource values('CO202',80,"202","CO","fac1");
+insert into resource values('CO203',80,"203","CO","fac1");
+insert into resource values('CO204',80,"204","CO","fac1");
+insert into resource values('CO205A',25,'205A',"CO","fac2");
+insert into resource values('CO205B',25,'205B',"CO","fac3");
+insert into resource values('CO205C',25,'205C',"CO","fac4");
+insert into resource values('CO206',25,'206',"CO","fac5");
+insert into resource values('CO207',25,'207',"CO","fac6");
+insert into resource values('CO210',25,'210',"CO","fac7");
+insert into resource values('CO212A',25,'212A',"CO","fac8");
+insert into resource values('CO212B',25,'212B',"CO","fac9");
+insert into resource values('CO212C',25,'212C',"CO","fac10");
+insert into resource values('CO112A',25,'112A',"CO","fac11");
+insert into resource values('CO112B',25,'112B',"CO","fac12");
+insert into resource values('CO112C',25,'112C',"CO","fac13");
+insert into resource values('CO007',25,'007',"CO","fac14");
 

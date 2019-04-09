@@ -85,7 +85,7 @@ public class Course {
 	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
 	Set<CompanionCourse> courses = new HashSet<CompanionCourse>();
 	
-	// O: Open Elective, E: Normal Elective R: regular course
+	//E: Elective R: regular course
 	@Column(name = "course_type")
 	private char courseType;
 
