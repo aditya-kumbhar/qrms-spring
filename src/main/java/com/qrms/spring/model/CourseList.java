@@ -13,14 +13,14 @@ public class CourseList {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="division_id")
-	private int divisionId;
+	@Column(name="id")
+	private int id;
 	
 	@Column(name="course_id")
 	private String courseId;
 	
-	@Column(name="division_name")
-	private char divisionName;
+	@Column(name="division_id")
+	private String divisionId;
 	
 	@Column(name="faculty_id")
 	private String facultyId;
@@ -32,10 +32,10 @@ public class CourseList {
 		
 	}
 	
-	public CourseList(String courseId, char divisionName, String facultyId,int noOfHours) {
+	public CourseList(String courseId, String divisionId, String facultyId,int noOfHours) {
 		super();
 		this.courseId = courseId;
-		this.divisionName = divisionName;
+		this.divisionId = divisionId;
 		this.facultyId = facultyId;
 		this.noOfHours = noOfHours;
 	}
@@ -48,11 +48,11 @@ public class CourseList {
 		this.noOfHours = noOfHours;
 	}
 
-	public int getDivisionId() {
+	public String getDivisionId() {
 		return divisionId;
 	}
 
-	public void setDivisionId(int divisionId) {
+	public void setDivisionId(String divisionId) {
 		this.divisionId = divisionId;
 	}
 
@@ -63,15 +63,7 @@ public class CourseList {
 	public void setCourseId(String courseId) {
 		this.courseId = courseId;
 	}
-
-	public char getDivisionName() {
-		return divisionName;
-	}
-
-	public void setDivisionName(char divisionName) {
-		this.divisionName = divisionName;
-	}
-
+	
 	public String getFacultyId() {
 		return facultyId;
 	}

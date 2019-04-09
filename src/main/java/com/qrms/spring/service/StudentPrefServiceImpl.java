@@ -17,6 +17,7 @@ import com.qrms.spring.repository.StudentPrefRepository;
 
 @Service
 public class StudentPrefServiceImpl implements StudentPrefService {
+	
 	@Autowired
 	private StudentPrefRepository studentPrefRepository;
 
@@ -38,7 +39,6 @@ public class StudentPrefServiceImpl implements StudentPrefService {
 	public List<StudentPrefCountInfo> computeStudPrefTable() {
 		List<StudentCountByYearSem> totalStudentCount;
 		
-
 		List<PrefGroupByCourseStudent> prefsPerElective;
 		List<StudentPrefCountInfo> studCountInfo = new ArrayList<StudentPrefCountInfo>();
 	
@@ -84,11 +84,7 @@ public class StudentPrefServiceImpl implements StudentPrefService {
 			}
 			si.setYear(openCourse.getCourseYear());
 			studCountInfo.add(si);
-			
 		}
-		
-		
 		return studCountInfo;
-	
 	}
 }
