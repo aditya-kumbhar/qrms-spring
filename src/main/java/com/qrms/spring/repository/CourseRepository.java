@@ -127,12 +127,10 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 			"WHERE c.courseSem%2<>0 and c.courseType<>'R' and c.isTheory=1 and c.department=?1")
 	ArrayList<Course> findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(Department dept);
 	
-		ArrayList<Course> findByCourseType(char c);
-		Optional<Course> findByCourseIdAndDepartmentAndIsTheoryAndCourseType(String prerequisiteNo1,
-				Department department, int i, char c);
-		Optional<Course> findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheoryAndCourseType(
-				String companionTheory, Department department, String courseYear, int courseSem, int i, char c);
-	
-		
+	ArrayList<Course> findByCourseType(char c);
+	Optional<Course> findByCourseIdAndDepartmentAndIsTheoryAndCourseType(String prerequisiteNo1,
+			Department department, int i, char c);
+	Optional<Course> findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheoryAndCourseType(
+			String companionTheory, Department department, String courseYear, int courseSem, int i, char c);
 		
 }
