@@ -2,6 +2,8 @@ package com.qrms.spring.resource;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.FacultyPref;
+import com.qrms.spring.model.Resource;
+import com.qrms.spring.model.TimeSlots;
+import com.qrms.spring.model.TimeTable;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CoursePrerequisites;
 import com.qrms.spring.model.Department;
@@ -29,6 +34,7 @@ import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
+import com.qrms.spring.repository.TimeSlotsRepository;
 import com.qrms.spring.service.BookingsService;
 import com.qrms.spring.service.BookingsServiceImpl;
 import com.qrms.spring.repository.FacultyAcadRepository;
@@ -269,12 +275,52 @@ public class FacultyController {
 		return model;
 	}
 	
-	@RequestMapping(value="/setbookings",method=RequestMethod.POST)
-	public ModelAndView setRequirements() {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("/faculty/bookings");
-		ArrayList<Department> depts = bookingsService.listDepartments();
-		model.addObject("departments", depts);		
-		return model;
+	@RequestMapping(value="/getOptions",method=RequestMethod.POST)
+	public String setRequirements(Model model,String dept,String rType,Integer minSeats) {
+//		ModelAndView model = new ModelAndView();
+//		model.setViewName("/faculty/bookings");
+//		ArrayList<Department> depts = bookingsService.listDepartments();
+//		model.addObject("departments", depts);
+		
+		System.out.println(dept+" "+rType+" "+minSeats);
+		ArrayList<Resource> options = bookingsService.listResourcesByDepartmentAndRTypeAndMinSeats(dept, rType, minSeats);
+		System.out.println("ok2"+" "+options.size());
+		
+		
+		if(options.isEmpty()) {
+			model.addAttribute("err_msg","There are no open student elective preference forms");
+			return "faculty/bookings:: messageDiv";
+		}
+		else {
+			model.addAttribute("options",options);
+			return "faculty/bookings:: resourceOptionsTable";
+		}
+	}
+	
+	@RequestMapping(value="/getTTForResource", method=RequestMethod.GET)
+	public String getTTForResource(Model model,String getTT){
+		System.out.println("resource = "+getTT);
+		
+		Collection <TimeSlots> ts = bookingsService.findTimeSlotsByResourceForCurrentDate(getTT);
+		
+		
+		List<TimeSlots> list;
+		if (ts instanceof List)
+		  list = (List<TimeSlots>)ts;
+		else
+		  list = new ArrayList<TimeSlots>(ts);
+		
+		Collections.sort(list);
+		
+		if(ts.isEmpty()) {
+			model.addAttribute("err_msg","No Slots are booked!");
+			return "faculty/bookings:: messageDiv";
+		}else {
+			System.out.println(list.size());
+			for(TimeSlots tss:ts)
+				System.out.println(tss.getStartTime());
+			model.addAttribute("ttForResource",list);
+			return "faculty/bookings:: resourceTT";
+		}
 	}
 }

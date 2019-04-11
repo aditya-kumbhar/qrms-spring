@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Elective batches</title>
+	<th:block th:include="fragments/admin_header.html :: headerfiles"></th:block>
+    <!-- Custom styles for this template -->
+   	<link th:href="@{/css/admin/admin_home.css}" rel="stylesheet">
+	<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
+   	
+</head>
+<body>
+<script type="text/javascript">
+$(document).ready(function () {
+	$( "#batches-form" ).on( "submit", function(){
+	console.log("umm");
+	
+	/*var answers = {};
+	$.each($('.batches'), function(e) {
+		answers[this.id] = $(this).val();
+	});*/
+	event.preventDefault();
+	var electiveBatchCounts = [];
+	$.each($('.batches'), function() {
+		electiveBatchCounts.push({"electiveId":this.id,"noOfBatches":$(this).val()});
+	});
+	
+	console.log(electiveBatchCounts);
+	
+	answers = JSON.stringify({
+		'electiveBatchCounts': electiveBatchCounts
+	});
+	
+	console.log(electiveBatchCounts);
+	
+	$.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: '/u/admin/setbatches',
+        data: electiveBatchCounts,
+        success: function (response) {
+        	console.log("Okay");
+        	window.location.replace("http://127.0.0.1:8080/u/admin/home");
+        }
+
+	});
+	});
+});
+</script>
+
+<div class="card bg-light">
+		<article class="card-body mx-auto">
+		<h4 class="card-title mt-3 text-center">Enter Requirements</h4>
+		<form id="batches-form">
+			<table class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>
+							Elective Id
+						</th>
+						<th>
+							Students Count
+						</th>
+						<th>
+							Number of batches to form
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="i:${electiveToCount}">
+						<td th:text="${i.key}" th:attr="data-ptr=${i.key}"></td>
+						<td th:text="${i.value}"></td>
+						<td>
+							<input th:id="${i.key}" th:name="electiveNoOfBatches" class="batches form-control" type="number" required>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3" align="center">
+							<button type="submit" class="btn btn-primary" name="submitNoOfBatches" id="submitNoOfBatches">Submit</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+		</article>
+		<div class="row text-center mx-auto">
+			<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+			<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
+		</div>  
+	</div>
+</body>
+</html>

@@ -34,18 +34,42 @@ public class Resource {
 	@Column(name="resource_capacity")
 	private int resourceCapacity;
 	
+	@Column(name="resource_type")
+	private String resourceType;
+	
+	@Column(name="resource_info")
+	private String resourceInfo;
+	
 	public Resource() {
 		// TODO Auto-generated constructor stub
 	}
 	
 	public Resource(String resourceId, String resourceName, Department department, Users resourceIncharge,
-			int resourceCapacity) {
+			int resourceCapacity,String resourceType,String resourceInfo) {
 		super();
 		this.resourceId = resourceId;
 		this.resourceName = resourceName;
 		this.department = department;
 		this.resourceIncharge = resourceIncharge;
 		this.resourceCapacity = resourceCapacity;
+		this.resourceType = resourceType;
+		this.resourceInfo = resourceInfo;
+	}
+
+	public String getResourceInfo() {
+		return resourceInfo;
+	}
+
+	public void setResourceInfo(String resourceInfo) {
+		this.resourceInfo = resourceInfo;
+	}
+
+	public String getResourceType() {
+		return resourceType;
+	}
+
+	public void setResourceType(String resourceType) {
+		this.resourceType = resourceType;
 	}
 
 	public int getResourceCapacity() {

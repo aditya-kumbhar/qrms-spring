@@ -13,12 +13,13 @@ import javax.persistence.Table;
 @Table(name="student_alloc_course")
 public class StudentAllocCourse{
 	
-	public StudentAllocCourse(Electives elective, Course courseId,StudentAcad student, int prefNo) {
+	public StudentAllocCourse(Electives elective, Course courseId,StudentAcad student, int prefNo,String batchId) {
 		super();
 		this.elective = elective;
 		this.courseId = courseId;
 		this.prefNo = prefNo;
 		this.student = student;
+		this.batchId = batchId;
 	}
 	
 	public StudentAllocCourse() {
@@ -45,6 +46,17 @@ public class StudentAllocCourse{
 	@Column(name="pref_no")
 	private int prefNo;
 	
+	@Column(name="batch_id")
+	private String batchId;
+	
+	public String getBatchId() {
+		return batchId;
+	}
+
+	public void setBatchId(String batchId) {
+		this.batchId = batchId;
+	}
+
 	public StudentAcad getStudent() {
 		return student;
 	}

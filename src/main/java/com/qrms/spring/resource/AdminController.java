@@ -55,6 +55,7 @@ import com.qrms.spring.queryBeans.FacultyUsers;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.queryBeans.CombinedCourseElective;
+import com.qrms.spring.queryBeans.ElectiveBatchCountList;
 import com.qrms.spring.queryBeans.StudentUsers;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CourseList;
@@ -200,7 +201,7 @@ public class AdminController {
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
 		allocFaculty(1,departmentRepository.findByDeptId("CO"));
-		//readTT("CO","Monday");
+//		readTT("CO","Monday");
 		return getViewAdminHome(null);
 	}
 	
@@ -412,7 +413,49 @@ public class AdminController {
 			courseId = ec.getCourseId();
 		}
 		set_process_student_allocation(courseId);
-		return getStudPrefDetailsTable();
+//		return getStudPrefDetailsTable();
+		Course c = courseRepository.findByCourseId(courseId);
+//		System.out.println("course "+c.getCourseId());
+		ArrayList<StudentAllocCourse> allocs = studentAllocCourseRepository.findByCourseId(c);
+		System.out.println("allocs size "+allocs.size());
+		HashMap<String,Integer> electiveToCount = new HashMap<>();
+		for(StudentAllocCourse sac:allocs) {
+//			System.out.println("sac "+sac.getCourseId());
+			String elective = sac.getElective().getElectiveCourseId();
+			if(electiveToCount.containsKey(elective)) {
+				electiveToCount.replace(elective, electiveToCount.get(elective)+1);
+			}else {
+				electiveToCount.put(elective, 1);
+			}
+		}
+		ModelAndView model = new ModelAndView();
+
+//		List<Integer> list;
+//		if (electiveToCount.values() instanceof List)
+//		  list = (List<Integer>)electiveToCount.values();
+//		else
+//		  list = new ArrayList<Integer>();
+//		
+		
+//		model.addObject("electiveToCount",list);
+//		System.out.println("elective count size "+electiveToCount.keySet().size());
+		model.addObject("electiveToCount",electiveToCount);
+		model.addObject("department",departmentRepository.findAll());
+		
+		model.setViewName("admin/electiveBatches");
+		return model;
+	}
+	
+	@RequestMapping(name="/setbatches",method=RequestMethod.POST)
+	public String setNoOfBatches(ElectiveBatchCountList electiveBatchCounts) {
+		ModelAndView model = new ModelAndView();
+		System.out.println("oyeeee");
+		
+		return "success";
+//		return "home
+//		model.setViewName("admin/home");
+//		model.addObject("msg","Elective Batches have been set successfully!");
+//		return model;
 	}
 	
 	//Display register user form
@@ -857,6 +900,7 @@ public class AdminController {
 			g_err_msg = "Preference forms should be closed before performing allocation.";
 			g_msg = null;
 		}
+		
 	//	return process_student_allocation(null,g_msg,g_err_msg);
 	}
 	
@@ -916,7 +960,7 @@ public class AdminController {
 							int vCount = eVHM.get(pref.getElectiveCourseId());
 							if (vCount>0) {
 								eVHM.replace(pref.getElectiveCourseId(), vCount-1);
-								StudentAllocCourse s = new StudentAllocCourse(pref, pref.getCourse(), studentAcad, prefNo);
+								StudentAllocCourse s = new StudentAllocCourse(pref, pref.getCourse(), studentAcad, prefNo,"");
 								studAllocs.put(studentAcad, s);
 								flag = 1;
 								break;
@@ -931,7 +975,7 @@ public class AdminController {
 								int vCount = eVHM.get(e.getElectiveCourseId());
 								if (vCount>0) {
 									eVHM.replace(e.getElectiveCourseId(), vCount-1);
-									StudentAllocCourse s = new StudentAllocCourse(e,e.getCourse(),studentAcad,-1);
+									StudentAllocCourse s = new StudentAllocCourse(e,e.getCourse(),studentAcad,-1,"");
 									studAllocs.put(studentAcad, s);
 									flag = 1;
 									break;
@@ -952,7 +996,7 @@ public class AdminController {
 							int vCount = eVHM.get(e.getElectiveCourseId());
 							if (vCount>0) {
 								eVHM.replace(e.getElectiveCourseId(), vCount-1);
-								StudentAllocCourse s = new StudentAllocCourse(e,e.getCourse(),studentAcad,-1);
+								StudentAllocCourse s = new StudentAllocCourse(e,e.getCourse(),studentAcad,-1,"");
 								studAllocs.put(studentAcad, s);
 								flag = 1;
 								break;
@@ -1624,12 +1668,12 @@ public class AdminController {
 		            				String[] temp = str.split(",");
 		            				for(String temps:temp) {
 		            					Resource r = resourceRepository.findByResourceId(dept.concat(temps));
-			            				timetable.add(new TimeTable(slot[0], slot[1], r, r.getResourceCapacity(), day, department));
+			            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department));
 		            				}
 		            			}else {
 		            				//System.out.println("token "+str+" "+dept.concat(str)+" "+slot[0]+" "+slot[1]);
 		            				Resource r = resourceRepository.findByResourceId(dept.concat(str));
-		            				timetable.add(new TimeTable(slot[0], slot[1], r, r.getResourceCapacity(), day, department));
+		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department));
 //		            				System.out.println("ok");
 		            				
 	            				}

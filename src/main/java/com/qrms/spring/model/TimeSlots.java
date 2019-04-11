@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="time_slots")
-public class TimeSlots {
+public class TimeSlots implements Comparable<TimeSlots>{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -91,11 +91,21 @@ public class TimeSlots {
 		this.seatsOccupied = seatsOccupied;
 	}
 
-	public TimeSlots(Time startTime, Time endTime, Resource resourceId, int seatsOccupied) {
+	public TimeSlots(Time startTime, Time endTime, Resource resourceId, int seatsOccupied,Date date) {
 		super();
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.resourceId = resourceId;
 		this.seatsOccupied = seatsOccupied;
+		this.date = date;
 	}
+
+	@Override
+	public int compareTo(TimeSlots o) {
+		// TODO Auto-generated method stub
+		return (this.getStartTime().before(o.getStartTime()) ? -1 : 
+
+            (this.getStartTime().equals(o) ? 0 : 1));
+	}
+	
 }
