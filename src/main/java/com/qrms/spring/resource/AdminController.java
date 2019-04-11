@@ -45,8 +45,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Role;
@@ -60,6 +62,7 @@ import com.qrms.spring.queryBeans.FacultyUsers;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.queryBeans.CombinedCourseElective;
+import com.qrms.spring.queryBeans.ElectiveBatchCount;
 import com.qrms.spring.queryBeans.ElectiveBatchCountList;
 import com.qrms.spring.queryBeans.StudentUsers;
 import com.qrms.spring.model.Course;
@@ -205,7 +208,7 @@ public class AdminController {
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
-		allocFaculty(1,departmentRepository.findByDeptId("CO"));
+//		allocFaculty(1,departmentRepository.findByDeptId("CO"));
 //		readTT("CO","Monday");
 		return getViewAdminHome(null);
 	}
@@ -418,11 +421,19 @@ public class AdminController {
 			courseId = ec.getCourseId();
 		}
 		set_process_student_allocation(courseId);
+		
+		ModelAndView model = new ModelAndView();
+
+		
+		if(g_err_msg!=null) {
+			return getStudPrefDetailsTable();
+		}
+		
 //		return getStudPrefDetailsTable();
 		Course c = courseRepository.findByCourseId(courseId);
 //		System.out.println("course "+c.getCourseId());
 		ArrayList<StudentAllocCourse> allocs = studentAllocCourseRepository.findByCourseId(c);
-		System.out.println("allocs size "+allocs.size());
+//		System.out.println("allocs size "+allocs.size());
 		HashMap<String,Integer> electiveToCount = new HashMap<>();
 		for(StudentAllocCourse sac:allocs) {
 //			System.out.println("sac "+sac.getCourseId());
@@ -433,8 +444,7 @@ public class AdminController {
 				electiveToCount.put(elective, 1);
 			}
 		}
-		ModelAndView model = new ModelAndView();
-
+		
 //		List<Integer> list;
 //		if (electiveToCount.values() instanceof List)
 //		  list = (List<Integer>)electiveToCount.values();
@@ -451,16 +461,23 @@ public class AdminController {
 		return model;
 	}
 	
+	@ResponseBody
 	@RequestMapping(name="/setbatches",method=RequestMethod.POST)
-	public String setNoOfBatches(ElectiveBatchCountList electiveBatchCounts) {
-		ModelAndView model = new ModelAndView();
+	public String setNoOfBatches(Model model,@RequestBody ElectiveBatchCountList electiveBatchCounts) {
 		System.out.println("oyeeee");
 		
+		
+		
+		for(ElectiveBatchCount ebc:electiveBatchCounts.getElectiveBatchCounts()) {
+			ElectiveBatches eb = new ElectiveBatches();
+			Electives elective = electivesRepository.findByElectiveCourseId(ebc.getElectiveId());
+			eb.setElectiveId(ebc.getElectiveId());
+			eb.setDepartment(elective.getCourse().getDepartment());
+			eb.setYear(elective.getCourse().getCourseYear());
+			electiveBatchesRepository.save(eb);
+		}
+		
 		return "success";
-//		return "home
-//		model.setViewName("admin/home");
-//		model.addObject("msg","Elective Batches have been set successfully!");
-//		return model;
 	}
 	
 	//Display register user form
@@ -994,8 +1011,8 @@ public class AdminController {
 						
 					}else {
 						//assign popular course
-						System.out.println("Hasn't given preference");
-						System.out.println("Assigning course according to popularity!");
+//						System.out.println("Hasn't given preference");
+//						System.out.println("Assigning course according to popularity!");
 						int flag=0;
 						for (Electives e : popularElectives) {
 							int vCount = eVHM.get(e.getElectiveCourseId());

@@ -15,10 +15,6 @@ $(document).ready(function () {
 	$( "#batches-form" ).on( "submit", function(){
 	console.log("umm");
 	
-	/*var answers = {};
-	$.each($('.batches'), function(e) {
-		answers[this.id] = $(this).val();
-	});*/
 	event.preventDefault();
 	var electiveBatchCounts = [];
 	$.each($('.batches'), function() {
@@ -27,7 +23,7 @@ $(document).ready(function () {
 	
 	console.log(electiveBatchCounts);
 	
-	answers = JSON.stringify({
+	electiveBatchCounts = JSON.stringify({
 		'electiveBatchCounts': electiveBatchCounts
 	});
 	
@@ -38,6 +34,8 @@ $(document).ready(function () {
         contentType: "application/json",
         url: '/u/admin/setbatches',
         data: electiveBatchCounts,
+        dataType: 'html',
+        mimeType: 'application/json',
         success: function (response) {
         	console.log("Okay");
         	window.location.replace("http://127.0.0.1:8080/u/admin/home");
