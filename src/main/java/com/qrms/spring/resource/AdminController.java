@@ -1,5 +1,6 @@
 package com.qrms.spring.resource;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,6 +9,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.logging.ConsoleHandler;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -35,14 +38,17 @@ import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Role;
@@ -56,6 +62,8 @@ import com.qrms.spring.queryBeans.FacultyUsers;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.queryBeans.CombinedCourseElective;
+import com.qrms.spring.queryBeans.ElectiveBatchCount;
+import com.qrms.spring.queryBeans.ElectiveBatchCountList;
 import com.qrms.spring.queryBeans.StudentUsers;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CourseList;
@@ -106,6 +114,7 @@ import com.qrms.spring.service.CustomUserDetailsService;
 import com.qrms.spring.service.FacultyAcadService;
 import com.qrms.spring.service.StudentAcadServiceImpl;
 import com.qrms.spring.service.StudentPrefServiceImpl;
+import com.qrms.spring.service.TimeSlotsService;
 
 @Controller
 @RequestMapping("/u/admin")
@@ -122,6 +131,9 @@ public class AdminController {
 	
 	@Autowired
 	private StudentAcadServiceImpl studAcadService;
+//	
+//	@Autowired
+//	private TimeSlotsService timeSlotsService;
 	
 	@Autowired
 	private RoleRepository roleRepository;
@@ -200,11 +212,15 @@ public class AdminController {
 	// Replace with kk:mm if you want 1-24 interval
 	private static final DateFormat TWENTY_FOUR_TF = new SimpleDateFormat("HH:mm");
 
+	
+	
+	
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
 //		allocFaculty(1,departmentRepository.findByDeptId("CO"));
-		//readTT("CO","Monday");
+//		readTT("CO","Monday");
+
 		return getViewAdminHome(null);
 	}
 	
@@ -416,7 +432,63 @@ public class AdminController {
 			courseId = ec.getCourseId();
 		}
 		set_process_student_allocation(courseId);
-		return getStudPrefDetailsTable();
+		
+		ModelAndView model = new ModelAndView();
+
+		
+		if(g_err_msg!=null) {
+			return getStudPrefDetailsTable();
+		}
+		
+//		return getStudPrefDetailsTable();
+		Course c = courseRepository.findByCourseId(courseId);
+//		System.out.println("course "+c.getCourseId());
+		ArrayList<StudentAllocCourse> allocs = studentAllocCourseRepository.findByCourseId(c);
+//		System.out.println("allocs size "+allocs.size());
+		HashMap<String,Integer> electiveToCount = new HashMap<>();
+		for(StudentAllocCourse sac:allocs) {
+//			System.out.println("sac "+sac.getCourseId());
+			String elective = sac.getElective().getElectiveCourseId();
+			if(electiveToCount.containsKey(elective)) {
+				electiveToCount.replace(elective, electiveToCount.get(elective)+1);
+			}else {
+				electiveToCount.put(elective, 1);
+			}
+		}
+		
+//		List<Integer> list;
+//		if (electiveToCount.values() instanceof List)
+//		  list = (List<Integer>)electiveToCount.values();
+//		else
+//		  list = new ArrayList<Integer>();
+//		
+		
+//		model.addObject("electiveToCount",list);
+//		System.out.println("elective count size "+electiveToCount.keySet().size());
+		model.addObject("electiveToCount",electiveToCount);
+		model.addObject("department",departmentRepository.findAll());
+		
+		model.setViewName("admin/electiveBatches");
+		return model;
+	}
+	
+	@ResponseBody
+	@RequestMapping(name="/setbatches",method=RequestMethod.POST)
+	public String setNoOfBatches(Model model,@RequestBody ElectiveBatchCountList electiveBatchCounts) {
+		System.out.println("oyeeee");
+		
+		
+		
+		for(ElectiveBatchCount ebc:electiveBatchCounts.getElectiveBatchCounts()) {
+			ElectiveBatches eb = new ElectiveBatches();
+			Electives elective = electivesRepository.findByElectiveCourseId(ebc.getElectiveId());
+			eb.setElectiveId(ebc.getElectiveId());
+			eb.setDepartment(elective.getCourse().getDepartment());
+			eb.setYear(elective.getCourse().getCourseYear());
+			electiveBatchesRepository.save(eb);
+		}
+		
+		return "success";
 	}
 	
 	//Display register user form
@@ -861,6 +933,7 @@ public class AdminController {
 			g_err_msg = "Preference forms should be closed before performing allocation.";
 			g_msg = null;
 		}
+		
 	//	return process_student_allocation(null,g_msg,g_err_msg);
 	}
 	
@@ -920,7 +993,7 @@ public class AdminController {
 							int vCount = eVHM.get(pref.getElectiveCourseId());
 							if (vCount>0) {
 								eVHM.replace(pref.getElectiveCourseId(), vCount-1);
-								StudentAllocCourse s = new StudentAllocCourse(pref, pref.getCourse(), studentAcad, prefNo);
+								StudentAllocCourse s = new StudentAllocCourse(pref, pref.getCourse(), studentAcad, prefNo,"");
 								studAllocs.put(studentAcad, s);
 								flag = 1;
 								break;
@@ -935,7 +1008,7 @@ public class AdminController {
 								int vCount = eVHM.get(e.getElectiveCourseId());
 								if (vCount>0) {
 									eVHM.replace(e.getElectiveCourseId(), vCount-1);
-									StudentAllocCourse s = new StudentAllocCourse(e,e.getCourse(),studentAcad,-1);
+									StudentAllocCourse s = new StudentAllocCourse(e,e.getCourse(),studentAcad,-1,"");
 									studAllocs.put(studentAcad, s);
 									flag = 1;
 									break;
@@ -949,14 +1022,14 @@ public class AdminController {
 						
 					}else {
 						//assign popular course
-						System.out.println("Hasn't given preference");
-						System.out.println("Assigning course according to popularity!");
+//						System.out.println("Hasn't given preference");
+//						System.out.println("Assigning course according to popularity!");
 						int flag=0;
 						for (Electives e : popularElectives) {
 							int vCount = eVHM.get(e.getElectiveCourseId());
 							if (vCount>0) {
 								eVHM.replace(e.getElectiveCourseId(), vCount-1);
-								StudentAllocCourse s = new StudentAllocCourse(e,e.getCourse(),studentAcad,-1);
+								StudentAllocCourse s = new StudentAllocCourse(e,e.getCourse(),studentAcad,-1,"");
 								studAllocs.put(studentAcad, s);
 								flag = 1;
 								break;
@@ -1601,7 +1674,7 @@ public class AdminController {
 		allocFaculty(sem,d);
 		generateFacultyAllotedList();
 		return model;
-	}
+	}	
 	
 	public void generateFacultyAllotedList() {
 		//TODO: change the return type to List<> of a query bean class which will have variables as required by the UI table in facultyAllocation.html
@@ -1703,12 +1776,12 @@ public class AdminController {
 		            				String[] temp = str.split(",");
 		            				for(String temps:temp) {
 		            					Resource r = resourceRepository.findByResourceId(dept.concat(temps));
-			            				timetable.add(new TimeTable(slot[0], slot[1], r, r.getResourceCapacity(), day, department));
+			            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department));
 		            				}
 		            			}else {
 		            				//System.out.println("token "+str+" "+dept.concat(str)+" "+slot[0]+" "+slot[1]);
 		            				Resource r = resourceRepository.findByResourceId(dept.concat(str));
-		            				timetable.add(new TimeTable(slot[0], slot[1], r, r.getResourceCapacity(), day, department));
+		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department));
 //		            				System.out.println("ok");
 		            				
 	            				}
@@ -1741,11 +1814,25 @@ public class AdminController {
        
 	}
 	
-	@Scheduled(cron="0 30 * * *")
-	public void hourlyUpdate() {
-		//change all entries from current time slots to old
-		//find entries from timeslots and timetable to current time slots
-	}
+//	private Date nextDate; 
+//	
+//	@Scheduled(cron="0 30 * * *")
+//	public void halfhourlyUpdate() throws Exception{
+//		//change all entries from current time slots to old
+//		//find entries from timeslots and timetable to current time slots
+//		
+//		//cron="0 30 * * *"
+//		try{
+//			CronExpression exp = new CronExpression("0 30 * * *");
+//			Instant nextTime = exp.getTimeBefore(Date.from(Instant.now())).toInstant();
+//			
+//		}catch (ParseException e) {
+//	         System.out.println("Could not parse cron expression: "+" "+ e.toString());
+//	        }
+//		timeSlotsService.updateTimeSlots();
+//		
+//		
+//	}
 	
 	
 }

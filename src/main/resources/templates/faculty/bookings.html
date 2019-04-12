@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<th:block th:include="fragments/fac_header.html :: headerfiles"></th:block>
+<title>Time slot booking</title>
+</head>
+<div th:replace="fragments/fac_header :: header"></div>
+
+<!-- script to turn nav link active -->
+<script type="text/javascript">
+	var navBar = document.getElementById("nav-bar");		
+	var current = navBar.getElementsByClassName("active");
+    // If there's any other active nav, make it inactive
+    if (current.length > 0) { 
+      current[0].className = current[0].className.replace(" active", "");
+    }
+	//set current page nav as active
+	document.getElementById("bookings-nav").className+=" active";		
+</script>
+<script>
+	$(document).ready(function () {
+        $("#submit").click(function () {
+       	 	var dept = $('#dept');
+       	 	var rType = $('#rType');
+       	 	var seats = $('#minSeats');
+       	 	
+       	 	if(dept.val() == "none"){
+	       	 	alert("Please select a department");
+	            $('#dept').focus();
+	            
+	            return false;
+       	 	}else if(rType.val() == "none"){
+	       	 	alert("Please select a resource type");
+	            $('#rType').focus();
+	            
+	            return false;
+       	 	}
+       	 	return true;
+        });
+	});  
+	</script>
+	
+<body>
+	<div class="card bg-light">
+		<article class="card-body mx-auto">
+		<h4 class="card-title mt-3 text-center">Enter Requirements</h4>
+		<form id="resourceReqForm">
+			<table>
+				<tr>
+					<td>
+						Select Department
+					</td>
+					<td>
+						<select class="form-control" th:id="dept" th:name="dept" autofocus>
+							<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+							<option th:each="dept : ${departments}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Select Resource Type
+					</td>
+					<td>
+						<select class="form-control" th:id="rType" th:name="rType" autofocus>
+							<option th:value="none" style="color:#8F8B87" selected>Select Resource Type</option>
+							<option th:value="Classroom" style="color:#000">Classroom</option>
+							<option th:value="Lab" style="color:#000">Lab</option>
+							<option th:value="Hall" style="color:#000">Hall</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Enter minimum seats required
+					</td>
+					<td>
+						<input th:id="minSeats" class="form-control" th:name="minSeats" placeholder="Enter minimum seats" type="number" required/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan=2 align=center>
+						<div class="form-group">
+			        		<button type="submit" class="btn btn-primary btn-block"  style="width:150px"> Find Resources  </button>
+			    		</div> <!-- form-group// -->  
+			    	</td> 
+				</tr>
+			</table>
+		</form>
+		</article>
+		<article class="card-body mx-auto" th:id="resourceOptionsTable" th:fragment="resourceOptionsTable">
+		
+			<table th:if="${options}" class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th>
+							Resource ID
+						</th>
+						<th>
+							Resource Name
+						</th>
+						<th>
+							Resource Capacity
+						</th>
+						<th>
+							Resource Type
+						</th>
+						<th>
+							Department
+						</th>
+						<th>
+							Resource Incharge
+						</th>
+						<th>
+							Other details
+						</th>
+						<th>
+							Book
+						</th>
+					</tr>
+					
+				</thead>
+				<tbody>
+					<tr th:each="i : ${options}">
+						<td th:text="${i.resourceId}"></td>
+						<td th:text="${i.resourceName}"></td>
+						<td th:text="${i.resourceCapacity}"></td>
+						<td th:text="${i.resourceType}"></td>
+						<td th:text="${i.department.deptName}"></td>
+						<td th:text="${i.resourceIncharge.firstName+' '+i.resourceIncharge.lastName}"></td>
+						<td th:text="${i.resourceInfo}"></td>
+						<td>
+							<button class="btn btn-primary" name="BookButton" th:id="${i.resourceId}">BOOK</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		
+		</article>
+		
+		<article class="card-body mx-auto" th:id="resourceTT" th:fragment="resourceTT">
+		
+			<table th:if="${ttForResource}" class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th>
+							Time Slot
+						</th>
+						<th>
+							Faculty	
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="i : ${ttForResource}">
+						<td th:text="${i.startTime+' - '+i.endTime}"></td>
+						<td th:text="${i.resourceId.resourceId}"></td>
+					</tr>
+				</tbody>
+			</table>
+			
+		</article>
+		  <div th:id="messageDiv">
+			<div class="row text-center card-body mx-auto" th:fragment="messageDiv">
+				<div class="alert alert-success" role="alert" id ="success" th:if="${msg}" th:utext="${msg}"></div>
+				<div class="alert alert-danger" role="alert"  id="err" th:if="${err_msg}" th:utext="${err_msg}"></div>
+			</div>
+		</div>
+	</div>
+	<script>
+	function bindForm(){
+		$( "[name='BookButton']" ).click(function() {
+			var curResource = this.id;
+			console.log(curResource);
+			console.log("heyaaa");
+		    $.ajax({	
+		        type: "GET",
+		        contentType: "application/json",
+		        data: { getTT : curResource},
+		        url: '/u/faculty/getTTForResource',
+		        success: function (data) {
+	        	if ($(data).find('#err').length) {
+	         	   		$('#messageDiv').html('');
+	        	   		$('#messageDiv').html(data);                   
+	           } else{
+            	   $('#resourceTT').html('');
+                   $('#resourceTT').html(data);                   
+              	 	}
+		        }
+			});
+		});
+	}
+	$( "#resourceReqForm" ).on( "submit", function( event ) {
+	    console.log("hello");
+		event.preventDefault();
+		$.ajax({
+	        type: "POST",
+	        data: $( this ).serialize(),
+	        url: '/u/faculty/getOptions',
+	        success: function (data) {
+               if ($(data).find('#err').length) {
+            	   $('#messageDiv').html('');
+            	   $('#messageDiv').html(data);                   
+               }
+               else{
+            	   $('#resourceOptionsTable').html('');
+                   $('#resourceOptionsTable').html(data);                   
+              	 }
+               }
+		});
+
+	    setTimeout(function(){
+			 bindForm();
+			 }, 100);
+		    
+	});
+	
+	
+</script>
+</body>
+</html>
