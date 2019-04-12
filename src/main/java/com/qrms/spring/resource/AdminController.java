@@ -76,10 +76,12 @@ import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.FacultyAllocCourse;
+import com.qrms.spring.model.FacultyAllotedHours;
 import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.model.PracticalList;
 import com.qrms.spring.model.Resource;
 import com.qrms.spring.repository.CourseCompanionRespositoy;
+import com.qrms.spring.repository.CourseListRepository;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
@@ -90,7 +92,9 @@ import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
 import com.qrms.spring.repository.FacultyAllocCourseRepository;
+import com.qrms.spring.repository.FacultyAllotedHoursRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
+import com.qrms.spring.repository.PracticalListRepository;
 import com.qrms.spring.repository.ResourceRepository;
 import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
@@ -156,7 +160,7 @@ public class AdminController {
 	private FacultyPrefRepository facultyPrefRepository;
 	
 	@Autowired
-	private FacultyAllocCourseRepository facultyAllocCourseRepository;
+	private FacultyAllotedHoursRepository facultyAllotedHoursRepository;
 	
 	@Autowired
 	private DesignationToHoursRepository designationToHoursRepository;
@@ -176,6 +180,12 @@ public class AdminController {
 	@Autowired
 	private ResourceRepository resourceRepository;
 	
+	@Autowired
+	private CourseListRepository courseListRepository;
+	
+	@Autowired
+	private PracticalListRepository practicalListRepository;
+	
 	private FacultyAcad faculty;
 	
 	private List<Department> departments; 
@@ -193,7 +203,7 @@ public class AdminController {
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
-		allocFaculty(1,departmentRepository.findByDeptId("CO"));
+//		allocFaculty(1,departmentRepository.findByDeptId("CO"));
 		//readTT("CO","Monday");
 		return getViewAdminHome(null);
 	}
@@ -1129,7 +1139,6 @@ public class AdminController {
 					}
 					msg = "Elective has been deleted successfully.";
 				}
-				
 			}else {
 				err_msg = "Specified Elective does not exist. Please check again.";
 			}
@@ -1148,7 +1157,6 @@ public class AdminController {
 	public void allocFaculty(int isSemEven,Department dept) {
 		
 		//find all the courses
-		
 		//get data of designation and faculty for that department
 		
 		//designationToHours objects list
@@ -1163,7 +1171,8 @@ public class AdminController {
 			desigHours.put(d.getDesignation(), new int[] {d.getMinLimit(),d.getMaxLimit()});
 		}
 		
-		//faculty to min hours max hours hashmap, faculty to alloted hours hashmap
+		//faculty to min hours
+		//max hours hashmap, faculty to alloted hours hashmap
 		//key: facultyID, value: current_alloted_hrs
 		HashMap <String,Integer> facAllotedHours = new HashMap<>();
 		
@@ -1172,11 +1181,15 @@ public class AdminController {
 		
 		//key: facultyID, value: loadLeft (maxLimit - current_alloted_hrs)
 		HashMap <String,Integer> facLoadLeft = new HashMap<>();
+		HashMap<String,Integer> facTheoryHours = new HashMap<String,Integer>();
+		HashMap<String,Integer> facPracticalHours = new HashMap<String,Integer>();
 		
 		for(FacultyAcad f:allFacs) {
 			facAllotedHours.put(f.getUserName(), 0);
 			facLimits.put(f.getUserName(), desigHours.get(f.getDesignation()));
 			facLoadLeft.put(f.getUserName(), desigHours.get(f.getDesignation())[1]);
+			facTheoryHours.put(f.getUserName(), 0);
+			facPracticalHours.put(f.getUserName(), 0);
 		}
 		
 		//divisions for each year sem
@@ -1193,7 +1206,7 @@ public class AdminController {
 		//maps all course ids with their practical courses in prac List 
 		HashMap<String,List<Integer>> practicalListPointer = new HashMap<String,List<Integer>>();
 		HashMap<String,List<Integer>> practicalListPointerPerDiv = new HashMap<String,List<Integer>>();
-
+		
 		ArrayList<Course> allTheoryCourses;
 		ArrayList<Course> allTheoryElectiveCourses;
 		ArrayList<Course> allElectivePracticals;
@@ -1334,7 +1347,7 @@ public class AdminController {
 						for(int i: pracListptrs) {
 							
 							PracticalList p = practicalList.get(i);
-						
+							
 							if(p.getFacultyId().equals("")) {
 								for(String fId: facs) {
 									if(facAllotedHours.get(fId) + p.getNoOfHours() <= facLimits.get(fId)[1]) {
@@ -1342,6 +1355,7 @@ public class AdminController {
 										//System.out.println(p.getFacultyId());
 										facAllotedHours.replace(fId, facAllotedHours.get(fId) + p.getNoOfHours());
 										facLoadLeft.replace(fId, facLoadLeft.get(fId) - p.getNoOfHours());
+										facPracticalHours.replace(fId, facPracticalHours.get(fId)+p.getNoOfHours());
 									}
 								}
 								
@@ -1383,12 +1397,12 @@ public class AdminController {
 							}else {
 								courseFacs.get(c.getCourseId()).add(fp.getUserName());
 							}
+							facTheoryHours.replace(fp.getUserName(), facTheoryHours.get(fp.getUserName())+c.getNoOfHours());
 						} 
 					}
 					
 					if(facAllotedHours.get(fp.getUserName()) >= facLimits.get(fp.getUserName())[1])
 						continue;
-					//TODO allocate to same div's prac
 					if(pracListptrs !=null && pracAllotCounter<pracListptrs.size())
 						for(int i: pracListptrs) {
 							
@@ -1402,12 +1416,11 @@ public class AdminController {
 									p.setFacultyId(fp.getUserName());
 									facAllotedHours.replace(fp.getUserName(), facAllotedHours.get(fp.getUserName()) + p.getNoOfHours());
 									facLoadLeft.replace(fp.getUserName(), facLoadLeft.get(fp.getUserName()) - p.getNoOfHours());
+									facPracticalHours.replace(fp.getUserName(), facPracticalHours.get(fp.getUserName())+p.getNoOfHours());
 									
 								}
 							}
 						}
-					
-					
 				}
 			}
 		
@@ -1415,7 +1428,7 @@ public class AdminController {
 		if(!prevCourse.equals("")) {
 			List<Integer> pracListptrs = practicalListPointer.get(prevCourse);
 			LinkedHashSet<String> facs = courseFacs.get(prevCourse);
-			if(pracListptrs !=null)
+			if(pracListptrs !=null && facs!=null)
 				for(int i: pracListptrs) {
 					
 					PracticalList p = practicalList.get(i);
@@ -1427,19 +1440,19 @@ public class AdminController {
 								//System.out.println(p.getFacultyId());
 								facAllotedHours.replace(fId, facAllotedHours.get(fId) + p.getNoOfHours());
 								facLoadLeft.replace(fId, facLoadLeft.get(fId) - p.getNoOfHours());
+								facPracticalHours.replace(fId, facPracticalHours.get(fId)+p.getNoOfHours());
+
 							}
 						}
 						
 					}
 				}		
 		}
-		
-		//TODO
-        
+	 
     	ArrayList<Integer> temp = new ArrayList<>();
     	int facLimitReached = 0;
     	
-////		for each unpreferred course, find fac with lowest load and allocate
+    	//for each unpreferred course, find fac with lowest load and allocate
         for(int i: nonPreferredCourseIndices) {
         	//find fac with highest load left and allocate
         	int ll = 0;
@@ -1463,6 +1476,8 @@ public class AdminController {
 					facAllotedHours.replace(bestFac, facAllotedHours.get(bestFac) + c.getNoOfHours());
 					facLoadLeft.replace(bestFac, facLoadLeft.get(bestFac) - c.getNoOfHours());
 					temp.add(i);
+					facTheoryHours.replace(bestFac, facTheoryHours.get(bestFac)+c.getNoOfHours());
+					
         	}
     		List<Integer> pracListptrs = practicalListPointer.get(c.getCourseId());
     		if(pracListptrs !=null)
@@ -1474,6 +1489,7 @@ public class AdminController {
 							//System.out.println(p.getFacultyId());
 							facAllotedHours.replace(bestFac, facAllotedHours.get(bestFac) + p.getNoOfHours());
 							facLoadLeft.replace(bestFac, facLoadLeft.get(bestFac) - p.getNoOfHours());
+							facPracticalHours.replace(bestFac, facPracticalHours.get(bestFac)+p.getNoOfHours());
 						}
 					}
 				}	
@@ -1520,21 +1536,29 @@ public class AdminController {
 		}
 		System.out.println("course list");
 		System.out.println("courseID divisionID facID noOfHrs");
-		for(CourseList c:courseList)
-			if(c.getFacultyId().equals(""))
+		for(CourseList c:courseList) {
+			courseListRepository.save(c);
+			if(c.getFacultyId().equals("")) {
 				System.out.println(c.getCourseId()+" "+c.getDivisionId()+" NA "+c.getNoOfHours());
-			else	
+				}
+			else {
 				System.out.println(c.getCourseId()+" "+c.getDivisionId()+" "+c.getFacultyId()+" "+c.getNoOfHours());
-		
+			}
+		}
+			
 		System.out.println("practical list");
 		System.out.println("courseID labID  practicalID facID noOfHrs");
 		
-		for(PracticalList p:practicalList)
+		for(PracticalList p:practicalList) {
+			practicalListRepository.save(p);
 			if(p.getFacultyId().equals(""))
 				System.out.println(p.getTheoryCourseId()+" "+p.getLabId()+" "+p.getPracticalCourseId()+" NA "+p.getNoOfHours());
 			else
 				System.out.println(p.getTheoryCourseId()+" "+p.getLabId()+" "+p.getPracticalCourseId()+" "+p.getFacultyId()+" "+p.getNoOfHours());
 	
+		}
+		FacultyAllotedHours fh = new FacultyAllotedHours();
+		
 		System.out.println("\n\nFac Details");
 		System.out.println("FacID  facMax facAlloted facLoadLeft");
 		int totalLoadLeft=0,totalLoadAlloted=0,maxLoad=0;
@@ -1543,9 +1567,50 @@ public class AdminController {
 			totalLoadLeft+=facLoadLeft.get(fac.getKey());
 			maxLoad+=fac.getValue()[1];
 			totalLoadAlloted+=facAllotedHours.get(fac.getKey());
+			fh.setFacultyId(fac.getKey());
+			fh.setMaxHours(fac.getValue()[1]);
+			fh.setAllotedHours(facAllotedHours.get(fac.getKey()));
+			fh.setTheoryHours(facTheoryHours.get(fac.getKey()));
+			fh.setPracticalHours(facPracticalHours.get(fac.getKey()));
+			facultyAllotedHoursRepository.save(fh);
 		}
 		System.out.println("Total hrs to be alloted: "+totalCourseHours);
 		System.out.println("MaxLoad: "+maxLoad+" TotalLoadAlloted: "+totalLoadAlloted+" TotalLoadLeft: "+totalLoadLeft);
+		
+	}
+	
+	@GetMapping("/getfacultyAllocationPage")
+	public ModelAndView getFacAllocationPage() {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("admin/facultyAllocation");
+		departments = departmentRepository.findAll();
+		model.addObject("departments",departments);
+		return model;
+	}
+	
+	@RequestMapping(value="/performFacultyAllocation", method=RequestMethod.POST)
+	public ModelAndView performFacultyAllocation(int sem, String dept) {
+		
+		ModelAndView model = new ModelAndView();
+		model.setViewName("admin/facultyAllocation");
+		departments = departmentRepository.findAll();
+		model.addObject("departments",departments);
+		
+		Department d = departmentRepository.findByDeptId(dept);
+		
+		allocFaculty(sem,d);
+		generateFacultyAllotedList();
+		return model;
+	}
+	
+	public void generateFacultyAllotedList() {
+		//TODO: change the return type to List<> of a query bean class which will have variables as required by the UI table in facultyAllocation.html
+		//populate the the List of objects of the class with required data and return to caller function above
+		//do model.addObject("returned List") so u can use it in UI table
+		ArrayList<FacultyAllotedHours> facs = facultyAllotedHoursRepository.findAllOrderByFacId();
+		for(FacultyAllotedHours f: facs) {
+			System.out.println(f.getFacultyId());
+		}
 	}
 	
 	public static String convertTo24HoursFormat(String twelveHourTime)
@@ -1553,6 +1618,9 @@ public class AdminController {
 	    return TWENTY_FOUR_TF.format(
 	            TWELVE_TF.parse(twelveHourTime));
 	  }
+	
+	
+	
 	
 	void readTT(String dept,String day) {
 		Department department = departmentRepository.findByDeptId(dept);
