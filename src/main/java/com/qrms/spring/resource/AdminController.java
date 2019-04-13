@@ -64,6 +64,7 @@ import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.queryBeans.CombinedCourseElective;
 import com.qrms.spring.queryBeans.ElectiveBatchCount;
 import com.qrms.spring.queryBeans.ElectiveBatchCountList;
+import com.qrms.spring.queryBeans.FacultyAllocations;
 import com.qrms.spring.queryBeans.StudentUsers;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CourseList;
@@ -1550,7 +1551,6 @@ public class AdminController {
 					facLoadLeft.replace(bestFac, facLoadLeft.get(bestFac) - c.getNoOfHours());
 					temp.add(i);
 					facTheoryHours.replace(bestFac, facTheoryHours.get(bestFac)+c.getNoOfHours());
-					
         	}
     		List<Integer> pracListptrs = practicalListPointer.get(c.getCourseId());
     		if(pracListptrs !=null)
@@ -1596,6 +1596,7 @@ public class AdminController {
 					//System.out.println(p.getFacultyId());
 					facAllotedHours.replace(bestFac, facAllotedHours.get(bestFac) + p.getNoOfHours());
 					facLoadLeft.replace(bestFac, facLoadLeft.get(bestFac) - p.getNoOfHours());
+					facPracticalHours.replace(bestFac, facPracticalHours.get(bestFac)+p.getNoOfHours());
 				}
         	}
         }
@@ -1631,7 +1632,6 @@ public class AdminController {
 	
 		}
 		FacultyAllotedHours fh = new FacultyAllotedHours();
-		
 		System.out.println("\n\nFac Details");
 		System.out.println("FacID  facMax facAlloted facLoadLeft");
 		int totalLoadLeft=0,totalLoadAlloted=0,maxLoad=0;
@@ -1670,20 +1670,74 @@ public class AdminController {
 		model.addObject("departments",departments);
 		
 		Department d = departmentRepository.findByDeptId(dept);
-		
 		allocFaculty(sem,d);
-		generateFacultyAllotedList();
+		model.addObject("facAllotmentList",generateFacultyAllotedList());
 		return model;
 	}	
 	
-	public void generateFacultyAllotedList() {
-		//TODO: change the return type to List<> of a query bean class which will have variables as required by the UI table in facultyAllocation.html
-		//populate the the List of objects of the class with required data and return to caller function above
-		//do model.addObject("returned List") so u can use it in UI table
-		ArrayList<FacultyAllotedHours> facs = facultyAllotedHoursRepository.findAllOrderByFacId();
+	public List<FacultyAllocations> generateFacultyAllotedList() {
+		List<FacultyAllotedHours> facs = facultyAllotedHoursRepository.findAll();
+		List<CourseList> courses = courseListRepository.findAll();
+		List<PracticalList> practicals = practicalListRepository.findAll();
+		List<FacultyAllocations> rs = new ArrayList<FacultyAllocations>();
+		//{key: facID, value:{key:courseId,value:divID} }
+	
+		HashMap<String,HashMap<String,List<String>>> facCourses = new HashMap<String,HashMap<String,List<String>>>();
+		HashMap<String,HashMap<String,List<String>>> facPracticalCourses = new HashMap<String,HashMap<String,List<String>>>();
+		HashMap<String,Integer> facTheoryHours = new HashMap<String,Integer>();
+		HashMap<String,Integer> facPracticalHours = new HashMap<String,Integer>();
+//				facPracticalHours.replace(c.getCourseId(),facPracticalHours.get(c.getFacultyId())+c.getNoOfHours());
+		//init all hashmaps
 		for(FacultyAllotedHours f: facs) {
-			System.out.println(f.getFacultyId());
+			HashMap<String,List<String>> cList = new HashMap<String,List<String>>();
+			facCourses.put(f.getFacultyId(),cList);
+			facTheoryHours.put(f.getFacultyId(),0);
+
+			HashMap<String,List<String>> pList = new HashMap<String,List<String>>();
+			facPracticalCourses.put(f.getFacultyId(), pList);
+			facPracticalHours.put(f.getFacultyId(),0);
 		}
+		
+		
+		for(CourseList c:courses) {
+			if(facCourses.get(c.getFacultyId()).containsKey(c.getCourseId())) {
+				facCourses.get(c.getFacultyId()).get(c.getCourseId()).add(c.getDivisionId());
+			}
+			else {
+				List<String> divs = new ArrayList<String>();
+				divs.add(c.getDivisionId());
+				facCourses.get(c.getFacultyId()).put(c.getCourseId(),divs);
+			}
+			facTheoryHours.replace(c.getFacultyId(),facTheoryHours.get(c.getFacultyId())+c.getNoOfHours());
+			
+		}
+		
+		for(PracticalList p: practicals) {
+			if(facPracticalCourses.get(p.getFacultyId()).containsKey(p.getPracticalCourseId())) {
+				facPracticalCourses.get(p.getFacultyId()).get(p.getPracticalCourseId()).add(p.getLabId());
+			}
+			else {
+				List<String> labBatches = new ArrayList<String>();
+				labBatches.add(p.getLabId());
+				facPracticalCourses.get(p.getFacultyId()).put(p.getPracticalCourseId(),labBatches);
+			}
+			facPracticalHours.replace(p.getFacultyId(),facPracticalHours.get(p.getFacultyId())+p.getNoOfHours());
+			
+		}
+		for(FacultyAllotedHours f: facs) {
+			Users faculty = userDetails.findByUserName(f.getFacultyId());
+			FacultyAllocations fa = new FacultyAllocations();
+			fa.setName(faculty.getFirstName() + " "+ faculty.getLastName());
+			fa.setAllotedLoad(f.getAllotedHours());
+			fa.setFacultyId(f.getFacultyId());
+			fa.setMaxLoad(f.getMaxHours());
+			fa.setCourseAndDivs(facCourses);
+			fa.setPracticalsAndBatches(facPracticalCourses);
+			fa.setPracticalHours(f.getPracticalHours());
+			fa.setTheoryHours(f.getTheoryHours());
+			rs.add(fa);
+		}
+		return rs;
 	}
 	
 	public static String convertTo24HoursFormat(String twelveHourTime)
@@ -1691,8 +1745,6 @@ public class AdminController {
 	    return TWENTY_FOUR_TF.format(
 	            TWELVE_TF.parse(twelveHourTime));
 	  }
-	
-	
 	
 	
 	void readTT(String dept,String day) {
@@ -1802,18 +1854,15 @@ public class AdminController {
 	        myWorkBook.close();
 	        
 		}catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
        
 	}
-	
+	//TODO: have a way to store per-div-course hrs in facAllocation query bean to be displayed in UI autoscrolled div
 //	private Date nextDate; 
 //	
 //	@Scheduled(cron="0 30 * * *")

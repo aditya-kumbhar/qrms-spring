@@ -11,9 +11,6 @@ import com.qrms.spring.model.FacultyAllotedHours;
 @Repository
 public interface FacultyAllotedHoursRepository extends JpaRepository<FacultyAllotedHours, Integer>{
 	
-	//JPQA
-	@Query("SELECT new com.qrms.spring.model.FacultyAllotedHours(fa.facultyId,fa.allotedHours,fa.maxHours,fa.practicalHours,fa.theoryHours) "
-			+ "from FacultyAllotedHours fa order by fa.facultyId")
-	ArrayList<FacultyAllotedHours> findAllOrderByFacId();
+	
 
 }
