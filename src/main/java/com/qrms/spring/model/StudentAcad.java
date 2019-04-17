@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -21,7 +22,7 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 //			int shift, String rollno, Float aggMarks, String academicYear) {
 //		super();
 //		this.userName = userName;
-//		this.user_dets = user_dets;
+//		this.userDets = userDets;
 //		this.department = department;
 //		this.year = year;
 //		this.sem = sem;
@@ -49,9 +50,9 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 	@Column(name="user_name")
 	private String userName;
 	
-//	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//	@JoinColumn(name="userName")
-//	private Users user_dets;
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name="user_dets")
+	private Users userDets;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "dept_id")
@@ -80,14 +81,14 @@ public class StudentAcad  implements Comparable <StudentAcad>{
 	@OneToMany(mappedBy="student",cascade=CascadeType.ALL)
 	Set<StudentAllocCourse> studentAllocs = new HashSet<StudentAllocCourse>();
 	
-//	public Users getUser_dets() {
-//		return user_dets;
-//	}
-//
-//	public void setUser_dets(Users user_dets) {
-//		this.user_dets = user_dets;
-//	}
-//	
+	public Users getUserDets() {
+		return userDets;
+	}
+
+	public void setUserDets(Users userDets) {
+		this.userDets = userDets;
+	}
+	
 	public String getUserName() {
 		return userName;
 	}

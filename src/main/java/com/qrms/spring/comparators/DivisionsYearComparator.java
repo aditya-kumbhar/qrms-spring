@@ -6,6 +6,9 @@ import java.util.List;
 
 import com.qrms.spring.model.Divisions;
 
+
+//1 - 2 for ascending
+//2 - 1 for descending
 public class DivisionsYearComparator implements Comparator<Divisions> {
 	 
     @Override

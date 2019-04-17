@@ -35,9 +35,6 @@ public class TimeTable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="resource_id")
 	private Resource resourceId;
-	
-	@Column(name="seats_occupied")
-	private int seatsOccupied;
 
 	@Column(name="day")
 	private String day;
@@ -69,15 +66,7 @@ public class TimeTable {
 	public void setResourceId(Resource resourceId) {
 		this.resourceId = resourceId;
 	}
-
-	public int getSeatsOccupied() {
-		return seatsOccupied;
-	}
-
-	public void setSeatsOccupied(int seatsOccupied) {
-		this.seatsOccupied = seatsOccupied;
-	}
-
+	
 	public String getDay() {
 		return day;
 	}
@@ -98,13 +87,12 @@ public class TimeTable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public TimeTable(Time startTime, Time endTime, Resource resourceId, int seatsOccupied, String day,
+	public TimeTable(Time startTime, Time endTime, Resource resourceId, String day,
 			Department department) {
 		super();
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.resourceId = resourceId;
-		this.seatsOccupied = seatsOccupied;
 		this.day = day;
 		this.department = department;
 	}

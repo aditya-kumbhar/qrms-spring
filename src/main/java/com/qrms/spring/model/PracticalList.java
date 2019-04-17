@@ -15,28 +15,63 @@ public class PracticalList {
 	@Column(name="b_id")
 	private int bId;
 	
+	//eg: BECOB1, BECOB2
 	@Column(name="lab_id")
 	private String labId;
 	
-	@Column(name="lab_name")
-	private String labName;
+	//BECOB, BECOA..
+	@Column(name="div_id")
+	private String divId;
+	
+	public PracticalList(String labId, String practicalCourseId, String theoryCourseId, String facultyId,
+			int noOfHours) {
+		super();
+		this.labId = labId;
+		this.practicalCourseId = practicalCourseId;
+		this.theoryCourseId = theoryCourseId;
+		this.facultyId = facultyId;
+		this.noOfHours = noOfHours;
+	}
+
+	@Column(name="practical_course_id")
+	private String practicalCourseId;
+	
+	@Column(name="theory_course_id")
+	private String theoryCourseId;
 	
 	@Column(name="faculty_id")
 	private String facultyId;
 
+	public int getbId() {
+		return bId;
+	}
+
+	public void setbId(int bId) {
+		this.bId = bId;
+	}
+
+	public String getDivId() {
+		return divId;
+	}
+
+	public void setDivId(String divId) {
+		this.divId = divId;
+	}
+
 	@Column(name="no_of_hours")
 	private int noOfHours;
 	
-	public PracticalList() {
-		super();
+	
+	public String getTheoryCourseId() {
+		return theoryCourseId;
 	}
 
-	public PracticalList(String labId, String labName, String facultyId,int noOfHours) {
+	public void setTheoryCourseId(String theoryCourseId) {
+		this.theoryCourseId = theoryCourseId;
+	}
+
+	public PracticalList() {
 		super();
-		this.labId = labId;
-		this.labName = labName;
-		this.facultyId = facultyId;
-		this.noOfHours = noOfHours;
 	}
 
 	public int getNoOfHours() {
@@ -63,12 +98,14 @@ public class PracticalList {
 		this.labId = labId;
 	}
 
-	public String getLabName() {
-		return labName;
+
+
+	public String getPracticalCourseId() {
+		return practicalCourseId;
 	}
 
-	public void setLabName(String labName) {
-		this.labName = labName;
+	public void setPracticalCourseId(String practicalCourseId) {
+		this.practicalCourseId = practicalCourseId;
 	}
 
 	public String getFacultyId() {
