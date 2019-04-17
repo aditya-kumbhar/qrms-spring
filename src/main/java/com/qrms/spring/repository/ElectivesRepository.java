@@ -12,7 +12,7 @@ import com.qrms.spring.model.Electives;
 public interface ElectivesRepository extends JpaRepository<Electives, Integer>  {
 	ArrayList <Electives> findByCourse(Course course);
 	Electives findByElectiveCourseId(String electiveId);
-	Electives findByElectiveCourseIdAndIsTheory(String electiveId);
+	//Electives findByElectiveCourseIdAndIsTheory(String electiveId);
 	Optional<Electives> findByElectiveName(String electiveName);
 	
 	//JPQL
