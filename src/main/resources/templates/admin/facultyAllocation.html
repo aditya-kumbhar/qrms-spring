@@ -1,0 +1,160 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <th:block th:include="fragments/admin_header.html :: headerfiles"></th:block>
+
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    
+    <title>Faculty Allocation</title>
+
+	<link rel="stylesheet" th:href="@{/css/register.css}">
+	
+    <script>
+    $(document).ready(function () {
+    	$("#courseYear").change(function () {
+            var val = $(this).val();
+            if (val == "FE") {
+                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='1' style='color:#000'>1</option><option value='2' style='color:#000'>2</option>");
+            } else if (val == "SE") {
+                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='3' style='color:#000'>3</option><option value='4' style='color:#000'>4</option>");
+            } else if (val == "TE") {
+                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='5' style='color:#000'>5</option><option value='6' style='color:#000'>6</option>");
+            } else if (val == "BE") {
+                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='7' style='color:#000'>7</option><option value='8' style='color:#000'>8</option>");
+            } else if (val == "none") {
+            	$("#courseSem").html("<option value=''>Select Semester</option>");
+            }
+        });
+    
+    	$('#submit').click(function(){
+    		var dept = $('#dept').val();
+    		var sem = $('#sem').val();
+    		if(dept=='none'){
+    			alert("Please select a department");
+    			return false;
+    		}
+    		if(sem=='none'){
+    			alert('Please select a semester');
+    			return false;
+    		}
+    	});
+    	
+    	$('[name="viewDetailsButton"]').click(function(){
+    		console.log(this.id);
+    		  $('html, body').animate({
+    		        scrollTop: $("#viewDetailsDiv").offset().top
+    		    }, 1000);
+    	});
+    });
+	    
+    </script>
+    
+  
+</head> 
+
+<div th:replace="fragments/admin_header :: header"></div>
+
+<body>
+
+<!-- script to turn nav link active -->
+<script type="text/javascript">
+	var navBar = document.getElementById("nav-bar");		
+	var current = navBar.getElementsByClassName("active");
+    // If there's any other active nav, make it inactive
+    if (current.length > 0) { 
+      current[0].className = current[0].className.replace(" active", "");
+    }
+	//set current page nav as active
+	document.getElementById("facultyAllocation-nav").className+=" active";		
+</script>
+
+<div class="card bg-light">
+<article class="card-body mx-auto" id="article1">
+	<h4 class="card-title mt-3 text-center">Perform Faculty to Course Allocation</h4>
+	<form method="POST" action="/u/admin/performFacultyAllocation">
+	<table>
+		<tr class="form-group">
+			<td>
+			    Select Department
+			</td>
+			<td>
+				<select class="form-control" th:id="dept" th:name="dept" autofocus>
+					<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+					<option th:each="dept : ${departments}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
+				</select>
+			</td>
+		</tr>
+		<tr class="form-group">
+			<td>
+			    Select Semester
+			</td>
+			<td>
+				<select class="form-control" th:id="sem" th:name="sem" autofocus>
+					<option th:value="none" style="color:#8F8B87" selected>Select Semester</option>
+					<option th:value="0" style="color:#000">Odd</option>
+					<option th:value="1" style="color:#000">Even</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 align=center>
+				<div class="form-group">
+	        		<button type="submit" id="submit" class="btn btn-primary btn-block"  style="width:150px"> Run Allocation  </button>
+	    		</div> <!-- form-group// -->  
+	    	</td> 	  
+		</tr>	
+	</table>
+	</form>
+	</article>
+	<article class="card-body mx-auto" th:if="${facAllotmentList}">
+	<table class="table table-bordered table-hover" > 
+	<thead class="thead-dark">
+    <tr>
+      <th scope="col">Username</th>
+      <th scope="col">Name</th>
+      <th scope="col">Theory Hours</th>
+      <th scope="col">Practical Hours</th>
+      <th scope="col">Total Load Alloted</th>
+      <th scope="col">Maximum Load</th>
+      <th scope="col">Details</th>
+    </tr>
+  	</thead>
+  	<tbody>
+    	<tr th:each="rs,iterStat : ${facAllotmentList}">
+     	<td th:text="${rs.facultyId}" th:id="${iterStat.count} + username"></td>
+     	<td th:text="${rs.name}" th:id="${iterStat.count} + name">></td>
+     	<td th:text="${rs.theoryHours}" th:id="${iterStat.count} + thHours">></td>
+     	<td th:text="${rs.practicalHours}" th:id="${iterStat.count} + prHours">></td>
+     	<td th:text="${rs.allotedLoad}" th:id="${iterStat.count} + allotedHours"></td>
+    	<td th:text="${rs.maxLoad}" th:id="${iterStat.count} + maxHours">></td>
+   		<td>
+   		 <button class="btn" name="viewDetailsButton" th:id="${iterStat.count}">View Details</button>
+   		</td>
+   		</tr>
+  	</tbody>
+	</table>
+	<br><br>
+	<div id="viewDetailsDiv">
+	 <h4 id="nameDet"></h4>
+	 <table>
+	 	<tr>
+	 		<td>Name</td>
+	 		<td id="nameDet"></td>
+	 	</tr>
+	 	<tr>
+	 		<td>Name</td>
+	 		<td id="nameDet"></td>
+	 	</tr>
+	 </table>
+	</div>
+	</article>
+	
+</div>
+</body>
+<script>
+	
+</script>
+
+</html>
+
+
