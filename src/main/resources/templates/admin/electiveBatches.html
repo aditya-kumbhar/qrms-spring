@@ -31,8 +31,9 @@ $(document).ready(function () {
 	
 	$.ajax({
         type: "POST",
+        method : "POST",
         contentType: "application/json",
-        url: '/u/admin/setbatches',
+        url: '/u/admin/setbatches/',
         data: electiveBatchCounts,
         dataType: 'html',
         mimeType: 'application/json',
@@ -40,8 +41,9 @@ $(document).ready(function () {
         	console.log("Okay");
         	window.location.replace("http://127.0.0.1:8080/u/admin/home");
         }
-
 	});
+	
+	
 	});
 });
 </script>

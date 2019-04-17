@@ -460,10 +460,9 @@ public class AdminController {
 		model.setViewName("admin/electiveBatches");
 		return model;
 	}
-	
-	@ResponseBody
+	//TODO: to send post instead of get
 	@RequestMapping(name="/setbatches",method=RequestMethod.POST)
-	public String setNoOfBatches(Model model,@RequestBody ElectiveBatchCountList electiveBatchCounts) {
+	public String setNoOfBatches(Model model,ElectiveBatchCountList electiveBatchCounts) {
 		System.out.println("oyeeee");
 		
 		
