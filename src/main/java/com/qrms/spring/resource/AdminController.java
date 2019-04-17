@@ -1679,49 +1679,46 @@ public class AdminController {
 		List<CourseList> courses = courseListRepository.findAll();
 		List<PracticalList> practicals = practicalListRepository.findAll();
 		List<FacultyAllocations> rs = new ArrayList<FacultyAllocations>();
-		//{key: facID, value:{key:courseId,value:divID} }
-	
-		HashMap<String,HashMap<String,List<String>>> facCourses = new HashMap<String,HashMap<String,List<String>>>();
-		HashMap<String,HashMap<String,List<String>>> facPracticalCourses = new HashMap<String,HashMap<String,List<String>>>();
+
+		//{key: facID, value:{key:courseId,value:courseList} }
+		HashMap<String,HashMap<String,List<CourseList>>> facCourses = new HashMap<String,HashMap<String,List<CourseList>>>();
+		HashMap<String,HashMap<String,List<PracticalList>>> facPracticalCourses = new HashMap<String,HashMap<String,List<PracticalList>>>();
 		HashMap<String,Integer> facTheoryHours = new HashMap<String,Integer>();
 		HashMap<String,Integer> facPracticalHours = new HashMap<String,Integer>();
-//				facPracticalHours.replace(c.getCourseId(),facPracticalHours.get(c.getFacultyId())+c.getNoOfHours());
+		
 		//init all hashmaps
 		for(FacultyAllotedHours f: facs) {
-			HashMap<String,List<String>> cList = new HashMap<String,List<String>>();
+			HashMap<String,List<CourseList>> cList = new HashMap<String,List<CourseList>>();
 			facCourses.put(f.getFacultyId(),cList);
 			facTheoryHours.put(f.getFacultyId(),0);
 
-			HashMap<String,List<String>> pList = new HashMap<String,List<String>>();
+			HashMap<String,List<PracticalList>> pList = new HashMap<String,List<PracticalList>>();
 			facPracticalCourses.put(f.getFacultyId(), pList);
 			facPracticalHours.put(f.getFacultyId(),0);
 		}
 		
-		
 		for(CourseList c:courses) {
 			if(facCourses.get(c.getFacultyId()).containsKey(c.getCourseId())) {
-				facCourses.get(c.getFacultyId()).get(c.getCourseId()).add(c.getDivisionId());
+				facCourses.get(c.getFacultyId()).get(c.getCourseId()).add(c);
 			}
 			else {
-				List<String> divs = new ArrayList<String>();
-				divs.add(c.getDivisionId());
+				List<CourseList> divs = new ArrayList<CourseList>();
+				divs.add(c);
 				facCourses.get(c.getFacultyId()).put(c.getCourseId(),divs);
 			}
 			facTheoryHours.replace(c.getFacultyId(),facTheoryHours.get(c.getFacultyId())+c.getNoOfHours());
-			
 		}
 		
 		for(PracticalList p: practicals) {
 			if(facPracticalCourses.get(p.getFacultyId()).containsKey(p.getPracticalCourseId())) {
-				facPracticalCourses.get(p.getFacultyId()).get(p.getPracticalCourseId()).add(p.getLabId());
+				facPracticalCourses.get(p.getFacultyId()).get(p.getPracticalCourseId()).add(p);
 			}
 			else {
-				List<String> labBatches = new ArrayList<String>();
-				labBatches.add(p.getLabId());
+				List<PracticalList> labBatches = new ArrayList<PracticalList>();
+				labBatches.add(p);
 				facPracticalCourses.get(p.getFacultyId()).put(p.getPracticalCourseId(),labBatches);
 			}
 			facPracticalHours.replace(p.getFacultyId(),facPracticalHours.get(p.getFacultyId())+p.getNoOfHours());
-			
 		}
 		for(FacultyAllotedHours f: facs) {
 			Users faculty = userDetails.findByUserName(f.getFacultyId());
@@ -1730,8 +1727,8 @@ public class AdminController {
 			fa.setAllotedLoad(f.getAllotedHours());
 			fa.setFacultyId(f.getFacultyId());
 			fa.setMaxLoad(f.getMaxHours());
-			fa.setCourseAndDivs(facCourses);
-			fa.setPracticalsAndBatches(facPracticalCourses);
+			fa.setCourseAndDivs(facCourses.get(f.getFacultyId()));
+			fa.setPracticalsAndBatches(facPracticalCourses.get(f.getFacultyId()));
 			fa.setPracticalHours(f.getPracticalHours());
 			fa.setTheoryHours(f.getTheoryHours());
 			rs.add(fa);

@@ -1,13 +1,16 @@
 package com.qrms.spring.queryBeans;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.qrms.spring.model.CourseList;
+import com.qrms.spring.model.PracticalList;
 
 public class FacultyAllocations {
 	String facultyId,name;
 	
-	HashMap<String,HashMap<String,List<String>>> courseAndDivs,practicalsAndBatches;
+	HashMap<String,List<CourseList>> courseAndDivs;
+	HashMap<String,List<PracticalList>> practicalsAndBatches;
 	
 	Integer theoryHours,practicalHours,allotedLoad,maxLoad;
 
@@ -32,19 +35,19 @@ public class FacultyAllocations {
 	}
 
 	
-	public HashMap<String, HashMap<String, List<String>>> getCourseAndDivs() {
+	public HashMap<String, List<CourseList>> getCourseAndDivs() {
 		return courseAndDivs;
 	}
 
-	public void setCourseAndDivs(HashMap<String, HashMap<String, List<String>>> courseAndDivs) {
+	public void setCourseAndDivs(HashMap<String, List<CourseList>> courseAndDivs) {
 		this.courseAndDivs = courseAndDivs;
 	}
 
-	public HashMap<String, HashMap<String, List<String>>> getPracticalsAndBatches() {
+	public HashMap<String, List<PracticalList>> getPracticalsAndBatches() {
 		return practicalsAndBatches;
 	}
 
-	public void setPracticalsAndBatches(HashMap<String, HashMap<String, List<String>>> practicalsAndBatches) {
+	public void setPracticalsAndBatches( HashMap<String, List<PracticalList>> practicalsAndBatches) {
 		this.practicalsAndBatches = practicalsAndBatches;
 	}
 
