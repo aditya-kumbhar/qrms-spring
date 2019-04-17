@@ -185,7 +185,11 @@
 	        	   		$('#messageDiv').html(data);                   
 	           } else{
             	   $('#resourceTT').html('');
-                   $('#resourceTT').html(data);                   
+                   $('#resourceTT').html(data);   
+                   //window.scrollTo(0, $('#resourceTT').offset().top);
+                   $('html, body').animate({
+                       scrollTop: $('#resourceTT').offset().top
+                     }, 500);
               	 	}
 		        }
 			});
