@@ -140,7 +140,7 @@ INSERT INTO `course` VALUES ('410241',4,'High Performance Computing',7,'R','BE',
 INSERT INTO `course` VALUES ('410242',3,'Artificial Intelligence and Robotics',7,'R','BE',1,3,0,'CO');
 INSERT INTO `course` VALUES ('410243',3,'Data Analytics',7,'R','BE',1,3,0,'CO');
 INSERT INTO `course` VALUES ('410244',3,'Elective 1',7,'E','BE',1,3,0,'CO');
-INSERT INTO `course` VALUES ('410245',3,'Elective 2',7,'E','BE',1,3,0,'CS');
+INSERT INTO `course` VALUES ('410245',3,'Elective 2',7,'E','BE',1,3,0,'CO');
 -- INSERT INTO `course` VALUES ('410246',2,'Laboratory Practice 1',7,'R','BE',0,4,0,'CO');
 -- INSERT INTO `course` VALUES ('410247',2,'Laboratory Practice 2',7,'E','BE',0,4,0,'CO');
 INSERT INTO `course` VALUES ('410246A',1,'LP1-Data Analytics',7,'R','BE',0,2,0,'CO');
@@ -357,42 +357,42 @@ INSERT into companion_course(id,course_id,companion_course) values (40,'210245',
 
 
 /*STUDENT_ACAD TABLE*/
-insert into student_acad values("stud1",80,"201",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud2",85,"202",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud3",90,"203",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud4",95,"204",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud5",70,"205",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud6",75,"206",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud7",65,"207",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud8",85,"208",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud9",90,"209",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud10",95,"210",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud11",70,"211",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud12",75,"212",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud13",80,"213",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud14",85,"214",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud15",90,"215",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud16",95,"216",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud17",70,"217",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud18",75,"218",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud19",80,"219",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud20",85,"220",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud21",90,"221",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud22",95,"222",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud23",70,"223",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud24",75,"224",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud25",80,"225",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud26",85,"226",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud27",90,"227",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud28",95,"228",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud29",70,"229",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud30",75,"230",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud31",80,"231",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud32",85,"232",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud33",90,"233",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud34",95,"234",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud35",70,"235",8,1,"BE","CO","BECOB");
-insert into student_acad values("stud36",75,"236",8,1,"BE","CO","BECOB");
+insert into student_acad values("stud1",80,"201",8,1,"BE","CO","BECOB","stud1");
+insert into student_acad values("stud2",85,"202",8,1,"BE","CO","BECOB","stud2");
+insert into student_acad values("stud3",90,"203",8,1,"BE","CO","BECOB","stud3");
+insert into student_acad values("stud4",95,"204",8,1,"BE","CO","BECOB","stud4");
+insert into student_acad values("stud5",70,"205",8,1,"BE","CO","BECOB","stud5");
+insert into student_acad values("stud6",75,"206",8,1,"BE","CO","BECOB","stud6");
+insert into student_acad values("stud7",65,"207",8,1,"BE","CO","BECOB","stud7");
+insert into student_acad values("stud8",85,"208",8,1,"BE","CO","BECOB","stud8");
+insert into student_acad values("stud9",90,"209",8,1,"BE","CO","BECOB","stud9");
+insert into student_acad values("stud10",95,"210",8,1,"BE","CO","BECOB","stud10");
+insert into student_acad values("stud11",70,"211",8,1,"BE","CO","BECOB","stud11");
+insert into student_acad values("stud12",75,"212",8,1,"BE","CO","BECOB","stud12");
+insert into student_acad values("stud13",80,"213",8,1,"BE","CO","BECOB","stud13");
+insert into student_acad values("stud14",85,"214",8,1,"BE","CO","BECOB","stud14");
+insert into student_acad values("stud15",90,"215",8,1,"BE","CO","BECOB","stud15");
+insert into student_acad values("stud16",95,"216",8,1,"BE","CO","BECOB","stud16");
+insert into student_acad values("stud17",70,"217",8,1,"BE","CO","BECOB","stud17");
+insert into student_acad values("stud18",75,"218",8,1,"BE","CO","BECOB","stud18");
+insert into student_acad values("stud19",80,"219",8,1,"BE","CO","BECOB","stud19");
+insert into student_acad values("stud20",85,"220",8,1,"BE","CO","BECOB","stud20");
+insert into student_acad values("stud21",90,"221",8,1,"BE","CO","BECOB","stud21");
+insert into student_acad values("stud22",95,"222",8,1,"BE","CO","BECOB","stud22");
+insert into student_acad values("stud23",70,"223",8,1,"BE","CO","BECOB","stud23");
+insert into student_acad values("stud24",75,"224",8,1,"BE","CO","BECOB","stud24");
+insert into student_acad values("stud25",80,"225",8,1,"BE","CO","BECOB","stud25");
+insert into student_acad values("stud26",85,"226",8,1,"BE","CO","BECOB","stud26");
+insert into student_acad values("stud27",90,"227",8,1,"BE","CO","BECOB","stud27");
+insert into student_acad values("stud28",95,"228",8,1,"BE","CO","BECOB","stud28");
+insert into student_acad values("stud29",70,"229",8,1,"BE","CO","BECOB","stud29");
+insert into student_acad values("stud30",75,"230",8,1,"BE","CO","BECOB","stud30");
+insert into student_acad values("stud31",80,"231",8,1,"BE","CO","BECOB","stud31");
+insert into student_acad values("stud32",85,"232",8,1,"BE","CO","BECOB","stud32");
+insert into student_acad values("stud33",90,"233",8,1,"BE","CO","BECOB","stud33");
+insert into student_acad values("stud34",95,"234",8,1,"BE","CO","BECOB","stud34");
+insert into student_acad values("stud35",70,"235",8,1,"BE","CO","BECOB","stud35");
+insert into student_acad values("stud36",75,"236",8,1,"BE","CO","BECOB","stud36");
 
 
 

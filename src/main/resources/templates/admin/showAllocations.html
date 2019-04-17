@@ -1,14 +1,17 @@
 <!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
+  	<link rel="stylesheet" th:href="@{/css/register.css}">
+   
    <th:block th:include="fragments/admin_header.html :: headerfiles"></th:block>
 
-    <title>Change Elective Seats</title>
+    <title>Show student allocations</title>
 
-    <link rel="stylesheet" th:href="@{/css/register.css}">
-	
     <script>
     	//display semester options as per year selected
+    	/*$(document).ready(function () {
+    		$('#allocTable').DataTable();
+    	});*/
 	    $(document).ready(function () {
 	        $("#courseYear").change(function () {
 	            var val = $(this).val();
@@ -237,22 +240,25 @@
 				</tr>
 			</table> 	                                                 
 	</form>
-	<table th:if="${studAllocations}" class="table table-hover table-bordered">
+	</article>
+	<article class="card-body mx-auto">
+	<table th:if="${studAllocations}" id="allocTable" class="table table-striped table-hover table-bordered">
 		<tr>
+			<th>Division</th>
 			<th>Roll number</th>
+			<th>Student Name</th>
 			<th>Elective Name</th>
+			
 		</tr>
 		<tr th:each="i : ${studAllocations}">
+		
+		<td th:text="${i.student.div.divId}"></td>
 		<td th:text="${i.student.rollno}"></td>
-		
-		<!-- BELOW CODE DOES NOT WORK. SOLVE IT -->
-		<!-- <td th:text="${i.student.user_dets.firstName +' '+ i.student.user_dets.lastName}"></td>-->
-		
-		
+		<td th:text="${i.student.userDets.firstName +' '+ i.student.userDets.lastName}"></td>
 		<td th:text="${i.elective.electiveName + ' (' + i.elective.electiveCourseId + ' )'}"></td>
 		</tr>
 	</table>
-</article>
+	</article>
 	<div class="row text-center card-body mx-auto">
 		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
  		<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>

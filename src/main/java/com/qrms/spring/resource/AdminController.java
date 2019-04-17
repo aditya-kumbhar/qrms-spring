@@ -441,7 +441,9 @@ public class AdminController {
 			return getStudPrefDetailsTable();
 		}
 		
-//		return getStudPrefDetailsTable();
+		return getStudPrefDetailsTable();
+		
+		/*
 		Course c = courseRepository.findByCourseId(courseId);
 //		System.out.println("course "+c.getCourseId());
 		ArrayList<StudentAllocCourse> allocs = studentAllocCourseRepository.findByCourseId(c);
@@ -471,6 +473,7 @@ public class AdminController {
 		
 		model.setViewName("admin/electiveBatches");
 		return model;
+		*/
 	}
 	//TODO: to send post instead of get
 	@RequestMapping(name="/setbatches",method=RequestMethod.POST)

@@ -288,7 +288,7 @@ public class FacultyController {
 		
 		
 		if(options.isEmpty()) {
-			model.addAttribute("err_msg","There are no open student elective preference forms");
+			model.addAttribute("err_msg","No suitable rooms/halls/classrooms were found.");
 			return "faculty/bookings:: messageDiv";
 		}
 		else {
