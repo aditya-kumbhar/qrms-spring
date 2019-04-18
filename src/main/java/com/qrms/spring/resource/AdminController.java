@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.ConsoleHandler;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
@@ -48,7 +49,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Role;
@@ -120,6 +123,8 @@ import com.qrms.spring.service.TimeSlotsService;
 @Controller
 @RequestMapping("/u/admin")
 public class AdminController {
+	@Autowired
+    private HttpServletRequest request;
 	
 	@Autowired
 	private CustomUserDetailsService userDetails;
@@ -558,6 +563,59 @@ public class AdminController {
 		}
 		
 		return "success";
+	}
+	
+	
+	//display uploadTT page
+	@RequestMapping(value="/uploadTT", method = RequestMethod.GET)
+	public ModelAndView uploadTT() {
+		ModelAndView model = new ModelAndView();
+		departments = departmentRepository.findAll();		
+		model.addObject("departments",departments);
+
+		model.setViewName("admin/uploadTT");
+		return model;
+	}
+	
+	//Handle upload TT form
+	@RequestMapping(value = "/upload_TT", method = RequestMethod.POST)
+	public ModelAndView upload_TT(@RequestParam("timeTableFile") MultipartFile file, String dept, String day) {
+		ModelAndView model = new ModelAndView();	
+		
+		if(file.isEmpty()) {
+			model.addObject("err_msg","Please select a file to upload");
+		}
+		else {
+			System.out.println(file.getOriginalFilename());
+			
+			try {
+	            String uploadsDir = "/uploads/";
+	            String realPathToUploads =  request.getServletContext().getRealPath(uploadsDir);
+	            System.out.println(realPathToUploads);
+	            if(! new File(realPathToUploads).exists())
+	            {
+	                new File(realPathToUploads).mkdir();
+	            }
+	
+	            String orgName = file.getOriginalFilename();
+	            String filePath = realPathToUploads + orgName;
+	            System.out.println(filePath);
+	            File dest = new File(filePath);
+	            file.transferTo(dest);
+	            
+	            readTT(filePath,dept,day);
+				model.addObject("msg","Time table has been successfully saved");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}	
+		}
+		
+		
+		departments = departmentRepository.findAll();
+		model.addObject("departments", departments);		
+		model.setViewName("admin/uploadTT");
+		return model;
+	
 	}
 	
 	//Display register user form
@@ -1823,12 +1881,12 @@ public class AdminController {
 	  }
 	
 	
-	void readTT(String dept,String day) {
+	void readTT(String path, String dept,String day) {
 		Department department = departmentRepository.findByDeptId(dept);
 		
 		HashMap<Integer,Time[]> timeSlots = new HashMap<>();
 		
-		File myFile = new File("/home/bharati/Documents/monday.xlsx");
+		File myFile = new File(path);
         FileInputStream fis;
         
         List<TimeTable> timetable = timeTableRepository.findAll();

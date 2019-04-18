@@ -192,6 +192,7 @@ INSERT INTO `course` VALUES ('210248',1,'OOP Lab',3,'R','SE',0,2,0,'CO');
 INSERT INTO `course` VALUES ('210249',1,'Soft Skills',3,'R','SE',0,2,0,'CO');
 
 
+
 /*ELECTIVES TABLE*/
 /*BE sem2 elective4*/
 INSERT INTO `electives` VALUES ('410253A','Software Defined Networks','410253');
@@ -216,6 +217,7 @@ INSERT INTO `electives` VALUES ('410244A','Digital Signal Processing','410244');
 INSERT INTO `electives` VALUES ('410244B','Software Architecture and Design','410244');
 INSERT INTO `electives` VALUES ('410244C','Pervasive and Ubiquitous Computing','410244');
 INSERT INTO `electives` VALUES ('410244D','Data Mining and Warehousing','410244');
+
 
 
 /*BE sem2 elective_batches -- will be populated during student allocation*/
@@ -345,7 +347,6 @@ INSERT into companion_course(id,course_id,companion_course) values (34,'210253',
 -- INSERT into companion_course(id,course_id,companion_course) values (36,'210256','210252');
 -- INSERT into companion_course(id,course_id,companion_course) values (37,'210257','210253');
 
-
 /*SE sem1*/
 INSERT into companion_course(id,course_id,companion_course) values (38,'210242','210246');
 INSERT into companion_course(id,course_id,companion_course) values (39,'210243','210247');
@@ -434,6 +435,8 @@ insert into faculty_acad values('fac34','Professor','PHD',14.7,'CO');
 insert into faculty_acad values('fac35','Assistant Professor','ME',14,'CO');
 insert into faculty_acad values('fac36','Assistant Professor','ME',6.5,'CO');
 
+
+
 /*DESIGNATION_TO_HOURS TABLE*/
 insert into designation_to_hours values("Professor",10,8);
 insert into designation_to_hours values("Associate Professor",14,12);
@@ -452,8 +455,9 @@ insert into divisions values('SECOA','A',4,'SE','CO');
 insert into divisions values('SECOB','B',4,'SE','CO');
 insert into divisions values('SECOC','C',4,'SE','CO');
 
-/*Resource Table*/
 
+
+/*RESOURCE TABLE*/
 insert into resource values('CO101',80,"","101","Classroom","CO","fac1");
 insert into resource values('CO111',80,"","111","Classroom","CO","fac1");
 insert into resource values('CO201',80,"","201","Classroom","CO","fac1");
@@ -475,7 +479,9 @@ insert into resource values('CO112C',25,"",'112C',"Lab","CO","fac13");
 insert into resource values('CO007',25,"",'007',"Lab","CO","fac14");
 
 
--- fac prefs for 36 facs
+
+/*FACULTY_PREF TABLE*/
+/*fac prefs for 36 facs*/
 INSERT INTO faculty_pref values(0,8,'410250',null,1,2,1,'fac1','BE');
 INSERT INTO faculty_pref values(1,5,null,'410252B',6,6,6,'fac1','BE');
 INSERT INTO faculty_pref values(2,7,'310251',null,2,4,5,'fac1','TE');
