@@ -140,7 +140,7 @@ INSERT INTO `course` VALUES ('410241',4,'High Performance Computing',7,'R','BE',
 INSERT INTO `course` VALUES ('410242',3,'Artificial Intelligence and Robotics',7,'R','BE',1,3,0,'CO');
 INSERT INTO `course` VALUES ('410243',3,'Data Analytics',7,'R','BE',1,3,0,'CO');
 INSERT INTO `course` VALUES ('410244',3,'Elective 1',7,'E','BE',1,3,0,'CO');
-INSERT INTO `course` VALUES ('410245',3,'Elective 2',7,'E','BE',1,3,0,'CS');
+INSERT INTO `course` VALUES ('410245',3,'Elective 2',7,'E','BE',1,3,0,'CO');
 -- INSERT INTO `course` VALUES ('410246',2,'Laboratory Practice 1',7,'R','BE',0,4,0,'CO');
 -- INSERT INTO `course` VALUES ('410247',2,'Laboratory Practice 2',7,'E','BE',0,4,0,'CO');
 INSERT INTO `course` VALUES ('410246A',1,'LP1-Data Analytics',7,'R','BE',0,2,0,'CO');

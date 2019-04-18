@@ -373,6 +373,72 @@ public class AdminController {
 		
 		return getStudPrefDetailsTable();
 	}
+	@RequestMapping(value="/view-courses",method=RequestMethod.GET)
+	public ModelAndView viewCourses() {
+		ModelAndView model = new ModelAndView();
+		departments = departmentRepository.findAll();
+		model.addObject("department",departments);
+		model.setViewName("admin/viewCourses");
+		return model;
+	}
+	
+	@RequestMapping(value="/view-courses",method=RequestMethod.POST)
+	public String viewCoursesUsingRequirements(Model model,String dept,String year,char sem) {
+		ArrayList<Course> courseList;
+		System.out.println("dept "+dept);
+		System.out.println("year "+year);
+		System.out.println("sem "+sem);
+		
+		
+		if (dept.equals("none") && year.equals("none") && sem=='0') {
+			courseList = courseRepository.findAll();
+			model.addAttribute("courses", courseList);
+			System.out.println("all");
+		}else {
+			if (dept.equals("none") && year.equals("none") && sem!='0') {
+				
+				if(sem == 'o') {
+					//odd
+					courseList = courseRepository.findOddSemCourses();
+				}else {
+					//even
+					courseList = courseRepository.findEvenSemCourses();
+				}
+				model.addAttribute("courses", courseList);
+			}else if(dept.equals("none") && !year.equals("none") && sem=='0'){
+				courseList = courseRepository.findByCourseYear(year);
+				model.addAttribute("courses", courseList);
+			}else if(!dept.equals("none") && year.equals("none") && sem=='0') {
+				Department department = departmentRepository.findByDeptId(dept);
+				courseList = courseRepository.findByDepartment(department);
+				model.addAttribute("courses", courseList);
+			}else if(dept.equals("none") && !year.equals("none") && sem!='0') {
+				Integer semester = Character.getNumericValue(sem);
+				courseList = courseRepository.findByCourseSemAndCourseYear(semester, year);
+				model.addAttribute("courses", courseList);
+			}else if(!dept.equals("none") && !year.equals("none") && sem=='0') {
+				Department department = departmentRepository.findByDeptId(dept);
+				courseList = courseRepository.findByCourseYearAndDepartment(year,department);
+				model.addAttribute("courses", courseList);
+			}else if(!dept.equals("none") && year.equals("none") && sem!='0'){
+				Department department = departmentRepository.findByDeptId(dept);
+				
+				if(sem == 'o') {
+					//odd
+					courseList = courseRepository.findByDepartmentAndOddCourseSem(department);
+				}else {
+					//even
+					courseList = courseRepository.findByDepartmentAndEvenCourseSem(department);
+				}
+				model.addAttribute("courses", courseList);
+			}
+			else {
+				//not allowed
+			}
+		}
+		
+		return "admin/viewCourses:: courseTableDiv";
+	}
 	
 	
 	@RequestMapping(value="/viewUsers", method = RequestMethod.GET)
@@ -1118,19 +1184,27 @@ public class AdminController {
 	}
 	
 	//findElectivesToShow
+	//@ResponseBody
 	@RequestMapping(value="/findElectivesToShow",method=RequestMethod.POST)
-	public ModelAndView findElectivesToShow(@Valid Course course,String dept) {
-	
+	public ModelAndView findElectivesToShow(Course course,String dept) {
+		
+		String year = course.getCourseYear();
+		Integer sem = course.getCourseSem();
+		
+		System.out.println("dept "+dept);
+		
 		Department department = departmentRepository.findByDeptId(dept);
 		
-		System.out.println(course.getCourseSem()+" "+course.getCourseYear());
-		System.out.println(department.getDeptId());
-		
-		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,2);
+		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(sem,year,'R',department,1,2);
 		
 		if(elective_ids.size()==0) {
 			String err_msg = "No electives are opened for preference forms.";
 			return getShowAllocations(elective_ids,null,err_msg);
+//			model.addAttribute("err_msg", "No electives are opened for preference forms.");
+//			return "admin/showAllocations:: messageDiv";
+//		}else {
+//			model.addAttribute("elective_ids",elective_ids);
+//			return "admin/showAllocations:: elective_fragment";
 		}
 		return getShowAllocations(elective_ids, null,null);
 		
