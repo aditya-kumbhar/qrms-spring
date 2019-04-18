@@ -397,7 +397,7 @@ public class AdminController {
 		
 		if (dept.equals("none") && year.equals("none") && sem=='0') {
 			courseList = courseRepository.findAll();
-			model.addAttribute("courses", courseList);
+			
 			System.out.println("all");
 		}else {
 			if (dept.equals("none") && year.equals("none") && sem!='0') {
@@ -409,22 +409,22 @@ public class AdminController {
 					//even
 					courseList = courseRepository.findEvenSemCourses();
 				}
-				model.addAttribute("courses", courseList);
+				
 			}else if(dept.equals("none") && !year.equals("none") && sem=='0'){
 				courseList = courseRepository.findByCourseYear(year);
-				model.addAttribute("courses", courseList);
+				
 			}else if(!dept.equals("none") && year.equals("none") && sem=='0') {
 				Department department = departmentRepository.findByDeptId(dept);
 				courseList = courseRepository.findByDepartment(department);
-				model.addAttribute("courses", courseList);
+				
 			}else if(dept.equals("none") && !year.equals("none") && sem!='0') {
 				Integer semester = Character.getNumericValue(sem);
 				courseList = courseRepository.findByCourseSemAndCourseYear(semester, year);
-				model.addAttribute("courses", courseList);
+				
 			}else if(!dept.equals("none") && !year.equals("none") && sem=='0') {
 				Department department = departmentRepository.findByDeptId(dept);
 				courseList = courseRepository.findByCourseYearAndDepartment(year,department);
-				model.addAttribute("courses", courseList);
+				
 			}else if(!dept.equals("none") && year.equals("none") && sem!='0'){
 				Department department = departmentRepository.findByDeptId(dept);
 				
@@ -435,14 +435,23 @@ public class AdminController {
 					//even
 					courseList = courseRepository.findByDepartmentAndEvenCourseSem(department);
 				}
-				model.addAttribute("courses", courseList);
+				
 			}
 			else {
-				//not allowed
+				Department department = departmentRepository.findByDeptId(dept);
+				Integer semester = Character.getNumericValue(sem);
+				courseList = courseRepository.findByDepartmentAndCourseSemAndCourseYear(department,semester,year);
+				
 			}
 		}
+		if (courseList.size()!=0){
+			model.addAttribute("courses", courseList);
+			return "admin/viewCourses:: courseTableDiv";
+		}else {
+			model.addAttribute("errmsg","No courses found!");
+			return "admin/viewCourses:: messageDiv";
+		}
 		
-		return "admin/viewCourses:: courseTableDiv";
 	}
 	
 	
@@ -1962,12 +1971,12 @@ public class AdminController {
 		            				String[] temp = str.split(",");
 		            				for(String temps:temp) {
 		            					Resource r = resourceRepository.findByResourceId(dept.concat(temps));
-			            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department));
+			            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),"Time Table"));
 		            				}
 		            			}else {
 		            				//System.out.println("token "+str+" "+dept.concat(str)+" "+slot[0]+" "+slot[1]);
 		            				Resource r = resourceRepository.findByResourceId(dept.concat(str));
-		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department));
+		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),"Time Table"));
 //		            				System.out.println("ok");
 		            				
 	            				}

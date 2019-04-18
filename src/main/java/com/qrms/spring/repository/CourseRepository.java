@@ -159,5 +159,6 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 	ArrayList<Course> findByCourseSem(Integer sem);
 	ArrayList<Course> findByCourseYearAndDepartment(String year, Department department);
 	ArrayList<Course> findByDepartmentAndCourseSem(Department department, Integer sem);
+	ArrayList<Course> findByDepartmentAndCourseSemAndCourseYear(Department department, Integer semester, String year);
 		
 }

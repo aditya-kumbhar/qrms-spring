@@ -43,6 +43,29 @@ public class TimeTable {
 	@JoinColumn(name="dept")
 	private Department department;
 
+	@Column(name="activity_name")
+	private String activityName;
+	
+	public String getActivityName() {
+		return activityName;
+	}
+
+	public void setActivityName(String activityName) {
+		this.activityName = activityName;
+	}
+
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="slot_incharge")
+	private FacultyAcad slotIncharge;
+	
+	public FacultyAcad getSlotIncharge() {
+		return slotIncharge;
+	}
+
+	public void setSlotIncharge(FacultyAcad slotIncharge) {
+		this.slotIncharge = slotIncharge;
+	}
+	
 	public Time getStartTime() {
 		return startTime;
 	}
@@ -88,13 +111,15 @@ public class TimeTable {
 	}
 
 	public TimeTable(Time startTime, Time endTime, Resource resourceId, String day,
-			Department department) {
+			Department department,FacultyAcad slotIncharge,String activityName) {
 		super();
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.resourceId = resourceId;
 		this.day = day;
 		this.department = department;
+		this.slotIncharge = slotIncharge;
+		this.activityName = activityName;
 	}
 	
 	

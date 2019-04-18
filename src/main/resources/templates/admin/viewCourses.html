@@ -3,8 +3,6 @@
 <head>
 	<th:block th:include="fragments/admin_header.html :: headerfiles"></th:block>
 
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-
     <title>View Courses</title>
 
 	<link rel="stylesheet" th:href="@{/css/register.css}">
@@ -49,12 +47,61 @@
 	 	 	     		}else{
 	 	 	     			$("#courseTableDiv").html('');
 	 	 	 	        	$("#courseTableDiv").html(data);
+	 	 	 	        	$('html, body').animate({
+	 	                       scrollTop: $('#courseTableDiv').offset().top
+	 	                     }, 500);
 	 	 	     		}
 	 	 	        	
 	 	 	     	}
 				});
 			});
+			
 		});
+		function exportTableToCSV() {
+	    	var filename = 'courses.csv';
+	    	
+	        var csv = [];
+	        var rows = document.querySelectorAll("#allocTable tr");
+	        
+	        for (var i = 0; i < rows.length; i++) {
+	            var row = [], cols = rows[i].querySelectorAll("td, th");
+	            
+	            for (var j = 0; j < cols.length; j++) 
+	                row.push(cols[j].innerText);
+	            
+	            csv.push(row.join(","));        
+	        }
+
+	        // Download CSV file
+	        downloadCSV(csv.join("\n"), filename);
+	    }
+	    
+	    function downloadCSV(csv, filename) {
+	        var csvFile;
+	        var downloadLink;
+
+	        // CSV file
+	        csvFile = new Blob([csv], {type: "text/csv"});
+
+	        // Download link
+	        downloadLink = document.createElement("a");
+
+	        // File name
+	        downloadLink.download = filename;
+
+	        // Create a link to the file
+	        downloadLink.href = window.URL.createObjectURL(csvFile);
+
+	        // Hide download link
+	        downloadLink.style.display = "none";
+
+	        // Add the link to DOM
+	        document.body.appendChild(downloadLink);
+
+	        // Click download link
+	        downloadLink.click();
+	    }
+		
 	</script>
 		
 </head>
@@ -122,7 +169,11 @@
 					</tr>
 				</table>
 		</article>
-
+	
+		<article class="card-body mx-auto" th:if="${courses}">
+			<button class="btn btn-primary" onclick="exportTableToCSV()">Export Table To CSV File</button>
+		 </article>
+		
 		<article class="card-body mx-auto">
 			<div id="courseTableDiv" th:fragment="courseTableDiv">
 				<table class="table table-bordered table-hover" th:if="${courses}">

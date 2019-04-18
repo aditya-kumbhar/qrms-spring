@@ -303,7 +303,6 @@ public class FacultyController {
 		
 		Collection <TimeSlots> ts = bookingsService.findTimeSlotsByResourceForCurrentDate(getTT);
 		
-		
 		List<TimeSlots> list;
 		if (ts instanceof List)
 		  list = (List<TimeSlots>)ts;
