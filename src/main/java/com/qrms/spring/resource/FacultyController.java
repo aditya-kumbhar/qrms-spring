@@ -1,6 +1,9 @@
 package com.qrms.spring.resource;
 
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -266,6 +269,7 @@ public class FacultyController {
 		
 	}*/
 	
+	
 	@RequestMapping(value="/bookings",method=RequestMethod.GET)
 	public ModelAndView getRequirements() {
 		ModelAndView model = new ModelAndView();
@@ -301,7 +305,13 @@ public class FacultyController {
 	public String getTTForResource(Model model,String getTT){
 		System.out.println("resource = "+getTT);
 		
-		Collection <TimeSlots> ts = bookingsService.findTimeSlotsByResourceForCurrentDate(getTT);
+
+		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate date = LocalDate.parse("2019-04-08", df);
+		Date sqlDate = java.sql.Date.valueOf(date.toString());
+		String day = date.getDayOfWeek().name();
+		
+		Collection <TimeSlots> ts = bookingsService.findTimeSlotsByResourceForDate(getTT,day,sqlDate);
 		
 		List<TimeSlots> list;
 		if (ts instanceof List)
@@ -321,5 +331,39 @@ public class FacultyController {
 			model.addAttribute("ttForResource",list);
 			return "faculty/bookings:: resourceTT";
 		}
+	}
+	
+	@RequestMapping(value="/getTTForResourceForDate",method=RequestMethod.POST)
+	public String getTTForResourceForDate(Model model,String booking_date,String getTT)
+	{
+		System.out.println("hello :)"+booking_date+getTT);
+		
+		
+		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate date = LocalDate.parse(booking_date, df);
+		Date sqlDate = java.sql.Date.valueOf(date.toString());
+		String day = date.getDayOfWeek().name();
+		
+		Collection <TimeSlots> ts = bookingsService.findTimeSlotsByResourceForDate(getTT,day,sqlDate);
+		
+		List<TimeSlots> list;
+		if (ts instanceof List)
+		  list = (List<TimeSlots>)ts;
+		else
+		  list = new ArrayList<TimeSlots>(ts);
+		
+		Collections.sort(list);
+		
+		if(ts.isEmpty()) {
+			model.addAttribute("err_msg","No Slots are booked!");
+			return "faculty/bookings:: messageDiv";
+		}else {
+			System.out.println(list.size());
+			for(TimeSlots tss:ts)
+				System.out.println(tss.getStartTime());
+			model.addAttribute("ttForResource",list);
+			return "faculty/bookings:: resourceTT";
+		}
+		
 	}
 }

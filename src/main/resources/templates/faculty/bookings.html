@@ -17,7 +17,7 @@
       current[0].className = current[0].className.replace(" active", "");
     }
 	//set current page nav as active
-	document.getElementById("bookings-nav").className+=" active";		
+	document.getElementById("bookings-nav").className+=" active";
 </script>
 <script>
 	$(document).ready(function () {
@@ -64,7 +64,7 @@
 						Select Resource Type
 					</td>
 					<td>
-						<select class="form-control" th:id="rType" th:name="rType" autofocus>
+						<select class="form-control" th:id="rType" th:name="rType">
 							<option th:value="none" style="color:#8F8B87" selected>Select Resource Type</option>
 							<option th:value="Classroom" style="color:#000">Classroom</option>
 							<option th:value="Lab" style="color:#000">Lab</option>
@@ -91,8 +91,8 @@
 		</form>
 		</article>
 		<article class="card-body mx-auto" th:id="resourceOptionsTable" th:fragment="resourceOptionsTable">
-		
-			<table th:if="${options}" class="table table-hover table-bordered">
+		<h5 class="card-title mt-3 text-center" th:if="${options}">Resources found</h5>
+			<table th:if="${options}" class="table table-hover table-light table-bordered">
 				<thead>
 					<tr>
 						<th>
@@ -140,9 +140,14 @@
 		
 		</article>
 		
-		<div class="card-body row" th:id="resourceTT" th:fragment="resourceTT">
+		<div class="card-body " th:id="resourceTT" th:fragment="resourceTT">
+			<div class="row col-sm-4">
+				<h5 class="card-title mt-3 text-center" th:if="${ttForResource}" th:name="resource-id-heading" th:id="resource-id-heading">Resource Time Table</h5>
+			</div>
+		
+			<div class="row">
 			<div class="col-8">
-				<table th:if="${ttForResource}" class="table table-hover table-bordered">
+				<table th:if="${ttForResource}" class="table table-light table-hover table-bordered">
 					<thead>
 						<tr>
 							<th>
@@ -165,24 +170,97 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="col-4">
-				<input th:if="${ttForResource}" class="" type="date" id="booking-date"/>
-			</div>
-		</div>
 			
-		  <div th:id="messageDiv">
-			<div class="row text-center card-body mx-auto" th:fragment="messageDiv">
-				<div class="alert alert-success" role="alert" id ="success" th:if="${msg}" th:utext="${msg}"></div>
-				<div class="alert alert-danger" role="alert"  id="err" th:if="${err_msg}" th:utext="${err_msg}"></div>
+			<div class="col-4">
+				<div class="row">
+					<table class="table table-borderless">
+						<tr>
+							<td>
+								Pick a date to book.
+							</td>
+							<td>
+								<input th:if="${ttForResource}" class="form-control btn btn-light" type="date" onchange="sendDateToBackend()" id="booking-date"/>
+							</td>
+						</tr>
+						<tr>
+							<td>Enter the activity/event name</td>
+							<td>
+								<input type="text" class="form-control" id="start-time">
+							</td>
+						</tr>
+						<tr>
+							<td>Enter a start time</td>
+							<td>
+								<input type="time" class="form-control" id="start-time">
+							</td>
+						</tr>
+						<tr>
+							<td>Enter an end time</td>
+							<td>
+								<input type="time" class="form-control" id="end-time">
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<button id="requestSlot" class="form-control btn btn-primary">Request Slot</button>
+							</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</div>
+		</div>
+		<article class="card-body mx-auto">
+			  <div th:id="messageDiv">
+				<div class="row text-center card-body mx-auto" th:fragment="messageDiv">
+					<div class="alert alert-success" role="alert" id ="success" th:if="${msg}" th:utext="${msg}"></div>
+					<div class="alert alert-danger" role="alert"  id="err" th:if="${err_msg}" th:utext="${err_msg}"></div>
+				</div>
+			</div>
+		</article>
 	</div>
 	<script>
+	
+	function sendDateToBackend(){
+		var d = document.getElementById("booking-date");
+        console.log(d.value);
+        console.log(Resource);
+        if (d.value==""){
+        	console.log("no change");
+        }else{
+	        $.ajax({
+				type: "POST",
+				data: {booking_date: d.value,getTT: Resource},
+				url: '/u/faculty/getTTForResourceForDate',
+				success: function(data){
+					if ($(data).find('#err').length) {
+	        			$('#resourceTT').html('');
+	         	   		$('#messageDiv').html('');
+	        	   		$('#messageDiv').html(data);                   
+		           } else{
+	            	   $('#resourceTT').html('');
+	                   $('#resourceTT').html(data);   
+	                   $('html, body').animate({
+	                       scrollTop: $('#resourceTT').offset().top
+	                     }, 500);
+	          	 	}
+		        }
+			});
+        }
+  };
+	
+	
+	var Resource;
+	function bindDatePicker(){
+		var d = document.getElementById("booking-date");
+		d.value = new Date().toISOString().substr(0, 10);
+		console.log(d.value);
+	}
+	
 	function bindForm(){
 		$( "[name='BookButton']" ).click(function() {
 			var curResource = this.id;
-			console.log(curResource);
-			console.log("heyaaa");
+			Resource = curResource;
 		    $.ajax({	
 		        type: "GET",
 		        contentType: "application/json",
@@ -202,10 +280,13 @@
               	 	}
 		        }
 			});
+		    
+		    setTimeout(function(){
+				 bindDatePicker();
+				 }, 100);
 		});
 	}
 	$( "#resourceReqForm" ).on( "submit", function( event ) {
-	    console.log("hello");
 		event.preventDefault();
 		$.ajax({
 	        type: "POST",
@@ -234,8 +315,6 @@
 			 }, 100);
 		    
 	});
-	
-	
 </script>
 </body>
 </html>

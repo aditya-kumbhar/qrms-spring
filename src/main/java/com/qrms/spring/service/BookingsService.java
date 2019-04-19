@@ -1,5 +1,6 @@
 package com.qrms.spring.service;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -11,5 +12,5 @@ public interface BookingsService {
 	public ArrayList<Department> listDepartments();
 	public Resource findByResourceId(String getTT);
 	public ArrayList<Resource> listResourcesByDepartmentAndRTypeAndMinSeats(String dept, String rType, Integer minSeats);
-	public Collection<TimeSlots> findTimeSlotsByResourceForCurrentDate(String getTT);
+	public Collection<TimeSlots> findTimeSlotsByResourceForDate(String getTT,String day,Date sqlDate);
 }

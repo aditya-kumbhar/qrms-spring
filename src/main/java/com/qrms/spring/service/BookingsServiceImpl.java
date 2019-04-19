@@ -53,16 +53,12 @@ public class BookingsServiceImpl implements BookingsService{
 		return resourceRepository.findByResourceId(getTT);
 	}
 
-	public Collection<TimeSlots> findTimeSlotsByResourceForCurrentDate(String getTT) {
+	public Collection<TimeSlots> findTimeSlotsByResourceForDate(String getTT,String day,Date sqlDate) {
 		// TODO Auto-generated method stub
 		Resource r = resourceRepository.findByResourceId(getTT);
 //		LocalDateTime date = LocalDateTime.now();
 //		Date sqlDate = java.sql.Date.valueOf(date.toLocalDate());
 		
-		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		LocalDate date = LocalDate.parse("2019-04-08", df);
-		Date sqlDate = java.sql.Date.valueOf(date.toString());
-		String day = date.getDayOfWeek().name();
 		
 		
 		//		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-mm-dd");
