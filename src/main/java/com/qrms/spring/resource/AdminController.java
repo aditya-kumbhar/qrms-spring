@@ -435,7 +435,6 @@ public class AdminController {
 					//even
 					courseList = courseRepository.findByDepartmentAndEvenCourseSem(department);
 				}
-				
 			}
 			else {
 				Department department = departmentRepository.findByDeptId(dept);
@@ -453,18 +452,17 @@ public class AdminController {
 		}
 		
 	}
-	
-	
+
 	@RequestMapping(value="/viewUsers", method = RequestMethod.GET)
 	public ModelAndView viewUsers() {
 		ModelAndView model = new ModelAndView();
 		departments = departmentRepository.findAll();
 		roles = roleRepository.findAll();
-		
 		model.addObject("roles",roles);
 		model.addObject("department",departments);
 		model.setViewName("admin/viewUsers");
 		return model;
+	
 	}
 	
 	
@@ -539,15 +537,6 @@ public class AdminController {
 			}
 		}
 		
-//		List<Integer> list;
-//		if (electiveToCount.values() instanceof List)
-//		  list = (List<Integer>)electiveToCount.values();
-//		else
-//		  list = new ArrayList<Integer>();
-//		
-		
-//		model.addObject("electiveToCount",list);
-//		System.out.println("elective count size "+electiveToCount.keySet().size());
 		model.addObject("electiveToCount",electiveToCount);
 		model.addObject("deptId",c.getDepartment().getDeptId());
 		model.addObject("year",c.getCourseYear());
@@ -593,9 +582,14 @@ public class AdminController {
 					extra = studentsPerBatch*ebc.getNoOfBatches() - totalStudents;
 				
 				System.out.println("Extra: "+extra);
-				
+				System.out.println("StudentsPerBatch: "+studentsPerBatch);
 				for(int j=0;j<ebc.getNoOfBatches();j++) {
-					int batchCount = studentsPerBatch+extra--;
+					int batchCount = 0;
+					if(extra-->0)
+						batchCount = studentsPerBatch+1;
+					else
+						batchCount = studentsPerBatch;
+					
 					System.out.println(batchCount);
 					int cur = i;
 					for(;i<cur+batchCount;i++) {
@@ -1114,8 +1108,6 @@ public class AdminController {
 
 		Course ElCourse = courseRepository.findByCourseId(course_id);
 		ArrayList<StudentAllocCourse> studentAllocs = studentAllocCourseRepository.findByCourseId(ElCourse);
-		
-		
 		
 		if(studentAllocs.size()!=0) {
 			studentAllocCourseRepository.deleteByCourseId(ElCourse);
