@@ -39,12 +39,8 @@
     		}
     	});
     	
-    	$('[name="viewDetailsButton"]').click(function(){
-    		console.log(this.id);
-    		  $('html, body').animate({
-    		        scrollTop: $("#viewDetailsDiv").offset().top
-    		    }, 1000);
-    	});
+    	
+    	
     });
 	    
     </script>
@@ -122,39 +118,94 @@
   	<tbody>
     	<tr th:each="rs,iterStat : ${facAllotmentList}">
      	<td th:text="${rs.facultyId}" th:id="${iterStat.count} + username"></td>
-     	<td th:text="${rs.name}" th:id="${iterStat.count} + name">></td>
-     	<td th:text="${rs.theoryHours}" th:id="${iterStat.count} + thHours">></td>
-     	<td th:text="${rs.practicalHours}" th:id="${iterStat.count} + prHours">></td>
+     	<td th:text="${rs.name}" th:id="${iterStat.count} + name"></td>
+     	<td th:text="${rs.theoryHours}" th:id="${iterStat.count} + thHours"></td>
+     	<td th:text="${rs.practicalHours}" th:id="${iterStat.count} + prHours"></td>
      	<td th:text="${rs.allotedLoad}" th:id="${iterStat.count} + allotedHours"></td>
-    	<td th:text="${rs.maxLoad}" th:id="${iterStat.count} + maxHours">></td>
+    	<td th:text="${rs.maxLoad}" th:id="${iterStat.count} + maxHours"></td>
    		<td>
    		 <button class="btn" name="viewDetailsButton" th:id="${iterStat.count}">View Details</button>
+   		
    		</td>
    		</tr>
   	</tbody>
 	</table>
 	<br><br>
-	<div id="viewDetailsDiv">
-	 <h4 id="nameDet"></h4>
-	 <table>
-	 	<tr>
-	 		<td>Name</td>
-	 		<td id="nameDet"></td>
-	 	</tr>
-	 	<tr>
-	 		<td>Name</td>
-	 		<td id="nameDet"></td>
-	 	</tr>
-	 </table>
-	</div>
-	</article>
+	<div id="viewDetailsDiv" th:fragment="viewDetailsDiv">
+ <div th:if="${facultyAllocation}">
+ <h5 id="nameDet" th:text="${facultyAllocation.name}"></h5>
+ <ol>
+ <li>Courses alloted
+ <table class="table table-bordered table-hover">
+ <thead>
+	 <tr>
+		 <td>Course ID</td>
+		 <td>Division</td>
+		 <td>Hours</td>
+	 </tr>
+ </thead>
+ <tbody>
+	<tr th:each="fa : ${facultyAllocation.courseAndDivs}">
+		<td th:text="${fa.courseId}"></td>
+		<td th:text="${fa.divisionId}"></td>
+		<td th:text="${fa.noOfHours}"></td>	
+ 	</tr>
+ 	</tbody>
+ </table>
+</li>
+<li>Practicals Alloted
+<table class="table table-bordered table-hover">
+ <thead>
+	 <tr>
+		 <td>Practical Course ID</td>
+		 <td>Division</td>
+		 <td>Batch</td>
+		 <td>Hours</td>
+	 </tr>
+ </thead>
+ <tbody>
+	<tr th:each="fa : ${facultyAllocation.practicalsAndBatches}">
+		<td th:text="${fa.practicalCourseId}"></td>
+		<td th:text="${fa.divId}"></td>
+		<td th:text="${fa.labId}"></td>
+		<td th:text="${fa.noOfHours}"></td>	
+ 	</tr>
+ 	</tbody>
+ </table>	
+</li>
+
+</ol>
+ 
+</div>
+</div>
+</article>
 	
 </div>
 </body>
-<script>
-	
-</script>
 
+ <script th:inline = "javascript">
+	/*<![CDATA[*/
+	$('[name="viewDetailsButton"]').click(function(){
+			var i = this.id;
+			$.ajax({
+ 	 	        type: "GET",
+ 	 	        url: '/u/admin/getFacultyAllocationByIndex',
+ 	 	        data: {i: i},
+ 	 	        success: function (data) {
+
+ 	 	        	$("#viewDetailsDiv").html('');
+ 	 	        	$("#viewDetailsDiv").html(data);
+ 	 	     		
+ 	               }
+ 	 		});
+			
+			  $('html, body').animate({
+			        scrollTop: $("#viewDetailsDiv").offset().top
+			    }, 1000);
+		});
+	
+	/*]]>*/
+	</script>
 </html>
 
 

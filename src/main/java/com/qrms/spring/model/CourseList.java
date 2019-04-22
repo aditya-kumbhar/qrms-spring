@@ -16,6 +16,8 @@ public class CourseList {
 	@Column(name="id")
 	private int id;
 	
+	
+	
 	@Column(name="course_id")
 	private String courseId;
 	

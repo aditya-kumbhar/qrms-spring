@@ -223,24 +223,24 @@ INSERT INTO `electives` VALUES ('410244D','Data Mining and Warehousing','410244'
 /*BE sem2 elective_batches -- will be populated during student allocation*/
 
 -- SCOA(1), Compilers(1), ERTOS(1)
-INSERT INTO `elective_batches` VALUES('BECOEL3-A','410252B','BE','CO');
-INSERT INTO `elective_batches` VALUES('BECOEL3-B','410252C','BE','CO');
-INSERT INTO `elective_batches` VALUES('BECOEL3-C','410252D','BE','CO');
+INSERT INTO `elective_batches` VALUES('410252B-1','410252B','BE','CO');
+INSERT INTO `elective_batches` VALUES('410252C-1','410252C','BE','CO');
+INSERT INTO `elective_batches` VALUES('410252D-1','410252D','BE','CO');
 
 -- HCI(2), CC(1)
-INSERT INTO `elective_batches` VALUES('BECOEL4-A','410253B','BE','CO');
-INSERT INTO `elective_batches` VALUES('BECOEL4-B','410253B','BE','CO');
-INSERT INTO `elective_batches` VALUES('BECOEL4-C','410253C','BE','CO');
+INSERT INTO `elective_batches` VALUES('410253B-1','410253B','BE','CO');
+INSERT INTO `elective_batches` VALUES('410253B-2','410253B','BE','CO');
+INSERT INTO `elective_batches` VALUES('410253C-1','410253C','BE','CO');
 
 /*BE sem1 elective_batches*/
 -- STQA(3)
-INSERT INTO `elective_batches` VALUES('BECOEL1-A','410245B','BE','CO');
-INSERT INTO `elective_batches` VALUES('BECOEL1-B','410245B','BE','CO');
-INSERT INTO `elective_batches` VALUES('BECOEL1-C','410245B','BE','CO');
+INSERT INTO `elective_batches` VALUES('410245B-1','410245B','BE','CO');
+INSERT INTO `elective_batches` VALUES('410245B-2','410245B','BE','CO');
+INSERT INTO `elective_batches` VALUES('410245B-3','410245B','BE','CO');
 -- DMW(3)
-INSERT INTO `elective_batches` VALUES('BECOEL2-A','410244D','BE','CO');
-INSERT INTO `elective_batches` VALUES('BECOEL2-B','410244D','BE','CO');
-INSERT INTO `elective_batches` VALUES('BECOEL2-C','410244D','BE','CO');
+INSERT INTO `elective_batches` VALUES('410244D-1','410244D','BE','CO');
+INSERT INTO `elective_batches` VALUES('410244D-2','410244D','BE','CO');
+INSERT INTO `elective_batches` VALUES('410244D-3','410244D','BE','CO');
 
 
 

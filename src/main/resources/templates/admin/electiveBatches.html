@@ -7,51 +7,51 @@
     <!-- Custom styles for this template -->
    	<link th:href="@{/css/admin/admin_home.css}" rel="stylesheet">
 	<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
+   	<script>
+   	/*
+   	$(function(){
    	
+   		$("#submitNoOfBatches").click(function(){
+	  		
+	  		var electiveBatchCounts = [];
+	  		$.each($('.batches'), function() {
+	  			electiveBatchCounts.push({"electiveId":this.id,"noOfBatches":$(this).val()});
+	  		});
+	  		
+	  		console.log(electiveBatchCounts);
+	  		
+	  		electiveBatchCounts = JSON.stringify({
+	  			'electiveBatchCounts': electiveBatchCounts
+	  		});
+	  		
+	  		console.log(electiveBatchCounts);
+	  		// data: electiveBatchCounts,
+	  		$.ajax({
+	  			type: "POST",
+	  		    method : "POST",
+	  	        contentType: "application/json",
+	  	        url: '/u/admin/setbatches',
+	  	        dataType: 'html',
+	  	        mimeType: 'application/json'
+	  	        success: function (response) {
+	  	        	console.log(response);
+	  	        	//window.location.replace("http://127.0.0.1:8080/u/admin/home");
+	  	        }
+	  		});
+	  		
+   		
+   		});
+   	
+   	});
+   	*/
+   	</script>
 </head>
+
 <body>
-<script type="text/javascript">
-$(document).ready(function () {
-	$( "#batches-form" ).on( "submit", function(){
-	console.log("umm");
-	
-	event.preventDefault();
-	var electiveBatchCounts = [];
-	$.each($('.batches'), function() {
-		electiveBatchCounts.push({"electiveId":this.id,"noOfBatches":$(this).val()});
-	});
-	
-	console.log(electiveBatchCounts);
-	
-	electiveBatchCounts = JSON.stringify({
-		'electiveBatchCounts': electiveBatchCounts
-	});
-	
-	console.log(electiveBatchCounts);
-	
-	$.ajax({
-        type: "POST",
-        method : "POST",
-        contentType: "application/json",
-        url: '/u/admin/setbatches/',
-        data: electiveBatchCounts,
-        dataType: 'html',
-        mimeType: 'application/json',
-        success: function (response) {
-        	console.log("Okay");
-        	window.location.replace("http://127.0.0.1:8080/u/admin/home");
-        }
-	});
-	
-	
-	});
-});
-</script>
 
 <div class="card bg-light">
 		<article class="card-body mx-auto">
 		<h4 class="card-title mt-3 text-center">Enter Requirements</h4>
-		<form id="batches-form">
 			<table class="table table-bordered table-hover">
 				<thead>
 					<tr>
@@ -76,12 +76,14 @@ $(document).ready(function () {
 					</tr>
 					<tr>
 						<td colspan="3" align="center">
-							<button type="submit" class="btn btn-primary" name="submitNoOfBatches" id="submitNoOfBatches">Submit</button>
+							<button  type = "submit" class="btn btn-primary" id="submitNoOfBatches" onclick="setBatches()">Submit</button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
-		</form>
+			<input type="hidden" th:value="${deptId}" id="deptId"></input>
+			<input type="hidden" th:value="${year}" id="year"></input>
+			
 		</article>
 		<div class="row text-center mx-auto">
 			<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
@@ -89,4 +91,35 @@ $(document).ready(function () {
 		</div>  
 	</div>
 </body>
+<script>
+function setBatches(){
+	var electiveBatchCounts = [];
+	
+	$.each($('.batches'), function() {
+		electiveBatchCounts.push({"electiveId":this.id,"noOfBatches": parseInt($(this).val())});
+	});
+	
+	var deptId = $('#deptId').val();
+	var year = $('#year').val();
+	
+	electiveBatchCounts = JSON.stringify({
+		'electiveBatchCounts': electiveBatchCounts,
+		'year': year,
+		'deptId': deptId
+	});
+	
+	$.ajax({
+        type: "POST",
+        url: '/u/admin/set-batches',
+        contentType: "application/json",
+        dataType: 'html',
+        data: electiveBatchCounts,
+        mimeType: 'application/json',
+        success: function (response) {
+        	alert("Batches created successfully");
+        	window.location.replace("http://127.0.0.1:8080/u/admin/home");        }
+	});
+}
+
+</script>
 </html>
