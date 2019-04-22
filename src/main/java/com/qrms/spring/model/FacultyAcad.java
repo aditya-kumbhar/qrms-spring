@@ -1,6 +1,9 @@
 package com.qrms.spring.model;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -44,6 +49,24 @@ public class FacultyAcad {
 	@Column(name="designation")
 	private String designation;
 
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name="user_dets")
+	private Users userDets;
+	
+	@OneToMany(mappedBy = "slotIncharge",cascade = CascadeType.ALL)
+	Set<TimeSlots> timeSlots = new HashSet<TimeSlots>();
+	
+	@OneToMany(mappedBy = "slotIncharge",cascade = CascadeType.ALL)
+	Set<TimeTable> timeTableSlots = new HashSet<TimeTable>();
+	
+	public Users getUserDets() {
+		return userDets;
+	}
+
+	public void setUserDets(Users userDets) {
+		this.userDets = userDets;
+	}
+	
 	public String getUserName() {
 		return userName;
 	}

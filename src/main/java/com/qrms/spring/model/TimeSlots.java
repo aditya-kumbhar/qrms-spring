@@ -21,12 +21,7 @@ public class TimeSlots implements Comparable<TimeSlots>{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="tid")
 	private String tid;
-	
-	//startTime
-	//endTime
-	//roomNo/labNo
-	//seats
-	
+		
 	@Column(name="start_time")
 	private Time startTime;
 	
@@ -43,6 +38,29 @@ public class TimeSlots implements Comparable<TimeSlots>{
 	@Column(name="date")
 	private Date date;
 	
+	@Column(name="activity_name")
+	private String activityName;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="slot_incharge")
+	private FacultyAcad slotIncharge;
+	
+	public String getActivityName() {
+		return activityName;
+	}
+
+	public void setActivityName(String activityName) {
+		this.activityName = activityName;
+	}
+
+	public FacultyAcad getSlotIncharge() {
+		return slotIncharge;
+	}
+
+	public void setSlotIncharge(FacultyAcad slotIncharge) {
+		this.slotIncharge = slotIncharge;
+	}
+
 	public Date getDate() {
 		return date;
 	}
@@ -91,13 +109,15 @@ public class TimeSlots implements Comparable<TimeSlots>{
 		this.seatsOccupied = seatsOccupied;
 	}
 
-	public TimeSlots(Time startTime, Time endTime, Resource resourceId, int seatsOccupied,Date date) {
+	public TimeSlots(Time startTime, Time endTime, Resource resourceId, int seatsOccupied,Date date,FacultyAcad slotIncharge,String activityName) {
 		super();
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.resourceId = resourceId;
 		this.seatsOccupied = seatsOccupied;
 		this.date = date;
+		this.slotIncharge = slotIncharge;
+		this.activityName = activityName;
 	}
 
 	@Override

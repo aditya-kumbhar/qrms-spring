@@ -29,7 +29,7 @@ public class Resource {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="resource_incharge")
-	private Users resourceIncharge;
+	private FacultyAcad resourceIncharge;
 	
 	@Column(name="resource_capacity")
 	private int resourceCapacity;
@@ -44,7 +44,7 @@ public class Resource {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Resource(String resourceId, String resourceName, Department department, Users resourceIncharge,
+	public Resource(String resourceId, String resourceName, Department department, FacultyAcad resourceIncharge,
 			int resourceCapacity,String resourceType,String resourceInfo) {
 		super();
 		this.resourceId = resourceId;
@@ -110,11 +110,11 @@ public class Resource {
 		this.department = department;
 	}
 
-	public Users getResourceIncharge() {
+	public FacultyAcad getResourceIncharge() {
 		return resourceIncharge;
 	}
 
-	public void setResourceIncharge(Users resourceIncharge) {
+	public void setResourceIncharge(FacultyAcad resourceIncharge) {
 		this.resourceIncharge = resourceIncharge;
 	}
 	

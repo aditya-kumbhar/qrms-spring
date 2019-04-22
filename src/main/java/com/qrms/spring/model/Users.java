@@ -120,4 +120,7 @@ public class Users {
 	@OneToOne(mappedBy = "userDets", cascade = CascadeType.ALL)
 	StudentAcad student = new StudentAcad();
 	
+	@OneToOne(mappedBy = "userDets", cascade = CascadeType.ALL)
+	FacultyAcad faculty = new FacultyAcad();
+	
 }

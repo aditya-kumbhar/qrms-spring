@@ -1,0 +1,216 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:include="fragments/admin_header.html :: headerfiles"></th:block>
+
+    <title>View Courses</title>
+
+	<link rel="stylesheet" th:href="@{/css/register.css}">
+	
+	<script type="text/javascript">
+	
+		$(document).ready(function () {
+			
+			$("#year").change(function () {
+	            var val = $(this).val();
+	            if (val == "FE") {
+	                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='1' style='color:#000'>1</option><option value='2' style='color:#000'>2</option>");
+	            } else if (val == "SE") {
+	                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='3' style='color:#000'>3</option><option value='4' style='color:#000'>4</option>");
+	            } else if (val == "TE") {
+	                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='5' style='color:#000'>5</option><option value='6' style='color:#000'>6</option>");
+	            } else if (val == "BE") {
+	                $("#sem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='7' style='color:#000'>7</option><option value='8' style='color:#000'>8</option>");
+	            } else if (val == "none") {
+	            	$("#sem").html("<option value='0'>Select Semester</option><option value='o' style='color:#000'>Odd</option><option value='e' style='color:#000'>Even</option>");
+	            }
+	        });
+			
+			$("#viewCoursesButton").click(function(){
+				
+				console.log($("#dept").val());
+				console.log($("#year").val());
+				console.log($("#sem").val());
+				var dept = $("#dept").val();
+				var year = $("#year").val();
+				var sem = $("#sem").val();
+				$.ajax({
+	 	 	        type: "POST",
+	 	 	        method:"POST",
+	 	 	        url: '/u/admin/view-courses',
+	 	 	     	data: { dept: dept, year:year, sem:sem},
+	 	 	     	success: function (data) {
+	 	 	     		console.log("hello");
+	 	 	     		if ($(data).find('#err').length){
+	 	 	     			$('#messageDiv').html('');
+	 			        	$('#messageDiv').html(data);
+	 	 	     		}else{
+	 	 	     			$("#courseTableDiv").html('');
+	 	 	 	        	$("#courseTableDiv").html(data);
+	 	 	 	        	$('html, body').animate({
+	 	                       scrollTop: $('#courseTableDiv').offset().top
+	 	                     }, 500);
+	 	 	     		}
+	 	 	        	
+	 	 	     	}
+				});
+			});
+			
+		});
+		function exportTableToCSV() {
+	    	var filename = 'courses.csv';
+	    	
+	        var csv = [];
+	        var rows = document.querySelectorAll("#allocTable tr");
+	        
+	        for (var i = 0; i < rows.length; i++) {
+	            var row = [], cols = rows[i].querySelectorAll("td, th");
+	            
+	            for (var j = 0; j < cols.length; j++) 
+	                row.push(cols[j].innerText);
+	            
+	            csv.push(row.join(","));        
+	        }
+
+	        // Download CSV file
+	        downloadCSV(csv.join("\n"), filename);
+	    }
+	    
+	    function downloadCSV(csv, filename) {
+	        var csvFile;
+	        var downloadLink;
+
+	        // CSV file
+	        csvFile = new Blob([csv], {type: "text/csv"});
+
+	        // Download link
+	        downloadLink = document.createElement("a");
+
+	        // File name
+	        downloadLink.download = filename;
+
+	        // Create a link to the file
+	        downloadLink.href = window.URL.createObjectURL(csvFile);
+
+	        // Hide download link
+	        downloadLink.style.display = "none";
+
+	        // Add the link to DOM
+	        document.body.appendChild(downloadLink);
+
+	        // Click download link
+	        downloadLink.click();
+	    }
+		
+	</script>
+		
+</head>
+<div th:replace="fragments/admin_header :: header"></div>
+
+<!-- script to turn nav link active -->
+<script type="text/javascript">
+	var navBar = document.getElementById("nav-bar");		
+	var current = navBar.getElementsByClassName("active");
+    // If there's any other active nav, make it inactive
+    if (current.length > 0) { 
+      current[0].className = current[0].className.replace(" active", "");
+    }
+	//set current page nav as active
+	document.getElementById("viewCourses-nav").className+=" active";		
+</script>
+<body>
+	<div class="card bg-light">
+		<article class="card-body mx-auto">
+			<h4 class="card-title mt-3 text-center">View Courses</h4>
+				<table>
+					<tr>
+						<td>
+							Select host department
+						</td>
+						<td>
+							<select class="form-control" id="dept" name="dept" autofocus>
+								<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+								<option th:each="dept : ${department}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Select Year
+						</td>
+						<td>
+							<select class="form-control" name="year" id="year">
+								<option value="none" style="color:#8F8B87" selected>Select Year</option>
+								<option value="FE" style="color:#000">FE</option>
+								<option value="SE" style="color:#000">SE</option>
+								<option value="TE" style="color:#000">TE</option>
+								<option value="BE" style="color:#000">BE</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Select Semester
+						</td>
+						<td>
+							<select class="form-control" name="sem" id="sem">
+								<option value='0' style="color:#8F8B87" selected>Select Semester</option>
+								<option value='o' style="color:#000">Odd</option>
+								<option value='e' style="color:#000">Even</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan=2 align=center>
+							<div class="form-group">
+		       					<button type="submit" class="btn btn-primary" id="viewCoursesButton">View</button>	        		
+				    		</div> 
+				    	</td>
+					</tr>
+				</table>
+		</article>
+	
+		<article class="card-body mx-auto" th:if="${courses}">
+			<button class="btn btn-primary" onclick="exportTableToCSV()">Export Table To CSV File</button>
+		 </article>
+		
+		<article class="card-body mx-auto">
+			<div id="courseTableDiv" th:fragment="courseTableDiv">
+				<table class="table table-bordered table-hover" th:if="${courses}">
+					<thead>
+						<tr>
+							<th>Id</th>
+							<th>Name</th>
+							<th>Department</th>
+							<th>Credits</th>
+							<th>Type</th>
+							<th>Year</th>
+							<th>Semester</th>
+							<th>No of hours / week</th>
+							<th>is theory?</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="i : ${courses}">
+							<td th:text="${i.courseId}"></td>
+							<td th:text="${i.courseName}"></td>
+							<td th:text="${i.department.deptName}"></td>
+							<td th:text="${i.courseCredits}"></td>
+							<td th:text="${i.courseType}"></td>
+							<td th:text="${i.courseYear}"></td>
+							<td th:text="${i.courseSem}"></td>
+							<td th:text="${i.noOfHours}"></td>
+							<td th:text="${i.isTheory}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</article>
+	</div>
+	
+	<div class="row text-center card-body mx-auto" th:fragment="messageDiv">
+		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+	   	<div class="alert alert-danger" role="alert" th:if="${errmsg}" th:utext="${errmsg}"></div>
+	</div>  
+</body>
+</html>

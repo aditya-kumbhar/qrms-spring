@@ -127,10 +127,38 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 			"WHERE c.courseSem%2<>0 and c.courseType<>'R' and c.isTheory=1 and c.department=?1")
 	ArrayList<Course> findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(Department dept);
 	
+	//JPQL
+		@Query("SELECT "+
+				"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+				"FROM Course c WHERE c.courseSem%2<>0")
+	ArrayList<Course> findOddSemCourses();
+	
+		//JPQL
+		@Query("SELECT "+
+				"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+				"FROM Course c WHERE c.courseSem%2=0")
+	ArrayList<Course> findEvenSemCourses();
+	
+	//JPQL
+		@Query("SELECT "+
+				"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+				"FROM Course c WHERE c.courseSem%2=0 and c.department=?1")
+	ArrayList<Course> findByDepartmentAndEvenCourseSem(Department dept);
+	
+		//JPQL
+		@Query("SELECT "+
+				"new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) "+ 
+				"FROM Course c WHERE c.courseSem%2<>0 and c.department=?1")
+	ArrayList<Course> findByDepartmentAndOddCourseSem(Department dept);
+		
 	ArrayList<Course> findByCourseType(char c);
 	Optional<Course> findByCourseIdAndDepartmentAndIsTheoryAndCourseType(String prerequisiteNo1,
 			Department department, int i, char c);
 	Optional<Course> findByCourseIdAndDepartmentAndCourseYearAndCourseSemAndIsTheoryAndCourseType(
 			String companionTheory, Department department, String courseYear, int courseSem, int i, char c);
+	ArrayList<Course> findByCourseSem(Integer sem);
+	ArrayList<Course> findByCourseYearAndDepartment(String year, Department department);
+	ArrayList<Course> findByDepartmentAndCourseSem(Department department, Integer sem);
+	ArrayList<Course> findByDepartmentAndCourseSemAndCourseYear(Department department, Integer semester, String year);
 		
 }

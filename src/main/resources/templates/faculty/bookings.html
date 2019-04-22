@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <th:block th:include="fragments/fac_header.html :: headerfiles"></th:block>
 <title>Time slot booking</title>
+
 </head>
 <div th:replace="fragments/fac_header :: header"></div>
 
@@ -76,7 +77,7 @@
 						Enter minimum seats required
 					</td>
 					<td>
-						<input th:id="minSeats" class="form-control" th:name="minSeats" placeholder="Enter minimum seats" type="number" required/>
+						<input th:id="minSeats" class="form-control" th:name="minSeats" placeholder="Enter minimum seats" min='0' type="number" required/>
 					</td>
 				</tr>
 				<tr>
@@ -128,7 +129,7 @@
 						<td th:text="${i.resourceCapacity}"></td>
 						<td th:text="${i.resourceType}"></td>
 						<td th:text="${i.department.deptName}"></td>
-						<td th:text="${i.resourceIncharge.firstName+' '+i.resourceIncharge.lastName}"></td>
+						<td th:text="${i.resourceIncharge.userDets.firstName+' '+i.resourceIncharge.userDets.lastName}"></td>
 						<td th:text="${i.resourceInfo}"></td>
 						<td>
 							<button class="btn btn-primary" name="BookButton" th:id="${i.resourceId}">BOOK</button>
@@ -139,28 +140,36 @@
 		
 		</article>
 		
-		<article class="card-body mx-auto" th:id="resourceTT" th:fragment="resourceTT">
-		
-			<table th:if="${ttForResource}" class="table table-hover table-bordered">
-				<thead>
-					<tr>
-						<th>
-							Time Slot
-						</th>
-						<th>
-							Faculty	
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="i : ${ttForResource}">
-						<td th:text="${i.startTime+' - '+i.endTime}"></td>
-						<td th:text="${i.resourceId.resourceId}"></td>
-					</tr>
-				</tbody>
-			</table>
+		<div class="card-body row" th:id="resourceTT" th:fragment="resourceTT">
+			<div class="col-8">
+				<table th:if="${ttForResource}" class="table table-hover table-bordered">
+					<thead>
+						<tr>
+							<th>
+								Time Slot
+							</th>
+							<th>
+								Faculty	
+							</th>
+							<th>
+								Activity
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="i : ${ttForResource}">
+							<td th:text="${i.startTime+' - '+i.endTime}"></td>
+							<td th:text="${i.slotIncharge.userDets.firstName + ' ' + i.slotIncharge.userDets.lastName}"></td>
+							<td th:text="${i.activityName}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-4">
+				<input th:if="${ttForResource}" class="" type="date" id="booking-date"/>
+			</div>
+		</div>
 			
-		</article>
 		  <div th:id="messageDiv">
 			<div class="row text-center card-body mx-auto" th:fragment="messageDiv">
 				<div class="alert alert-success" role="alert" id ="success" th:if="${msg}" th:utext="${msg}"></div>
@@ -181,12 +190,12 @@
 		        url: '/u/faculty/getTTForResource',
 		        success: function (data) {
 	        	if ($(data).find('#err').length) {
+	        			$('#resourceTT').html('');
 	         	   		$('#messageDiv').html('');
 	        	   		$('#messageDiv').html(data);                   
 	           } else{
             	   $('#resourceTT').html('');
                    $('#resourceTT').html(data);   
-                   //window.scrollTo(0, $('#resourceTT').offset().top);
                    $('html, body').animate({
                        scrollTop: $('#resourceTT').offset().top
                      }, 500);
@@ -204,12 +213,18 @@
 	        url: '/u/faculty/getOptions',
 	        success: function (data) {
                if ($(data).find('#err').length) {
+            	   $('#resourceTT').html('');
+            	   $('#resourceOptionsTable').html('');
             	   $('#messageDiv').html('');
             	   $('#messageDiv').html(data);                   
                }
                else{
+            	   $('#resourceTT').html('');
             	   $('#resourceOptionsTable').html('');
-                   $('#resourceOptionsTable').html(data);                   
+                   $('#resourceOptionsTable').html(data);
+                   $('html, body').animate({
+                       scrollTop: $('#resourceOptionsTable').offset().top
+                     }, 500);
               	 }
                }
 		});

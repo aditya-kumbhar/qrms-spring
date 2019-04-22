@@ -74,7 +74,7 @@ public class BookingsServiceImpl implements BookingsService{
 		HashMap<Time, TimeSlots> finalTT = new HashMap<>();
 		System.out.println(tt.size());
 		for(TimeTable t:tt) {
-			finalTT.put(t.getStartTime(), new TimeSlots(t.getStartTime(), t.getEndTime(), t.getResourceId(),r.getResourceCapacity(),sqlDate));
+			finalTT.put(t.getStartTime(), new TimeSlots(t.getStartTime(), t.getEndTime(), t.getResourceId(),r.getResourceCapacity(),sqlDate,t.getSlotIncharge(),t.getActivityName()));
 		}
 		System.out.println(ts.size());
 		for(TimeSlots tss: ts) {

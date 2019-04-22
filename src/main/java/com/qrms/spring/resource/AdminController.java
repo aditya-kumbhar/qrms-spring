@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.ConsoleHandler;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
@@ -48,7 +49,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.Role;
@@ -120,6 +123,8 @@ import com.qrms.spring.service.TimeSlotsService;
 @Controller
 @RequestMapping("/u/admin")
 public class AdminController {
+	@Autowired
+    private HttpServletRequest request;
 	
 	@Autowired
 	private CustomUserDetailsService userDetails;
@@ -373,6 +378,81 @@ public class AdminController {
 		
 		return getStudPrefDetailsTable();
 	}
+	@RequestMapping(value="/view-courses",method=RequestMethod.GET)
+	public ModelAndView viewCourses() {
+		ModelAndView model = new ModelAndView();
+		departments = departmentRepository.findAll();
+		model.addObject("department",departments);
+		model.setViewName("admin/viewCourses");
+		return model;
+	}
+	
+	@RequestMapping(value="/view-courses",method=RequestMethod.POST)
+	public String viewCoursesUsingRequirements(Model model,String dept,String year,char sem) {
+		ArrayList<Course> courseList;
+		System.out.println("dept "+dept);
+		System.out.println("year "+year);
+		System.out.println("sem "+sem);
+		
+		
+		if (dept.equals("none") && year.equals("none") && sem=='0') {
+			courseList = courseRepository.findAll();
+			
+			System.out.println("all");
+		}else {
+			if (dept.equals("none") && year.equals("none") && sem!='0') {
+				
+				if(sem == 'o') {
+					//odd
+					courseList = courseRepository.findOddSemCourses();
+				}else {
+					//even
+					courseList = courseRepository.findEvenSemCourses();
+				}
+				
+			}else if(dept.equals("none") && !year.equals("none") && sem=='0'){
+				courseList = courseRepository.findByCourseYear(year);
+				
+			}else if(!dept.equals("none") && year.equals("none") && sem=='0') {
+				Department department = departmentRepository.findByDeptId(dept);
+				courseList = courseRepository.findByDepartment(department);
+				
+			}else if(dept.equals("none") && !year.equals("none") && sem!='0') {
+				Integer semester = Character.getNumericValue(sem);
+				courseList = courseRepository.findByCourseSemAndCourseYear(semester, year);
+				
+			}else if(!dept.equals("none") && !year.equals("none") && sem=='0') {
+				Department department = departmentRepository.findByDeptId(dept);
+				courseList = courseRepository.findByCourseYearAndDepartment(year,department);
+				
+			}else if(!dept.equals("none") && year.equals("none") && sem!='0'){
+				Department department = departmentRepository.findByDeptId(dept);
+				
+				if(sem == 'o') {
+					//odd
+					courseList = courseRepository.findByDepartmentAndOddCourseSem(department);
+				}else {
+					//even
+					courseList = courseRepository.findByDepartmentAndEvenCourseSem(department);
+				}
+				
+			}
+			else {
+				Department department = departmentRepository.findByDeptId(dept);
+				Integer semester = Character.getNumericValue(sem);
+				courseList = courseRepository.findByDepartmentAndCourseSemAndCourseYear(department,semester,year);
+				
+			}
+		}
+		if (courseList.size()!=0){
+			model.addAttribute("courses", courseList);
+			return "admin/viewCourses:: courseTableDiv";
+		}else {
+			model.addAttribute("errmsg","No courses found!");
+			return "admin/viewCourses:: messageDiv";
+		}
+		
+	}
 	
 	
 	@RequestMapping(value="/viewUsers", method = RequestMethod.GET)
@@ -527,6 +607,59 @@ public class AdminController {
 			}
 		}
 		return "success";
+	}
+	
+	
+	//display uploadTT page
+	@RequestMapping(value="/uploadTT", method = RequestMethod.GET)
+	public ModelAndView uploadTT() {
+		ModelAndView model = new ModelAndView();
+		departments = departmentRepository.findAll();		
+		model.addObject("departments",departments);
+
+		model.setViewName("admin/uploadTT");
+		return model;
+	}
+	
+	//Handle upload TT form
+	@RequestMapping(value = "/upload_TT", method = RequestMethod.POST)
+	public ModelAndView upload_TT(@RequestParam("timeTableFile") MultipartFile file, String dept, String day) {
+		ModelAndView model = new ModelAndView();	
+		
+		if(file.isEmpty()) {
+			model.addObject("err_msg","Please select a file to upload");
+		}
+		else {
+			System.out.println(file.getOriginalFilename());
+			
+			try {
+	            String uploadsDir = "/uploads/";
+	            String realPathToUploads =  request.getServletContext().getRealPath(uploadsDir);
+	            System.out.println(realPathToUploads);
+	            if(! new File(realPathToUploads).exists())
+	            {
+	                new File(realPathToUploads).mkdir();
+	            }
+	
+	            String orgName = file.getOriginalFilename();
+	            String filePath = realPathToUploads + orgName;
+	            System.out.println(filePath);
+	            File dest = new File(filePath);
+	            file.transferTo(dest);
+	            
+	            readTT(filePath,dept,day);
+				model.addObject("msg","Time table has been successfully saved");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}	
+		}
+		
+		
+		departments = departmentRepository.findAll();
+		model.addObject("departments", departments);		
+		model.setViewName("admin/uploadTT");
+		return model;
+	
 	}
 	
 	//Display register user form
@@ -1152,19 +1285,27 @@ public class AdminController {
 	}
 	
 	//findElectivesToShow
+	//@ResponseBody
 	@RequestMapping(value="/findElectivesToShow",method=RequestMethod.POST)
-	public ModelAndView findElectivesToShow(@Valid Course course,String dept) {
-	
+	public ModelAndView findElectivesToShow(Course course,String dept) {
+		
+		String year = course.getCourseYear();
+		Integer sem = course.getCourseSem();
+		
+		System.out.println("dept "+dept);
+		
 		Department department = departmentRepository.findByDeptId(dept);
 		
-		System.out.println(course.getCourseSem()+" "+course.getCourseYear());
-		System.out.println(department.getDeptId());
-		
-		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,2);
+		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(sem,year,'R',department,1,2);
 		
 		if(elective_ids.size()==0) {
 			String err_msg = "No electives are opened for preference forms.";
 			return getShowAllocations(elective_ids,null,err_msg);
+//			model.addAttribute("err_msg", "No electives are opened for preference forms.");
+//			return "admin/showAllocations:: messageDiv";
+//		}else {
+//			model.addAttribute("elective_ids",elective_ids);
+//			return "admin/showAllocations:: elective_fragment";
 		}
 		return getShowAllocations(elective_ids, null,null);
 		
@@ -1781,12 +1922,12 @@ public class AdminController {
   }
 	
 	
-	void readTT(String dept,String day) {
+	void readTT(String path, String dept,String day) {
 		Department department = departmentRepository.findByDeptId(dept);
 		
 		HashMap<Integer,Time[]> timeSlots = new HashMap<>();
 		
-		File myFile = new File("/home/bharati/Documents/monday.xlsx");
+		File myFile = new File(path);
         FileInputStream fis;
         
         List<TimeTable> timetable = timeTableRepository.findAll();
@@ -1862,12 +2003,12 @@ public class AdminController {
 		            				String[] temp = str.split(",");
 		            				for(String temps:temp) {
 		            					Resource r = resourceRepository.findByResourceId(dept.concat(temps));
-			            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department));
+			            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),"Time Table"));
 		            				}
 		            			}else {
 		            				//System.out.println("token "+str+" "+dept.concat(str)+" "+slot[0]+" "+slot[1]);
 		            				Resource r = resourceRepository.findByResourceId(dept.concat(str));
-		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department));
+		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),"Time Table"));
 //		            				System.out.println("ok");
 		            				
 	            				}

@@ -398,44 +398,42 @@ insert into student_acad values("stud36",75,"236",8,1,"BE","CO","BECOB","stud36"
 
 
 /*FACULTY_ACAD TABLE*/
-insert into faculty_acad values('fac1','Professor','PHD',20,'CO');
-insert into faculty_acad values('fac2','Professor','PHD',18.4,'CO');
-insert into faculty_acad values('fac3','Professor','PHD',18.4,'CO');
-insert into faculty_acad values('fac4','Professor','PHD',20,'CO');
-insert into faculty_acad values('fac5','Associate Professor','PHD',15,'CO');
-insert into faculty_acad values('fac6','Associate Professor','ME',25,'CO');
-insert into faculty_acad values('fac7','Assistant Professor','MTECH',15.5,'CO');
-insert into faculty_acad values('fac8','Assistant Professor','ME',13,'CO');
-insert into faculty_acad values('fac9','Assistant Professor','ME',15,'CO');
-insert into faculty_acad values('fac10','Assistant Professor','ME',14,'CO');
-insert into faculty_acad values('fac11','Assistant Professor','ME',13,'CO');
-insert into faculty_acad values('fac12','Assistant Professor','BE',11,'CO');
-insert into faculty_acad values('fac13','Assistant Professor','ME',12.2,'CO');
-insert into faculty_acad values('fac14','Assistant Professor','ME',13,'CO');
-insert into faculty_acad values('fac15','Assistant Professor','ME',14.8,'CO');
-insert into faculty_acad values('fac16','Assistant Professor','ME',12,'CO');
-insert into faculty_acad values('fac17','Assistant Professor','ME',8.6,'CO');
-insert into faculty_acad values('fac18','Assistant Professor','ME',12,'CO');
-insert into faculty_acad values('fac19','Assistant Professor','ME',10.5,'CO');
-insert into faculty_acad values('fac20','Assistant Professor','ME',10,'CO');
-insert into faculty_acad values('fac21','Assistant Professor','ME',10,'CO');
-insert into faculty_acad values('fac22','Assistant Professor','ME',5.5,'CO');
-insert into faculty_acad values('fac23','Assistant Professor','ME',7.11,'CO');
-insert into faculty_acad values('fac24','Assistant Professor','ME',7.6,'CO');
-insert into faculty_acad values('fac25','Assistant Professor','ME',5.4,'CO');
-insert into faculty_acad values('fac26','Assistant Professor','MTECH',7.5,'CO');
-insert into faculty_acad values('fac27','Assistant Professor','MTECH',10,'CO');
-insert into faculty_acad values('fac28','Assistant Professor','ME',13,'CO');
-insert into faculty_acad values('fac29','Assistant Professor','ME',9,'CO');
-insert into faculty_acad values('fac30','Assistant Professor','ME',5.2,'CO');
-insert into faculty_acad values('fac31','Assistant Professor','ME',3.4,'CO');
-insert into faculty_acad values('fac32','Assistant Professor','MTECH',11.6,'CO');
-insert into faculty_acad values('fac33','Assistant Professor','ME',5,'CO');
-insert into faculty_acad values('fac34','Professor','PHD',14.7,'CO');
-insert into faculty_acad values('fac35','Assistant Professor','ME',14,'CO');
-insert into faculty_acad values('fac36','Assistant Professor','ME',6.5,'CO');
-
-
+insert into faculty_acad values('fac1','Professor','PHD',20,'CO','fac1');
+insert into faculty_acad values('fac2','Professor','PHD',18.4,'CO','fac2');
+insert into faculty_acad values('fac3','Professor','PHD',18.4,'CO','fac3');
+insert into faculty_acad values('fac4','Professor','PHD',20,'CO','fac4');
+insert into faculty_acad values('fac5','Associate Professor','PHD',15,'CO','fac5');
+insert into faculty_acad values('fac6','Associate Professor','ME',25,'CO','fac6');
+insert into faculty_acad values('fac7','Assistant Professor','MTECH',15.5,'CO','fac7');
+insert into faculty_acad values('fac8','Assistant Professor','ME',13,'CO','fac8');
+insert into faculty_acad values('fac9','Assistant Professor','ME',15,'CO','fac9');
+insert into faculty_acad values('fac10','Assistant Professor','ME',14,'CO','fac10');
+insert into faculty_acad values('fac11','Assistant Professor','ME',13,'CO','fac11');
+insert into faculty_acad values('fac12','Assistant Professor','BE',11,'CO','fac12');
+insert into faculty_acad values('fac13','Assistant Professor','ME',12.2,'CO','fac13');
+insert into faculty_acad values('fac14','Assistant Professor','ME',13,'CO','fac14');
+insert into faculty_acad values('fac15','Assistant Professor','ME',14.8,'CO','fac15');
+insert into faculty_acad values('fac16','Assistant Professor','ME',12,'CO','fac16');
+insert into faculty_acad values('fac17','Assistant Professor','ME',8.6,'CO','fac17');
+insert into faculty_acad values('fac18','Assistant Professor','ME',12,'CO','fac18');
+insert into faculty_acad values('fac19','Assistant Professor','ME',10.5,'CO','fac19');
+insert into faculty_acad values('fac20','Assistant Professor','ME',10,'CO','fac20');
+insert into faculty_acad values('fac21','Assistant Professor','ME',10,'CO','fac21');
+insert into faculty_acad values('fac22','Assistant Professor','ME',5.5,'CO','fac22');
+insert into faculty_acad values('fac23','Assistant Professor','ME',7.11,'CO','fac23');
+insert into faculty_acad values('fac24','Assistant Professor','ME',7.6,'CO','fac24');
+insert into faculty_acad values('fac25','Assistant Professor','ME',5.4,'CO','fac25');
+insert into faculty_acad values('fac26','Assistant Professor','MTECH',7.5,'CO','fac26');
+insert into faculty_acad values('fac27','Assistant Professor','MTECH',10,'CO','fac27');
+insert into faculty_acad values('fac28','Assistant Professor','ME',13,'CO','fac28');
+insert into faculty_acad values('fac29','Assistant Professor','ME',9,'CO','fac29');
+insert into faculty_acad values('fac30','Assistant Professor','ME',5.2,'CO','fac30');
+insert into faculty_acad values('fac31','Assistant Professor','ME',3.4,'CO','fac31');
+insert into faculty_acad values('fac32','Assistant Professor','MTECH',11.6,'CO','fac32');
+insert into faculty_acad values('fac33','Assistant Professor','ME',5,'CO','fac33');
+insert into faculty_acad values('fac34','Professor','PHD',14.7,'CO','fac34');
+insert into faculty_acad values('fac35','Assistant Professor','ME',14,'CO','fac35');
+insert into faculty_acad values('fac36','Assistant Professor','ME',6.5,'CO','fac36');
 
 /*DESIGNATION_TO_HOURS TABLE*/
 insert into designation_to_hours values("Professor",10,8);
