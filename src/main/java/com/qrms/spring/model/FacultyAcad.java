@@ -58,6 +58,9 @@ public class FacultyAcad {
 	
 	@OneToMany(mappedBy = "slotIncharge",cascade = CascadeType.ALL)
 	Set<TimeTable> timeTableSlots = new HashSet<TimeTable>();
+		
+	@OneToMany(mappedBy = "requestBy",cascade = CascadeType.ALL)
+	Set<ResourceRequests> requests = new HashSet<ResourceRequests>();
 	
 	public Users getUserDets() {
 		return userDets;

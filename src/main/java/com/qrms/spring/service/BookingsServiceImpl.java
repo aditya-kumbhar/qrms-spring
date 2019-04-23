@@ -53,7 +53,7 @@ public class BookingsServiceImpl implements BookingsService{
 		return resourceRepository.findByResourceId(getTT);
 	}
 
-	public Collection<TimeSlots> findTimeSlotsByResourceForDate(String getTT,String day,Date sqlDate) {
+	public ArrayList<TimeSlots> findTimeSlotsByResourceForDate(String getTT,String day,Date sqlDate) {
 		// TODO Auto-generated method stub
 		Resource r = resourceRepository.findByResourceId(getTT);
 //		LocalDateTime date = LocalDateTime.now();
@@ -67,20 +67,48 @@ public class BookingsServiceImpl implements BookingsService{
 
 		//		Date date1 = java.sql.Date.valueOf(date);
 		System.out.println(sqlDate+" sqlDate");
-		HashMap<Time, TimeSlots> finalTT = new HashMap<>();
-		System.out.println(tt.size());
-		for(TimeTable t:tt) {
-			finalTT.put(t.getStartTime(), new TimeSlots(t.getStartTime(), t.getEndTime(), t.getResourceId(),r.getResourceCapacity(),sqlDate,t.getSlotIncharge(),t.getActivityName()));
+//		HashMap<Time, TimeSlots> finalTT = new HashMap<>();
+//		System.out.println(tt.size());
+//		for(TimeTable t:tt) {
+//			finalTT.put(t.getStartTime(), new TimeSlots(t.getStartTime(), t.getEndTime(), t.getResourceId(),sqlDate,t.getSlotIncharge(),t.getActivityName(),0));
+//		}
+//		System.out.println(ts.size());
+//		for(TimeSlots tss: ts) {
+//			
+//			if(!finalTT.containsKey(tss.getStartTime())){
+//				finalTT.put(tss.getStartTime(),tss);
+//			}
+//		}
+		
+		ArrayList<TimeSlots> finalTS = new ArrayList<>();
+		
+		for(TimeSlots tss:ts) {
+			finalTS.add(tss);
 		}
-		System.out.println(ts.size());
-		for(TimeSlots tss: ts) {
-			
-			if(!finalTT.containsKey(tss.getStartTime())){
-				finalTT.put(tss.getStartTime(),tss);
+		
+		for(TimeTable t:tt) {
+			Long st = t.getStartTime().getTime();
+			Long et = t.getEndTime().getTime();
+			int i = 0;
+			for(TimeSlots tss:ts) {
+				Long gost = tss.getStartTime().getTime();
+				Long goet = tss.getEndTime().getTime();
+				
+				if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet)) {
+					i+=1;
+				}
+				
+			}
+			if(i==0) {
+				finalTS.add(new TimeSlots(t.getStartTime(), t.getEndTime(), t.getResourceId(),sqlDate,t.getSlotIncharge(),t.getActivityName(),0));
 			}
 		}
-		System.out.println(finalTT.size());
-		return finalTT.values();
+		
+		System.out.println("finalts size: "+finalTS.size());
+		
+//		System.out.println(finalTT.size());
+//		return finalTT.values();
+		return finalTS;
 	}
 
 }

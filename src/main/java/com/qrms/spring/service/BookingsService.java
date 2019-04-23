@@ -12,5 +12,5 @@ public interface BookingsService {
 	public ArrayList<Department> listDepartments();
 	public Resource findByResourceId(String getTT);
 	public ArrayList<Resource> listResourcesByDepartmentAndRTypeAndMinSeats(String dept, String rType, Integer minSeats);
-	public Collection<TimeSlots> findTimeSlotsByResourceForDate(String getTT,String day,Date sqlDate);
+	public ArrayList<TimeSlots> findTimeSlotsByResourceForDate(String getTT,String day,Date sqlDate);
 }

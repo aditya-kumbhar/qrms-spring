@@ -20,8 +20,8 @@ public class TimeSlots implements Comparable<TimeSlots>{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="tid")
-	private String tid;
-		
+	private int tid;
+	
 	@Column(name="start_time")
 	private Time startTime;
 	
@@ -31,9 +31,6 @@ public class TimeSlots implements Comparable<TimeSlots>{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="resource_id")
 	private Resource resourceId;
-	
-	@Column(name="seats_occupied")
-	private int seatsOccupied;
 
 	@Column(name="date")
 	private Date date;
@@ -44,6 +41,9 @@ public class TimeSlots implements Comparable<TimeSlots>{
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="slot_incharge")
 	private FacultyAcad slotIncharge;
+	
+	@Column(name="request_id")
+	private int requestId;
 	
 	public String getActivityName() {
 		return activityName;
@@ -69,14 +69,6 @@ public class TimeSlots implements Comparable<TimeSlots>{
 		this.date = date;
 	}
 
-	public String getTid() {
-		return tid;
-	}
-
-	public void setTid(String tid) {
-		this.tid = tid;
-	}
-
 	public Time getStartTime() {
 		return startTime;
 	}
@@ -100,24 +92,27 @@ public class TimeSlots implements Comparable<TimeSlots>{
 	public void setResourceId(Resource resourceId) {
 		this.resourceId = resourceId;
 	}
-
-	public int getSeatsOccupied() {
-		return seatsOccupied;
+	public int getRequestId() {
+		return requestId;
 	}
 
-	public void setSeatsOccupied(int seatsOccupied) {
-		this.seatsOccupied = seatsOccupied;
+	public void setRequestId(int requestId) {
+		this.requestId = requestId;
 	}
 
-	public TimeSlots(Time startTime, Time endTime, Resource resourceId, int seatsOccupied,Date date,FacultyAcad slotIncharge,String activityName) {
+	public TimeSlots(Time startTime, Time endTime, Resource resourceId, Date date,FacultyAcad slotIncharge,String activityName,int requestId) {
 		super();
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.resourceId = resourceId;
-		this.seatsOccupied = seatsOccupied;
 		this.date = date;
 		this.slotIncharge = slotIncharge;
 		this.activityName = activityName;
+		this.requestId = requestId;
+	}
+	
+	public TimeSlots() {
+		
 	}
 
 	@Override
