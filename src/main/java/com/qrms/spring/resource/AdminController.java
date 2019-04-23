@@ -214,6 +214,8 @@ public class AdminController {
 	
 	private List<StudentPrefCountInfo> prefSummaryList;
 	
+	private List<FacultyAllocations> rs; 
+	
 	private static final DateFormat TWELVE_TF = new SimpleDateFormat("hh:mma");
 	// Replace with kk:mm if you want 1-24 interval
 	private static final DateFormat TWENTY_FOUR_TF = new SimpleDateFormat("HH:mm");
@@ -313,8 +315,6 @@ public class AdminController {
 	@Transactional
 	@RequestMapping(value = "/performQuickAction-student", method = RequestMethod.POST)
 	public ModelAndView studentAllocQuickAction(String courseId,  String selectAction, String courseName) {
-		System.out.println(courseId);
-		System.out.println(selectAction);
 		String courseIds[] = courseId.split(",");
 		String actions[] = selectAction.split(",");
 		int i=0;
@@ -435,7 +435,6 @@ public class AdminController {
 					//even
 					courseList = courseRepository.findByDepartmentAndEvenCourseSem(department);
 				}
-				
 			}
 			else {
 				Department department = departmentRepository.findByDeptId(dept);
@@ -453,18 +452,17 @@ public class AdminController {
 		}
 		
 	}
-	
-	
+
 	@RequestMapping(value="/viewUsers", method = RequestMethod.GET)
 	public ModelAndView viewUsers() {
 		ModelAndView model = new ModelAndView();
 		departments = departmentRepository.findAll();
 		roles = roleRepository.findAll();
-		
 		model.addObject("roles",roles);
 		model.addObject("department",departments);
 		model.setViewName("admin/viewUsers");
 		return model;
+	
 	}
 	
 	
@@ -521,9 +519,9 @@ public class AdminController {
 			return getStudPrefDetailsTable();
 		}
 		
-		return getStudPrefDetailsTable();
+	//	return getStudPrefDetailsTable();
 		
-		/*
+	
 		Course c = courseRepository.findByCourseId(courseId);
 //		System.out.println("course "+c.getCourseId());
 		ArrayList<StudentAllocCourse> allocs = studentAllocCourseRepository.findByCourseId(c);
@@ -539,38 +537,69 @@ public class AdminController {
 			}
 		}
 		
-//		List<Integer> list;
-//		if (electiveToCount.values() instanceof List)
-//		  list = (List<Integer>)electiveToCount.values();
-//		else
-//		  list = new ArrayList<Integer>();
-//		
-		
-//		model.addObject("electiveToCount",list);
-//		System.out.println("elective count size "+electiveToCount.keySet().size());
 		model.addObject("electiveToCount",electiveToCount);
-		model.addObject("department",departmentRepository.findAll());
-		
+		model.addObject("deptId",c.getDepartment().getDeptId());
+		model.addObject("year",c.getCourseYear());
 		model.setViewName("admin/electiveBatches");
+		
 		return model;
-		*/
+		
 	}
-	//TODO: to send post instead of get
-	@RequestMapping(name="/setbatches",method=RequestMethod.POST)
-	public String setNoOfBatches(Model model,ElectiveBatchCountList electiveBatchCounts) {
-		System.out.println("oyeeee");
-		
-		
-		
+
+	@ResponseBody
+	@RequestMapping(value="/set-batches",method=RequestMethod.POST)
+	public String setNoOfBatches(Model model,@RequestBody ElectiveBatchCountList electiveBatchCounts) {
+		String dept = electiveBatchCounts.getDeptId();
+		String year = electiveBatchCounts.getYear();
 		for(ElectiveBatchCount ebc:electiveBatchCounts.getElectiveBatchCounts()) {
-			ElectiveBatches eb = new ElectiveBatches();
-			Electives elective = electivesRepository.findByElectiveCourseId(ebc.getElectiveId());
-			eb.setElectiveId(ebc.getElectiveId());
-			eb.setDepartment(elective.getCourse().getDepartment());
-			eb.setYear(elective.getCourse().getCourseYear());
-			electiveBatchesRepository.save(eb);
+			String batchId = "";
+			List<String> batchIdList = new ArrayList<String>();
+			for(int i=0;i<ebc.getNoOfBatches();i++) {
+				ElectiveBatches eb = new ElectiveBatches();
+				batchId = year+dept+"-"+ebc.getElectiveId()+"-"+(i+1);
+				eb.setBatchId(batchId);
+				eb.setYear(year);
+				eb.setDepartment(departmentRepository.findByDeptId(dept));
+				eb.setElectiveId(ebc.getElectiveId());
+				electiveBatchesRepository.save(eb);
+				batchIdList.add(batchId);
+			}
+			if(ebc.getNoOfBatches() == 1)
+				studentAllocCourseRepository.updateBatchIdByElectiveId(
+						electivesRepository.findByElectiveCourseId(ebc.getElectiveId()), batchId);
+			
+			else {
+
+				ArrayList<StudentAllocCourse> sacList = studentAllocCourseRepository.findByElectiveIdSortedByDiv(
+						electivesRepository.findByElectiveCourseId(ebc.getElectiveId()));
+				int totalStudents =  sacList.size();
+				int studentsPerBatch = Math.round(totalStudents/ebc.getNoOfBatches());
+				int i = 0,extra=0;
+				
+				if(studentsPerBatch*ebc.getNoOfBatches() < totalStudents) 
+					extra = totalStudents - studentsPerBatch*ebc.getNoOfBatches();
+				else 
+					extra = studentsPerBatch*ebc.getNoOfBatches() - totalStudents;
+				
+				System.out.println("Extra: "+extra);
+				System.out.println("StudentsPerBatch: "+studentsPerBatch);
+				for(int j=0;j<ebc.getNoOfBatches();j++) {
+					int batchCount = 0;
+					if(extra-->0)
+						batchCount = studentsPerBatch+1;
+					else
+						batchCount = studentsPerBatch;
+					
+					System.out.println(batchCount);
+					int cur = i;
+					for(;i<cur+batchCount;i++) {
+						StudentAllocCourse st = sacList.get(i);
+						st.setBatchId(batchIdList.get(j));
+						studentAllocCourseRepository.save(st);
+					}
+				}
+			}
 		}
-		
 		return "success";
 	}
 	
@@ -664,7 +693,6 @@ public class AdminController {
 			String errmsg = "A user is already registered with the given email";
 			return registerUsers(null,errmsg);
 		}
-		
 		
 		if(role.equals("STUDENT")) {
 			System.out.println("Adding user to studAcad");
@@ -1081,8 +1109,6 @@ public class AdminController {
 		Course ElCourse = courseRepository.findByCourseId(course_id);
 		ArrayList<StudentAllocCourse> studentAllocs = studentAllocCourseRepository.findByCourseId(ElCourse);
 		
-		
-		
 		if(studentAllocs.size()!=0) {
 			studentAllocCourseRepository.deleteByCourseId(ElCourse);
 		}
@@ -1380,6 +1406,10 @@ public class AdminController {
 		List<DesignationToHours> desigList = designationToHoursRepository.findAll();
 		//all faculty list for that department
 		List<FacultyAcad> allFacs = facultyAcadRepository.findByDepartmentEquals(dept);
+		
+		//clear courseList and practicalList tables
+		
+		
 		
 		//designation to min max hours hashmap
 		HashMap<String, int[]> desigHours =  new HashMap<>();
@@ -1822,51 +1852,38 @@ public class AdminController {
 		List<FacultyAllotedHours> facs = facultyAllotedHoursRepository.findAll();
 		List<CourseList> courses = courseListRepository.findAll();
 		List<PracticalList> practicals = practicalListRepository.findAll();
-		List<FacultyAllocations> rs = new ArrayList<FacultyAllocations>();
-		//{key: facID, value:{key:courseId,value:divID} }
-	
-		HashMap<String,HashMap<String,List<String>>> facCourses = new HashMap<String,HashMap<String,List<String>>>();
-		HashMap<String,HashMap<String,List<String>>> facPracticalCourses = new HashMap<String,HashMap<String,List<String>>>();
+		rs = new ArrayList<FacultyAllocations>();
+		
+		//{key: facID, value:{key:courseId,value:courseList} }
+		HashMap<String,List<CourseList>> facCourses = new HashMap<String,List<CourseList>>();
+		HashMap<String,List<PracticalList>> facPracticalCourses = new HashMap<String,List<PracticalList>>();
 		HashMap<String,Integer> facTheoryHours = new HashMap<String,Integer>();
 		HashMap<String,Integer> facPracticalHours = new HashMap<String,Integer>();
-//				facPracticalHours.replace(c.getCourseId(),facPracticalHours.get(c.getFacultyId())+c.getNoOfHours());
+		
 		//init all hashmaps
 		for(FacultyAllotedHours f: facs) {
-			HashMap<String,List<String>> cList = new HashMap<String,List<String>>();
+			List<CourseList> cList = new ArrayList<CourseList>();
 			facCourses.put(f.getFacultyId(),cList);
 			facTheoryHours.put(f.getFacultyId(),0);
 
-			HashMap<String,List<String>> pList = new HashMap<String,List<String>>();
+			List<PracticalList> pList = new ArrayList<PracticalList>();
 			facPracticalCourses.put(f.getFacultyId(), pList);
 			facPracticalHours.put(f.getFacultyId(),0);
 		}
 		
-		
 		for(CourseList c:courses) {
-			if(facCourses.get(c.getFacultyId()).containsKey(c.getCourseId())) {
-				facCourses.get(c.getFacultyId()).get(c.getCourseId()).add(c.getDivisionId());
-			}
-			else {
-				List<String> divs = new ArrayList<String>();
-				divs.add(c.getDivisionId());
-				facCourses.get(c.getFacultyId()).put(c.getCourseId(),divs);
-			}
-			facTheoryHours.replace(c.getFacultyId(),facTheoryHours.get(c.getFacultyId())+c.getNoOfHours());
 			
+			facCourses.get(c.getFacultyId()).add(c);
+			facTheoryHours.replace(c.getFacultyId(),facTheoryHours.get(c.getFacultyId())+c.getNoOfHours());
 		}
 		
 		for(PracticalList p: practicals) {
-			if(facPracticalCourses.get(p.getFacultyId()).containsKey(p.getPracticalCourseId())) {
-				facPracticalCourses.get(p.getFacultyId()).get(p.getPracticalCourseId()).add(p.getLabId());
-			}
-			else {
-				List<String> labBatches = new ArrayList<String>();
-				labBatches.add(p.getLabId());
-				facPracticalCourses.get(p.getFacultyId()).put(p.getPracticalCourseId(),labBatches);
-			}
+				
+			facPracticalCourses.get(p.getFacultyId()).add(p);
 			facPracticalHours.replace(p.getFacultyId(),facPracticalHours.get(p.getFacultyId())+p.getNoOfHours());
-			
+				
 		}
+		
 		for(FacultyAllotedHours f: facs) {
 			Users faculty = userDetails.findByUserName(f.getFacultyId());
 			FacultyAllocations fa = new FacultyAllocations();
@@ -1874,8 +1891,8 @@ public class AdminController {
 			fa.setAllotedLoad(f.getAllotedHours());
 			fa.setFacultyId(f.getFacultyId());
 			fa.setMaxLoad(f.getMaxHours());
-			fa.setCourseAndDivs(facCourses);
-			fa.setPracticalsAndBatches(facPracticalCourses);
+			fa.setCourseAndDivs(facCourses.get(f.getFacultyId()));
+			fa.setPracticalsAndBatches(facPracticalCourses.get(f.getFacultyId()));
 			fa.setPracticalHours(f.getPracticalHours());
 			fa.setTheoryHours(f.getTheoryHours());
 			rs.add(fa);
@@ -1883,11 +1900,18 @@ public class AdminController {
 		return rs;
 	}
 	
+	@RequestMapping(value="/getFacultyAllocationByIndex", method=RequestMethod.GET)
+	public String getFacultyAllocationByIndex(Model model,Integer i) {
+		System.out.println(i);
+		model.addAttribute("facultyAllocation",rs.get(i-1));
+		return "admin/facultyAllocation :: viewDetailsDiv";
+	}
+	
 	public static String convertTo24HoursFormat(String twelveHourTime)
 	        throws ParseException {
 	    return TWENTY_FOUR_TF.format(
 	            TWELVE_TF.parse(twelveHourTime));
-	  }
+  }
 	
 	
 	void readTT(String path, String dept,String day) {

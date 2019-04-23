@@ -14,6 +14,15 @@ import javax.persistence.Table;
 @Table(name="student_alloc_course")
 public class StudentAllocCourse{
 	
+	public StudentAllocCourse(int id,String batchId, Course courseId,Electives elective,StudentAcad student,int prefNo ) {
+		super();
+		this.id = id;
+		this.elective = elective;
+		this.courseId = courseId;
+		this.prefNo = prefNo;
+		this.student = student;
+		this.batchId = batchId;
+	}
 	public StudentAllocCourse(Electives elective, Course courseId,StudentAcad student, int prefNo,String batchId) {
 		super();
 		this.elective = elective;
@@ -30,7 +39,7 @@ public class StudentAllocCourse{
 	@javax.persistence.Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="id")
-	private int Id;
+	private int id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "elective_id")
@@ -91,11 +100,11 @@ public class StudentAllocCourse{
 	}
 	
 	public int getId() {
-		return Id;
+		return id;
 	}
 
 	public void setId(int id) {
-		this.Id = id;
+		this.id = id;
 	}
 
 	

@@ -1,13 +1,15 @@
 package com.qrms.spring.queryBeans;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+
+import com.qrms.spring.model.CourseList;
+import com.qrms.spring.model.PracticalList;
 
 public class FacultyAllocations {
 	String facultyId,name;
 	
-	HashMap<String,HashMap<String,List<String>>> courseAndDivs,practicalsAndBatches;
+	List<CourseList> courseAndDivs;
+	List<PracticalList> practicalsAndBatches;
 	
 	Integer theoryHours,practicalHours,allotedLoad,maxLoad;
 
@@ -32,19 +34,19 @@ public class FacultyAllocations {
 	}
 
 	
-	public HashMap<String, HashMap<String, List<String>>> getCourseAndDivs() {
+	public List<CourseList> getCourseAndDivs() {
 		return courseAndDivs;
 	}
 
-	public void setCourseAndDivs(HashMap<String, HashMap<String, List<String>>> courseAndDivs) {
+	public void setCourseAndDivs(List<CourseList> courseAndDivs) {
 		this.courseAndDivs = courseAndDivs;
 	}
 
-	public HashMap<String, HashMap<String, List<String>>> getPracticalsAndBatches() {
+	public List<PracticalList> getPracticalsAndBatches() {
 		return practicalsAndBatches;
 	}
 
-	public void setPracticalsAndBatches(HashMap<String, HashMap<String, List<String>>> practicalsAndBatches) {
+	public void setPracticalsAndBatches( List<PracticalList> practicalsAndBatches) {
 		this.practicalsAndBatches = practicalsAndBatches;
 	}
 
@@ -79,7 +81,5 @@ public class FacultyAllocations {
 	public void setMaxLoad(Integer maxLoad) {
 		this.maxLoad = maxLoad;
 	}
-	
-	
 
 }
