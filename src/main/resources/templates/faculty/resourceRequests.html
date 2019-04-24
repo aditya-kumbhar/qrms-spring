@@ -4,6 +4,16 @@
 			<meta charset="UTF-8">
 			<th:block th:include="fragments/fac_header.html :: headerfiles"></th:block>
 			<title>Resource Requests</title>
+			
+			<style>
+				.buttonAlign {
+					text-align: center;
+				}
+				.inlneTable {
+					display: inline-block;
+				}
+			</style>
+			
 	</head>
 	<div th:replace="fragments/fac_header :: header"></div>
 	<!-- script to turn nav link active -->
@@ -23,7 +33,7 @@
 				<div class="row">
 					<div  th:fragment="requestsDiv" id="requestsDiv">
 						<h4 class="card-title mt-3 text-center">Requests for Resource</h4>
-						<table th:if="${requests}" class="table table-hover table-light table-bordered" id="reqTable" name="reqTable">
+						<table th:if="${requests}" class="table table-hover table-light table-bordered" id="reqTable">
 							<thead>
 								<tr>
 									<th>Request Id</th>
@@ -53,7 +63,8 @@
 						</table>
 					</div>
 				</div>
-				<div class="row">
+				
+				<div class="row text-center mx-auto">
 					<div th:id="messageDiv">
 						<div class="text-center" th:fragment="messageDiv">
 							<div class="alert alert-success" role="alert" id ="success" th:if="${msg}" th:utext="${msg}"></div>
@@ -62,83 +73,92 @@
 					</div>
 				</div>
 			
-				<div class="row">
-					<div th:fragment="overlapDiv" id="overlapDiv">
-						<!-- <div class="row">
-							<div class="alert alert-success" role="alert" id ="overlap-success" th:if="${msg}" th:utext="${msg}"></div>
-							<div class="alert alert-danger" role="alert"  id="overlap-err" th:if="${err_msg}" th:utext="${err_msg}"></div>
-						</div> -->
-						<div class="row">
-							<div class="col">
-								<div th:if="${overlappingRequests}">
-									<h5 class="card-title mt-3 text-center">OverLapping Requests</h5>
-									<table class="table table-hover table-light table-bordered" id="overlappingRequestsId">
-										<thead>
-											<tr>
-												<th>Request Id</th>
-												<th>Activity Name</th>
-												<th>Slot Time</th>
-											</tr>
-										</thead>
-										<tr th:each="i: ${overlappingRequests}">
-											<td th:text="${i.requestId}"></td>
-											<td th:text="${i.slotActivityName}"></td>
-											<td th:text="${i.slotStartTime+' - '+i.slotEndTime}"></td>
-										</tr>
-									</table>
-									<!-- Delete overlapping requests<input type="checkbox" id="requestsCheckbox"> -->
-								</div>
-							</div>
-							<div class="col">
-								<div th:if="${overlappingTimeSlots}">
-									<h5 class="card-title mt-3 text-center">OverLapping TimeSlots</h5>
-									<table class="table table-hover table-light table-bordered" id="overlappingTimeSlotsId">
-										<thead>
-											<tr>
-												<th>Request Id</th>
-												<th>Activity Name</th>
-												<th>Slot Time</th>
-											</tr>
-										</thead>
-										<tr th:each="i: ${overlappingTimeSlots}">
-											<td th:text="${i.requestId}"></td>
-											<td th:text="${i.activityName}"></td>
-											<td th:text="${i.startTime+' - '+i.endTime}"></td>
-										</tr>
-									</table>
-									<!-- Delete overlapping time slots<input type="checkbox" id="timeSlotsCheckbox"> -->
-								</div>
-							</div>
-							<div class="col">
-								<div th:if="${overlappingTimeTableSlots}">
-									<h5 class="card-title mt-3 text-center">OverLapping TimeTable Slots</h5>
-									<table class="table table-hover table-light table-bordered" id="overlappingTimeTableSlotsId">
-										<thead>
-											<tr>
-												<th>Activity Name</th>
-												<th>Time</th>
-											</tr>
-										</thead>
-										<tr th:each="i: ${overlappingTimeTableSlots}">
-											<td th:text="${i.activityName}"></td>
-											<td th:text="${i.startTime+' - '+i.endTime}"></td>
-										</tr>
-									</table>
-									<!-- Delete overlapping time table slots<input type="checkbox" id="timTableSlotsCheckbox"> -->
-								</div>
-							</div>
-							
-						</div>
-						<div class="row" th:if="${overlappingTimeTableSlots} or ${overlappingTimeSlots} or ${overlappingRequests}" >
+				
+				<div th:fragment="overlapDiv" id="overlapDiv">					
+					<br th:if="${overlappingRequests}"/>
+					<hr th:if="${overlappingRequests}"/>
+					<hr th:if="${overlappingRequests}"/>
+					<br th:if="${overlappingRequests}"/>
+						
+					<div th:if="${overlappingRequests}" class="inlineTable">
+						<h5 class="card-title mt-3 text-center">OverLapping Requests</h5>
+						<table class="table table-hover table-light table-bordered" id="overlappingRequestsId">
+							<thead>
+								<tr>
+									<th>Request Id</th>
+									<th>Activity Name</th>
+									<th>Slot Time</th>
+								</tr>
+							</thead>
+							<tr th:each="i: ${overlappingRequests}">
+								<td th:text="${i.requestId}"></td>
+								<td th:text="${i.slotActivityName}"></td>
+								<td th:text="${i.slotStartTime+' - '+i.slotEndTime}"></td>
+							</tr>
+						</table>
+						<!-- Delete overlapping requests<input type="checkbox" id="requestsCheckbox"> -->
+					</div>
+						
+					<br th:if="${overlappingTimeSlots}"/>
+					<hr th:if="${overlappingTimeSlots}"/>
+					<hr th:if="${overlappingTimeSlots}"/>
+					<br th:if="${overlappingTimeSlots}"/>
+						
+					<div th:if="${overlappingTimeSlots}" class="inlineTable">
+						<h5 class="card-title mt-3 text-center">OverLapping TimeSlots</h5>
+						<table class="table table-hover table-light table-bordered" id="overlappingTimeSlotsId">
+							<thead>
+								<tr>
+									<th>Request Id</th>
+									<th>Activity Name</th>
+									<th>Slot Time</th>
+								</tr>
+							</thead>
+							<tr th:each="i: ${overlappingTimeSlots}">
+								<td th:text="${i.requestId}"></td>
+								<td th:text="${i.activityName}"></td>
+								<td th:text="${i.startTime+' - '+i.endTime}"></td>
+							</tr>
+						</table>
+						<!-- Delete overlapping time slots<input type="checkbox" id="timeSlotsCheckbox"> -->
+					</div>
+					
+					<br th:if="${overlappingTimeTableSlots}"/>
+					<hr th:if="${overlappingTimeTableSlots}"/>
+					<hr th:if="${overlappingTimeTableSlots}"/>
+					<br th:if="${overlappingTimeTableSlots}"/>
+						
+					<div th:if="${overlappingTimeTableSlots}" class="inlineTable">
+						<h5 class="card-title mt-3 text-center">OverLapping TimeTable Slots</h5>
+						<table class="table table-hover table-light table-bordered" id="overlappingTimeTableSlotsId">
+							<thead>
+								<tr>
+									<th>Activity Name</th>
+									<th>Time</th>
+								</tr>
+							</thead>
+							<tr th:each="i: ${overlappingTimeTableSlots}">
+								<td th:text="${i.activityName}"></td>
+								<td th:text="${i.startTime+' - '+i.endTime}"></td>
+							</tr>
+						</table>
+						<!-- Delete overlapping time table slots<input type="checkbox" id="timTableSlotsCheckbox"> -->
+					</div>
+						
+					<br />
+					<br />
+					
+					<div th:if="${overlappingTimeTableSlots} or ${overlappingTimeSlots} or ${overlappingRequests}" >
+						<div class="buttonAlign">
 							<button th:name="final-accept" class="btn btn-warning">Accept Request</button>
 						</div>
 					</div>
-					
 				</div>
-				
+					
 			</article>
 			
 		</div>
+		
 		<script type="text/javascript">
 		var curRequest;
 		function bindForm(){
@@ -218,23 +238,28 @@
 		});
 		$("[name='reject-request']").click(function(){
 			var delReq = this.id;
-			$.ajax({
-				type: "POST",
-		        data: {deleteRequestFor : delReq},
-		        url: '/u/faculty/deleteResourceRequest',
-		        success: function (data) {
-	               if ($(data).find('#success').length) {
-	            		$('#requestsDiv').html('');
-	            		$('#overlapDiv').html('');
-	            		$("#messageDiv").html('');
-	            		$("#messageDiv").html(data);
-	               }
-	               else{
-	            	   alert("Resource Request Deleted successfully!");
-	            	   window.location.replace("http://127.0.0.1:8080/u/faculty/resourceRequests");
-	              	 }
-	               }
-			});
+			
+			var con = confirm("Are you sure you want to delete the Request : "+delReq+"?");
+			if(con==true){
+				$.ajax({
+					type: "POST",
+			        data: {deleteRequestFor : delReq},
+			        url: '/u/faculty/deleteResourceRequest',
+			        success: function (data) {
+		               if ($(data).find('#success').length) {
+		            		$('#requestsDiv').html('');
+		            		$('#overlapDiv').html('');
+		            		$("#messageDiv").html('');
+		            		$("#messageDiv").html(data);
+		               }
+		               else{
+		            	   alert("Resource Request Deleted successfully!");
+		            	   window.location.replace("http://127.0.0.1:8080/u/faculty/resourceRequests");
+		              	 }
+		               }
+				});
+			}
+			
 		});
 		</script>
 	</body>
