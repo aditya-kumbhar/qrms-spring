@@ -32,7 +32,7 @@ public class Resource {
 	private FacultyAcad resourceIncharge;
 	
 	@Column(name="resource_capacity")
-	private int resourceCapacity;
+	private Integer resourceCapacity;
 	
 	@Column(name="resource_type")
 	private String resourceType;
@@ -48,7 +48,7 @@ public class Resource {
 	}
 	
 	public Resource(String resourceId, String resourceName, Department department, FacultyAcad resourceIncharge,
-			int resourceCapacity,String resourceType,String resourceInfo) {
+			Integer resourceCapacity,String resourceType,String resourceInfo) {
 		super();
 		this.resourceId = resourceId;
 		this.resourceName = resourceName;
@@ -75,11 +75,11 @@ public class Resource {
 		this.resourceType = resourceType;
 	}
 
-	public int getResourceCapacity() {
+	public Integer getResourceCapacity() {
 		return resourceCapacity;
 	}
 
-	public void setResourceCapacity(int resourceCapacity) {
+	public void setResourceCapacity(Integer resourceCapacity) {
 		this.resourceCapacity = resourceCapacity;
 	}
 
