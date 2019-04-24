@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -39,7 +40,7 @@ import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.quartz.CronExpression;
+//import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -616,6 +617,7 @@ public class AdminController {
 	}
 	
 	//Handle upload TT form
+	@Transactional
 	@RequestMapping(value = "/upload_TT", method = RequestMethod.POST)
 	public ModelAndView upload_TT(@RequestParam("timeTableFile") MultipartFile file, String dept, String day) {
 		ModelAndView model = new ModelAndView();	
@@ -641,8 +643,15 @@ public class AdminController {
 	            File dest = new File(filePath);
 	            file.transferTo(dest);
 	            
-	            readTT(filePath,dept,day);
-				model.addObject("msg","Time table has been successfully saved");
+	            String msg = readTT(filePath,dept,day);
+	            
+	            if(msg.equals("Time Table has been uploaded successfully.")) {
+	            	model.addObject("msg",msg);
+	            }else {
+	            	model.addObject("err_msg",msg);
+	            }
+	            
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}	
@@ -1912,9 +1921,9 @@ public class AdminController {
 	    return TWENTY_FOUR_TF.format(
 	            TWELVE_TF.parse(twelveHourTime));
   }
-	
-	
-	void readTT(String path, String dept,String day) {
+	@Transactional
+	String readTT(String path, String dept,String day) {
+		
 		Department department = departmentRepository.findByDeptId(dept);
 		
 		HashMap<Integer,Time[]> timeSlots = new HashMap<>();
@@ -1922,13 +1931,13 @@ public class AdminController {
 		File myFile = new File(path);
         FileInputStream fis;
         
-        List<TimeTable> timetable = timeTableRepository.findAll();
+        List<TimeTable> timetable = new ArrayList<>();
+		
+		timeTableRepository.deleteByDepartmentAndDay(department,day);
+//		List<Resource> resources = resourceRepository.findByDepartment(department);
         
-        DateFormat dateFormat = new SimpleDateFormat("hh:mm");
-        
-       
-		List<Resource> resources = resourceRepository.findByDepartment(department);
-        
+		String msg = "Time Table has been uploaded successfully.";
+		
 		try {
 			fis = new FileInputStream(myFile);
 		    // Finds the workbook instance for XLSX file
@@ -1986,6 +1995,11 @@ public class AdminController {
 	            		StringTokenizer st= new StringTokenizer(row.getCell(i).getStringCellValue().trim(),delim);
 	            		int j=1;
 	            		while(st.hasMoreTokens()) {
+	            			String activityName = "Time Table";
+	            			if(j==1) {
+	            				activityName = st.nextToken().trim();
+	            				j++;
+	            			}
 	            			if(j==2) {
 	            				
 	            				String str = st.nextToken().trim();
@@ -1995,12 +2009,12 @@ public class AdminController {
 		            				String[] temp = str.split(",");
 		            				for(String temps:temp) {
 		            					Resource r = resourceRepository.findByResourceId(dept.concat(temps));
-			            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),"Time Table"));
+			            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),activityName));
 		            				}
 		            			}else {
 		            				//System.out.println("token "+str+" "+dept.concat(str)+" "+slot[0]+" "+slot[1]);
 		            				Resource r = resourceRepository.findByResourceId(dept.concat(str));
-		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),"Time Table"));
+		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),activityName));
 //		            				System.out.println("ok");
 		            				
 	            				}
@@ -2020,14 +2034,13 @@ public class AdminController {
 	        
 	        myWorkBook.close();
 	        
-		}catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			msg = "Uploaded timetable is in incorrect format.";
+			myFile.delete();
+	       	return msg;
 		}
-       
+		myFile.delete();
+       	return msg;
 	}
 	//TODO: have a way to store per-div-course hrs in facAllocation query bean to be displayed in UI autoscrolled div
 //	private Date nextDate; 
