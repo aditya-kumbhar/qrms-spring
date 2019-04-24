@@ -114,6 +114,7 @@ import com.qrms.spring.repository.StudentAllocCourseRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.repository.TimeSlotsRepository;
 import com.qrms.spring.repository.TimeTableRepository;
+import com.qrms.spring.repository.UsersRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
 import com.qrms.spring.service.FacultyAcadService;
 import com.qrms.spring.service.StudentAcadServiceImpl;
@@ -204,9 +205,14 @@ public class AdminController {
 	@Autowired
 	private PracticalListRepository practicalListRepository;
 	
+	@Autowired
+	private UsersRepository usersRepository;
+	
 	private FacultyAcad faculty;
 	
-	private List<Department> departments; 
+	private List<Department> departments;
+	
+	private List<Users> faculties;
 	
 	private List<Role> roles; 
 	
@@ -273,7 +279,6 @@ public class AdminController {
 	public ModelAndView getDepartmentsPage() {
 		ModelAndView model = new ModelAndView();
 		departments = departmentRepository.findAll();
-		
 		model.addObject("departments", departments);
 		model.addObject("newDept", new Department());
 		model.setViewName("admin/departments");
@@ -290,7 +295,12 @@ public class AdminController {
 	public String getManageDept(Model model, String dept) {
 		Department department = departmentRepository.findByDeptId(dept);
 		model.addAttribute("manageDept",department);
+		Role userRole = roleRepository.findByRole("FACULTY");
+		Set<Role> role = new HashSet<Role>(Arrays.asList(userRole));
+		faculties = usersRepository.findByRoles(role);
 		model.addAttribute("div", new Divisions());
+		model.addAttribute("res", new Resource());
+		model.addAttribute("faculties", faculties);
 		return "admin/departments:: manageDeptFragment";
 	}
 	
@@ -301,6 +311,15 @@ public class AdminController {
 		div.setDivId(divId);
 		divisionsRepository.save(div);
 		model.addAttribute("msg","Division added in "+div.getYear()+"-"+div.getDepartment().getDeptName());
+		return "admin/departments:: messageDiv";
+	}
+	
+	@RequestMapping(value = "/addResource", method = RequestMethod.POST)
+	String addResource(Model model, Resource res, String dept, String incharge) {
+		res.setDepartment(departmentRepository.findByDeptId(dept));
+		res.setResourceIncharge(facultyAcadRepository.findByUserName(incharge));
+		resourceRepository.save(res);
+		model.addAttribute("msg","Resource added for "+res.getDepartment().getDeptName());
 		return "admin/departments:: messageDiv";
 	}
 

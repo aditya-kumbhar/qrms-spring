@@ -35,3 +35,7 @@ div.content {
     float: none;
   }
 }
+
+#addDivForm, #addResourceForm {
+	display:none;
+}
