@@ -40,6 +40,9 @@ public class Resource {
 	@Column(name="resource_info")
 	private String resourceInfo;
 	
+	@OneToMany(mappedBy = "resourceId",cascade = CascadeType.ALL)
+	Set<ResourceRequests> requests = new HashSet<ResourceRequests>();
+	
 	public Resource() {
 		// TODO Auto-generated constructor stub
 	}

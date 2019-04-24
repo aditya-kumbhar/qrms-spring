@@ -30,9 +30,15 @@
       	   <li class="nav-item" >
         	   <a class="nav-link" href="/u/faculty/givePreferenceChoice"  id="cpref-nav">Course Preference</a>
       	   </li>
-      	   <li>
-     	       <a class="nav-link" href="/u/faculty/bookings" id="bookings-nav">Booking</a>
-      	   </li>
+      	   <li class="nav-item dropdown">
+	      	   	<a class="nav-link dropdown-toggle" href="#" id="bookingsDrop" data-toggle="dropdown">
+				     Resource Management
+			 	</a>
+			   	<div class="dropdown-menu">
+				   	<a class="dropdown-item" th:href="@{/u/faculty/bookings}" id="bookings-nav">Resource Booking</a>
+	      	   		<a class="dropdown-item" th:href="@{/u/faculty/resourceRequests}" id="requests-nav">Resource Requests</a>
+	   			</div>
+	   		</li>
 	   </ul>
 	   <div class="navbar-nav ml-auto">
           <a class="nav-link mr-sm-2" href="/logout">Log Out</a>
