@@ -13,8 +13,55 @@
    	<link rel="stylesheet" th:href="@{/css/register.css}">
   	<link rel="stylesheet" th:href="@{/css/admin/admin_dept.css}">
    	
-	<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}">
+	<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
+	<script>
+		$(document).ready(function() {
+	 	   $('#year').css('color','#8F8B87');
+	 	   $('#year').change(function() {
+	 	      var current = $('#year').val();
+	 	      if (current != 'none') {
+	 	          $('#year').css('color','black');
+	 	      } else {
+	 	          $('#year').css('color','#8F8B87');
+	 	      }
+	 	   }); 
+	 	});
 		
+		$(document).ready(function() {
+    	   $('#incharge').css('color','#8F8B87');
+    	   $('#incharge').change(function() {
+    	      var current = $('#incharge').val();
+    	      if (current != 'none') {
+    	          $('#incharge').css('color','black');
+    	      } else {
+    	          $('#incharge').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+		
+		$(document).ready(function() {
+    	   $('#resourceType').css('color','#8F8B87');
+    	   $('#resourceType').change(function() {
+    	      var current = $('#resourceType').val();
+    	      if (current != 'none') {
+    	          $('#resourceType').css('color','black');
+    	      } else {
+    	          $('#resourceType').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+		
+		$(document).ready(function() {
+    	   $('#selectAction').css('color','#8F8B87');
+    	   $('#selectAction').change(function() {
+    	      var current = $('#selectAction').val();
+    	      if (current != 'none') {
+    	          $('#selectAction').css('color','black');
+    	      } else {
+    	          $('#selectAction').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
 	</script>
    	
 	
@@ -124,7 +171,7 @@
 			</td>
 			<td>
 				<input type="hidden" th:value="${manageDept.deptId}" th:name="dept">
-				<select class="form-control" th:field="*{year}">
+				<select class="form-control" th:field="*{year}" id="year">
 					<option th:value="none" style="color:#8F8B87" selected >Select Year</option>
 					<option value="SE" style="color:#000">SE</option>
 					<option value="TE" style="color:#000">TE</option>
@@ -195,7 +242,12 @@
 				Resource Type
 			</td>
 			<td>
-		        <input type="text" class="form-control" th:field="*{resourceType}" placeholder="Enter resource type" required autofocus/>
+				<select class="form-control" id="resourceType" th:field="*{resourceType}">
+					<option th:value="none" style="color:#8F8B87" selected >Select Type</option>
+					<option value="Classroom" style="color:#000">Classroom</option>
+					<option value="Lab" style="color:#000">Lab</option>
+					<option value="Hall" style="color:#000">Hall</option>
+				</select>			
 			</td>
 		</tr>
 		
@@ -213,7 +265,7 @@
 				Resource Incharge
 			</td>
 			<td>
-				<select class="form-control" th:id="incharge" th:name="incharge" autofocus>
+				<select class="form-control" id="incharge" th:name="incharge" autofocus>
 					<option th:value="none" style="color:#8F8B87" selected>Select Incharge</option>
 					<option th:each="fac : ${faculties}" th:value="${fac.userName}"  th:text="${fac.firstName+' '+fac.lastName}" style="color:#000"></option>
 				</select>
@@ -244,16 +296,19 @@
 			if(action == "addDiv") {
 				$("#addDivForm").show();
 				$("#addResourceForm").hide();
+				$('#messageDiv').html("");
 				var heading = document.getElementById("heading");
 				heading.innerHTML = "Add Divisions";
 			} else if(action == "addResource") {
 				$("#addDivForm").hide();
 				$("#addResourceForm").show();
+				$('#messageDiv').html("");
 				var heading = document.getElementById("heading");
 				heading.innerHTML = "Add Resource";
 			} else {
 				$("#addDivForm").hide();
 				$("#addResourceForm").hide();
+				$('#messageDiv').html("");
 				var heading = document.getElementById("heading");
 				heading.innerHTML = "";
 			}
@@ -279,15 +334,24 @@
 				        	$('#messageDiv').html(response);
 				        }
 					});
+				  
+				  document.getElementById("addDivForm").reset();
 			 });	
 			 
 			 $( "#addResourceForm" ).on( "submit", function( event ) {
 				  event.preventDefault();
+				  
+				  var type = $("#resourceType",this).val();
+				  if(type == 'none'){
+					  alert('Please select a resource type');
+					  return false;
+				  }
 				  var fac = $("#incharge",this).val();
 				  if(fac == 'none'){
 					  alert('Please select a resource incharge');
 					  return false;
 				  }
+				  
 				  
 				  $.ajax({
 				        type: "POST",
@@ -298,6 +362,8 @@
 				        	$('#messageDiv').html(response);
 				        }
 					});
+				  
+				  document.getElementById("addResourceForm").reset();
 				  
 			 });	
 		
