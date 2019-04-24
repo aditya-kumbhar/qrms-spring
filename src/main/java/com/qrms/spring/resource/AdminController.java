@@ -2033,6 +2033,7 @@ public class AdminController {
 		            			}else {
 		            				//System.out.println("token "+str+" "+dept.concat(str)+" "+slot[0]+" "+slot[1]);
 		            				Resource r = resourceRepository.findByResourceId(dept.concat(str));
+		            				System.out.println("resource-"+r.getResourceId());
 		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),activityName));
 //		            				System.out.println("ok");
 		            				
@@ -2054,6 +2055,7 @@ public class AdminController {
 	        myWorkBook.close();
 	        
 		} catch (Exception e) {
+			e.printStackTrace();
 			msg = "Uploaded timetable is in incorrect format.";
 			myFile.delete();
 	       	return msg;

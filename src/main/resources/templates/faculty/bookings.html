@@ -46,6 +46,7 @@
 	<body>
 		<div class="card bg-light">
 			<article class="card-body mx-auto">
+				<h3 class="card-title mt-3 text-center">Booking a resource</h3>
 				<h4 class="card-title mt-3 text-center">Enter Requirements</h4>
 				<form id="resourceReqForm">
 					<table>
@@ -145,8 +146,8 @@
 				<div class="row">
 					<div class="col-8">
 						<div th:id="resourceTT" th:fragment="resourceTT">
-							<div class="row col-sm-4">
-								<h5 class="card-title mt-3 text-center" th:if="${ttForResource}" th:name="resource-id-heading" th:id="resource-id-heading">Resource Time Table</h5>
+							<div class="row">
+								<h5 class="card-title mt-3 text-center" th:if="${ttForResource}" th:name="resource-id-heading" th:id="resource-id-heading"></h5>
 							</div>
 							<div class="row">
 								<table th:if="${ttForResource}" class="table table-light table-hover table-bordered">
@@ -188,25 +189,25 @@
 										<input class="form-control btn btn-light" type="date" onchange="sendDateToBackend()" id="booking-date"/>
 									</td>
 								</tr>
-								<tr>
+								<tr class="bookingsAllowed">
 									<td>Enter the activity/event name</td>
 									<td>
 										<input type="text" class="form-control" id="activity-name">
 									</td>
 								</tr>
-								<tr>
+								<tr class="bookingsAllowed">
 									<td>Enter a start time</td>
 									<td>
 										<input type="time" class="form-control" id="start-time">
 									</td>
 								</tr>
-								<tr>
+								<tr class="bookingsAllowed">
 									<td>Enter an end time</td>
 									<td>
 										<input type="time" class="form-control" id="end-time">
 									</td>
 								</tr>
-								<tr>
+								<tr class="bookingsAllowed">
 									<td colspan="2">
 										<button id="requestSlot" onclick="requestTimeSlot()" class="form-control btn btn-primary">Request Slot</button>
 									</td>
@@ -251,33 +252,41 @@
 				}else if(endTime==""){
 					alert("Please enter the event end time.");
 				}else{
-					var retVal = confirm("Do you want to book?");
-					if(retVal==true){
-						console.log("user wants to continue");
-						$.ajax({
-							type: "POST",
-							data: {booking_date: date,resource: Resource,startTime:startTime,endTime:endTime,activityName:activityName},
-							url: '/u/faculty/sendBookingRequest',
-							success: function(data){
-								if ($(data).find('#err').length){
-				        			$('#resourceTT').html('');
-				         	   		$('#messageDiv').html('');
-				        	   		$('#messageDiv').html(data);                   
-					           } else if($(data).find('#success').length){
-					        	   	$('#messageDiv').html('');
-									//$('#messageDiv').html(data);
-									alert("Sent request to the resource incharge, the updates will be mailed to you soon!");
-					           }else{
-					        	   $('#messageDiv').html('');
-					        	   $('#resourceTT').html('');
-				                   $('#resourceTT').html(data);   
-				                   $('html, body').animate({
-				                       scrollTop: $('#resourceTT').offset().top
-				                     }, 500);
-				          	 	}
-					        }
-						});
-					}
+					var curDate = new Date();
+        	   		console.log(curDate);
+	                if((curDate.getHours()*60 + curDate.getMinutes()) > (parseInt(st[0])*60 + parseInt(st[1])))
+	                   {
+	                	 alert("Can't book! Start Time for slot is greater than current time!");
+	                   }else{
+	                	   var retVal = confirm("Do you want to book?");
+	   					if(retVal==true){
+	   						console.log("user wants to continue");
+	   						$.ajax({
+	   							type: "POST",
+	   							data: {booking_date: date,resource: Resource,startTime:startTime,endTime:endTime,activityName:activityName},
+	   							url: '/u/faculty/sendBookingRequest',
+	   							success: function(data){
+	   								if ($(data).find('#err').length){
+	   				        			$('#resourceTT').html('');
+	   				         	   		$('#messageDiv').html('');
+	   				        	   		$('#messageDiv').html(data);                   
+	   					           } else if($(data).find('#success').length){
+	   					        	   	$('#messageDiv').html('');
+	   									//$('#messageDiv').html(data);
+	   									alert("Sent request to the resource incharge, the updates will be mailed to you soon!");
+	   					           }else{
+	   					        	   $('#messageDiv').html('');
+	   					        	   $('#resourceTT').html('');
+	   				                   $('#resourceTT').html(data);   
+	   				                   $('html, body').animate({
+	   				                       scrollTop: $('#resourceTT').offset().top
+	   				                     }, 500);
+	   				          	 	}
+	   					        }
+	   						});
+	   					}
+	                   }
+					
 				}
 			}
 			function sendDateToBackend(){
@@ -295,14 +304,36 @@
 							if ($(data).find('#err').length) {
 			        			$('#resourceTT').html('');
 			         	   		$('#messageDiv').html('');
-			        	   		$('#messageDiv').html(data);                   
+			        	   		$('#messageDiv').html(data);   
+			        	   		var curDate = new Date();
+			        	   		console.log(curDate);
+				                   console.log(d.value);
+				                   var d1 = Date.parse(curDate.toISOString().substr(0, 10));
+				                   var d2 = Date.parse(d.value);
+				                   if(d1>d2){
+				                	   alert("You cannot book for past dates!");
+				                	   $('.bookingsAllowed').css("display",'none');
+				                   }else{
+				                	   $('.bookingsAllowed').css("display",'');
+				                   }
 				           } else{
 			            	   $('#resourceTT').html('');
 			                   $('#resourceTT').html(data);   
 			                   $('html, body').animate({
 			                       scrollTop: $('#resourceTT').offset().top
 			                     }, 500);
-			                   
+			                   document.getElementById("resource-id-heading").innerHTML = "Time Table for Resource: "+Resource;
+			                   var curDate = new Date().toISOString().substr(0, 10);
+			                   console.log(curDate);
+			                   console.log(d.value);
+			                   var d1 = Date.parse(curDate);
+			                   var d2 = Date.parse(d.value);
+			                   if(d1>d2){
+			                	   alert("You cannot book for past dates!"); 
+			                	   $('.bookingsAllowed').css("display",'none');
+			                   }else{
+			                	   $('.bookingsAllowed').css("display",'');
+			                   }
 			          	 	}
 				        }
 					});
@@ -321,6 +352,7 @@
 				$( "[name='BookButton']" ).click(function() {
 					var curResource = this.id;
 					Resource = curResource;
+					
 					$("#date-row").show();
 				    $.ajax({	
 				        type: "GET",
@@ -338,7 +370,8 @@
 		                   $('html, body').animate({
 		                       scrollTop: $('#resourceTT').offset().top
 		                     }, 500);
-		              	 	}
+		                   document.getElementById("resource-id-heading").innerHTML = "Time Table for Resource: "+Resource; 	
+			           }
 				        }
 					});
 				    
