@@ -484,7 +484,7 @@ public class FacultyController {
 				
 				System.out.println(st);
 				
-				if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet)) {
+				if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet) || (st<=gost && et>gost && et<=goet)) {
 					overlappingRequests.add(rr);
 				}
 				
@@ -495,14 +495,14 @@ public class FacultyController {
 		ArrayList<TimeSlots> overlappingTimeSlots = new ArrayList<>();
 		
 		for(TimeSlots ts:allTimeSlots) {
-			Long st = ts.getStartTime().getTime();
-			Long et = ts.getStartTime().getTime();
-			Long gost = obj.getSlotStartTime().getTime();
-			Long goet = obj.getSlotEndTime().getTime();
+			Long gost = ts.getStartTime().getTime();
+			Long goet = ts.getEndTime().getTime();
+			Long st = obj.getSlotStartTime().getTime();
+			Long et = obj.getSlotEndTime().getTime();
 			
 			System.out.println(st);
 			
-			if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet)) {
+			if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet) || (st<=gost && et>gost && et<=goet)) {
 				overlappingTimeSlots.add(ts);
 			}
 			
@@ -516,13 +516,13 @@ public class FacultyController {
 		
 		for(TimeTable tt:allTimeTableSlots) {
 			Long st = tt.getStartTime().getTime();
-			Long et = tt.getStartTime().getTime();
+			Long et = tt.getEndTime().getTime();
 			Long gost = obj.getSlotStartTime().getTime();
 			Long goet = obj.getSlotEndTime().getTime();
 			
-			System.out.println(st);
+			System.out.println(st+" "+et+" "+gost+" "+goet);
 			
-			if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet)) {
+			if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet) || (st<=gost && et>gost && et<=goet)) {
 				overlappingTimeTableSlots.add(tt);
 			}
 			
@@ -541,6 +541,7 @@ public class FacultyController {
 				model.addAttribute("overlappingTimeTableSlots",overlappingTimeTableSlots);
 			}
 			
+			System.out.println(overlappingRequests.size()+" "+overlappingTimeSlots.size()+" "+overlappingTimeTableSlots.size());
 			return "faculty/resourceRequests:: overlapDiv";
 		}else {
 			model.addAttribute("msg","No overlapping requests!");
@@ -580,10 +581,10 @@ public class FacultyController {
 		
 		
 		for(ResourceRequests rr:allRequests) {
-				Long st = rr.getSlotStartTime().getTime();
-				Long et = rr.getSlotEndTime().getTime();
-				Long gost = obj.getSlotStartTime().getTime();
-				Long goet = obj.getSlotEndTime().getTime();
+				Long gost = rr.getSlotStartTime().getTime();
+				Long goet = rr.getSlotEndTime().getTime();
+				Long st = obj.getSlotStartTime().getTime();
+				Long et = obj.getSlotEndTime().getTime();
 				
 				System.out.println(st);
 				
@@ -608,10 +609,10 @@ public class FacultyController {
 		ArrayList<TimeSlots> allTimeSlots = timeSlotsRepository.findByResourceIdAndDate(obj.getResourceId(), obj.getSlotDate());
 		
 		for(TimeSlots ts:allTimeSlots) {
-			Long st = ts.getStartTime().getTime();
-			Long et = ts.getStartTime().getTime();
-			Long gost = obj.getSlotStartTime().getTime();
-			Long goet = obj.getSlotEndTime().getTime();
+			Long gost = ts.getStartTime().getTime();
+			Long goet = ts.getEndTime().getTime();
+			Long st = obj.getSlotStartTime().getTime();
+			Long et = obj.getSlotEndTime().getTime();
 			
 			System.out.println(st);
 			
@@ -622,7 +623,7 @@ public class FacultyController {
 				body = body.concat("Slot: "+ts.getDate()+" "+ts.getStartTime()+" - "+ts.getEndTime()+"\n");
 				body = body.concat("Please login to your QRMS account to book another slot!\n\nRegards,\nQRMS Team.");
 				try {
-					emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+ts.getResourceId().getResourceId()+" Rejected", body);
+					emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+ts.getResourceId().getResourceId()+" Overridden", body);
 				} catch (MailException | InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

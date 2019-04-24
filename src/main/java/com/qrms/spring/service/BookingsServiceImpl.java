@@ -94,7 +94,7 @@ public class BookingsServiceImpl implements BookingsService{
 				Long gost = tss.getStartTime().getTime();
 				Long goet = tss.getEndTime().getTime();
 				
-				if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet)) {
+				if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet) || (st<=gost && et>gost && et<=goet)) {
 					i+=1;
 				}
 				

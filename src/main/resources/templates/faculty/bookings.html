@@ -254,7 +254,11 @@
 				}else{
 					var curDate = new Date();
         	   		console.log(curDate);
-	                if((curDate.getHours()*60 + curDate.getMinutes()) > (parseInt(st[0])*60 + parseInt(st[1])))
+        	   		var d = document.getElementById("booking-date");
+                   var d1 = Date.parse(curDate.toISOString().substr(0, 10));
+                   var d2 = Date.parse(d.value);
+                   
+	                if(d1==d2 && ((curDate.getHours()*60 + curDate.getMinutes()) > (parseInt(st[0])*60 + parseInt(st[1]))))
 	                   {
 	                	 alert("Can't book! Start Time for slot is greater than current time!");
 	                   }else{
