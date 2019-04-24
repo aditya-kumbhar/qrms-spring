@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.FacultyPref;
+import com.qrms.spring.model.OpenFacultyPrefs;
 import com.qrms.spring.model.Resource;
 import com.qrms.spring.model.TimeSlots;
 import com.qrms.spring.model.TimeTable;
@@ -34,6 +35,7 @@ import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
+import com.qrms.spring.repository.OpenFacultyPrefsRepository;
 import com.qrms.spring.repository.TimeSlotsRepository;
 import com.qrms.spring.service.BookingsService;
 import com.qrms.spring.service.BookingsServiceImpl;
@@ -62,6 +64,9 @@ public class FacultyController {
 	@Autowired
 	private BookingsServiceImpl bookingsService;
 	
+	@Autowired
+	private OpenFacultyPrefsRepository openFacultyPrefsRepository;
+	
 	@GetMapping("/home")
 	public String facultyHome() {
 		return "faculty/home";
@@ -84,10 +89,17 @@ public class FacultyController {
 		
 		FacultyAcad currUserAcad = facultyAcadRepository.findByUserName(userName);
 		
+		OpenFacultyPrefs ofp = openFacultyPrefsRepository.findByDeptId(currUserAcad.getDepartment().getDeptId());
+
+		if(ofp==null) {
+			model.addObject("err_msg_1","Preference forms are closed for "+currUserAcad.getDepartment().getDeptName());
+			model.setViewName("/faculty/facultyPref");
+			return model;
+		}
 		ArrayList <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserName(currUserAcad.getUserName());
 		if(facultyPrefs.size()!=0) 
 		{
-			model.addObject("pref_submitted_msg","You have already submitted your preferences. Please wait until allocation process takes place.");
+			model.addObject("err_msg_1","You have already submitted your preferences. Please wait until allocation process takes place.");
 		}
 		
 		model.setViewName("/faculty/facultyPref");
@@ -98,16 +110,24 @@ public class FacultyController {
 	public String getFacPrefForm(Model model, String year) {
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
-		System.out.println(year);
 		
 		FacultyAcad currUserAcad = facultyAcadRepository.findByUserName(userName);
 		
 		//ArrayList <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserNameAndYear(currUserAcad.getUserName(),year);
-		
+		OpenFacultyPrefs ofp = openFacultyPrefsRepository.findByDeptId(currUserAcad.getDepartment().getDeptId());
+	
 		ArrayList<CourseAndElectives> resultSet = new ArrayList<CourseAndElectives>() ;
+		ArrayList<Course> regCourses,elCourses;
+		if(ofp.getSemType() == 0) {
+			regCourses = courseRepository.findEvenSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
+			elCourses = courseRepository.findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
+				
+		}else {
+			regCourses = courseRepository.findOddSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
+			elCourses = courseRepository.findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
+				
+		}
 		//change later when admin gives current Sem input
-		ArrayList<Course> regCourses = courseRepository.findByCourseYearAndCourseTypeAndDepartment(year,'R', currUserAcad.getDepartment());
-		ArrayList<Course> elCourses = courseRepository.findByCourseYearAndCourseTypeAndDepartment(year,'E', currUserAcad.getDepartment());
 		
 		if(regCourses.isEmpty() && elCourses.isEmpty())
 		{
