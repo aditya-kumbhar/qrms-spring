@@ -1,12 +1,22 @@
 package com.qrms.spring.resource;
 
 
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.mail.MailException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.model.OpenFacultyPrefs;
 import com.qrms.spring.model.Resource;
+import com.qrms.spring.model.ResourceRequests;
 import com.qrms.spring.model.TimeSlots;
 import com.qrms.spring.model.TimeTable;
 import com.qrms.spring.model.Course;
@@ -32,13 +43,15 @@ import com.qrms.spring.queryBeans.CourseAndElectives;
 import com.qrms.spring.queryBeans.FacPrefsList;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
-import com.qrms.spring.repository.DepartmentRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
 import com.qrms.spring.repository.OpenFacultyPrefsRepository;
+import com.qrms.spring.repository.ResourceRepository;
+import com.qrms.spring.repository.ResourceRequestsRepository;
 import com.qrms.spring.repository.TimeSlotsRepository;
-import com.qrms.spring.service.BookingsService;
+import com.qrms.spring.repository.TimeTableRepository;
 import com.qrms.spring.service.BookingsServiceImpl;
+import com.qrms.spring.service.EmailServiceImpl;
 import com.qrms.spring.repository.FacultyAcadRepository;
 
 
@@ -66,6 +79,23 @@ public class FacultyController {
 	
 	@Autowired
 	private OpenFacultyPrefsRepository openFacultyPrefsRepository;
+
+	private EmailServiceImpl emailServiceImpl;
+	
+	@Autowired
+	private ResourceRepository resourceRepository;
+	
+	@Autowired
+	private ResourceRequestsRepository resourceRequestsRepository;
+	
+	@Autowired
+	private TimeSlotsRepository timeSlotsRepository;
+	
+	@Autowired
+	private TimeTableRepository timeTableRepository;
+	
+	@Value("${spring.mail.username}")
+	private String qrmsEmailId;
 	
 	@GetMapping("/home")
 	public String facultyHome() {
@@ -286,6 +316,7 @@ public class FacultyController {
 		
 	}*/
 	
+	
 	@RequestMapping(value="/bookings",method=RequestMethod.GET)
 	public ModelAndView getRequirements() {
 		ModelAndView model = new ModelAndView();
@@ -297,10 +328,6 @@ public class FacultyController {
 	
 	@RequestMapping(value="/getOptions",method=RequestMethod.POST)
 	public String setRequirements(Model model,String dept,String rType,Integer minSeats) {
-//		ModelAndView model = new ModelAndView();
-//		model.setViewName("/faculty/bookings");
-//		ArrayList<Department> depts = bookingsService.listDepartments();
-//		model.addObject("departments", depts);
 		
 		System.out.println(dept+" "+rType+" "+minSeats);
 		ArrayList<Resource> options = bookingsService.listResourcesByDepartmentAndRTypeAndMinSeats(dept, rType, minSeats);
@@ -318,28 +345,325 @@ public class FacultyController {
 	}
 	
 	@RequestMapping(value="/getTTForResource", method=RequestMethod.GET)
-	public String getTTForResource(Model model,String getTT){
-		System.out.println("resource = "+getTT);
+	public String getTTForResource(Model model,String getTT,String cur_date){
 		
-		Collection <TimeSlots> ts = bookingsService.findTimeSlotsByResourceForCurrentDate(getTT);
+		List<TimeSlots> list = getTimeSlotsForDate(cur_date, getTT);
 		
-		List<TimeSlots> list;
-		if (ts instanceof List)
-		  list = (List<TimeSlots>)ts;
-		else
-		  list = new ArrayList<TimeSlots>(ts);
-		
-		Collections.sort(list);
-		
-		if(ts.isEmpty()) {
-			model.addAttribute("err_msg","No Slots are booked!");
+		if(list.size()==0) {
+			model.addAttribute("msg","All slots are empty!");
 			return "faculty/bookings:: messageDiv";
 		}else {
-			System.out.println(list.size());
-			for(TimeSlots tss:ts)
-				System.out.println(tss.getStartTime());
 			model.addAttribute("ttForResource",list);
 			return "faculty/bookings:: resourceTT";
 		}
+	}
+	
+	public List<TimeSlots> getTimeSlotsForDate(String booking_date,String getTT){
+		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate date = LocalDate.parse(booking_date, df);
+		Date sqlDate = java.sql.Date.valueOf(date.toString());
+		String day = date.getDayOfWeek().name();
+		
+//		Collection <TimeSlots> ts = bookingsService.findTimeSlotsByResourceForDate(getTT,day,sqlDate);
+//		
+//		List<TimeSlots> list;
+//		if (ts instanceof List)
+//		  list = (List<TimeSlots>)ts;
+//		else
+//		  list = new ArrayList<TimeSlots>(ts);
+		
+		ArrayList<TimeSlots> list = bookingsService.findTimeSlotsByResourceForDate(getTT,day,sqlDate);
+		
+		Collections.sort(list);
+		return list;
+	}
+	
+	@RequestMapping(value="/getTTForResourceForDate",method=RequestMethod.POST)
+	public String getTTForResourceForDate(Model model,String booking_date,String getTT){
+		System.out.println("hello :)"+booking_date+getTT);
+		
+		List<TimeSlots> list = getTimeSlotsForDate(booking_date, getTT);
+		
+		if(list.isEmpty()) {
+			model.addAttribute("msg","All slots are empty!");
+			return "faculty/bookings:: messageDiv";
+		}else {
+			System.out.println(list.size());
+			model.addAttribute("ttForResource",list);
+			return "faculty/bookings:: resourceTT";
+		}
+		
+	}
+	
+	@RequestMapping(value="/sendBookingRequest",method=RequestMethod.POST)
+	public String sendBookingRequest(Model model,String booking_date,String resource,String startTime,String endTime,String activityName) {
+		
+		LocalDateTime reqTime = LocalDateTime.now();
+		System.out.println(reqTime.getYear()+"/"+reqTime.getMonthValue()+"/"+reqTime.getDayOfMonth()+"  "+reqTime.getHour()+":"+reqTime.getMinute()+":"+reqTime.getSecond());
+		String reqGenTime = reqTime.getYear()+"/"+reqTime.getMonthValue()+"/"+reqTime.getDayOfMonth()+"  "+reqTime.getHour()+":"+reqTime.getMinute()+":"+reqTime.getSecond();
+		
+		System.out.println("booking_date "+booking_date+" "+"resource "+resource+" "+"startTime "+startTime+" "+"endTime "+endTime+" "+"activityName "+activityName);
+		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userName = user.getUserName();
+		
+		FacultyAcad requestingFaculty = facultyAcadRepository.findByUserName(userName);
+		
+		Resource resourceObj = resourceRepository.findByResourceId(resource);
+		String resourceIncharge = resourceObj.getResourceIncharge().getUserDets().getEmail();
+		
+		String body;
+		body = "Request BY: "+requestingFaculty.getUserDets().getFirstName()+" "+requestingFaculty.getUserDets().getLastName()+"\n";
+		body = body.concat("Resource: "+resource+"\n");
+		body = body.concat("Slot time: "+startTime+" - "+endTime+" on "+booking_date+" for the activity \""+activityName+"\""+"\n");
+		body = body.concat("Request generated on - "+reqGenTime+"\n\n\n");
+		body = body.concat("Please login to your QRMS account to manage the requests!\n\nRegards,\nQRMS Team.");
+		try {
+			emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+resourceObj.getResourceName(), body);
+		} catch (MailException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate slotDate = LocalDate.parse(booking_date, df);
+		Date slotSqlDate = java.sql.Date.valueOf(slotDate.toString());
+		String day = slotDate.getDayOfWeek().name();
+		
+		LocalDate requestDate = LocalDate.parse(reqTime.getYear()+"-"+String.format("%02d", reqTime.getMonthValue())+"-"+String.format("%02d", reqTime.getDayOfMonth()), df);
+		Date requestedSqlDate = java.sql.Date.valueOf(requestDate.toString());
+		
+		
+		ResourceRequests resourceRequest = new ResourceRequests();
+		resourceRequest.setSlotActivityName(activityName);
+		resourceRequest.setSlotDate(slotSqlDate);
+		resourceRequest.setSlotDay(day);
+		resourceRequest.setSlotStartTime(Time.valueOf(startTime+":00"));
+		resourceRequest.setSlotEndTime(Time.valueOf(endTime+":00"));
+		resourceRequest.setRequestBy(requestingFaculty);
+		resourceRequest.setResourceId(resourceObj);
+		resourceRequest.setRequestedDate(requestedSqlDate);
+		resourceRequest.setRequestTime(Time.valueOf(reqTime.getHour()+":"+reqTime.getMinute()+":"+reqTime.getSecond()));
+		
+		resourceRequestsRepository.save(resourceRequest);
+		
+		model.addAttribute("msg","Sent request to the resource incharge, the updates will be mailed to you soon!");
+		return "faculty/bookings:: messageDiv";
+	}
+	
+	
+	@RequestMapping(value="/resourceRequests",method=RequestMethod.GET)
+	public ModelAndView getResourceRequests() {
+		//if faculty is not a resource incharge, send appropriate msg
+		//if no pending requests, send appropriate msg
+		//if pending requests, show all requests
+		ModelAndView model = new ModelAndView();
+		
+		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userName = user.getUserName();
+		ArrayList<ResourceRequests> requests = resourceRequestsRepository.findByResourceIncharge(userName);
+		
+		if(requests.isEmpty()) {
+			model.addObject("msg","No requests!");
+		}else {
+			model.addObject("requests",requests);
+		}
+		model.setViewName("/faculty/resourceRequests");
+		return model;
+	}
+	/*
+	 * 
+	@Query("SELECT rr FROM ResourceRequests rr WHERE 
+	(rr.slotStartTime >= :obj.slotStartTime AND rr.slotEndTime <= :obj.slotEndTime)
+	 OR (rr.slotStartTime >= :obj.slotStartTime AND rr.slotStartTime < :obj.slotEndTime) 
+	 OR (rr.slotEndTime > :obj.slotStartTime AND rr.slotEndTime <= :obj.slotEndTime) 
+	 OR (rr.slotStartTime <= :obj.slotStartTime AND rr.slotEndTime >= :obj.slotEndTime)")
+	ArrayList<ResourceRequests> findRequestsWithOverlapsFor(@Param("obj") ResourceRequests getOverlapsFor);
+	
+	the value 0 if the argument Date is equal to this Date; 
+	a value less than 0 if this Date is before the Date argument;
+	and a value greater than 0 if this Date is after the Date argument.
+	 */
+	
+	@RequestMapping(value="/getOverlappingSlots",method=RequestMethod.POST)
+	public String getOverlappingSlots(Model model,Integer getOverlapsFor) {
+		
+		ResourceRequests obj = resourceRequestsRepository.findByRequestId(getOverlapsFor);
+		
+		ArrayList<ResourceRequests> allRequests = resourceRequestsRepository.findByResourceIdAndSlotDate(obj.getResourceId(),obj.getSlotDate());
+		ArrayList<ResourceRequests> overlappingRequests = new ArrayList<>();
+		
+		for(ResourceRequests rr:allRequests) {
+			if(obj.getRequestId() != rr.getRequestId()) {
+				Long st = rr.getSlotStartTime().getTime();
+				Long et = rr.getSlotEndTime().getTime();
+				Long gost = obj.getSlotStartTime().getTime();
+				Long goet = obj.getSlotEndTime().getTime();
+				
+				System.out.println(st);
+				
+				if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet) || (st<=gost && et>gost && et<=goet)) {
+					overlappingRequests.add(rr);
+				}
+				
+			}
+		}
+		
+		ArrayList<TimeSlots> allTimeSlots = timeSlotsRepository.findByResourceIdAndDate(obj.getResourceId(), obj.getSlotDate());
+		ArrayList<TimeSlots> overlappingTimeSlots = new ArrayList<>();
+		
+		for(TimeSlots ts:allTimeSlots) {
+			Long gost = ts.getStartTime().getTime();
+			Long goet = ts.getEndTime().getTime();
+			Long st = obj.getSlotStartTime().getTime();
+			Long et = obj.getSlotEndTime().getTime();
+			
+			System.out.println(st);
+			
+			if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet) || (st<=gost && et>gost && et<=goet)) {
+				overlappingTimeSlots.add(ts);
+			}
+			
+		}
+		
+		String day = obj.getSlotDay();
+		
+		ArrayList<TimeTable> allTimeTableSlots = timeTableRepository.findByResourceIdAndDay(obj.getResourceId(), day);
+		
+		ArrayList<TimeTable> overlappingTimeTableSlots = new ArrayList<>();
+		
+		for(TimeTable tt:allTimeTableSlots) {
+			Long st = tt.getStartTime().getTime();
+			Long et = tt.getEndTime().getTime();
+			Long gost = obj.getSlotStartTime().getTime();
+			Long goet = obj.getSlotEndTime().getTime();
+			
+			System.out.println(st+" "+et+" "+gost+" "+goet);
+			
+			if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet) || (st<=gost && et>gost && et<=goet)) {
+				overlappingTimeTableSlots.add(tt);
+			}
+			
+		}
+		
+		
+		if(!overlappingRequests.isEmpty() || !overlappingTimeSlots.isEmpty() || !overlappingTimeTableSlots.isEmpty()) {
+			
+			if(!overlappingRequests.isEmpty()) {
+				model.addAttribute("overlappingRequests",overlappingRequests);
+			}
+			if(!overlappingTimeSlots.isEmpty()) {
+				model.addAttribute("overlappingTimeSlots",overlappingTimeSlots);
+			}
+			if(!overlappingTimeTableSlots.isEmpty()) {
+				model.addAttribute("overlappingTimeTableSlots",overlappingTimeTableSlots);
+			}
+			
+			System.out.println(overlappingRequests.size()+" "+overlappingTimeSlots.size()+" "+overlappingTimeTableSlots.size());
+			return "faculty/resourceRequests:: overlapDiv";
+		}else {
+			model.addAttribute("msg","No overlapping requests!");
+			return "faculty/resourceRequests:: messageDiv"; 
+		}
+		
+	}
+	
+	@RequestMapping(value="/deleteResourceRequest",method=RequestMethod.POST)
+	public String deleteResourceRequest(Model model,Integer deleteRequestFor) {
+		
+		ResourceRequests obj = resourceRequestsRepository.findByRequestId(deleteRequestFor);
+		
+		resourceRequestsRepository.delete(obj);
+		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userName = user.getUserName();
+		ArrayList<ResourceRequests> requests = resourceRequestsRepository.findByResourceIncharge(userName);
+		
+		if(requests.isEmpty()) {
+			model.addAttribute("msg","Deleted successfully!No requests!");
+			return "faculty/resourceRequests:: messageDiv";
+		}else {
+			model.addAttribute("requests",requests);
+			return "faculty/resourceRequests:: requestsDiv";
+		}
+		
+	}
+	
+	@RequestMapping(value="/finalAcceptResourceRequest",method=RequestMethod.POST)
+	public String finalAcceptResourceRequest(Model model,Integer getOverlapsFor) {
+
+		ResourceRequests obj = resourceRequestsRepository.findByRequestId(getOverlapsFor);
+		
+		ArrayList<ResourceRequests> allRequests = resourceRequestsRepository.findByResourceIdAndSlotDate(obj.getResourceId(),obj.getSlotDate());
+		
+		String body;
+		
+		
+		for(ResourceRequests rr:allRequests) {
+				Long gost = rr.getSlotStartTime().getTime();
+				Long goet = rr.getSlotEndTime().getTime();
+				Long st = obj.getSlotStartTime().getTime();
+				Long et = obj.getSlotEndTime().getTime();
+				
+				System.out.println(st);
+				
+				if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet)) {
+					
+					body = "Your request to book the resource "+rr.getResourceId().getResourceId()+" with Request No: "+rr.getRequestId()+" has been rejected!\n";
+					body = body.concat("Resource: "+rr.getResourceId().getResourceId()+"\n");
+					body = body.concat("Activity Name: "+rr.getSlotActivityName()+"\n");
+					body = body.concat("Slot: "+rr.getSlotDate()+" "+rr.getSlotStartTime()+" - "+rr.getSlotEndTime()+"\n");
+					body = body.concat("Please login to your QRMS account to book another slot!\n\nRegards,\nQRMS Team.");
+					try {
+						emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+rr.getResourceId().getResourceId()+" Rejected", body);
+					} catch (MailException | InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					resourceRequestsRepository.delete(rr);
+				}
+				
+		}
+		
+		ArrayList<TimeSlots> allTimeSlots = timeSlotsRepository.findByResourceIdAndDate(obj.getResourceId(), obj.getSlotDate());
+		
+		for(TimeSlots ts:allTimeSlots) {
+			Long gost = ts.getStartTime().getTime();
+			Long goet = ts.getEndTime().getTime();
+			Long st = obj.getSlotStartTime().getTime();
+			Long et = obj.getSlotEndTime().getTime();
+			
+			System.out.println(st);
+			
+			if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet)) {
+				body = "Your booked slot the resource "+ts.getResourceId().getResourceId()+" with Request No: "+ts.getRequestId()+" has been overridden by another request!\n";
+				body = body.concat("Resource: "+ts.getResourceId().getResourceId()+"\n");
+				body = body.concat("Activity Name: "+ts.getActivityName()+"\n");
+				body = body.concat("Slot: "+ts.getDate()+" "+ts.getStartTime()+" - "+ts.getEndTime()+"\n");
+				body = body.concat("Please login to your QRMS account to book another slot!\n\nRegards,\nQRMS Team.");
+				try {
+					emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+ts.getResourceId().getResourceId()+" Overridden", body);
+				} catch (MailException | InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				timeSlotsRepository.delete(ts);
+			}
+			
+		}
+		body = "Your request to book the resource "+obj.getResourceId().getResourceId()+" with Request No: "+obj.getRequestId()+" has been Accepted!\n";
+		body = body.concat("Resource: "+obj.getResourceId().getResourceId()+"\n");
+		body = body.concat("Activity Name: "+obj.getSlotActivityName()+"\n");
+		body = body.concat("Slot: "+obj.getSlotDate()+" "+obj.getSlotStartTime()+" - "+obj.getSlotEndTime()+"\n");
+		body = body.concat("Please login to your QRMS account to book another slot!\n\nRegards,\nQRMS Team.");
+		try {
+			emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+obj.getResourceId().getResourceId()+" Accepted!", body);
+		} catch (MailException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		TimeSlots ts = new TimeSlots(obj.getSlotStartTime(), obj.getSlotEndTime(), obj.getResourceId(), obj.getSlotDate(), obj.getRequestBy(), obj.getSlotActivityName(), obj.getRequestId());
+		timeSlotsRepository.save(ts);
+		
+		model.addAttribute("msg", "Request Accepted!");
+		return "faculty/resourceRequests:: messageDiv";
 	}
 }

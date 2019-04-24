@@ -1,241 +1,422 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<th:block th:include="fragments/fac_header.html :: headerfiles"></th:block>
-<title>Time slot booking</title>
+	<head>
+		<meta charset="UTF-8">
+		<th:block th:include="fragments/fac_header.html :: headerfiles"></th:block>
+		<title>Time slot booking</title>
+		
+		<link rel="stylesheet" th:href="@{/css/register.css}">
+		
+		
+	</head>
 
-</head>
-<div th:replace="fragments/fac_header :: header"></div>
-
-<!-- script to turn nav link active -->
-<script type="text/javascript">
-	var navBar = document.getElementById("nav-bar");		
-	var current = navBar.getElementsByClassName("active");
-    // If there's any other active nav, make it inactive
-    if (current.length > 0) { 
-      current[0].className = current[0].className.replace(" active", "");
-    }
-	//set current page nav as active
-	document.getElementById("bookings-nav").className+=" active";		
-</script>
-<script>
-	$(document).ready(function () {
-        $("#submit").click(function () {
-       	 	var dept = $('#dept');
-       	 	var rType = $('#rType');
-       	 	var seats = $('#minSeats');
-       	 	
-       	 	if(dept.val() == "none"){
-	       	 	alert("Please select a department");
-	            $('#dept').focus();
-	            
-	            return false;
-       	 	}else if(rType.val() == "none"){
-	       	 	alert("Please select a resource type");
-	            $('#rType').focus();
-	            
-	            return false;
-       	 	}
-       	 	return true;
-        });
-	});  
+	<div th:replace="fragments/fac_header :: header"></div>
+	
+	<!-- script to turn nav link active -->
+	<script type="text/javascript">
+		var navBar = document.getElementById("nav-bar");		
+		var current = navBar.getElementsByClassName("active");
+	    // If there's any other active nav, make it inactive
+	    if (current.length > 0) { 
+	      current[0].className = current[0].className.replace(" active", "");
+	    }
+		//set current page nav as active
+		document.getElementById("bookings-nav").className+=" active";
+	</script>
+	<script>
+		$(document).ready(function () {
+			$("#date-row").css("display", "none");
+	        $("#submit").click(function () {
+	       	 	var dept = $('#dept');
+	       	 	var rType = $('#rType');
+	       	 	var seats = $('#minSeats');
+	       	 	
+	       	 	if(dept.val() == "none"){
+		       	 	alert("Please select a department");
+		            $('#dept').focus();
+		            
+		            return false;
+	       	 	}else if(rType.val() == "none"){
+		       	 	alert("Please select a resource type");
+		            $('#rType').focus();
+		            
+		            return false;
+	       	 	}
+	       	 	return true;
+	        });
+		});  
 	</script>
 	
-<body>
-	<div class="card bg-light">
-		<article class="card-body mx-auto">
-		<h4 class="card-title mt-3 text-center">Enter Requirements</h4>
-		<form id="resourceReqForm">
-			<table>
-				<tr>
-					<td>
-						Select Department
-					</td>
-					<td>
-						<select class="form-control" th:id="dept" th:name="dept" autofocus>
-							<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
-							<option th:each="dept : ${departments}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Select Resource Type
-					</td>
-					<td>
-						<select class="form-control" th:id="rType" th:name="rType" autofocus>
-							<option th:value="none" style="color:#8F8B87" selected>Select Resource Type</option>
-							<option th:value="Classroom" style="color:#000">Classroom</option>
-							<option th:value="Lab" style="color:#000">Lab</option>
-							<option th:value="Hall" style="color:#000">Hall</option>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Enter minimum seats required
-					</td>
-					<td>
-						<input th:id="minSeats" class="form-control" th:name="minSeats" placeholder="Enter minimum seats" min='0' type="number" required/>
-					</td>
-				</tr>
-				<tr>
-					<td colspan=2 align=center>
-						<div class="form-group">
-			        		<button type="submit" class="btn btn-primary btn-block"  style="width:150px"> Find Resources  </button>
-			    		</div> <!-- form-group// -->  
-			    	</td> 
-				</tr>
-			</table>
-		</form>
-		</article>
-		<article class="card-body mx-auto" th:id="resourceOptionsTable" th:fragment="resourceOptionsTable">
-		
-			<table th:if="${options}" class="table table-hover table-bordered">
-				<thead>
-					<tr>
-						<th>
-							Resource ID
-						</th>
-						<th>
-							Resource Name
-						</th>
-						<th>
-							Resource Capacity
-						</th>
-						<th>
-							Resource Type
-						</th>
-						<th>
-							Department
-						</th>
-						<th>
-							Resource Incharge
-						</th>
-						<th>
-							Other details
-						</th>
-						<th>
-							Book
-						</th>
-					</tr>
-					
-				</thead>
-				<tbody>
-					<tr th:each="i : ${options}">
-						<td th:text="${i.resourceId}"></td>
-						<td th:text="${i.resourceName}"></td>
-						<td th:text="${i.resourceCapacity}"></td>
-						<td th:text="${i.resourceType}"></td>
-						<td th:text="${i.department.deptName}"></td>
-						<td th:text="${i.resourceIncharge.userDets.firstName+' '+i.resourceIncharge.userDets.lastName}"></td>
-						<td th:text="${i.resourceInfo}"></td>
-						<td>
-							<button class="btn btn-primary" name="BookButton" th:id="${i.resourceId}">BOOK</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		
-		</article>
-		
-		<div class="card-body row" th:id="resourceTT" th:fragment="resourceTT">
-			<div class="col-8">
-				<table th:if="${ttForResource}" class="table table-hover table-bordered">
+	<body>
+		<div class="card bg-light">
+			<article class="card-body mx-auto">
+				<h3 class="card-title mt-3 text-center">Booking a resource</h3>
+				<h4 class="card-title mt-3 text-center">Enter Requirements</h4>
+				<form id="resourceReqForm">
+					<table>
+						<tr>
+							<td>
+								Select Department
+							</td>
+							<td>
+								<select class="form-control" th:id="dept" th:name="dept" autofocus>
+									<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+									<option th:each="dept : ${departments}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Select Resource Type
+							</td>
+							<td>
+								<select class="form-control" th:id="rType" th:name="rType">
+									<option th:value="none" style="color:#8F8B87" selected>Select Resource Type</option>
+									<option th:value="Classroom" style="color:#000">Classroom</option>
+									<option th:value="Lab" style="color:#000">Lab</option>
+									<option th:value="Hall" style="color:#000">Hall</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Enter minimum seats required
+							</td>
+							<td>
+								<input th:id="minSeats" class="form-control" th:name="minSeats" placeholder="Enter minimum seats" min='0' type="number" required/>
+							</td>
+						</tr>
+						<tr>
+							<td colspan=2 align=center>
+								<div class="form-group">
+					        		<button type="submit" class="btn btn-primary btn-block"  style="width:150px"> Find Resources  </button>
+					    		</div> <!-- form-group// -->  
+					    	</td> 
+						</tr>
+					</table>
+				</form>
+			</article>
+			
+			<article class="card-body mx-auto" th:id="resourceOptionsTable" th:fragment="resourceOptionsTable">
+				<h5 class="card-title mt-3 text-center" th:if="${options}">Resources found</h5>
+				<table th:if="${options}" class="table table-hover table-light table-bordered">
 					<thead>
 						<tr>
 							<th>
-								Time Slot
+								Resource ID
 							</th>
 							<th>
-								Faculty	
+								Resource Name
 							</th>
 							<th>
-								Activity
+								Resource Capacity
+							</th>
+							<th>
+								Resource Type
+							</th>
+							<th>
+								Department
+							</th>
+							<th>
+								Resource Incharge
+							</th>
+							<th>
+								Other details
+							</th>
+							<th>
+								Book
 							</th>
 						</tr>
+						
 					</thead>
 					<tbody>
-						<tr th:each="i : ${ttForResource}">
-							<td th:text="${i.startTime+' - '+i.endTime}"></td>
-							<td th:text="${i.slotIncharge.userDets.firstName + ' ' + i.slotIncharge.userDets.lastName}"></td>
-							<td th:text="${i.activityName}"></td>
+						<tr th:each="i : ${options}">
+							<td th:text="${i.resourceId}"></td>
+							<td th:text="${i.resourceName}"></td>
+							<td th:text="${i.resourceCapacity}"></td>
+							<td th:text="${i.resourceType}"></td>
+							<td th:text="${i.department.deptName}"></td>
+							<td th:text="${i.resourceIncharge.userDets.firstName+' '+i.resourceIncharge.userDets.lastName}"></td>
+							<td th:text="${i.resourceInfo}"></td>
+							<td>
+								<button class="btn btn-primary" name="BookButton" th:id="${i.resourceId}">BOOK</button>
+							</td>
 						</tr>
 					</tbody>
 				</table>
-			</div>
-			<div class="col-4">
-				<input th:if="${ttForResource}" class="" type="date" id="booking-date"/>
-			</div>
-		</div>
+			</article>
+			<article class="card-body">
 			
-		  <div th:id="messageDiv">
-			<div class="row text-center card-body mx-auto" th:fragment="messageDiv">
-				<div class="alert alert-success" role="alert" id ="success" th:if="${msg}" th:utext="${msg}"></div>
-				<div class="alert alert-danger" role="alert"  id="err" th:if="${err_msg}" th:utext="${err_msg}"></div>
-			</div>
+				<div class="row">
+					<div class="col-8">
+						<div th:id="resourceTT" th:fragment="resourceTT">
+							<div class="row">
+								<h5 class="card-title mt-3 text-center" th:if="${ttForResource}" th:name="resource-id-heading" th:id="resource-id-heading"></h5>
+							</div>
+							<div class="row">
+								<table th:if="${ttForResource}" class="table table-light table-hover table-bordered">
+									<thead>
+										<tr>
+											<th>
+												Time Slot
+											</th>
+											<th>
+												Faculty	
+											</th>
+											<th>
+												Activity
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="i : ${ttForResource}">
+											<td th:text="${i.startTime+' - '+i.endTime}"></td>
+											<td th:text="${i.slotIncharge.userDets.firstName + ' ' + i.slotIncharge.userDets.lastName}"></td>
+											<td th:text="${i.activityName}"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="col-4" id="date-row">
+						<div class="row">
+							<h5 class="card-title mt-3 text-center"> Booking details </h5>
+						</div>
+						<div class="row">
+							<table class="table table-light table-borderless">
+								<tr>
+									<td>
+										Pick a date to book.
+									</td>
+									<td>
+										<input class="form-control btn btn-light" type="date" onchange="sendDateToBackend()" id="booking-date"/>
+									</td>
+								</tr>
+								<tr class="bookingsAllowed">
+									<td>Enter the activity/event name</td>
+									<td>
+										<input type="text" class="form-control" id="activity-name">
+									</td>
+								</tr>
+								<tr class="bookingsAllowed">
+									<td>Enter a start time</td>
+									<td>
+										<input type="time" class="form-control" id="start-time">
+									</td>
+								</tr>
+								<tr class="bookingsAllowed">
+									<td>Enter an end time</td>
+									<td>
+										<input type="time" class="form-control" id="end-time">
+									</td>
+								</tr>
+								<tr class="bookingsAllowed">
+									<td colspan="2">
+										<button id="requestSlot" onclick="requestTimeSlot()" class="form-control btn btn-primary">Request Slot</button>
+									</td>
+								</tr>
+							</table>
+							<div th:id="messageDiv" class="card-body mx-auto">
+								<div class="row text-center" th:fragment="messageDiv">
+									<div class="alert alert-success" role="alert" id ="success" th:if="${msg}" th:utext="${msg}"></div>
+									<div class="alert alert-danger" role="alert"  id="err" th:if="${err_msg}" th:utext="${err_msg}"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</article>
 		</div>
-	</div>
-	<script>
-	function bindForm(){
-		$( "[name='BookButton']" ).click(function() {
-			var curResource = this.id;
-			console.log(curResource);
-			console.log("heyaaa");
-		    $.ajax({	
-		        type: "GET",
-		        contentType: "application/json",
-		        data: { getTT : curResource},
-		        url: '/u/faculty/getTTForResource',
-		        success: function (data) {
-	        	if ($(data).find('#err').length) {
-	        			$('#resourceTT').html('');
-	         	   		$('#messageDiv').html('');
-	        	   		$('#messageDiv').html(data);                   
-	           } else{
-            	   $('#resourceTT').html('');
-                   $('#resourceTT').html(data);   
-                   $('html, body').animate({
-                       scrollTop: $('#resourceTT').offset().top
-                     }, 500);
-              	 	}
+			  
+		<script>
+			function requestTimeSlot(){
+				var date = document.getElementById("booking-date").value;
+				var activityName = document.getElementById("activity-name").value;
+				var startTime = document.getElementById("start-time").value;
+				var endTime = document.getElementById("end-time").value;
+				
+				console.log(date);
+				console.log(activityName);
+				console.log(startTime);
+				console.log(endTime);
+				
+				var st = startTime.split(":");
+				var et = endTime.split(":");
+				
+				
+				if(date==""){
+					alert("Please select a date to book!");
+				}else if(activityName==""){
+					alert("Please enter the event name.");
+				}else if(startTime==""){
+					alert("Please enter the event start time.");
+				}else if((parseInt(st[0])*60 + parseInt(st[1])) > (parseInt(et[0])*60+parseInt(et[1]))){
+					alert("Start time should be less than end time!");
+				}else if(endTime==""){
+					alert("Please enter the event end time.");
+				}else{
+					var curDate = new Date();
+        	   		console.log(curDate);
+        	   		var d = document.getElementById("booking-date");
+                   var d1 = Date.parse(curDate.toISOString().substr(0, 10));
+                   var d2 = Date.parse(d.value);
+                   
+	                if(d1==d2 && ((curDate.getHours()*60 + curDate.getMinutes()) > (parseInt(st[0])*60 + parseInt(st[1]))))
+	                   {
+	                	 alert("Can't book! Start Time for slot is greater than current time!");
+	                   }else{
+	                	   var retVal = confirm("Do you want to book?");
+	   					if(retVal==true){
+	   						console.log("user wants to continue");
+	   						$.ajax({
+	   							type: "POST",
+	   							data: {booking_date: date,resource: Resource,startTime:startTime,endTime:endTime,activityName:activityName},
+	   							url: '/u/faculty/sendBookingRequest',
+	   							success: function(data){
+	   								if ($(data).find('#err').length){
+	   				        			$('#resourceTT').html('');
+	   				         	   		$('#messageDiv').html('');
+	   				        	   		$('#messageDiv').html(data);                   
+	   					           } else if($(data).find('#success').length){
+	   					        	   	$('#messageDiv').html('');
+	   									//$('#messageDiv').html(data);
+	   									alert("Sent request to the resource incharge, the updates will be mailed to you soon!");
+	   					           }else{
+	   					        	   $('#messageDiv').html('');
+	   					        	   $('#resourceTT').html('');
+	   				                   $('#resourceTT').html(data);   
+	   				                   $('html, body').animate({
+	   				                       scrollTop: $('#resourceTT').offset().top
+	   				                     }, 500);
+	   				          	 	}
+	   					        }
+	   						});
+	   					}
+	                   }
+					
+				}
+			}
+			function sendDateToBackend(){
+				var d = document.getElementById("booking-date");
+		        console.log(d.value);
+		        console.log(Resource);
+		        if (d.value==""){
+		        	console.log("no change");
+		        }else{
+			        $.ajax({
+						type: "POST",
+						data: {booking_date: d.value,getTT: Resource},
+						url: '/u/faculty/getTTForResourceForDate',
+						success: function(data){
+							if ($(data).find('#err').length) {
+			        			$('#resourceTT').html('');
+			         	   		$('#messageDiv').html('');
+			        	   		$('#messageDiv').html(data);   
+			        	   		var curDate = new Date();
+			        	   		console.log(curDate);
+				                   console.log(d.value);
+				                   var d1 = Date.parse(curDate.toISOString().substr(0, 10));
+				                   var d2 = Date.parse(d.value);
+				                   if(d1>d2){
+				                	   alert("You cannot book for past dates!");
+				                	   $('.bookingsAllowed').css("display",'none');
+				                   }else{
+				                	   $('.bookingsAllowed').css("display",'');
+				                   }
+				           } else{
+			            	   $('#resourceTT').html('');
+			                   $('#resourceTT').html(data);   
+			                   $('html, body').animate({
+			                       scrollTop: $('#resourceTT').offset().top
+			                     }, 500);
+			                   document.getElementById("resource-id-heading").innerHTML = "Time Table for Resource: "+Resource;
+			                   var curDate = new Date().toISOString().substr(0, 10);
+			                   console.log(curDate);
+			                   console.log(d.value);
+			                   var d1 = Date.parse(curDate);
+			                   var d2 = Date.parse(d.value);
+			                   if(d1>d2){
+			                	   alert("You cannot book for past dates!"); 
+			                	   $('.bookingsAllowed').css("display",'none');
+			                   }else{
+			                	   $('.bookingsAllowed').css("display",'');
+			                   }
+			          	 	}
+				        }
+					});
 		        }
+		  };
+			
+			
+			var Resource;
+			function bindDatePicker(){
+				var d = document.getElementById("booking-date");
+				d.value = new Date().toISOString().substr(0, 10);
+				console.log(d.value);
+			}
+			
+			function bindForm(){
+				$( "[name='BookButton']" ).click(function() {
+					var curResource = this.id;
+					Resource = curResource;
+					
+					$("#date-row").show();
+				    $.ajax({	
+				        type: "GET",
+				        contentType: "application/json",
+				        data: { getTT : curResource,cur_date:new Date().toISOString().substr(0, 10)},
+				        url: '/u/faculty/getTTForResource',
+				        success: function (data) {
+			        	if ($(data).find('#err').length) {
+			        			$('#resourceTT').html('');
+			         	   		$('#messageDiv').html('');
+			        	   		$('#messageDiv').html(data);                   
+			           } else{
+		            	   $('#resourceTT').html('');
+		                   $('#resourceTT').html(data);   
+		                   $('html, body').animate({
+		                       scrollTop: $('#resourceTT').offset().top
+		                     }, 500);
+		                   document.getElementById("resource-id-heading").innerHTML = "Time Table for Resource: "+Resource; 	
+			           }
+				        }
+					});
+				    
+				    setTimeout(function(){
+						 bindDatePicker();
+						 }, 100);
+				});
+			}
+			$( "#resourceReqForm" ).on( "submit", function( event ) {
+				event.preventDefault();
+				$.ajax({
+			        type: "POST",
+			        data: $( this ).serialize(),
+			        url: '/u/faculty/getOptions',
+			        success: function (data) {
+		               if ($(data).find('#err').length) {
+		            	   $('#resourceTT').html('');
+		            	   $('#resourceOptionsTable').html('');
+		            	   $('#messageDiv').html('');
+		            	   $('#messageDiv').html(data);                   
+		               }
+		               else{
+		            	   $('#resourceTT').html('');
+		            	   $('#resourceOptionsTable').html('');
+		                   $('#resourceOptionsTable').html(data);
+		                   $('html, body').animate({
+		                       scrollTop: $('#resourceOptionsTable').offset().top
+		                     }, 500);
+		              	 }
+		               }
+				});
+		
+			    setTimeout(function(){
+					 bindForm();
+					 }, 100);
+				    
 			});
-		});
-	}
-	$( "#resourceReqForm" ).on( "submit", function( event ) {
-	    console.log("hello");
-		event.preventDefault();
-		$.ajax({
-	        type: "POST",
-	        data: $( this ).serialize(),
-	        url: '/u/faculty/getOptions',
-	        success: function (data) {
-               if ($(data).find('#err').length) {
-            	   $('#resourceTT').html('');
-            	   $('#resourceOptionsTable').html('');
-            	   $('#messageDiv').html('');
-            	   $('#messageDiv').html(data);                   
-               }
-               else{
-            	   $('#resourceTT').html('');
-            	   $('#resourceOptionsTable').html('');
-                   $('#resourceOptionsTable').html(data);
-                   $('html, body').animate({
-                       scrollTop: $('#resourceOptionsTable').offset().top
-                     }, 500);
-              	 }
-               }
-		});
-
-	    setTimeout(function(){
-			 bindForm();
-			 }, 100);
-		    
-	});
-	
-	
-</script>
-</body>
+		</script>
+	</body>
 </html>

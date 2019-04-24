@@ -1,4 +1,4 @@
-package com.qrms.spring.model;
+package com.qrms.spring.comparators;
 
 import java.util.Map;
 

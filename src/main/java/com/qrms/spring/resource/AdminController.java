@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -39,7 +40,7 @@ import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.quartz.CronExpression;
+//import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -114,6 +115,7 @@ import com.qrms.spring.repository.StudentAllocCourseRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.repository.TimeSlotsRepository;
 import com.qrms.spring.repository.TimeTableRepository;
+import com.qrms.spring.repository.UsersRepository;
 import com.qrms.spring.service.CustomUserDetailsService;
 import com.qrms.spring.service.FacultyAcadService;
 import com.qrms.spring.service.StudentAcadServiceImpl;
@@ -204,9 +206,14 @@ public class AdminController {
 	@Autowired
 	private PracticalListRepository practicalListRepository;
 	
+	@Autowired
+	private UsersRepository usersRepository;
+	
 	private FacultyAcad faculty;
 	
-	private List<Department> departments; 
+	private List<Department> departments;
+	
+	private List<Users> faculties;
 	
 	private List<Role> roles; 
 	
@@ -273,7 +280,6 @@ public class AdminController {
 	public ModelAndView getDepartmentsPage() {
 		ModelAndView model = new ModelAndView();
 		departments = departmentRepository.findAll();
-		
 		model.addObject("departments", departments);
 		model.addObject("newDept", new Department());
 		model.setViewName("admin/departments");
@@ -289,8 +295,16 @@ public class AdminController {
 	@GetMapping("/manageDept")
 	public String getManageDept(Model model, String dept) {
 		Department department = departmentRepository.findByDeptId(dept);
+		ArrayList<FacultyAcad> fac = facultyAcadRepository.findByDepartmentEquals(department);
+		List<String> facIds = new ArrayList<>();
+		for(FacultyAcad f: fac) {
+			facIds.add(f.getUserName());
+		}
+		faculties = usersRepository.findByUserNameList(facIds);
 		model.addAttribute("manageDept",department);
 		model.addAttribute("div", new Divisions());
+		model.addAttribute("res", new Resource());
+		model.addAttribute("faculties", faculties);
 		return "admin/departments:: manageDeptFragment";
 	}
 	
@@ -301,6 +315,15 @@ public class AdminController {
 		div.setDivId(divId);
 		divisionsRepository.save(div);
 		model.addAttribute("msg","Division added in "+div.getYear()+"-"+div.getDepartment().getDeptName());
+		return "admin/departments:: messageDiv";
+	}
+	
+	@RequestMapping(value = "/addResource", method = RequestMethod.POST)
+	String addResource(Model model, Resource res, String dept, String incharge) {
+		res.setDepartment(departmentRepository.findByDeptId(dept));
+		res.setResourceIncharge(facultyAcadRepository.findByUserName(incharge));
+		resourceRepository.save(res);
+		model.addAttribute("msg","Resource added for "+res.getDepartment().getDeptName());
 		return "admin/departments:: messageDiv";
 	}
 
@@ -616,6 +639,7 @@ public class AdminController {
 	}
 	
 	//Handle upload TT form
+	@Transactional
 	@RequestMapping(value = "/upload_TT", method = RequestMethod.POST)
 	public ModelAndView upload_TT(@RequestParam("timeTableFile") MultipartFile file, String dept, String day) {
 		ModelAndView model = new ModelAndView();	
@@ -641,8 +665,15 @@ public class AdminController {
 	            File dest = new File(filePath);
 	            file.transferTo(dest);
 	            
-	            readTT(filePath,dept,day);
-				model.addObject("msg","Time table has been successfully saved");
+	            String msg = readTT(filePath,dept,day);
+	            
+	            if(msg.equals("Time Table has been uploaded successfully.")) {
+	            	model.addObject("msg",msg);
+	            }else {
+	            	model.addObject("err_msg",msg);
+	            }
+	            
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}	
@@ -1961,7 +1992,10 @@ public class AdminController {
 	            TWELVE_TF.parse(twelveHourTime));
 	}
 	
-	void readTT(String path, String dept,String day) {
+
+	@Transactional
+	String readTT(String path, String dept,String day) {
+		
 		Department department = departmentRepository.findByDeptId(dept);
 		
 		HashMap<Integer,Time[]> timeSlots = new HashMap<>();
@@ -1969,12 +2003,14 @@ public class AdminController {
 		File myFile = new File(path);
         FileInputStream fis;
         
-        List<TimeTable> timetable = timeTableRepository.findAll();
+
+        List<TimeTable> timetable = new ArrayList<>();
+		
+		timeTableRepository.deleteByDepartmentAndDay(department,day);
+//		List<Resource> resources = resourceRepository.findByDepartment(department);
         
-        DateFormat dateFormat = new SimpleDateFormat("hh:mm");
-        
-		List<Resource> resources = resourceRepository.findByDepartment(department);
-        
+		String msg = "Time Table has been uploaded successfully.";
+		
 		try {
 			fis = new FileInputStream(myFile);
 		    // Finds the workbook instance for XLSX file
@@ -2032,6 +2068,11 @@ public class AdminController {
 	            		StringTokenizer st= new StringTokenizer(row.getCell(i).getStringCellValue().trim(),delim);
 	            		int j=1;
 	            		while(st.hasMoreTokens()) {
+	            			String activityName = "Time Table";
+	            			if(j==1) {
+	            				activityName = st.nextToken().trim();
+	            				j++;
+	            			}
 	            			if(j==2) {
 	            				
 	            				String str = st.nextToken().trim();
@@ -2041,12 +2082,13 @@ public class AdminController {
 		            				String[] temp = str.split(",");
 		            				for(String temps:temp) {
 		            					Resource r = resourceRepository.findByResourceId(dept.concat(temps));
-			            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),"Time Table"));
+			            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),activityName));
 		            				}
 		            			}else {
 		            				//System.out.println("token "+str+" "+dept.concat(str)+" "+slot[0]+" "+slot[1]);
 		            				Resource r = resourceRepository.findByResourceId(dept.concat(str));
-		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),"Time Table"));
+		            				System.out.println("resource-"+r.getResourceId());
+		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),activityName));
 //		            				System.out.println("ok");
 		            				
 	            				}
@@ -2066,14 +2108,14 @@ public class AdminController {
 	        
 	        myWorkBook.close();
 	        
-		}catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
+			msg = "Uploaded timetable is in incorrect format.";
+			myFile.delete();
+	       	return msg;
 		}
-       
+		myFile.delete();
+       	return msg;
 	}
 	//TODO: have a way to store per-div-course hrs in facAllocation query bean to be displayed in UI autoscrolled div
 //	private Date nextDate; 

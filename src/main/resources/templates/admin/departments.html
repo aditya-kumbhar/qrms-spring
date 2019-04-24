@@ -6,11 +6,63 @@
     
     <title>Departments</title>
 
+	<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+	
     <!-- Custom styles for this template -->
    	<link th:href="@{/css/admin/admin_home.css}" rel="stylesheet">
+   	<link rel="stylesheet" th:href="@{/css/register.css}">
   	<link rel="stylesheet" th:href="@{/css/admin/admin_dept.css}">
    	
 	<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
+	<script>
+		$(document).ready(function() {
+	 	   $('#year').css('color','#8F8B87');
+	 	   $('#year').change(function() {
+	 	      var current = $('#year').val();
+	 	      if (current != 'none') {
+	 	          $('#year').css('color','black');
+	 	      } else {
+	 	          $('#year').css('color','#8F8B87');
+	 	      }
+	 	   }); 
+	 	});
+		
+		$(document).ready(function() {
+    	   $('#incharge').css('color','#8F8B87');
+    	   $('#incharge').change(function() {
+    	      var current = $('#incharge').val();
+    	      if (current != 'none') {
+    	          $('#incharge').css('color','black');
+    	      } else {
+    	          $('#incharge').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+		
+		$(document).ready(function() {
+    	   $('#resourceType').css('color','#8F8B87');
+    	   $('#resourceType').change(function() {
+    	      var current = $('#resourceType').val();
+    	      if (current != 'none') {
+    	          $('#resourceType').css('color','black');
+    	      } else {
+    	          $('#resourceType').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+		
+		$(document).ready(function() {
+    	   $('#selectAction').css('color','#8F8B87');
+    	   $('#selectAction').change(function() {
+    	      var current = $('#selectAction').val();
+    	      if (current != 'none') {
+    	          $('#selectAction').css('color','black');
+    	      } else {
+    	          $('#selectAction').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	</script>
    	
 	
 </head>
@@ -49,6 +101,7 @@
 		</td>		
 	</tr>
 	 </table>
+	 
 	<form id="addDeptForm" action="/u/admin/addDept" method="POST">
 	<table style="border: 1px solid #000000; width:350px" cellpadding="5">  	
   	<tr>
@@ -81,21 +134,44 @@
 	</table> 
   </form>
 </div>
+
+
 <div class="content">
   <div class="card bg-light">
   <article class="card-body mx-auto">
   <div th:fragment="manageDeptFragment" id="manageDeptFragment">
   <div th:if="${manageDept}">
   	<h3  th:text="${manageDept.deptName}" style="color:blue; margin-bottom: 30px;"></h3>
-  	<form th:object="${div}" id="addDivForm">
+  	
+  	 <table>
+  	 	<tr>
+  	 		<td>
+  	 			Select Action
+  	 		</td>
+  	 		<td>
+  	 			<select class="form-control" id="selectAction" onchange="performAction()">
+					<option th:value="none" style="color:#8F8B87" selected >Select Action</option>
+					<option value="addDiv" style="color:#000">Add Divisions</option>
+					<option value="addResource" style="color:#000">Add Resource</option>
+				</select>
+  	 		</td>
+  	 	</tr>
+	</table>
+	
+	
+	<h5 class="card-title mt-3 text-center"><span id = "heading"></span></h5>
+	
+  	
+  	<form th:object="${div}" id="addDivForm" role="form">
+  	
   	<table>
-		<tr class="form-group">
+		<tr>
 			<td>
 			    Select Year
 			</td>
 			<td>
 				<input type="hidden" th:value="${manageDept.deptId}" th:name="dept">
-				<select class="form-control" th:field="*{year}">
+				<select class="form-control" th:field="*{year}" id="year">
 					<option th:value="none" style="color:#8F8B87" selected >Select Year</option>
 					<option value="SE" style="color:#000">SE</option>
 					<option value="TE" style="color:#000">TE</option>
@@ -104,22 +180,24 @@
 			</td>
 		</tr>
 		
-		<tr class="form-group">
+		<tr>
 			<td>
 				Division Name
 			</td>
 			<td>
-		        	<input type="text" class="form-control" th:field="*{divName}" required autofocus>
+		        	<input type="text" class="form-control" th:field="*{divName}" placeholder="Enter division name" required autofocus>
 			</td>
 		</tr>
-		<tr class="form-group">
+		
+		<tr>
 			<td>
 				Number of batches
 			</td>
 			<td>
-		        	<input type="number" min=1 class="form-control" th:field="*{noOfBatches}" required autofocus/>
+		        	<input type="number" min=1 class="form-control" th:field="*{noOfBatches}" placeholder="Enter number of batches" required autofocus/>
 			</td>
 		</tr>
+		
 		<tr>
 			<td colspan=2 align=center>
 				<button  type="submit" class="btn btn-primary" style = "width:60%" id="addDivSubmitButton">Add division</button>
@@ -127,6 +205,82 @@
 		</tr>
 	</table>
 	</form>
+	
+	
+	<form th:object="${res}" id="addResourceForm" role="form">
+  	<table>
+		<tr>
+			<td>
+			    Resource ID
+			</td>
+			<td>
+				<input type="hidden" th:value="${manageDept.deptId}" th:name="dept">
+				<input type="text" class="form-control" th:field="*{resourceId}" placeholder="Enter resource ID" required autofocus>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Resource Name
+			</td>
+			<td>
+		        <input type="text" class="form-control" th:field="*{resourceName}" placeholder="Enter resource name" required autofocus>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Resource Info
+			</td>
+			<td>
+		        <input type="text" class="form-control" th:field="*{resourceInfo}" placeholder="Enter resource info" required autofocus/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Resource Type
+			</td>
+			<td>
+				<select class="form-control" id="resourceType" th:field="*{resourceType}">
+					<option th:value="none" style="color:#8F8B87" selected >Select Type</option>
+					<option value="Classroom" style="color:#000">Classroom</option>
+					<option value="Lab" style="color:#000">Lab</option>
+					<option value="Hall" style="color:#000">Hall</option>
+				</select>			
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Resource Capacity
+			</td>
+			<td>
+		        <input type="number" min=1 class="form-control" th:field="*{resourceCapacity}" placeholder="Enter resource capacity" required autofocus/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Resource Incharge
+			</td>
+			<td>
+				<select class="form-control" id="incharge" th:name="incharge" autofocus>
+					<option th:value="none" style="color:#8F8B87" selected>Select Incharge</option>
+					<option th:each="fac : ${faculties}" th:value="${fac.userName}"  th:text="${fac.firstName+' '+fac.lastName}" style="color:#000"></option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td colspan=2 align=center>
+				<button  type="submit" class="btn btn-primary" style = "width:60%" id="addResSubmitButton">Add Resource</button>
+			</td>
+		</tr>
+	</table>
+	</form>
+	
+	
   </div>
   </div>
   <div class="row text-center card-body mx-auto" th:fragment="messageDiv" th:id="messageDiv">
@@ -137,6 +291,31 @@
   </div>
 </div>
 	<script>
+		function performAction() {
+			var action = document.getElementById("selectAction").value;
+			if(action == "addDiv") {
+				$("#addDivForm").show();
+				$("#addResourceForm").hide();
+				$('#messageDiv').html("");
+				var heading = document.getElementById("heading");
+				heading.innerHTML = "Add Divisions";
+			} else if(action == "addResource") {
+				$("#addDivForm").hide();
+				$("#addResourceForm").show();
+				$('#messageDiv').html("");
+				var heading = document.getElementById("heading");
+				heading.innerHTML = "Add Resource";
+			} else {
+				$("#addDivForm").hide();
+				$("#addResourceForm").hide();
+				$('#messageDiv').html("");
+				var heading = document.getElementById("heading");
+				heading.innerHTML = "";
+			}
+			
+		}
+		
+		
 		function bindForm(){
 			 $( "#addDivForm" ).on( "submit", function( event ) {
 				  event.preventDefault();
@@ -155,10 +334,45 @@
 				        	$('#messageDiv').html(response);
 				        }
 					});
+				  
+				  document.getElementById("addDivForm").reset();
+			 });	
+			 
+			 $( "#addResourceForm" ).on( "submit", function( event ) {
+				  event.preventDefault();
+				  
+				  var type = $("#resourceType",this).val();
+				  if(type == 'none'){
+					  alert('Please select a resource type');
+					  return false;
+				  }
+				  var fac = $("#incharge",this).val();
+				  if(fac == 'none'){
+					  alert('Please select a resource incharge');
+					  return false;
+				  }
+				  
+				  
+				  $.ajax({
+				        type: "POST",
+				        url: '/u/admin/addResource',
+				        data: $( this ).serialize(),
+				        success: function (response) {
+				        	$('#messageDiv').html('');
+				        	$('#messageDiv').html(response);
+				        }
+					});
+				  
+				  document.getElementById("addResourceForm").reset();
+				  
 			 });	
 		
 		}
 		$("[name='manageButton']").click(function(){
+			$("#addDivForm").hide();
+			$("#addResourceForm").hide();
+			$("#addDivisionButton").show();
+			$("#addResourceButton").show();
 			 var curDept = this.id;
 			 $.ajax({
 			        type: "GET",
@@ -175,7 +389,7 @@
 				});
 			 setTimeout(function(){
 				 bindForm();
-				 }, 100);
+				 }, 500);
 			 			
 		});
 	</script>
