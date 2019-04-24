@@ -294,10 +294,13 @@ public class AdminController {
 	@GetMapping("/manageDept")
 	public String getManageDept(Model model, String dept) {
 		Department department = departmentRepository.findByDeptId(dept);
+		ArrayList<FacultyAcad> fac = facultyAcadRepository.findByDepartmentEquals(department);
+		List<String> facIds = new ArrayList<>();
+		for(FacultyAcad f: fac) {
+			facIds.add(f.getUserName());
+		}
+		faculties = usersRepository.findByUserNameList(facIds);
 		model.addAttribute("manageDept",department);
-		Role userRole = roleRepository.findByRole("FACULTY");
-		Set<Role> role = new HashSet<Role>(Arrays.asList(userRole));
-		faculties = usersRepository.findByRoles(role);
 		model.addAttribute("div", new Divisions());
 		model.addAttribute("res", new Resource());
 		model.addAttribute("faculties", faculties);

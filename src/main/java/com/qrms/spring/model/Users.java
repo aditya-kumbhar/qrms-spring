@@ -34,6 +34,12 @@ public class Users {
 		
 	}
 	
+	public Users(String userName, String firstName, String lastName) {
+		this.userName = userName;
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+	
 	@Id
 	@Column(name="user_name")
 	private String userName;
