@@ -700,4 +700,4 @@ INSERT INTO faculty_pref values(215,8,'210253',null,2,4,6,'fac36','SE');
 
 
 /* Required for accepting preference for COMP dept, even semester*/
-INSERT INTO open_faculty_prefs values	
+INSERT INTO open_faculty_prefs values('CO',0,1);	

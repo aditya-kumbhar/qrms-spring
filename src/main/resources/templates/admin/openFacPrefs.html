@@ -1,0 +1,124 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <th:block th:include="fragments/admin_header.html :: headerfiles"></th:block>
+
+    <title>Open Course Allocation</title>
+
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+	
+    <script>
+    	//display semester options as per year selected
+    	
+	    $(document).ready(function () {
+	        $("#submit").click(function () {
+	        	
+	            var semType = $('#semType');
+				var dept = $('#dept');
+	            
+	            if (dept.val() == "none") {
+	                alert("Please select a course department");
+	                $('#dept').focus();
+	                
+	                return false;
+	            }
+	            else if (semType.val() == "-1") {
+	                alert("Please select a semester type");
+	                $('#semType').focus();
+	                
+	                return false;
+	            }
+	            else return;
+	        });
+	    });
+	    
+	    $(document).ready(function() {
+    	   $('#dept').css('color','#8F8B87');
+    	   $('#dept').change(function() {
+    	      var current = $('#dept').val();
+    	      if (current != 'none') {
+    	          $('#dept').css('color','black');
+    	      } else {
+    	          $('#dept').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
+	    $(document).ready(function() {
+    	   $('#semType').css('color','#8F8B87');
+    	   $('#semType').change(function() {
+    	      var current = $('#semType').val();
+    	      if (current != '-1') {
+    	          $('#semType').css('color','black');
+    	      } else {
+    	          $('#semType').css('color','#8F8B87');
+    	      }
+    	   }); 
+    	});
+	    
+    </script>
+     
+  
+</head> 
+
+<div th:replace="fragments/admin_header :: header"></div>
+
+<!-- script to turn nav link active -->
+<script type="text/javascript">
+	var navBar = document.getElementById("nav-bar");		
+	var current = navBar.getElementsByClassName("active");
+    // If there's any other active nav, make it inactive
+    if (current.length > 0) { 
+      current[0].className = current[0].className.replace(" active", "");
+    }
+	//set current page nav as active
+	document.getElementById("openFacPref-nav").className+=" active";		
+</script>
+<body>
+
+<div class="card bg-light">
+<article class="card-body mx-auto">
+	<h3 class="card-title mt-3 text-center">Open Faculty Preference Forms</h3>
+	
+	<form th:action="@{/u/admin/open_faculty_allocation}"  role="form" method="POST" id="all_form">   
+	<table>
+		<tr>
+			<td>
+				Select Department
+			</td>
+			<td>
+				<select class="form-control" th:id="dept" th:name="deptId" autofocus>
+					<option th:value="none" style="color:#8F8B87" selected>Select Department</option>
+					<option th:each="dept : ${departments}" th:value="${dept.deptId}"  th:text="${dept.deptName}" style="color:#000"></option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Select Semester Type
+			<td>
+				<select class="form-control"  name="semType" id="semType" required>
+					<option value="-1" style="color:#8F8B87" selected>Select Semester</option>
+					<option value="1" style="color:#000">Odd Semesters</option>
+					<option value="0" style="color:#000">Even Semesters</option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td colspan=2 align=center>
+	        		<button type="submit" id="submit" class="btn btn-primary btn-block"> Submit </button>
+	    	</td> 	  
+		</tr>
+		
+		</table>
+		</form>
+</article>
+
+<div class="row text-center card-body mx-auto">
+	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+		<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
+	</div>  
+</div>
+</body>

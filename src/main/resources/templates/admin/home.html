@@ -5,6 +5,9 @@
 	<th:block th:include="fragments/admin_header.html :: headerfiles"></th:block>
     
     <title>Admin Home</title>
+    
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+    
 
     <!-- Custom styles for this template -->
    	<link th:href="@{/css/admin/admin_home.css}" rel="stylesheet">
@@ -33,17 +36,30 @@
 </script>
 
 <article class="card-body mx-auto" style="max-width:70%;">
+
 <div class="container">
 	<div class="row">
 		<div class="col-sm">
 			<h5 class="float-left">Active student elective choice forms</h5>
 		</div>
 		<div class="col-sm">	
-			<a href="#" class="btn btn-primary" id="viewDetails" >View Details</a>
+			<a href="#" class="btn btn-primary" id="viewDetailsStud" >View Details</a>
 		</div>
-	</div>
+	</div>	
 </div>
 
+<br>
+
+<div class="container">
+	<div class="row">
+		<div class="col-sm">
+			<h5 class="float-left">Active faculty course choice forms</h5>
+		</div>
+		<div class="col-sm">	
+			<a href="#" class="btn btn-primary" id="viewDetailsFac" >View Details</a>
+		</div>
+	</div> 
+</div>
 
 <div th:id="messageDiv">
 <div class="row text-center card-body mx-auto" th:fragment="messageDiv">
@@ -54,6 +70,7 @@
 
 <form action="/u/admin/performQuickAction-student" method="post" id="tableForm">
 <div th:id="studPrefTable">
+<h5 class="card-title mt-3 text-center" th:if="${studCountInfo}" th:fragment="studPrefTable">Active student preference form details</h5>
 <table class="table table-bordered table-hover" th:if="${studCountInfo}"  th:fragment="studPrefTable"> 
   <thead class="thead-dark">
     <tr>    
@@ -128,17 +145,70 @@
 <div class="row text-center card-body">
 <input type="submit" class="btn btn-primary"  value="Run student allocation"/>
 </div>
-</form>  
+</form> 
+
+<form action="/u/admin/performQuickAction-faculty" method="post" id="tableForm">
+<div th:id="facPrefTable">
+<h5 class="card-title mt-3 text-center" th:if="${facCountInfo}" th:fragment="facPrefTable">Active faculty preference form details</h5>
+<table class="table table-bordered table-hover" th:if="${facCountInfo}"  th:fragment="facPrefTable"> 
+  <thead class="thead-dark">
+    <tr>         
+      <th scope="col">Department</th>
+      <th scope="col">Semester Type</th>
+      <th scope="col">Form submissions</th>
+      <th scope="col">Select Action</th>
+    </tr>
+  </thead>		
+  	
+  <tbody>
+    <tr th:each="rs : ${facCountInfo}">
+     	<td th:text="${rs.deptName}"></td>
+     	<td th:text="${rs.semType}"></td>
+     	<td th:text="${rs.submitCount + '/' + rs.totalFacultyCount}"></td>
+    	<td>
+	   		<select class="form-control" th:name="selectAction" onchange="if(this.value!='none') { SubmitForm('tableForm'); }">
+				<option th:value="none" style="color:#8F8B87" selected>Select action</option>			
+				<option th:value="closeForms" style="color:#000">Close forms</option>				
+				<option th:value="summary" th:if="${rs.submitCount!=0 && rs.submitCount==rs.totalFacultyCount}" style="color:#000">Perform allocation</option>								
+				<option th:value="clearPrefs" style="color:#000">Clear preferences</option>
+			</select>
+    	</td>
+   	</tr>
+  </tbody>
+</table>
+</div>
+</form>
+
+
 </article>
 
 <script>
 
-	$('#viewDetails').on('click', function () {
+	$('#viewDetailsStud').on('click', function () {
 	    //console.log("hello");
 		$.ajax({
 	        type: "GET",
 	        contentType: "application/json",
 	        url: '/u/admin/getStudPrefDetailsTable_async',
+	        success: function (data) {
+               if ($(data).find('#err').length) {
+            	   $('#messageDiv').html('');
+            	   $('#messageDiv').html(data);                   
+               }
+               else{
+            	   $('#studPrefTable').html('');
+                   $('#studPrefTable').html(data);                   
+              	 }
+               }
+		});
+	});
+	
+	$('#viewDetailsFac').on('click', function () {
+	    //console.log("hello");
+		$.ajax({
+	        type: "GET",
+	        contentType: "application/json",
+	        url: '/u/admin/getFacPrefDetailsTable_async',
 	        success: function (data) {
                if ($(data).find('#err').length) {
             	   $('#messageDiv').html('');
