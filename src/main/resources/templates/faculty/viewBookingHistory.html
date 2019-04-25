@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<th:block th:include="fragments/fac_header.html :: headerfiles"></th:block>
+		<title>Time slot booking</title>
+		
+		<link rel="stylesheet" th:href="@{/css/register.css}">
+		
+		
+	</head>
+
+	<div th:replace="fragments/fac_header :: header"></div>
+	
+	<!-- script to turn nav link active -->
+	<script type="text/javascript">
+		var navBar = document.getElementById("nav-bar");		
+		var current = navBar.getElementsByClassName("active");
+	    // If there's any other active nav, make it inactive
+	    if (current.length > 0) { 
+	      current[0].className = current[0].className.replace(" active", "");
+	    }
+		//set current page nav as active
+		document.getElementById("viewBookingHistory-nav").className+=" active";
+	</script>
+	<body>
+		<div class="card bg-light">
+			<article class="card-body mx-auto">
+				<h3 class="card-title mt-3 text-center">Booking history</h3>
+				
+					<div th:if="${historyRequests}">
+						<h4 class="card-title mt-3 text-center">Pending Requests</h4>
+						<table class="table table-hover table-bordered">
+							<thead>
+								<tr>
+									<th>Request Id</th>
+									<th>Activity Name</th>
+									<th>Resource</th>
+									<th>Slot Date</th>
+									<th>Slot Timings</th>
+									<th>Request details</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="i : ${historyRequests}">
+									<td th:text="${i.requestId}"></td>
+									<td th:text="${i.slotActivityName}"></td>
+									<td th:text="${i.resourceId.resourceId}"></td>
+									<td th:text="${i.slotDate}"></td>
+									<td th:text="${i.slotStartTime +' - '+i.slotEndTime}"></td>
+									<td th:text="${i.requestedDate +'  '+ i.requestTime}"></td>
+									<td><button th:id="${i.requestId}" th:name="deleteReq-btn" class="btn btn-warning">Delete Request</button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div th:if="${historyAccepted}">
+						<h4 class="card-title mt-3 text-center">Accepted Requests</h4>
+						<table class="table table-hover table-bordered">
+							<thead>
+								<tr>
+									<th>Request Id</th>
+									<th>Activity Name</th>
+									<th>Resource</th>
+									<th>Slot Date</th>
+									<th>Slot Timings</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="i : ${historyAccepted}">
+									<td th:text="${i.requestId}"></td>
+									<td th:text="${i.activityName}"></td>
+									<td th:text="${i.resourceId.resourceId}"></td>
+									<td th:text="${i.date}"></td>
+									<td th:text="${i.startTime +' - '+i.endTime}"></td>
+								</tr>
+							</tbody>
+						</table>
+				</div>
+				<div class="row">
+						<div class="text-center">
+							<div class="alert alert-success" role="alert" id ="success" th:if="${msg}" th:utext="${msg}"></div>
+							<div class="alert alert-danger" role="alert"  id="err" th:if="${err_msg}" th:utext="${err_msg}"></div>
+					</div>
+				</div>
+				
+			</article>
+		</div>
+		<script type="text/javascript">
+		$(document).ready(function(){
+			
+			setTimeout(function(){
+				 bindForm();
+				 }, 100);
+			function bindForm(){
+				$( "[name='deleteReq-btn']" ).click(function() {
+					var curReq = this.id;
+					
+					console.log(curReq);
+					
+					$.ajax({
+						type: "POST",
+				        data: {requestToDelete : curReq},
+				        url: '/u/faculty/deleteRequest',
+				        success: function (data) {
+				        	alert("Request with Id "+curReq+" has been deleted!");
+				        	window.location.replace("http://127.0.0.1:8080/u/faculty/viewBookingHistory");
+				        }
+					});
+					
+				});
+			}
+			
+		});
+		
+		
+		</script>
+	</body>
+</html>

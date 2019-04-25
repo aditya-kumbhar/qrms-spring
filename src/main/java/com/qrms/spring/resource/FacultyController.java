@@ -19,6 +19,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.mail.MailException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -82,6 +83,7 @@ public class FacultyController {
 	@Autowired
 	private OpenFacultyPrefsRepository openFacultyPrefsRepository;
 
+	@Autowired
 	private EmailServiceImpl emailServiceImpl;
 	
 	@Autowired
@@ -331,13 +333,10 @@ public class FacultyController {
 	@RequestMapping(value="/getOptions",method=RequestMethod.POST)
 	public String setRequirements(Model model,String dept,String rType,Integer minSeats) {
 		
-		System.out.println(dept+" "+rType+" "+minSeats);
 		if(minSeats==null) {
 			minSeats=0;
 		}
 		ArrayList<Resource> options = bookingsService.listResourcesByDepartmentAndRTypeAndMinSeats(dept, rType, minSeats);
-		System.out.println("ok2"+" "+options.size());
-		
 		
 		if(options.isEmpty()) {
 			model.addAttribute("err_msg","No suitable rooms/halls/classrooms were found.");
@@ -380,6 +379,7 @@ public class FacultyController {
 		
 	}
 	
+	
 	@RequestMapping(value="/sendBookingRequest",method=RequestMethod.POST)
 	public String sendBookingRequest(Model model,String booking_date,String resource,String startTime,String endTime,String activityName) {
 		
@@ -402,13 +402,7 @@ public class FacultyController {
 		body = body.concat("Slot time: "+startTime+" - "+endTime+" on "+booking_date+" for the activity \""+activityName+"\""+"\n");
 		body = body.concat("Request generated on - "+reqGenTime+"\n\n\n");
 		body = body.concat("Please login to your QRMS account to manage the requests!\n\nRegards,\nQRMS Team.");
-		try {
-			emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+resourceObj.getResourceName(), body);
-		} catch (MailException | InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+
 		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate slotDate = LocalDate.parse(booking_date, df);
 		Date slotSqlDate = java.sql.Date.valueOf(slotDate.toString());
@@ -431,6 +425,12 @@ public class FacultyController {
 		
 		resourceRequestsRepository.save(resourceRequest);
 		
+		try {
+			emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+resource, "woahla");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
 		model.addAttribute("msg","Sent request to the resource incharge, the updates will be mailed to you soon!");
 		return "faculty/bookings:: messageDiv";
 	}
@@ -439,9 +439,7 @@ public class FacultyController {
 	@Modifying
 	@RequestMapping(value="/resourceRequests",method=RequestMethod.GET)
 	public ModelAndView getResourceRequests() {
-		//if faculty is not a resource incharge, send appropriate msg
-		//if no pending requests, send appropriate msg
-		//if pending requests, show all requests
+		
 		ModelAndView model = new ModelAndView();
 		
 		//TODO:
@@ -451,9 +449,6 @@ public class FacultyController {
 		long curTime = new java.util.Date().getTime();
 		
 		Time t = new Time(curTime);
-		
-		System.out.println(localDate.toString());
-		System.out.println(t);
 		
 		resourceRequestsRepository.deletePastRequests(sqlDate,t);
 		
@@ -469,19 +464,6 @@ public class FacultyController {
 		model.setViewName("/faculty/resourceRequests");
 		return model;
 	}
-	/*
-	 * 
-	@Query("SELECT rr FROM ResourceRequests rr WHERE 
-	(rr.slotStartTime >= :obj.slotStartTime AND rr.slotEndTime <= :obj.slotEndTime)
-	 OR (rr.slotStartTime >= :obj.slotStartTime AND rr.slotStartTime < :obj.slotEndTime) 
-	 OR (rr.slotEndTime > :obj.slotStartTime AND rr.slotEndTime <= :obj.slotEndTime) 
-	 OR (rr.slotStartTime <= :obj.slotStartTime AND rr.slotEndTime >= :obj.slotEndTime)")
-	ArrayList<ResourceRequests> findRequestsWithOverlapsFor(@Param("obj") ResourceRequests getOverlapsFor);
-	
-	the value 0 if the argument Date is equal to this Date; 
-	a value less than 0 if this Date is before the Date argument;
-	and a value greater than 0 if this Date is after the Date argument.
-	 */
 	
 	@Transactional
 	@Modifying
@@ -493,9 +475,6 @@ public class FacultyController {
 		long curTime = new java.util.Date().getTime();
 		
 		Time t = new Time(curTime);
-		
-		System.out.println(localDate.toString());
-		
 		resourceRequestsRepository.deletePastRequests(sqlDate,t);
 		
 		ResourceRequests obj = resourceRequestsRepository.findByRequestId(getOverlapsFor);
@@ -509,9 +488,6 @@ public class FacultyController {
 				Long et = rr.getSlotEndTime().getTime();
 				Long gost = obj.getSlotStartTime().getTime();
 				Long goet = obj.getSlotEndTime().getTime();
-				
-				System.out.println(st);
-				
 				if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet) || (st<=gost && et>gost && et<=goet)) {
 					overlappingRequests.add(rr);
 				}
@@ -527,9 +503,6 @@ public class FacultyController {
 			Long goet = ts.getEndTime().getTime();
 			Long st = obj.getSlotStartTime().getTime();
 			Long et = obj.getSlotEndTime().getTime();
-			
-			System.out.println(st);
-			
 			if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet) || (st<=gost && et>gost && et<=goet)) {
 				overlappingTimeSlots.add(ts);
 			}
@@ -547,15 +520,11 @@ public class FacultyController {
 			Long et = tt.getEndTime().getTime();
 			Long gost = obj.getSlotStartTime().getTime();
 			Long goet = obj.getSlotEndTime().getTime();
-			
-			System.out.println(st+" "+et+" "+gost+" "+goet);
-			
 			if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet) || (st<=gost && et>gost && et<=goet)) {
 				overlappingTimeTableSlots.add(tt);
 			}
 			
 		}
-		
 		
 		if(!overlappingRequests.isEmpty() || !overlappingTimeSlots.isEmpty() || !overlappingTimeTableSlots.isEmpty()) {
 			
@@ -608,27 +577,16 @@ public class FacultyController {
 		String body;
 		
 		
+		ArrayList<ResourceRequests> overlappingRequests = new ArrayList<>();
+		ArrayList<TimeSlots> overlappingTimeSlots = new ArrayList<>();
+
 		for(ResourceRequests rr:allRequests) {
 				Long gost = rr.getSlotStartTime().getTime();
 				Long goet = rr.getSlotEndTime().getTime();
 				Long st = obj.getSlotStartTime().getTime();
 				Long et = obj.getSlotEndTime().getTime();
-				
-				System.out.println(st);
-				
 				if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet)) {
-					
-					body = "Your request to book the resource "+rr.getResourceId().getResourceId()+" with Request No: "+rr.getRequestId()+" has been rejected!\n";
-					body = body.concat("Resource: "+rr.getResourceId().getResourceId()+"\n");
-					body = body.concat("Activity Name: "+rr.getSlotActivityName()+"\n");
-					body = body.concat("Slot: "+rr.getSlotDate()+" "+rr.getSlotStartTime()+" - "+rr.getSlotEndTime()+"\n");
-					body = body.concat("Please login to your QRMS account to book another slot!\n\nRegards,\nQRMS Team.");
-					try {
-						emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+rr.getResourceId().getResourceId()+" Rejected", body);
-					} catch (MailException | InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					overlappingRequests.add(rr);
 					resourceRequestsRepository.delete(rr);
 				}
 				
@@ -641,21 +599,8 @@ public class FacultyController {
 			Long goet = ts.getEndTime().getTime();
 			Long st = obj.getSlotStartTime().getTime();
 			Long et = obj.getSlotEndTime().getTime();
-			
-			System.out.println(st);
-			
 			if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet)) {
-				body = "Your booked slot the resource "+ts.getResourceId().getResourceId()+" with Request No: "+ts.getRequestId()+" has been overridden by another request!\n";
-				body = body.concat("Resource: "+ts.getResourceId().getResourceId()+"\n");
-				body = body.concat("Activity Name: "+ts.getActivityName()+"\n");
-				body = body.concat("Slot: "+ts.getDate()+" "+ts.getStartTime()+" - "+ts.getEndTime()+"\n");
-				body = body.concat("Please login to your QRMS account to book another slot!\n\nRegards,\nQRMS Team.");
-				try {
-					emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+ts.getResourceId().getResourceId()+" Overridden", body);
-				} catch (MailException | InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				overlappingTimeSlots.add(ts);
 				timeSlotsRepository.delete(ts);
 			}
 			
@@ -665,14 +610,42 @@ public class FacultyController {
 		body = body.concat("Activity Name: "+obj.getSlotActivityName()+"\n");
 		body = body.concat("Slot: "+obj.getSlotDate()+" "+obj.getSlotStartTime()+" - "+obj.getSlotEndTime()+"\n");
 		body = body.concat("Please login to your QRMS account to book another slot!\n\nRegards,\nQRMS Team.");
+		TimeSlots timeslot = new TimeSlots(obj.getSlotStartTime(), obj.getSlotEndTime(), obj.getResourceId(), obj.getSlotDate(), obj.getRequestBy(), obj.getSlotActivityName(), obj.getRequestId());
+		timeSlotsRepository.save(timeslot);
+		
 		try {
 			emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+obj.getResourceId().getResourceId()+" Accepted!", body);
-		} catch (MailException | InterruptedException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		TimeSlots ts = new TimeSlots(obj.getSlotStartTime(), obj.getSlotEndTime(), obj.getResourceId(), obj.getSlotDate(), obj.getRequestBy(), obj.getSlotActivityName(), obj.getRequestId());
-		timeSlotsRepository.save(ts);
+		
+		for(ResourceRequests rr:overlappingRequests) {
+			body = "Your request to book the resource "+rr.getResourceId().getResourceId()+" with Request No: "+rr.getRequestId()+" has been rejected!\n";
+			body = body.concat("Resource: "+rr.getResourceId().getResourceId()+"\n");
+			body = body.concat("Activity Name: "+rr.getSlotActivityName()+"\n");
+			body = body.concat("Slot: "+rr.getSlotDate()+" "+rr.getSlotStartTime()+" - "+rr.getSlotEndTime()+"\n");
+			body = body.concat("Please login to your QRMS account to book another slot!\n\nRegards,\nQRMS Team.");
+
+			try {
+			emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+rr.getResourceId().getResourceId()+" Rejected", body);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		for(TimeSlots ts:overlappingTimeSlots) {
+			body = "Your booked slot the resource "+ts.getResourceId().getResourceId()+" with Request No: "+ts.getRequestId()+" has been overridden by another request!\n";
+			body = body.concat("Resource: "+ts.getResourceId().getResourceId()+"\n");
+			body = body.concat("Activity Name: "+ts.getActivityName()+"\n");
+			body = body.concat("Slot: "+ts.getDate()+" "+ts.getStartTime()+" - "+ts.getEndTime()+"\n");
+			body = body.concat("Please login to your QRMS account to book another slot!\n\nRegards,\nQRMS Team.");
+			try {
+				emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+ts.getResourceId().getResourceId()+" Overridden", body);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		
 		model.addAttribute("msg", "Request Accepted!");
 		return "faculty/resourceRequests:: messageDiv";
@@ -706,14 +679,11 @@ public class FacultyController {
 	@RequestMapping(value="/getViewOptions",method=RequestMethod.POST)
 	public String getViewOptions(Model model,String dept,String rType,Integer minSeats) {
 		
-		System.out.println(dept+" "+rType+" "+minSeats);
 		if(minSeats==null) {
 			minSeats=0;
 		}
 		ArrayList<Resource> options = bookingsService.listResourcesByDepartmentAndRTypeAndMinSeats(dept, rType, minSeats);
-		System.out.println("ok2"+" "+options.size());
-		
-		
+
 		if(options.isEmpty()) {
 			model.addAttribute("err_msg","No suitable rooms/halls/classrooms were found.");
 			return "faculty/viewSchedule:: messageDiv";
@@ -722,5 +692,55 @@ public class FacultyController {
 			model.addAttribute("options",options);
 			return "faculty/viewSchedule:: resourceOptionsTable";
 		}
+	}
+	
+	@Transactional
+	@Modifying
+	@RequestMapping(value="/viewBookingHistory",method=RequestMethod.GET)
+	public ModelAndView getPreviousHistory() {
+		ModelAndView model = new ModelAndView();
+		
+		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userName = user.getUserName();
+		
+		LocalDate localDate = LocalDate.now();
+		Date sqlDate = Date.valueOf(localDate.toString());
+		
+		long curTime = new java.util.Date().getTime();
+		
+		Time t = new Time(curTime);
+		
+		resourceRequestsRepository.deletePastRequests(sqlDate,t);
+		
+		ArrayList <ResourceRequests> historyRequests = resourceRequestsRepository.findByRequestBy(userName);
+		if(!historyRequests.isEmpty()) {
+			model.addObject("historyRequests",historyRequests);
+		}
+		
+		ArrayList <TimeSlots> historyAccepted = timeSlotsRepository.findBySlotIncharge(userName);
+		if(!historyAccepted.isEmpty()) {
+			model.addObject("historyAccepted",historyAccepted);
+		}
+		
+		if(historyRequests.isEmpty() && historyAccepted.isEmpty()) {
+			model.addObject("msg","No History found!");
+		}else if(historyRequests.isEmpty()) {
+			model.addObject("msg", "No pending requests!");
+		} if(historyAccepted.isEmpty()) {
+			model.addObject("msg","No accepted requests!");
+		}
+		
+		model.setViewName("/faculty/viewBookingHistory");
+		return model;
+	}
+	
+	@Transactional
+	@Modifying
+	@RequestMapping(value="/deleteRequest",method=RequestMethod.POST)
+	public String deleteRequest(Model model,Integer requestToDelete) {
+		
+		resourceRequestsRepository.deleteByRequestId(requestToDelete);
+		
+		return "/faculty/viewBookingHistory:: messageDiv";
 	}
 }

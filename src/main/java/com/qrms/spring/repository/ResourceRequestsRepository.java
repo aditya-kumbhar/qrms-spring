@@ -27,5 +27,13 @@ public interface ResourceRequestsRepository extends JpaRepository<ResourceReques
 	@Modifying
 	@Query("DELETE FROM ResourceRequests rr WHERE (rr.slotDate < ?1) or (rr.slotDate = ?1 and rr.slotStartTime <= ?2)")
 	void deletePastRequests(Date sqlDate, Time t);
+	
+	@Query("SELECT rr "+
+			//"new com.qrms.spring.model.ResourceRequests(rr.requestId,rr.resourceId,rr.requestBy,rr.slotDate,rr.slotStartTime,rr.slotEndTime,rr.slotActivityName,rr.requestedDate,rr.requestTime,rr.slotDay) "+ 
+			"FROM ResourceRequests rr " +
+			"WHERE rr.requestBy.userName=?1")
+	ArrayList<ResourceRequests> findByRequestBy(String userName);
+
+	void deleteByRequestId(Integer requestToDelete);
 
 }
