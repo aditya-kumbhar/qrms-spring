@@ -44,6 +44,7 @@ import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.CourseAndElectives;
 import com.qrms.spring.queryBeans.FacPrefsList;
+import com.qrms.spring.queryBeans.FacultyAllocations;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.ElectivesRepository;
@@ -102,14 +103,19 @@ public class FacultyController {
 	private String qrmsEmailId;
 	
 	@GetMapping("/home")
-	public String facultyHome() {
-		return "faculty/home";
-	}
-	
-	@RequestMapping(value = "/viewTT",method = RequestMethod.GET)
-	public ModelAndView viewTT() {
+	public ModelAndView facultyHome() {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/faculty/viewTT");
+		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userName = user.getUserName();
+		
+		FacultyAcad facultyProfile = facultyAcadRepository.findByUserName(userName);
+		if(facultyProfile!=null)
+			model.addObject("facultyProfile", facultyProfile);
+		
+		FacultyAllocations facultyAllocation = new FacultyAllocations();
+		
+		model.setViewName("/faculty/home");
+		
 		return model;
 	}
 	
@@ -119,7 +125,6 @@ public class FacultyController {
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
-		System.out.println(userName);
 		
 		FacultyAcad currUserAcad = facultyAcadRepository.findByUserName(userName);
 		
@@ -426,7 +431,7 @@ public class FacultyController {
 		resourceRequestsRepository.save(resourceRequest);
 		
 		try {
-			emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+resource, "woahla");
+			emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+resource, body);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
@@ -726,7 +731,7 @@ public class FacultyController {
 			model.addObject("msg","No History found!");
 		}else if(historyRequests.isEmpty()) {
 			model.addObject("msg", "No pending requests!");
-		} if(historyAccepted.isEmpty()) {
+		}else if(historyAccepted.isEmpty()) {
 			model.addObject("msg","No accepted requests!");
 		}
 		

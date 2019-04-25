@@ -460,6 +460,7 @@ insert into resource values('CO101',80,"","101","Classroom","CO","fac1");
 insert into resource values('CO111',80,"","111","Classroom","CO","fac1");
 insert into resource values('CO201',80,"","201","Classroom","CO","fac1");
 insert into resource values('CO202',80,"","202","Classroom","CO","fac1");
+insert into resource values('CO202A',80,"",'202A',"Classroom","CO","fac1");
 insert into resource values('CO203',80,"","203","Classroom","CO","fac1");
 insert into resource values('CO204',80,"","204","Classroom","CO","fac1");
 insert into resource values('CO205A',25,"",'205A',"Lab","CO","fac2");

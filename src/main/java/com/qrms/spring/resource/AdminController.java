@@ -248,9 +248,6 @@ public class AdminController {
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
-//		allocFaculty(1,departmentRepository.findByDeptId("CO"));
-//		readTT("CO","Monday");
-
 		return getViewAdminHome(null,null);
 	}
 	

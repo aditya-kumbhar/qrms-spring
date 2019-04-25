@@ -23,8 +23,72 @@
 </script>
 
 <body>
-
+	
  	<div class="row">
    		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+	</div>
+	
+	<div class="card bg-light">
+		<article class="card-body mx-auto">
+			<h3 class="card-title mt-3 text-center" th:if="${studentProfile}">Your Profile</h3>
+			
+			<table class="table table-bordered table-light" th:if="${studentProfile}">
+				<tr>
+					<td>First Name</td>
+					<th th:text="${studentProfile.userDets.firstName}"></th>
+				</tr>
+				<tr>
+					<td>Last Name</td>
+					<th th:text="${studentProfile.userDets.lastName}"></th>
+				</tr>
+				<tr>
+					<td>UserName (System generated)</td>
+					<th th:text="${studentProfile.userDets.firstName}"></th>
+				</tr>
+				<tr>
+					<td>Email</td>
+					<th th:text="${studentProfile.userDets.email}"></th>
+				</tr>
+				<tr>
+					<td>Department</td>
+					<th th:text="${studentProfile.userDets.firstName}"></th>
+				</tr>
+				<tr>
+					<td>Shift</td>
+					<th th:text="${studentProfile.shift}"></th>
+				</tr>
+				<tr>
+					<td>Year</td>
+					<th th:text="${studentProfile.year}"></th>
+				</tr>
+				<tr>
+					<td>Division</td>
+					<th th:text="${studentProfile.div.divId}"></th>
+				</tr>
+				<tr>
+					<td>Roll No</td>
+					<th th:text="${studentProfile.rollno}"></th>
+				</tr>
+				<tr>
+					<td>Aggregate Marks</td>
+					<th th:text="${studentProfile.aggMarks}"></th>
+				</tr>
+			</table>
+			<br/>
+			<hr/>
+			
+			<h3 class="card-title mt-3 text-center" th:if="${studentAllocations}">Alloted Courses</h3>
+			
+			<table class="table table-bordered table-light" th:if="${studentAllocations}">
+				<tr>
+					<th>Elective Course</th>
+					<th>Alloted Elective</th>
+				</tr>
+				<tr th:each="i: ${studentAllocations}">
+					<td th:text="${i.courseId.courseName}"></td>
+					<td th:text="${i.elective.electiveName}"></td>
+				</tr>
+			</table>
+		</article>
 	</div>
 </body>

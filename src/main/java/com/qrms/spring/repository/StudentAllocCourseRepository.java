@@ -31,4 +31,6 @@ public interface StudentAllocCourseRepository extends JpaRepository<StudentAlloc
 //			+ "SELECT com.qrms.spring.model.StudentAcad(sa.userName) FROM com.qrms.spring.model.StudentAcad sa "
 //			+ "order by sa.divId")
 	ArrayList <StudentAllocCourse> findByElectiveIdSortedByDiv(Electives elective);
+
+	ArrayList<StudentAllocCourse> findByStudent(StudentAcad studentProfile);
 }
