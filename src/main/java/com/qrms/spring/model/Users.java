@@ -119,14 +119,15 @@ public class Users {
 		this.roles = roles;
 	}
 	
-	@OneToMany(mappedBy = "resourceIncharge", cascade = CascadeType.ALL)
-	Set<Resource> resources = new HashSet<Resource>();
-	
-	
-	@OneToOne(mappedBy = "userDets", cascade = CascadeType.ALL)
-	StudentAcad student = new StudentAcad();
-	
-	@OneToOne(mappedBy = "userDets", cascade = CascadeType.ALL)
-	FacultyAcad faculty = new FacultyAcad();
-	
+	//Causes errors
+//	@OneToMany(mappedBy = "resourceIncharge", cascade = CascadeType.ALL)
+//	Set<Resource> resources = new HashSet<Resource>();
+//	
+//	
+//	@OneToOne(mappedBy = "userDets", cascade = CascadeType.ALL)
+//	StudentAcad student = new StudentAcad();
+//	
+//	@OneToOne(mappedBy = "userDets", cascade = CascadeType.ALL)
+//	FacultyAcad faculty = new FacultyAcad();
+//	
 }

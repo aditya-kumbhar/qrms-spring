@@ -238,7 +238,7 @@
 <div class="row text-center card-body mx-auto" th:fragment="messageDiv">
 	<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
 	<div class="alert alert-danger" role="alert"  id="err" th:if="${err_msg}" th:utext="${err_msg}"></div>
-	<div class="alert alert-danger" role="alert"  id="err1" th:if="${pref_submitted_msg}" th:utext="${pref_submitted_msg}"></div>
+	<div class="alert alert-danger" role="alert"  id="err1" th:if="${err_msg_1}" th:utext="${err_msg_1}"></div>
 	<script>
 		if ($('#err1').length) {
 	 	   $('.sidebar').hide();

@@ -158,7 +158,7 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 		
 		usersRepository.save(user);
 		
-		}
+	}
 
 	@Override
 	public void createPasswordTokenForUser(Users user, String token) {

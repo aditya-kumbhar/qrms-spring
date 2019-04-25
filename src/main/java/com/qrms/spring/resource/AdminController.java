@@ -715,7 +715,7 @@ public class AdminController {
 	
 	//Handle register user form
 	@RequestMapping(value = "/register_users", method = RequestMethod.POST)
-	public ModelAndView createUser(@Valid Users user, String role, StudentAcad student,String dept,
+	public ModelAndView createUser(Users user, String role, StudentAcad student,String dept,
 			String dept1, Double facExp, String facDesignation, String facQualification, String divName
 			) {
 		ModelAndView model = new ModelAndView();	
@@ -734,7 +734,7 @@ public class AdminController {
 			Department department = departmentRepository.findByDeptId(dept);
 			student.setDepartment(department);
 			if(studAcadService.validateAndSetStudDiv(student,divName)) {
-				userDetails.saveUser(user);	
+				userDetails.saveUser(user);
 				student.setUserName(user.getUserName());
 				studentAcadRepository.save(student);				
 			}
@@ -1275,7 +1275,6 @@ public class AdminController {
 				g_err_msg = "Cannot clear preferences for open forms. Close forms before clearing preferences";
 			else
 				g_err_msg = "Preferences have already been cleared";
-			
 		}
 		else {
 			System.out.println(electiveIdOption);
@@ -1328,11 +1327,7 @@ public class AdminController {
 		if(elective_ids.size()==0) {
 			String err_msg = "No electives are opened for preference forms.";
 			return getShowAllocations(elective_ids,null,err_msg);
-//			model.addAttribute("err_msg", "No electives are opened for preference forms.");
-//			return "admin/showAllocations:: messageDiv";
-//		}else {
-//			model.addAttribute("elective_ids",elective_ids);
-//			return "admin/showAllocations:: elective_fragment";
+
 		}
 		return getShowAllocations(elective_ids, null,null);
 		
@@ -1443,14 +1438,19 @@ public class AdminController {
 		List<FacultyAcad> allFacs = facultyAcadRepository.findByDepartmentEquals(dept);
 		
 		//clear courseList and practicalList tables
+		List<String> facIdList = new ArrayList<String>();
+		for(FacultyAcad f:allFacs) {
+			facIdList.add(f.getUserName());
+		}
 		
-		
+		courseListRepository.deleteByFacultyIdList(facIdList);
+		practicalListRepository.deleteByFacultyIdList(facIdList);
 		
 		//designation to min max hours hashmap
 		HashMap<String, int[]> desigHours =  new HashMap<>();
 		
 		for(DesignationToHours d:desigList) {
-			desigHours.put(d.getDesignation(), new int[] {d.getMinLimit(),d.getMaxLimit()});
+			desigHours.put(d.getDesignation(), new int[] {d.getMinLimit(),d.getMaxLimit()});			
 		}
 		
 		//faculty to min hours
@@ -1465,15 +1465,12 @@ public class AdminController {
 		HashMap <String,Integer> facLoadLeft = new HashMap<>();
 		HashMap<String,Integer> facTheoryHours = new HashMap<String,Integer>();
 		HashMap<String,Integer> facPracticalHours = new HashMap<String,Integer>();
-		
+		int totalCourseHours = 0, totalFacLoad = 0;
+	
 		for(FacultyAcad f:allFacs) {
-			facAllotedHours.put(f.getUserName(), 0);
-			facLimits.put(f.getUserName(), desigHours.get(f.getDesignation()));
-			facLoadLeft.put(f.getUserName(), desigHours.get(f.getDesignation())[1]);
-			facTheoryHours.put(f.getUserName(), 0);
-			facPracticalHours.put(f.getUserName(), 0);
+			
+			totalFacLoad+= desigHours.get(f.getDesignation())[1];
 		}
-		
 		//divisions for each year sem
 		List<Divisions> divisionNeeds = divisionsRepository.findByDepartment(dept);
 
@@ -1502,15 +1499,14 @@ public class AdminController {
 			allTheoryCourses = courseRepository.findEvenSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(dept);
 			allTheoryElectiveCourses = courseRepository.findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(dept);
 			allElectivePracticals = courseRepository.findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryNotAndDepartment(dept);
-
 		}
 		
 		int pl = 0;
-		int totalCourseHours = 0;
+		
 		// add regular theory courses to courseList and practical courses to practicalList
 		for(Course c:allTheoryCourses)
 		{
-		for(Divisions d:divisionNeeds) {
+			for(Divisions d:divisionNeeds) {
 			
 				if(d.getDepartment().equals(c.getDepartment()) && d.getYear().equals(c.getCourseYear())) {
 					courseList.add(new CourseList(c.getCourseId(),d.getDivId(),"",c.getNoOfHours()));
@@ -1567,7 +1563,6 @@ public class AdminController {
 			}		
 		}
 
-		
 		//add elective practical courses to course list
 		for(Course c: allElectivePracticals) {
 			ArrayList<CompanionCourse> ccs = courseCompanionRepository.findByCompanionCourseAndCourseIdInElectiveBatches(c.getCourseId());
@@ -1605,11 +1600,54 @@ public class AdminController {
 				}
 			}
 		}
+		//more fac hrs than courses
+		if(totalCourseHours < totalFacLoad) {
+			HashMap<String,Integer> facsPerDesig = new HashMap<String,Integer>();
+			for(Entry<String,int[]> entry: desigHours.entrySet()) {
+				int count = facultyAcadRepository.countFacultyByDesignation(entry.getKey());
+				facsPerDesig.put(entry.getKey(),count);
+			}
+			int cur = 0;
+			cur = totalFacLoad;
+			while(cur>=totalCourseHours) {
+				cur = 0;
+				for(Entry<String,int[]> entry: desigHours.entrySet()) {
+					cur+= facsPerDesig.get(entry.getKey())*(entry.getValue()[1]-1);
+					desigHours.put(entry.getKey(),new int[]{entry.getValue()[0],entry.getValue()[1]-1});
+				}
+			}
+			for(Entry<String,int[]> entry: desigHours.entrySet()) {
+				desigHours.put(entry.getKey(),new int[]{entry.getValue()[0],entry.getValue()[1]+1});
+			}
+		}
+		else {
+			//less fac hrs than courses
+				HashMap<String,Integer> facsPerDesig = new HashMap<String,Integer>();
+			
+				for(Entry<String,int[]> entry: desigHours.entrySet()) {
+					int count = facultyAcadRepository.countFacultyByDesignation(entry.getKey());
+				facsPerDesig.put(entry.getKey(),count);
+			}
+			int cur = 0;
+			cur = totalFacLoad;
+			while(cur<totalCourseHours) {
+				cur = 0;
+				for(Entry<String,int[]> entry: desigHours.entrySet()) {
+					cur+= facsPerDesig.get(entry.getKey())*(entry.getValue()[1]+1);
+					desigHours.put(entry.getKey(),new int[]{entry.getValue()[0],entry.getValue()[1]+1});
+				}
+			}
+		}
 		
-		//iterating over prac List pointer
-//		for (Entry<String, List<Integer>> entry : practicalListPointer.entrySet()) {
-//	        System.out.println(entry.getKey() + ":" + entry.getValue());
-//	    }
+		for(FacultyAcad f:allFacs) {
+			facAllotedHours.put(f.getUserName(), 0);
+			facLimits.put(f.getUserName(), desigHours.get(f.getDesignation()));
+			facLoadLeft.put(f.getUserName(), desigHours.get(f.getDesignation())[1]);
+			facTheoryHours.put(f.getUserName(), 0);
+			facPracticalHours.put(f.getUserName(), 0);
+			totalFacLoad+= desigHours.get(f.getDesignation())[1];
+		}
+		
 		int courseIndex = -1;
 		ArrayList<Integer> nonPreferredCourseIndices = new ArrayList<>();
 		String prevCourse = "";
@@ -1723,10 +1761,8 @@ public class AdminController {
 								facAllotedHours.replace(fId, facAllotedHours.get(fId) + p.getNoOfHours());
 								facLoadLeft.replace(fId, facLoadLeft.get(fId) - p.getNoOfHours());
 								facPracticalHours.replace(fId, facPracticalHours.get(fId)+p.getNoOfHours());
-
 							}
 						}
-						
 					}
 				}		
 		}
@@ -1787,6 +1823,7 @@ public class AdminController {
         	if(p.getFacultyId().equals("")) {
         		String bestFac = null;
         		int ll = 0;
+        		System.out.println("Finding fac for "+p.getPracticalCourseId());
         		//find fac with highest load left and allocate
         		for (Entry<String, Integer> fac : facLoadLeft.entrySet()) {
             		if(fac.getValue()>ll) {
@@ -1795,17 +1832,26 @@ public class AdminController {
             		}
             	}
             	if(bestFac==null) {
-            		//No faculty has load left
-            		facLimitReached = 1;
+            		facLimitReached=1;
             		break;
             	}
             	if(facLoadLeft.get(bestFac) >= p.getNoOfHours()) {
 					p.setFacultyId(bestFac);
-					//System.out.println(p.getFacultyId());
 					facAllotedHours.replace(bestFac, facAllotedHours.get(bestFac) + p.getNoOfHours());
 					facLoadLeft.replace(bestFac, facLoadLeft.get(bestFac) - p.getNoOfHours());
 					facPracticalHours.replace(bestFac, facPracticalHours.get(bestFac)+p.getNoOfHours());
 				}
+            	else {
+            		//increment bestFac max limit
+            		System.out.println("Incrementing for "+bestFac);
+            		p.setFacultyId(bestFac);
+            		int newHrs = facAllotedHours.get(bestFac) + p.getNoOfHours();
+					facAllotedHours.replace(bestFac, newHrs);
+					facLoadLeft.replace(bestFac, 0);
+					facPracticalHours.replace(bestFac, facPracticalHours.get(bestFac)+p.getNoOfHours());
+					facLimits.put(bestFac, new int[] {facLimits.get(bestFac)[0],newHrs});
+            		System.out.println("Hours "+newHrs);
+            	}
         	}
         }
         if(facLimitReached==1) {
@@ -1837,8 +1883,8 @@ public class AdminController {
 				System.out.println(p.getTheoryCourseId()+" "+p.getLabId()+" "+p.getPracticalCourseId()+" NA "+p.getNoOfHours());
 			else
 				System.out.println(p.getTheoryCourseId()+" "+p.getLabId()+" "+p.getPracticalCourseId()+" "+p.getFacultyId()+" "+p.getNoOfHours());
-	
 		}
+		
 		FacultyAllotedHours fh = new FacultyAllotedHours();
 		System.out.println("\n\nFac Details");
 		System.out.println("FacID  facMax facAlloted facLoadLeft");
@@ -1855,6 +1901,7 @@ public class AdminController {
 			fh.setPracticalHours(facPracticalHours.get(fac.getKey()));
 			facultyAllotedHoursRepository.save(fh);
 		}
+		
 		System.out.println("Total hrs to be alloted: "+totalCourseHours);
 		System.out.println("MaxLoad: "+maxLoad+" TotalLoadAlloted: "+totalLoadAlloted+" TotalLoadLeft: "+totalLoadLeft);
 		
@@ -1946,7 +1993,9 @@ public class AdminController {
 	        throws ParseException {
 	    return TWENTY_FOUR_TF.format(
 	            TWELVE_TF.parse(twelveHourTime));
-  }
+	}
+	
+
 	@Transactional
 	String readTT(String path, String dept,String day) {
 		
@@ -1956,7 +2005,7 @@ public class AdminController {
 		
 		File myFile = new File(path);
         FileInputStream fis;
-        
+
         List<TimeTable> timetable = new ArrayList<>();
 		
 		timeTableRepository.deleteByDepartmentAndDay(department,day);
