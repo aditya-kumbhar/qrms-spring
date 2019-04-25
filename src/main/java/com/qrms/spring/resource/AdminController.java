@@ -305,7 +305,7 @@ public class AdminController {
 		
 		List<FacPrefCountInfo> facCountInfo = facPrefService.computeFacPrefTable();
 		if(facCountInfo.isEmpty()) {
-			model.addAttribute("err_msg","There are no open student elective preference forms");
+			model.addAttribute("err_msg","There are no open faculty course preference forms");
 			return "admin/home:: messageDiv";
 		}
 		else {
@@ -451,8 +451,80 @@ public class AdminController {
 	//TODO
 	@Transactional
 	@RequestMapping(value = "/performQuickAction-faculty", method = RequestMethod.POST)
-	public ModelAndView facultyAllocQuickAction(String deptId,  String selectAction, String courseName) {
+	public ModelAndView facultyAllocQuickAction(String deptName,  String selectActionFac, String semType, 
+			String totalFacultyCount, String submitCount) {
+
+		String actions[] = selectActionFac.split(",");
+		String deptNames[] = deptName.split(",");
+		String semTypes[] = semType.split(",");
+		String submitCounts[] = submitCount.split(",");
+		String totalFacultyCounts[] = totalFacultyCount.split(",");
 		
+		int i;
+		for(i=0; i<actions.length;i++) {
+			if(!actions[i].equals("none")) {
+				break;
+			}
+		}
+		
+		String action = actions[i];
+		String selectedDeptName = deptNames[i];
+		String selectedSemType = semTypes[i];
+		int selectedSubmitCount = Integer.parseInt(submitCounts[i]);
+		int selectedTotalFacultyCount = Integer.parseInt(totalFacultyCounts[i]);
+		Department dept = departmentRepository.findByDeptId(selectedDeptName);
+		OpenFacultyPrefs ofp = openFacultyPrefsRepository.findByDeptId(dept.getDeptId());
+
+		if(action.equals("clearPrefs")) {
+			if(ofp.getStatus()==0) {
+				facultyPrefRepository.deleteByDepartment(dept);
+				openFacultyPrefsRepository.deleteByDeptId(dept.getDeptId());
+			}
+			else {
+				g_err_msg = "Close preference forms before performing this action";
+				g_msg = null;
+			}
+			
+			
+		} else if(action.equals("performAllocation")) {
+			if(ofp.getStatus()==0) {
+				if(selectedSemType.charAt(0)=='E')
+					allocFaculty(0, dept);
+				else
+					allocFaculty(1, dept);
+				g_msg = "Faculty allocation has been completed for "+dept.getDeptName();
+				g_err_msg=null;		
+			}
+			else {
+				g_err_msg = "Close preference forms before performing this action";
+				g_msg = null;
+			}
+		
+		}
+		
+		else {
+			//action = close pref forms
+			if(ofp.getStatus()==0) {
+				g_err_msg = "Preference forms are already closed";
+				g_msg = null;
+			}
+			else if(selectedSubmitCount!=selectedTotalFacultyCount) {
+				
+				g_err_msg = "All faculties have not given preferences. Form has been closed but allocation cannot be performed.<br>"
+						+ "Clear preferences to remove this entry";
+				g_msg = null;
+				ofp.setStatus(0);
+				openFacultyPrefsRepository.save(ofp);
+			}
+			else {
+				g_msg = "Preference forms have been closed";
+				g_err_msg = null;
+				ofp.setStatus(0);
+				openFacultyPrefsRepository.save(ofp);
+			}
+			
+		}
+	
 		
 		return getFacPrefDetailsTable();
 	}
@@ -1515,7 +1587,7 @@ public class AdminController {
 //	@RequestMapping(value="/allocFaculty",method=RequestMethod.POST)
 //	public ModelAndView
 	// 0 -- odd, 1 -- even
-	public void allocFaculty(int isSemEven,Department dept) {
+	public void allocFaculty(int isSemOdd,Department dept) {
 		
 		//find all the courses
 		//get data of designation and faculty for that department
@@ -1578,7 +1650,7 @@ public class AdminController {
 		ArrayList<Course> allTheoryElectiveCourses;
 		ArrayList<Course> allElectivePracticals;
 		
-		if(isSemEven==0) { //odd
+		if(isSemOdd==1) { //odd
 			allTheoryCourses = courseRepository.findOddSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(dept);
 			allTheoryElectiveCourses = courseRepository.findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(dept);
 			allElectivePracticals = courseRepository.findOddSemCoursesAndCourseTypeNotRegAndIsTheoryNotAndDepartment(dept);
@@ -2004,8 +2076,8 @@ public class AdminController {
 		return model;
 	}
 	
-	@RequestMapping(value="/performFacultyAllocation", method=RequestMethod.POST)
-	public ModelAndView performFacultyAllocation(int sem, String dept) {
+	@RequestMapping(value="/showFacultyAllocation", method=RequestMethod.POST)
+	public ModelAndView showFacultyAllocation(String dept) {
 		
 		ModelAndView model = new ModelAndView();
 		model.setViewName("admin/facultyAllocation");
@@ -2013,15 +2085,20 @@ public class AdminController {
 		model.addObject("departments",departments);
 		
 		Department d = departmentRepository.findByDeptId(dept);
-		allocFaculty(sem,d);
-		model.addObject("facAllotmentList",generateFacultyAllotedList());
+		List<FacultyAllotedHours> facs = facultyAllotedHoursRepository.findFacsByDepartment(d);
+		if(facs.isEmpty()) {
+			model.addObject("err_msg","Allocation has not been performed for "+d.getDeptName());
+		}
+		else {
+			model.addObject("facAllotmentList",generateFacultyAllotedList(d));
+		}
 		return model;
 	}	
 	
-	public List<FacultyAllocations> generateFacultyAllotedList() {
-		List<FacultyAllotedHours> facs = facultyAllotedHoursRepository.findAll();
-		List<CourseList> courses = courseListRepository.findAll();
-		List<PracticalList> practicals = practicalListRepository.findAll();
+	public List<FacultyAllocations> generateFacultyAllotedList(Department dept) {
+		List<FacultyAllotedHours> facs = facultyAllotedHoursRepository.findFacsByDepartment(dept);
+		List<CourseList> courses = courseListRepository.findByFacultyIdDepartment(dept);
+		List<PracticalList> practicals = practicalListRepository.findByFacultyIdDepartment(dept);
 		rs = new ArrayList<FacultyAllocations>();
 		
 		//{key: facID, value:{key:courseId,value:courseList} }

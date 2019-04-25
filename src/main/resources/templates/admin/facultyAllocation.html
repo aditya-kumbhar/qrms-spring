@@ -11,30 +11,13 @@
 	
     <script>
     $(document).ready(function () {
-    	$("#courseYear").change(function () {
-            var val = $(this).val();
-            if (val == "FE") {
-                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='1' style='color:#000'>1</option><option value='2' style='color:#000'>2</option>");
-            } else if (val == "SE") {
-                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='3' style='color:#000'>3</option><option value='4' style='color:#000'>4</option>");
-            } else if (val == "TE") {
-                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='5' style='color:#000'>5</option><option value='6' style='color:#000'>6</option>");
-            } else if (val == "BE") {
-                $("#courseSem").html("<option value='0' style='color:#8F8B87' selected>Select Semester</option><option value='7' style='color:#000'>7</option><option value='8' style='color:#000'>8</option>");
-            } else if (val == "none") {
-            	$("#courseSem").html("<option value=''>Select Semester</option>");
-            }
-        });
+    	
     
     	$('#submit').click(function(){
     		var dept = $('#dept').val();
     		var sem = $('#sem').val();
     		if(dept=='none'){
     			alert("Please select a department");
-    			return false;
-    		}
-    		if(sem=='none'){
-    			alert('Please select a semester');
     			return false;
     		}
     	});
@@ -67,7 +50,7 @@
 <div class="card bg-light">
 <article class="card-body mx-auto" id="article1">
 	<h4 class="card-title mt-3 text-center">Perform Faculty to Course Allocation</h4>
-	<form method="POST" action="/u/admin/performFacultyAllocation">
+	<form method="POST" action="/u/admin/showFacultyAllocation">
 	<table>
 		<tr class="form-group">
 			<td>
@@ -80,28 +63,22 @@
 				</select>
 			</td>
 		</tr>
-		<tr class="form-group">
-			<td>
-			    Select Semester
-			</td>
-			<td>
-				<select class="form-control" th:id="sem" th:name="sem" autofocus>
-					<option th:value="none" style="color:#8F8B87" selected>Select Semester</option>
-					<option th:value="0" style="color:#000">Odd</option>
-					<option th:value="1" style="color:#000">Even</option>
-				</select>
-			</td>
-		</tr>
 		<tr>
 			<td colspan=2 align=center>
 				<div class="form-group">
-	        		<button type="submit" id="submit" class="btn btn-primary btn-block"  style="width:150px"> Run Allocation  </button>
+	        		<button type="submit" id="submit" class="btn btn-primary btn-block"  style="width:150px"> Show Allocations  </button>
 	    		</div> <!-- form-group// -->  
 	    	</td> 	  
 		</tr>	
 	</table>
 	</form>
 	</article>
+	<div th:id="messageDiv">
+	<div class="text-center card-title mx-auto" style="max-width:40%;" th:fragment="messageDiv">
+		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
+		<div class="alert alert-danger" role="alert"  id="err" th:if="${err_msg}" th:utext="${err_msg}"></div>
+	</div>
+	</div>
 	<article class="card-body mx-auto" th:if="${facAllotmentList}">
 	
 	<table class="table table-bordered table-hover" > 
@@ -138,48 +115,47 @@
 	</table>
 	<br><br>
 	<div id="viewDetailsDiv" th:fragment="viewDetailsDiv">
- <div th:if="${facultyAllocation}">
- <h5 id="nameDet" th:text="${facultyAllocation.name}"></h5>
- <ol>
- <li>Courses alloted
- <table class="table table-bordered table-hover">
- <thead>
-	 <tr>
-		 <td>Course ID</td>
-		 <td>Division</td>
-		 <td>Hours</td>
-	 </tr>
- </thead>
- <tbody>
-	<tr th:each="fa : ${facultyAllocation.courseAndDivs}">
-		<td th:text="${fa.courseId}"></td>
-		<td th:text="${fa.divisionId}"></td>
-		<td th:text="${fa.noOfHours}"></td>	
- 	</tr>
- 	</tbody>
- </table>
-</li>
-<li>Practicals Alloted
-<table class="table table-bordered table-hover">
- <thead>
-	 <tr>
-		 <td>Practical Course ID</td>
-		 <td>Division</td>
-		 <td>Batch</td>
-		 <td>Hours</td>
-	 </tr>
- </thead>
- <tbody>
-	<tr th:each="fa : ${facultyAllocation.practicalsAndBatches}">
-		<td th:text="${fa.practicalCourseId}"></td>
-		<td th:text="${fa.divId}"></td>
-		<td th:text="${fa.labId}"></td>
-		<td th:text="${fa.noOfHours}"></td>	
- 	</tr>
- 	</tbody>
- </table>	
-</li>
-
+	<div th:if="${facultyAllocation}">
+ 		<h5 id="nameDet" th:text="${facultyAllocation.name}"></h5>
+	 <ol>
+	 <li>Courses alloted
+	 <table class="table table-bordered table-hover">
+	 <thead>
+		 <tr>
+			 <td>Course ID</td>
+			 <td>Division</td>
+			 <td>Hours</td>
+		 </tr>
+	 </thead>
+	 <tbody>
+		<tr th:each="fa : ${facultyAllocation.courseAndDivs}">
+			<td th:text="${fa.courseId}"></td>
+			<td th:text="${fa.divisionId}"></td>
+			<td th:text="${fa.noOfHours}"></td>	
+	 	</tr>
+	 	</tbody>
+	 </table>
+	</li>
+	<li>Practicals Alloted
+	<table class="table table-bordered table-hover">
+	 <thead>
+		 <tr>
+			 <td>Practical Course ID</td>
+			 <td>Division</td>
+			 <td>Batch</td>
+			 <td>Hours</td>
+		 </tr>
+	 </thead>
+	 <tbody>
+		<tr th:each="fa : ${facultyAllocation.practicalsAndBatches}">
+			<td th:text="${fa.practicalCourseId}"></td>
+			<td th:text="${fa.divId}"></td>
+			<td th:text="${fa.labId}"></td>
+			<td th:text="${fa.noOfHours}"></td>	
+	 	</tr>
+	 	</tbody>
+	 </table>	
+	</li>
 </ol>
  
 </div>
@@ -198,10 +174,11 @@
  	 	        url: '/u/admin/getFacultyAllocationByIndex',
  	 	        data: {i: i},
  	 	        success: function (data) {
-
- 	 	        	$("#viewDetailsDiv").html('');
+ 	 	        	
+ 	        		$("#viewDetailsDiv").html('');
  	 	        	$("#viewDetailsDiv").html(data);
- 	 	     		
+ 	 	  	 	 	     			
+ 	 	        	
  	               }
  	 		});
 			
@@ -217,10 +194,10 @@
 		function downloadAllocationsFile(){
 			var list = /*[[${facAllotmentList}]]*/ 'default';
 			console.log(list);
-		});
+		}
 	
 		/*]]>*/
-	}
+	});
 	
 	</script>
 </html>
