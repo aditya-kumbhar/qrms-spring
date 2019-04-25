@@ -7,7 +7,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -111,4 +113,24 @@ public class BookingsServiceImpl implements BookingsService{
 		return finalTS;
 	}
 
+
+	public List<TimeSlots> getTimeSlotsForDate(String booking_date,String getTT){
+		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate date = LocalDate.parse(booking_date, df);
+		Date sqlDate = java.sql.Date.valueOf(date.toString());
+		String day = date.getDayOfWeek().name();
+		
+//		Collection <TimeSlots> ts = bookingsService.findTimeSlotsByResourceForDate(getTT,day,sqlDate);
+//		
+//		List<TimeSlots> list;
+//		if (ts instanceof List)
+//		  list = (List<TimeSlots>)ts;
+//		else
+//		  list = new ArrayList<TimeSlots>(ts);
+		
+		ArrayList<TimeSlots> list = findTimeSlotsByResourceForDate(getTT,day,sqlDate);
+		
+		Collections.sort(list);
+		return list;
+	}
 }
