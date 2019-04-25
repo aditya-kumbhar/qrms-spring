@@ -1759,7 +1759,6 @@ public class AdminController {
 								facPracticalHours.replace(fId, facPracticalHours.get(fId)+p.getNoOfHours());
 							}
 						}
-						
 					}
 				}		
 		}
@@ -2002,7 +2001,6 @@ public class AdminController {
 		
 		File myFile = new File(path);
         FileInputStream fis;
-        
 
         List<TimeTable> timetable = new ArrayList<>();
 		
