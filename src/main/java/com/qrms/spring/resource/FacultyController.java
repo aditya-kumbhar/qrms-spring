@@ -14,11 +14,13 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.mail.MailException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -416,13 +418,27 @@ public class FacultyController {
 		return "faculty/bookings:: messageDiv";
 	}
 	
-	
+	@Transactional
+	@Modifying
 	@RequestMapping(value="/resourceRequests",method=RequestMethod.GET)
 	public ModelAndView getResourceRequests() {
 		//if faculty is not a resource incharge, send appropriate msg
 		//if no pending requests, send appropriate msg
 		//if pending requests, show all requests
 		ModelAndView model = new ModelAndView();
+		
+		//TODO:
+		LocalDate localDate = LocalDate.now();
+		Date sqlDate = Date.valueOf(localDate.toString());
+		
+		long curTime = new java.util.Date().getTime();
+		
+		Time t = new Time(curTime);
+		
+		System.out.println(localDate.toString());
+		System.out.println(t);
+		
+		resourceRequestsRepository.deletePastRequests(sqlDate,t);
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
@@ -450,8 +466,20 @@ public class FacultyController {
 	and a value greater than 0 if this Date is after the Date argument.
 	 */
 	
+	@Transactional
+	@Modifying
 	@RequestMapping(value="/getOverlappingSlots",method=RequestMethod.POST)
 	public String getOverlappingSlots(Model model,Integer getOverlapsFor) {
+		LocalDate localDate = LocalDate.now();
+		Date sqlDate = Date.valueOf(localDate.toString());
+		
+		long curTime = new java.util.Date().getTime();
+		
+		Time t = new Time(curTime);
+		
+		System.out.println(localDate.toString());
+		
+		resourceRequestsRepository.deletePastRequests(sqlDate,t);
 		
 		ResourceRequests obj = resourceRequestsRepository.findByRequestId(getOverlapsFor);
 		
@@ -544,7 +572,7 @@ public class FacultyController {
 		ArrayList<ResourceRequests> requests = resourceRequestsRepository.findByResourceIncharge(userName);
 		
 		if(requests.isEmpty()) {
-			model.addAttribute("msg","Deleted successfully!No requests!");
+			model.addAttribute("msg","Deleted successfully! No requests!");
 			return "faculty/resourceRequests:: messageDiv";
 		}else {
 			model.addAttribute("requests",requests);
