@@ -178,7 +178,6 @@ public class FacultyController {
 				ArrayList<Electives> electives = electivesRepository.findByCourse(elCourse);
 				
 				for(Electives el: electives) {
-					System.out.println(elCourse.getCourseId());
 					CoursePrerequisites cp = coursePrerequisitesRepository.findByCourseId(el.getElectiveCourseId());
 					CourseAndElectives ce = new CourseAndElectives();
 
@@ -252,9 +251,6 @@ public class FacultyController {
 	@ResponseBody
 	@RequestMapping(value = "/givePreference", method = RequestMethod.GET)
 	public String givePreference(Model model, String selectPref, int courseExp, int prereq1Exp, int prereq2Exp) {
-		//Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		System.out.println(selectPref);
-		
 		return selectPref;
 	}
 	
@@ -369,15 +365,12 @@ public class FacultyController {
 		
 	@RequestMapping(value="/getTTForResourceForDate",method=RequestMethod.POST)
 	public String getTTForResourceForDate(Model model,String booking_date,String getTT){
-		System.out.println("hello :)"+booking_date+getTT);
-		
 		List<TimeSlots> list = bookingsService.getTimeSlotsForDate(booking_date, getTT);
 		
 		if(list.isEmpty()) {
 			model.addAttribute("msg","All slots are empty!");
 			return "faculty/bookings:: messageDiv";
 		}else {
-			System.out.println(list.size());
 			model.addAttribute("ttForResource",list);
 			return "faculty/bookings:: resourceTT";
 		}
@@ -447,7 +440,6 @@ public class FacultyController {
 		
 		ModelAndView model = new ModelAndView();
 		
-		//TODO:
 		LocalDate localDate = LocalDate.now();
 		Date sqlDate = Date.valueOf(localDate.toString());
 		
@@ -543,7 +535,6 @@ public class FacultyController {
 				model.addAttribute("overlappingTimeTableSlots",overlappingTimeTableSlots);
 			}
 			
-			System.out.println(overlappingRequests.size()+" "+overlappingTimeSlots.size()+" "+overlappingTimeTableSlots.size());
 			return "faculty/resourceRequests:: overlapDiv";
 		}else {
 			model.addAttribute("msg","No overlapping requests!");
