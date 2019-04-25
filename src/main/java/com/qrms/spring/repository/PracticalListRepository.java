@@ -23,4 +23,6 @@ public interface PracticalListRepository extends JpaRepository<PracticalList, In
 			"(SELECT fa.userName FROM com.qrms.spring.model.FacultyAcad fa where fa.department = ?1)")
 	List<PracticalList> findByFacultyIdDepartment(Department dept);
 
+	List<PracticalList> findByFacultyId(String userName);
+
 }

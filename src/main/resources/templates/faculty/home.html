@@ -59,11 +59,11 @@
 						<th th:text="${facultyProfile.qualification}"></th>
 					</tr>
 				</table>
-				
-				<!--  <h5 th:if="${facultyAllocation}">Course Allocation Results</h5>
-				  <ol>
-				 <li th:if="${facultyAllocation}">Courses alloted
-				 <table class="table table-bordered table-hover">
+				 
+				 <h3 class="card-title mt-3 text-center" th:if="${facultyAllocation}">Course Allocation Results</h3>
+				  <ol th:if="${facultyAllocation}">
+				 <li th:if="${!facultyAllocation.courseAndDivs.empty}">Courses alloted
+				 <table class="table table-bordered table-light table-hover">
 				 <thead>
 					 <tr>
 						 <td>Course ID</td>
@@ -80,8 +80,8 @@
 				 	</tbody>
 				 </table>
 				</li>
-				<li th:if="${facultyAllocation}">Labs Alloted
-				<table class="table table-bordered table-hover">
+				<li th:if="${!facultyAllocation.practicalsAndBatches.empty}">Labs Alloted
+				<table class="table table-bordered table-light table-hover">
 				 <thead>
 					 <tr>
 						 <td>Practical Course ID</td>
@@ -101,7 +101,7 @@
 				 </table>
 				 </li>
 
-				</ol> -->
+				</ol>
 			</article>
 		</div>
 	</body>

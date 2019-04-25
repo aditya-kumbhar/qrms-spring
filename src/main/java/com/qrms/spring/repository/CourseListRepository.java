@@ -25,5 +25,7 @@ public interface CourseListRepository extends JpaRepository<CourseList, Integer>
 	@Query("Select cl from CourseList cl where cl.facultyId in " + 
 			"(SELECT fa.userName FROM com.qrms.spring.model.FacultyAcad fa where fa.department = ?1)")
 	List<CourseList> findByFacultyIdDepartment(Department dept);
+
+	List<CourseList> findByFacultyId(String userName);
 	
 }

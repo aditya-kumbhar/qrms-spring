@@ -32,24 +32,29 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.model.OpenFacultyPrefs;
+import com.qrms.spring.model.PracticalList;
 import com.qrms.spring.model.Resource;
 import com.qrms.spring.model.ResourceRequests;
 import com.qrms.spring.model.TimeSlots;
 import com.qrms.spring.model.TimeTable;
 import com.qrms.spring.model.Course;
+import com.qrms.spring.model.CourseList;
 import com.qrms.spring.model.CoursePrerequisites;
 import com.qrms.spring.model.Department;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
+import com.qrms.spring.model.FacultyAllotedHours;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.CourseAndElectives;
 import com.qrms.spring.queryBeans.FacPrefsList;
 import com.qrms.spring.queryBeans.FacultyAllocations;
+import com.qrms.spring.repository.CourseListRepository;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
 import com.qrms.spring.repository.OpenFacultyPrefsRepository;
+import com.qrms.spring.repository.PracticalListRepository;
 import com.qrms.spring.repository.ResourceRepository;
 import com.qrms.spring.repository.ResourceRequestsRepository;
 import com.qrms.spring.repository.TimeSlotsRepository;
@@ -57,6 +62,7 @@ import com.qrms.spring.repository.TimeTableRepository;
 import com.qrms.spring.service.BookingsServiceImpl;
 import com.qrms.spring.service.EmailServiceImpl;
 import com.qrms.spring.repository.FacultyAcadRepository;
+import com.qrms.spring.repository.FacultyAllotedHoursRepository;
 
 
 @Controller
@@ -99,6 +105,15 @@ public class FacultyController {
 	@Autowired
 	private TimeTableRepository timeTableRepository;
 	
+	@Autowired
+	private CourseListRepository courseListRepository;
+	
+	@Autowired
+	private PracticalListRepository practicalListRepository;
+	
+	@Autowired
+	private FacultyAllotedHoursRepository facultyAllotedHoursRepository;
+
 	@Value("${spring.mail.username}")
 	private String qrmsEmailId;
 	
@@ -110,9 +125,40 @@ public class FacultyController {
 		
 		FacultyAcad facultyProfile = facultyAcadRepository.findByUserName(userName);
 		if(facultyProfile!=null)
-			model.addObject("facultyProfile", facultyProfile);
 		
-		FacultyAllocations facultyAllocation = new FacultyAllocations();
+			{
+				model.addObject("facultyProfile", facultyProfile);
+				
+				FacultyAllocations fa = new FacultyAllocations();
+				
+				FacultyAllotedHours fac = facultyAllotedHoursRepository.findByFacultyId(userName);
+				
+				if(fac!=null) {
+					List<CourseList> courses = courseListRepository.findByFacultyId(userName);
+					List<PracticalList> practicals = practicalListRepository.findByFacultyId(userName);
+					
+					int facTheoryHours = 0;
+					for(CourseList c:courses) {
+						facTheoryHours += c.getNoOfHours();
+					}
+					
+					int practicalTheoryHours = 0;
+					for(PracticalList p:practicals) {
+						practicalTheoryHours += p.getNoOfHours();
+					}
+					
+					fa.setAllotedLoad(fac.getAllotedHours());
+					fa.setFacultyId(fac.getFacultyId());
+					fa.setMaxLoad(fac.getMaxHours());
+					fa.setCourseAndDivs(courses);
+					fa.setPracticalsAndBatches(practicals);
+					fa.setPracticalHours(practicalTheoryHours);
+					fa.setTheoryHours(facTheoryHours);
+					
+					model.addObject("facultyAllocation", fa);
+				}
+				
+			}
 		
 		model.setViewName("/faculty/home");
 		
