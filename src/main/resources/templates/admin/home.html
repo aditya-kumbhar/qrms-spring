@@ -14,7 +14,7 @@
 	<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
    	
 	<script>
-		function SubmitForm(formId){
+		function submitForm(formId){
 			var oForm = document.getElementById(formId);
 			oForm.submit();
 		}
@@ -68,7 +68,7 @@
 </div>
 </div>
 
-<form action="/u/admin/performQuickAction-student" method="post" id="tableForm">
+<form action="/u/admin/performQuickAction-student" method="post" id="studTableForm">
 <div th:id="studPrefTable">
 <h5 class="card-title mt-3 text-center" th:if="${studCountInfo}" th:fragment="studPrefTable">Active student preference form details</h5>
 <table class="table table-bordered table-hover" th:if="${studCountInfo}"  th:fragment="studPrefTable"> 
@@ -98,7 +98,7 @@
      	<input type="hidden" th:name="courseYear" th:value="${rs.year}"></input>
      	<input type="hidden" th:name="courseSem" th:value="${rs.sem}"></input>
      	<input type="hidden" th:name="deptId" th:value="${rs.deptId}"></input>  
-    		<select class="form-control" th:name="selectAction" onchange="if(this.value!='none') { SubmitForm('tableForm'); }">
+    		<select class="form-control" th:name="selectAction" onchange="if(this.value!='none') { submitForm('studTableForm'); }">
 				<option th:value="none" style="color:#8F8B87" selected>Select action</option>			
 				<option th:value="closeForms" style="color:#000">Close forms</option>				
 				<option th:value="summary" th:if="${rs.submitCount}!=0" style="color:#000">Perform allocation</option>								
@@ -114,7 +114,7 @@
 
 
 <form action="/u/admin/changeSeatsAndAllocate"  th:if="${prefSummaryList}" method="POST">
-<div class="row text-center card-body mx-auto">	
+<div class="row text-center card-body mx-auto">
 	<h5 th:text="${'Allocation for course '+prefSummaryList.get(0).courseId}"></h5>
 </div>
 <table class="table table-bordered table-hover">
@@ -147,7 +147,7 @@
 </div>
 </form> 
 
-<form action="/u/admin/performQuickAction-faculty" method="post" id="tableForm">
+<form action="/u/admin/performQuickAction-faculty" method="post" id="facTableForm">
 <div th:id="facPrefTable">
 <h5 class="card-title mt-3 text-center" th:if="${facCountInfo}" th:fragment="facPrefTable">Active faculty preference form details</h5>
 <table class="table table-bordered table-hover" th:if="${facCountInfo}"  th:fragment="facPrefTable"> 
@@ -166,10 +166,14 @@
      	<td th:text="${rs.semType}"></td>
      	<td th:text="${rs.submitCount + '/' + rs.totalFacultyCount}"></td>
     	<td>
-	   		<select class="form-control" th:name="selectAction" onchange="if(this.value!='none') { SubmitForm('tableForm'); }">
+    		<input type="hidden" th:name="deptName" th:value="${rs.deptName}"></input>
+    		<input type="hidden" th:name="semType" th:value="${rs.semType}"></input>
+	   		<input type="hidden" th:name="submitCount" th:value="${rs.submitCount}"></input>
+	   		<input type="hidden" th:name="totalFacultyCount" th:value="${rs.totalFacultyCount}"></input>
+	   		<select class="form-control" th:name="selectActionFac" onchange="if(this.value!='none') { submitForm('facTableForm'); }">
 				<option th:value="none" style="color:#8F8B87" selected>Select action</option>			
-				<option th:value="closeForms" style="color:#000">Close forms</option>				
-				<option th:value="summary" th:if="${rs.submitCount!=0 && rs.submitCount==rs.totalFacultyCount}" style="color:#000">Perform allocation</option>								
+				<option th:value="closeForms" style="color:#000">Close forms</option>
+				<option th:value="performAllocation" th:if="${rs.totalFacultyCount!=0}" style="color:#000">Perform allocation</option>								
 				<option th:value="clearPrefs" style="color:#000">Clear preferences</option>
 			</select>
     	</td>
@@ -191,11 +195,13 @@
 	        contentType: "application/json",
 	        url: '/u/admin/getStudPrefDetailsTable_async',
 	        success: function (data) {
+       	 	   $('#facPrefTable').html('');
                if ($(data).find('#err').length) {
             	   $('#messageDiv').html('');
             	   $('#messageDiv').html(data);                   
                }
                else{
+            	   
             	   $('#studPrefTable').html('');
                    $('#studPrefTable').html(data);                   
               	 }
@@ -210,13 +216,15 @@
 	        contentType: "application/json",
 	        url: '/u/admin/getFacPrefDetailsTable_async',
 	        success: function (data) {
+        	 $('#studPrefTable').html('');
                if ($(data).find('#err').length) {
             	   $('#messageDiv').html('');
             	   $('#messageDiv').html(data);                   
                }
                else{
-            	   $('#studPrefTable').html('');
-                   $('#studPrefTable').html(data);                   
+            	  
+            	   $('#facPrefTable').html('');
+                   $('#facPrefTable').html(data);                   
               	 }
                }
 		});
