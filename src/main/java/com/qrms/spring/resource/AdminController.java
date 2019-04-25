@@ -68,6 +68,7 @@ import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.queryBeans.CombinedCourseElective;
 import com.qrms.spring.queryBeans.ElectiveBatchCount;
 import com.qrms.spring.queryBeans.ElectiveBatchCountList;
+import com.qrms.spring.queryBeans.FacPrefCountInfo;
 import com.qrms.spring.queryBeans.FacultyAllocations;
 import com.qrms.spring.queryBeans.StudentUsers;
 import com.qrms.spring.model.Course;
@@ -91,6 +92,7 @@ import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.FacultyAllocCourse;
 import com.qrms.spring.model.FacultyAllotedHours;
 import com.qrms.spring.model.FacultyPref;
+import com.qrms.spring.model.OpenFacultyPrefs;
 import com.qrms.spring.model.PracticalList;
 import com.qrms.spring.model.Resource;
 import com.qrms.spring.repository.CourseCompanionRespositoy;
@@ -107,6 +109,7 @@ import com.qrms.spring.repository.FacultyAcadRepository;
 import com.qrms.spring.repository.FacultyAllocCourseRepository;
 import com.qrms.spring.repository.FacultyAllotedHoursRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
+import com.qrms.spring.repository.OpenFacultyPrefsRepository;
 import com.qrms.spring.repository.PracticalListRepository;
 import com.qrms.spring.repository.ResourceRepository;
 import com.qrms.spring.repository.RoleRepository;
@@ -118,6 +121,7 @@ import com.qrms.spring.repository.TimeTableRepository;
 import com.qrms.spring.repository.UsersRepository;
 import com.qrms.spring.service.BookingsServiceImpl;
 import com.qrms.spring.service.CustomUserDetailsService;
+import com.qrms.spring.service.FacPrefServiceImpl;
 import com.qrms.spring.service.FacultyAcadService;
 import com.qrms.spring.service.StudentAcadServiceImpl;
 import com.qrms.spring.service.StudentPrefServiceImpl;
@@ -136,6 +140,9 @@ public class AdminController {
 	private StudentPrefServiceImpl studPrefService;
 	
 	@Autowired
+	private FacPrefServiceImpl facPrefService;
+	
+	@Autowired
 	private FacultyAcadService facAcadService;
 	
 	@Autowired
@@ -146,6 +153,10 @@ public class AdminController {
 	
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	private OpenFacultyPrefsRepository openFacultyPrefsRepository;
+	
 	
 	@Autowired
 	private StudentAcadRepository studentAcadRepository;
@@ -240,11 +251,11 @@ public class AdminController {
 //		allocFaculty(1,departmentRepository.findByDeptId("CO"));
 //		readTT("CO","Monday");
 
-		return getViewAdminHome(null);
+		return getViewAdminHome(null,null);
 	}
 	
 	//show home page
-	public ModelAndView getViewAdminHome(List<StudentPrefCountInfo> studCountInfo) {
+	public ModelAndView getViewAdminHome(List<StudentPrefCountInfo> studCountInfo,List<FacPrefCountInfo> facPrefCountInfo) {
 		ModelAndView model = new ModelAndView();
 		
 		if(studCountInfo!=null) {
@@ -252,6 +263,16 @@ public class AdminController {
 				model.addObject("err_msg","There are no open student elective preference forms");
 			else {
 				model.addObject("studCountInfo",studCountInfo);
+				if(g_msg!=null)
+					model.addObject("msg",g_msg);
+				else
+					model.addObject("err_msg",g_err_msg);
+			}
+		} else if(facPrefCountInfo!=null) {
+			if(facPrefCountInfo.isEmpty())
+				model.addObject("err_msg","There are no open faculty course preference forms");
+			else {
+				model.addObject("facCountInfo",facPrefCountInfo);
 				if(g_msg!=null)
 					model.addObject("msg",g_msg);
 				else
@@ -275,6 +296,21 @@ public class AdminController {
 		else {
 				model.addAttribute("studCountInfo",studCountInfo);
 				return "admin/home:: studPrefTable";
+		}
+		
+	}
+	
+	@RequestMapping(value = "/getFacPrefDetailsTable_async", method = RequestMethod.GET)
+	public String getFacPrefDetailsTable(Model model) {
+		
+		List<FacPrefCountInfo> facCountInfo = facPrefService.computeFacPrefTable();
+		if(facCountInfo.isEmpty()) {
+			model.addAttribute("err_msg","There are no open student elective preference forms");
+			return "admin/home:: messageDiv";
+		}
+		else {
+				model.addAttribute("facCountInfo",facCountInfo);
+				return "admin/home:: facPrefTable";
 		}
 		
 	}
@@ -336,7 +372,7 @@ public class AdminController {
 	@GetMapping("/getStudPrefDetailsTable")
 	public ModelAndView getStudPrefDetailsTable() {		
 	
-		return getViewAdminHome(studPrefService.computeStudPrefTable());		
+		return getViewAdminHome(studPrefService.computeStudPrefTable(),null);		
 	}
 		
 	@Transactional
@@ -405,6 +441,24 @@ public class AdminController {
 		
 		return getStudPrefDetailsTable();
 	}
+	
+	@GetMapping("/getFacPrefDetailsTable")
+	public ModelAndView getFacPrefDetailsTable() {		
+	
+		return getViewAdminHome(null,facPrefService.computeFacPrefTable());		
+	}
+	
+	//TODO
+	@Transactional
+	@RequestMapping(value = "/performQuickAction-faculty", method = RequestMethod.POST)
+	public ModelAndView facultyAllocQuickAction(String deptId,  String selectAction, String courseName) {
+		
+		
+		return getFacPrefDetailsTable();
+	}
+	
+	
+	
 	@RequestMapping(value="/view-courses",method=RequestMethod.GET)
 	public ModelAndView viewCourses() {
 		ModelAndView model = new ModelAndView();
@@ -1030,7 +1084,6 @@ public class AdminController {
 		return model;
 	}
 	
-	
 	// CHANGE NEEDED AFTER HANDLING OPEN ELECTIVES	
 	//Retrieve all electives for specified dept, year and sem 
 	@RequestMapping(value="/findElective",method=RequestMethod.POST)
@@ -1092,7 +1145,61 @@ public class AdminController {
 		model.addObject("course",new Course());
 		model.setViewName("/admin/studCourseAllocation");		
 		return model;
-	}	
+	}
+	
+	//showing allocations - getShowAllocations
+	@RequestMapping(value="/getShowAllocations",method=RequestMethod.GET)
+	public ModelAndView getShowAllocations(ArrayList<Course> elective_ids,String msg,String err_msg) 
+	{
+		ModelAndView model = new ModelAndView();
+		
+		ArrayList<Department> departments = departmentRepository.findAll();
+		
+		model.addObject("course", new Course());
+		model.addObject("departments", departments);
+		model.setViewName("/admin/showAllocations");
+		if(elective_ids.size()!=0)
+			model.addObject("elective_ids",elective_ids);
+		if(msg!=null)
+			model.addObject("msg", msg);
+		if(err_msg!=null)
+			model.addObject("err_msg",err_msg);
+		return model;
+	}
+		
+		
+	//Get facCourseAllocation HTML page for opening course allocation forms
+	@RequestMapping(value="/openFacCourseAllocation",method=RequestMethod.GET)
+	public ModelAndView openFacCourseAllocation() {
+		ModelAndView model = new ModelAndView();
+		
+		ArrayList<Department> departments = departmentRepository.findAll();
+		model.addObject("departments",departments);
+		model.setViewName("/admin/openFacPrefs");
+		
+		return model;
+	}
+	
+	@RequestMapping(value="/open_faculty_allocation",method=RequestMethod.POST)
+	public ModelAndView open_faculty_allocation(String deptId, String semType) {
+		
+		ModelAndView model = new ModelAndView();
+		
+		OpenFacultyPrefs openFacPrefs = new OpenFacultyPrefs();
+		openFacPrefs.setDeptId(deptId);
+		openFacPrefs.setSemType(Integer.parseInt(semType));
+		openFacPrefs.setStatus(1);
+		
+		openFacultyPrefsRepository.save(openFacPrefs);
+		
+		ArrayList<Department> departments = departmentRepository.findAll();
+		model.addObject("departments",departments);		
+		model.addObject("msg", "Faculty preference forms have been opened successfully");
+
+		model.setViewName("/admin/openFacPrefs");		
+		return model;
+	}
+		
 		
 	//@RequestMapping(value="/process_student_allocation_post",method=RequestMethod.POST)
 	@Transactional	
@@ -1290,26 +1397,7 @@ public class AdminController {
 		}
 	}	
 	
-	//showing allocations - getShowAllocations
-	@RequestMapping(value="/getShowAllocations",method=RequestMethod.GET)
-	public ModelAndView getShowAllocations(ArrayList<Course> elective_ids,String msg,String err_msg) 
-	{
-		ModelAndView model = new ModelAndView();
-		
-		ArrayList<Department> departments = departmentRepository.findAll();
-		
-		model.addObject("course", new Course());
-		model.addObject("departments", departments);
-		model.setViewName("/admin/showAllocations");
-		if(elective_ids.size()!=0)
-			model.addObject("elective_ids",elective_ids);
-		if(msg!=null)
-			model.addObject("msg", msg);
-		if(err_msg!=null)
-			model.addObject("err_msg",err_msg);
-		return model;
-	}
-	
+
 	//findElectivesToShow
 	//@ResponseBody
 	@RequestMapping(value="/findElectivesToShow",method=RequestMethod.POST)
@@ -1604,7 +1692,7 @@ public class AdminController {
 		if(totalCourseHours < totalFacLoad) {
 			HashMap<String,Integer> facsPerDesig = new HashMap<String,Integer>();
 			for(Entry<String,int[]> entry: desigHours.entrySet()) {
-				int count = facultyAcadRepository.countFacultyByDesignation(entry.getKey());
+				int count = facultyAcadRepository.countFacultyByDesignationAndDepartment(entry.getKey(),dept);
 				facsPerDesig.put(entry.getKey(),count);
 			}
 			int cur = 0;
@@ -1625,7 +1713,7 @@ public class AdminController {
 				HashMap<String,Integer> facsPerDesig = new HashMap<String,Integer>();
 			
 				for(Entry<String,int[]> entry: desigHours.entrySet()) {
-					int count = facultyAcadRepository.countFacultyByDesignation(entry.getKey());
+					int count = facultyAcadRepository.countFacultyByDesignationAndDepartment(entry.getKey(),dept);
 				facsPerDesig.put(entry.getKey(),count);
 			}
 			int cur = 0;

@@ -1,14 +1,18 @@
 <!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
+  	<link rel="stylesheet" th:href="@{/css/register.css}">
+   
    <th:block th:include="fragments/admin_header.html :: headerfiles"></th:block>
 
-    <title>Open Course Allocation</title>
+    <title>Show student allocations</title>
 
-    <link rel="stylesheet" th:href="@{/css/register.css}">
-	
     <script>
     	//display semester options as per year selected
+    	/*$(document).ready(function () {
+    		$('#allocTable').DataTable();
+    	});*/
+    	
 	    $(document).ready(function () {
 	        $("#courseYear").change(function () {
 	            var val = $(this).val();
@@ -46,7 +50,7 @@
 	        	
 	            var cyear = $('#courseYear');
 	            var csem = $('#courseSem');
-				var dept = $('#dept');
+ 				var dept = $('#dept');
 	            
 	            if (dept.val() == "none") {
 	                alert("Please select a course department");
@@ -54,6 +58,7 @@
 	                
 	                return false;
 	            }
+	            
 	            else if (cyear.val() == "none") {
 	                alert("Please select a course year");
 	                $('#courseYear').focus();
@@ -70,11 +75,10 @@
 	            	$('#electiveIdOption').focus();
 	            	
 	            	return false;
-	            }  
-	            
-	            else return;
+	            }   	 
+			        
+				});
 	        });
-	    });
 	    
 	    $(document).ready(function() {
     	   $('#dept').css('color','#8F8B87');
@@ -87,7 +91,7 @@
     	      }
     	   }); 
     	});
-	    
+	
 	    $(document).ready(function() {
     	   $('#courseYear').css('color','#8F8B87');
     	   $('#courseYear').change(function() {
@@ -124,33 +128,89 @@
     	   }); 
     	});
 	    
-    	
+	    function exportTableToCSV() {
+	    	var filename = 'allocations.csv';
+	    	
+	        var csv = [];
+	        var rows = document.querySelectorAll("#allocTable tr");
+	        
+	        for (var i = 0; i < rows.length; i++) {
+	            var row = [], cols = rows[i].querySelectorAll("td, th");
+	            
+	            for (var j = 0; j < cols.length; j++) 
+	                row.push(cols[j].innerText);
+	            
+	            csv.push(row.join(","));        
+	        }
+
+	        // Download CSV file
+	        downloadCSV(csv.join("\n"), filename);
+	    }
+	    
+	    function downloadCSV(csv, filename) {
+	        var csvFile;
+	        var downloadLink;
+
+	        // CSV file
+	        csvFile = new Blob([csv], {type: "text/csv"});
+
+	        // Download link
+	        downloadLink = document.createElement("a");
+
+	        // File name
+	        downloadLink.download = filename;
+
+	        // Create a link to the file
+	        downloadLink.href = window.URL.createObjectURL(csvFile);
+
+	        // Hide download link
+	        downloadLink.style.display = "none";
+
+	        // Add the link to DOM
+	        document.body.appendChild(downloadLink);
+
+	        // Click download link
+	        downloadLink.click();
+	    }
+	    
+	    $(document).ready(function(){
+	    	$('#selectedElective').css('color','#8F8B87');
+	    	$('#selectedElective').change(function() {
+	    	      var current = $('#selectedElective').val();
+	    	      if (current != 'none') {
+	    	          $('#courseSem').css('color','black');
+	    	          document.getElementById("seats").placeholder = "Enter new Seats";
+	    	      } else {
+	    	          $('#courseSem').css('color','#8F8B87');
+	    	      }
+	    	   });
+	    });
+	    
     </script>
-     
+
   
 </head> 
 
 <div th:replace="fragments/admin_header :: header"></div>
 
-<!-- script to turn nav link active -->
-<script type="text/javascript">
-	var navBar = document.getElementById("nav-bar");		
-	var current = navBar.getElementsByClassName("active");
-    // If there's any other active nav, make it inactive
-    if (current.length > 0) { 
-      current[0].className = current[0].className.replace(" active", "");
-    }
-	//set current page nav as active
-	document.getElementById("openPref-nav").className+=" active";		
-</script>
 <body>
-
+     
+     <!-- script to turn nav link active -->
+	<script type="text/javascript">
+		var navBar = document.getElementById("nav-bar");		
+		var current = navBar.getElementsByClassName("active");
+	    // If there's any other active nav, make it inactive
+	    if (current.length > 0) { 
+	      current[0].className = current[0].className.replace(" active", "");
+	    }
+		//set current page nav as active
+		document.getElementById("showFacallocations").className+=" active";		
+	</script>
 <div class="card bg-light">
 <article class="card-body mx-auto">
-	<h3 class="card-title mt-3 text-center">Open Student Preference Forms</h3>
 	<h6 class="card-title mt-3 text-center">Enter Elective Details</h6>
 	
-	<form th:action="@{/u/admin/findElective}"  role="form" method="POST" th:object="${course}" id="all_form">   
+	<form role="form" th:object="${course}" action='/u/admin/findElectivesToShow' method='post' id="all_form">   
 	<table>
 		<tr>
 			<td>
@@ -191,18 +251,18 @@
 		
 		<tr>
 			<td colspan=2 align=center>
-	        		<button type="submit" id="submit_all" class="btn btn-primary btn-block"> Get Electives </button>
+	        		<button type="submit" id="submit_all" name="submit_all" class="btn btn-primary btn-block"> Get Electives </button>
 	    	</td> 	  
 		</tr>
 		
 		</table>
 		</form>
 		
-		<form th:if="${elective_ids}" th:action="@{/u/admin/open_student_allocation}"  role="form" method="POST" th:object="${elective}" id="all_form">   	    
+		<form th:if="${elective_ids}" th:fragment="${elective_fragment}" th:action="@{/u/admin/showAllocations}"  role="form" method="POST" th:object="${elective}">   	    
 			<table>
 				<tr>
 					<td  colspan=2 align=center>
-					    <h4 class="card-title mt-3 text-center">Open Course Allocation</h4>
+					    <h4 class="card-title mt-3 text-center">Elective Course</h4>
 					</td>
 				</tr>
 				
@@ -212,7 +272,7 @@
 					</td>
 					<td>		
 						<select class="form-control" name="electiveIdOption" id="electiveIdOption">
-							<option value="none" style="color:#8F8B87" selected>Select Elective number</option>
+							<option value="none" style="color:#8F8B87" selected>Select Course number</option>
 							<option th:each="i : ${elective_ids}" th:value="${i.courseId}" th:text="${i.courseName}" style="color:#000"></option>
 						</select>							
 					</td>
@@ -220,13 +280,36 @@
 				
 				<tr>
 					<td colspan=2 align=center>
-						<button type="submit" id="submit_elective" class="btn btn-primary btn-block"> Submit  </button>     	
+						<button type="submit" id="submit_elective" name="submit_elective" class="btn btn-primary btn-block"> Submit  </button>     	
 					</td>
 				</tr>
 			</table> 	                                                 
 	</form>
-</article>
-	<div class="row text-center card-body mx-auto">
+	</article>
+	
+	<article class="card-body mx-auto" th:if="${studAllocations}">
+		<button class="btn btn-primary" onclick="exportTableToCSV()">Export Table To CSV File</button>
+	</article>
+	
+	<article class="card-body mx-auto">
+	<table th:if="${studAllocations}" id="allocTable" class="table table-striped table-hover table-bordered">
+		<tr>
+			<th>Division</th>
+			<th>Roll number</th>
+			<th>Student Name</th>
+			<th>Elective Name</th>
+			
+		</tr>
+		<tr th:each="i : ${studAllocations}">
+		
+		<td th:text="${i.student.div.divId}"></td>
+		<td th:text="${i.student.rollno}"></td>
+		<td th:text="${i.student.userDets.firstName +' '+ i.student.userDets.lastName}"></td>
+		<td th:text="${i.elective.electiveName + ' (' + i.elective.electiveCourseId + ' )'}"></td>
+		</tr>
+	</table>
+	</article>
+	<div class="row text-center card-body mx-auto" th:fragment="messageDiv">
 		<div class="alert alert-success" role="alert" th:if="${msg}" th:utext="${msg}"></div>
  		<div class="alert alert-danger" role="alert" th:if="${err_msg}" th:utext="${err_msg}"></div>
  	</div>  

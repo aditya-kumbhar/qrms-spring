@@ -13,7 +13,10 @@ public interface FacultyAcadRepository  extends JpaRepository<FacultyAcad, Integ
 
 	ArrayList<FacultyAcad> findByDepartmentEquals(Department dept);
 
-	@Query("SELECT count(*) from FacultyAcad fa where fa.designation=?1")
-	int countFacultyByDesignation(String key);
+	@Query("SELECT count(*) from FacultyAcad fa where fa.designation=?1 and fa.department=?2")
+	int countFacultyByDesignationAndDepartment(String key,Department dept);
+	
+	@Query("SELECT count(*) from FacultyAcad fa where fa.department=?1")
+	int countFacultyByDepartment(Department dept);
 	
 }

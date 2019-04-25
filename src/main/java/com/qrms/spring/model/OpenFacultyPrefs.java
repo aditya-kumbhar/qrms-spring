@@ -17,12 +17,15 @@ public class OpenFacultyPrefs {
 	@Column(name="sem_type")
 	int semType;
 
-	public String getDepId() {
+	@Column(name="status")
+	int status;
+	
+	public String getDeptId() {
 		return deptId;
 	}
 
-	public void setDepId(String depId) {
-		this.deptId = depId;
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
 	}
 
 	public int getSemType() {
@@ -33,6 +36,15 @@ public class OpenFacultyPrefs {
 		this.semType = semType;
 	}
 
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	
 	public OpenFacultyPrefs() {
 		super();
 	}
