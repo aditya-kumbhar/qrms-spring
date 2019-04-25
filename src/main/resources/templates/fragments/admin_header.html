@@ -76,11 +76,16 @@
 			  <li class="nav-item">
 			 	<a class="nav-link" th:href="@{/u/admin/getDepartmentsPage}" id="dept-nav">Departments</a>
 		      </li>
-
-			  <li class="nav-item">
-			 	<a class="nav-link" th:href="@{/u/admin/uploadTT}" id="dept-nav">Upload Time Table</a>
-		      </li>
 		      
+			<li class="nav-item dropdown">
+	      	   	<a class="nav-link dropdown-toggle" href="#" id="bookingsDrop" data-toggle="dropdown">
+				     Resource Management
+			 	</a>
+			   	<div class="dropdown-menu">
+				   	<a class="dropdown-item" th:href="@{/u/admin/uploadTT}" id="dept-nav">Upload Time Table</a>
+	      	   		<a class="dropdown-item" th:href="@{/u/admin/viewSchedule}" id="viewSchedule-nav">View resource schedule</a>
+	   			</div>
+	   		</li>		      
 	 	</ul>
 	    <div class="navbar-nav ml-auto">
 	    	<a class="nav-link mr-sm-2" href="/logout">Log Out</a>

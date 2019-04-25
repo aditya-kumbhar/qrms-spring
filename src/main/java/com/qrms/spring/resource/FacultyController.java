@@ -313,6 +313,9 @@ public class FacultyController {
 	public String setRequirements(Model model,String dept,String rType,Integer minSeats) {
 		
 		System.out.println(dept+" "+rType+" "+minSeats);
+		if(minSeats==null) {
+			minSeats=0;
+		}
 		ArrayList<Resource> options = bookingsService.listResourcesByDepartmentAndRTypeAndMinSeats(dept, rType, minSeats);
 		System.out.println("ok2"+" "+options.size());
 		
@@ -330,7 +333,7 @@ public class FacultyController {
 	@RequestMapping(value="/getTTForResource", method=RequestMethod.GET)
 	public String getTTForResource(Model model,String getTT,String cur_date){
 		
-		List<TimeSlots> list = getTimeSlotsForDate(cur_date, getTT);
+		List<TimeSlots> list = bookingsService.getTimeSlotsForDate(cur_date, getTT);
 		
 		if(list.size()==0) {
 			model.addAttribute("msg","All slots are empty!");
@@ -340,32 +343,12 @@ public class FacultyController {
 			return "faculty/bookings:: resourceTT";
 		}
 	}
-	
-	public List<TimeSlots> getTimeSlotsForDate(String booking_date,String getTT){
-		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		LocalDate date = LocalDate.parse(booking_date, df);
-		Date sqlDate = java.sql.Date.valueOf(date.toString());
-		String day = date.getDayOfWeek().name();
 		
-//		Collection <TimeSlots> ts = bookingsService.findTimeSlotsByResourceForDate(getTT,day,sqlDate);
-//		
-//		List<TimeSlots> list;
-//		if (ts instanceof List)
-//		  list = (List<TimeSlots>)ts;
-//		else
-//		  list = new ArrayList<TimeSlots>(ts);
-		
-		ArrayList<TimeSlots> list = bookingsService.findTimeSlotsByResourceForDate(getTT,day,sqlDate);
-		
-		Collections.sort(list);
-		return list;
-	}
-	
 	@RequestMapping(value="/getTTForResourceForDate",method=RequestMethod.POST)
 	public String getTTForResourceForDate(Model model,String booking_date,String getTT){
 		System.out.println("hello :)"+booking_date+getTT);
 		
-		List<TimeSlots> list = getTimeSlotsForDate(booking_date, getTT);
+		List<TimeSlots> list = bookingsService.getTimeSlotsForDate(booking_date, getTT);
 		
 		if(list.isEmpty()) {
 			model.addAttribute("msg","All slots are empty!");
@@ -648,5 +631,51 @@ public class FacultyController {
 		
 		model.addAttribute("msg", "Request Accepted!");
 		return "faculty/resourceRequests:: messageDiv";
+	}
+	
+	@RequestMapping(value = "/viewSchedule",method=RequestMethod.GET)
+	public ModelAndView getViewSchedule() {
+		ModelAndView model = new ModelAndView();
+		ArrayList<Department> depts = bookingsService.listDepartments();
+		model.addObject("departments", depts);
+			
+		model.setViewName("/faculty/viewSchedule");
+		return model;
+		
+	}
+	
+	@RequestMapping(value="/getScheduleForResource", method=RequestMethod.GET)
+	public String getScheduleForResource(Model model,String getTT,String cur_date){
+		
+		List<TimeSlots> list = bookingsService.getTimeSlotsForDate(cur_date, getTT);
+		
+		if(list.size()==0) {
+			model.addAttribute("msg","All slots are empty!");
+			return "faculty/viewSchedule:: messageDiv";
+		}else {
+			model.addAttribute("ttForResource",list);
+			return "faculty/viewSchedule:: resourceTT";
+		}
+	}
+	
+	@RequestMapping(value="/getViewOptions",method=RequestMethod.POST)
+	public String getViewOptions(Model model,String dept,String rType,Integer minSeats) {
+		
+		System.out.println(dept+" "+rType+" "+minSeats);
+		if(minSeats==null) {
+			minSeats=0;
+		}
+		ArrayList<Resource> options = bookingsService.listResourcesByDepartmentAndRTypeAndMinSeats(dept, rType, minSeats);
+		System.out.println("ok2"+" "+options.size());
+		
+		
+		if(options.isEmpty()) {
+			model.addAttribute("err_msg","No suitable rooms/halls/classrooms were found.");
+			return "faculty/viewSchedule:: messageDiv";
+		}
+		else {
+			model.addAttribute("options",options);
+			return "faculty/viewSchedule:: resourceOptionsTable";
+		}
 	}
 }

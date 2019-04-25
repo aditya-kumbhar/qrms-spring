@@ -116,6 +116,7 @@ import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.repository.TimeSlotsRepository;
 import com.qrms.spring.repository.TimeTableRepository;
 import com.qrms.spring.repository.UsersRepository;
+import com.qrms.spring.service.BookingsServiceImpl;
 import com.qrms.spring.service.CustomUserDetailsService;
 import com.qrms.spring.service.FacultyAcadService;
 import com.qrms.spring.service.StudentAcadServiceImpl;
@@ -208,6 +209,9 @@ public class AdminController {
 	
 	@Autowired
 	private UsersRepository usersRepository;
+
+	@Autowired
+	private BookingsServiceImpl bookingsService;
 	
 	private FacultyAcad faculty;
 	
@@ -1993,11 +1997,14 @@ public class AdminController {
 	        
 	        rowIterator.next();
 	        
+	        
+	        
 	        // Traversing over each row of XLSX file
 	        while (rowIterator.hasNext()) {
 	            Row row = rowIterator.next();
 	            
 	            Cell cprev = row.cellIterator().next();
+	            String div = cprev.getStringCellValue().trim();
 	            
 	            if(cprev.getStringCellValue().equals("END") || cprev.getStringCellValue().equals("") || cprev.getCellType()==Cell.CELL_TYPE_BLANK) {
 	            	break;
@@ -2020,6 +2027,7 @@ public class AdminController {
 	            			String activityName = "Time Table";
 	            			if(j==1) {
 	            				activityName = st.nextToken().trim();
+	            				activityName = activityName.concat(" ("+div+")");
 	            				j++;
 	            			}
 	            			if(j==2) {
@@ -2065,6 +2073,71 @@ public class AdminController {
 		}
 		myFile.delete();
        	return msg;
+	}
+	
+	
+	
+
+	@RequestMapping(value = "/viewSchedule",method=RequestMethod.GET)
+	public ModelAndView getViewSchedule() {
+		ModelAndView model = new ModelAndView();
+		ArrayList<Department> depts = bookingsService.listDepartments();
+		model.addObject("departments", depts);
+			
+		model.setViewName("/admin/viewSchedule");
+		return model;
+		
+	}
+	
+	@RequestMapping(value="/getScheduleForResource", method=RequestMethod.GET)
+	public String getScheduleForResource(Model model,String getTT,String cur_date){
+		
+		List<TimeSlots> list = bookingsService.getTimeSlotsForDate(cur_date, getTT);
+		
+		if(list.size()==0) {
+			model.addAttribute("msg","All slots are empty!");	
+			return "admin/viewSchedule:: messageDiv";
+		}else {
+			model.addAttribute("ttForResource",list);
+			return "admin/viewSchedule:: resourceTT";
+		}
+	}
+	
+	@RequestMapping(value="/getTTForResourceForDate",method=RequestMethod.POST)
+	public String getTTForResourceForDate(Model model,String booking_date,String getTT){
+		System.out.println("hello :)"+booking_date+getTT);
+		
+		List<TimeSlots> list = bookingsService.getTimeSlotsForDate(booking_date, getTT);
+		
+		if(list.isEmpty()) {
+			model.addAttribute("msg","All slots are empty!");
+			return "admin/viewSchedule:: messageDiv";
+		}else {
+			System.out.println(list.size());
+			model.addAttribute("ttForResource",list);
+			return "admin/viewSchedule:: resourceTT";
+		}
+		
+	}
+	
+	@RequestMapping(value="/getViewOptions",method=RequestMethod.POST)
+	public String getViewOptions(Model model,String dept,String rType,Integer minSeats) {
+		
+		System.out.println(dept+" "+rType+" "+minSeats);
+		if(minSeats==null) {
+			minSeats=0;
+		}
+		ArrayList<Resource> options = bookingsService.listResourcesByDepartmentAndRTypeAndMinSeats(dept, rType, minSeats);
+		System.out.println("ok2"+" "+options.size());
+		
+		
+		if(options.isEmpty()) {
+			model.addAttribute("err_msg","No suitable rooms/halls/classrooms were found.");
+			return "admin/viewSchedule:: messageDiv";
+		}else {
+			model.addAttribute("options",options);
+			return "admin/viewSchedule:: resourceOptionsTable";
+		}
 	}
 	//TODO: have a way to store per-div-course hrs in facAllocation query bean to be displayed in UI autoscrolled div
 //	private Date nextDate; 
