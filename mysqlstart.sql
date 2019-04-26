@@ -266,7 +266,7 @@ INSERT into course_prerequisites values ('410244B',0,-1,'310243','NA');
 INSERT into course_prerequisites values ('410244C',0,-1,'310245','NA');
 INSERT into course_prerequisites values ('410244D',0,0,'310242','310244');
 INSERT into course_prerequisites values ('410245A',0,0,'310254','210254');
-INSERT into course_prerequisites values ('410245B',0,0,'310243','310263');
+INSERT into course_prerequisites values ('410245B',0,0,'310243','310253');
 INSERT into course_prerequisites values ('421245C',0,0,'210241','310243');
 INSERT into course_prerequisites values ('410245D',0,-1,'310245','NA');
 
@@ -460,6 +460,7 @@ insert into resource values('CO101',80,"","101","Classroom","CO","fac1");
 insert into resource values('CO111',80,"","111","Classroom","CO","fac1");
 insert into resource values('CO201',80,"","201","Classroom","CO","fac1");
 insert into resource values('CO202',80,"","202","Classroom","CO","fac1");
+insert into resource values('CO202A',80,"",'202A',"Classroom","CO","fac1");
 insert into resource values('CO203',80,"","203","Classroom","CO","fac1");
 insert into resource values('CO204',80,"","204","Classroom","CO","fac1");
 insert into resource values('CO205A',25,"",'205A',"Lab","CO","fac2");

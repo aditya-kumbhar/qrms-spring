@@ -248,9 +248,6 @@ public class AdminController {
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
-//		allocFaculty(1,departmentRepository.findByDeptId("CO"));
-//		readTT("CO","Monday");
-
 		return getViewAdminHome(null,null);
 	}
 	
@@ -1456,7 +1453,6 @@ public class AdminController {
 				g_err_msg = "Preferences have already been cleared";
 		}
 		else {
-			System.out.println(electiveIdOption);
 			studentPrefRepository.deleteByCourseId(electiveIdOption);
 			
 			Course c = courseRepository.findByCourseId(electiveIdOption);
@@ -1477,9 +1473,6 @@ public class AdminController {
 		
 		String year = course.getCourseYear();
 		Integer sem = course.getCourseSem();
-		
-		System.out.println("dept "+dept);
-		
 		Department department = departmentRepository.findByDeptId(dept);
 		
 		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(sem,year,'R',department,1,2);
@@ -2149,7 +2142,6 @@ public class AdminController {
 	
 	@RequestMapping(value="/getFacultyAllocationByIndex", method=RequestMethod.GET)
 	public String getFacultyAllocationByIndex(Model model,Integer i) {
-		System.out.println(i);
 		model.addAttribute("facultyAllocation",rs.get(i-1));
 		return "admin/facultyAllocation :: viewDetailsDiv";
 	}
@@ -2174,8 +2166,7 @@ public class AdminController {
         List<TimeTable> timetable = new ArrayList<>();
 		
 		timeTableRepository.deleteByDepartmentAndDay(department,day);
-//		List<Resource> resources = resourceRepository.findByDepartment(department);
-        
+
 		String msg = "Time Table has been uploaded successfully.";
 		
 		try {
@@ -2202,17 +2193,11 @@ public class AdminController {
 				timeSlots.put(cNext.getColumnIndex(),new Time[] {new Time(formatter.parse(startTime).getTime()),new Time(formatter.parse(endTime).getTime())});
 	        }
 	        
-	        for(int i:timeSlots.keySet()) {
-	        	System.out.println(i+" "+timeSlots.get(i)[0]+" "+timeSlots.get(i)[1]);
-	        }
-	        
 	        // Get iterator to all the rows in current sheet
 	        Iterator<Row> rowIterator = mySheet.iterator();
 	        
 	        rowIterator.next();
-	        
-	        
-	        
+	       
 	        // Traversing over each row of XLSX file
 	        while (rowIterator.hasNext()) {
 	            Row row = rowIterator.next();
@@ -2234,7 +2219,6 @@ public class AdminController {
 	            		
 	            	}else {
 	            		String delim = " \n\t";
-	            		//System.out.println(row.getCell(i).getStringCellValue());
 	            		StringTokenizer st= new StringTokenizer(row.getCell(i).getStringCellValue().trim(),delim);
 	            		int j=1;
 	            		while(st.hasMoreTokens()) {
@@ -2247,8 +2231,6 @@ public class AdminController {
 	            			if(j==2) {
 	            				
 	            				String str = st.nextToken().trim();
-//		            			System.out.println(j+" "+"this token "+str);
-		            			
 		            			if(str.contains(",")) {
 		            				String[] temp = str.split(",");
 		            				for(String temps:temp) {
@@ -2256,12 +2238,9 @@ public class AdminController {
 			            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),activityName));
 		            				}
 		            			}else {
-		            				//System.out.println("token "+str+" "+dept.concat(str)+" "+slot[0]+" "+slot[1]);
 		            				Resource r = resourceRepository.findByResourceId(dept.concat(str));
 		            				System.out.println("resource-"+r.getResourceId());
 		            				timetable.add(new TimeTable(slot[0], slot[1], r, day, department,r.getResourceIncharge(),activityName));
-//		            				System.out.println("ok");
-		            				
 	            				}
 		            			j=0;
 	            			}else {
@@ -2327,7 +2306,6 @@ public class AdminController {
 			model.addAttribute("msg","All slots are empty!");
 			return "admin/viewSchedule:: messageDiv";
 		}else {
-			System.out.println(list.size());
 			model.addAttribute("ttForResource",list);
 			return "admin/viewSchedule:: resourceTT";
 		}
@@ -2337,13 +2315,10 @@ public class AdminController {
 	@RequestMapping(value="/getViewOptions",method=RequestMethod.POST)
 	public String getViewOptions(Model model,String dept,String rType,Integer minSeats) {
 		
-		System.out.println(dept+" "+rType+" "+minSeats);
 		if(minSeats==null) {
 			minSeats=0;
 		}
 		ArrayList<Resource> options = bookingsService.listResourcesByDepartmentAndRTypeAndMinSeats(dept, rType, minSeats);
-		System.out.println("ok2"+" "+options.size());
-		
 		
 		if(options.isEmpty()) {
 			model.addAttribute("err_msg","No suitable rooms/halls/classrooms were found.");

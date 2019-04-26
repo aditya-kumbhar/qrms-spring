@@ -1,23 +1,108 @@
 <!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <th:block th:include="fragments/fac_header.html :: headerfiles"></th:block>
-    <title>Faculty Home</title>
+	<head>
+	    <th:block th:include="fragments/fac_header.html :: headerfiles"></th:block>
+	    <title>Faculty Home</title>
+		
+	    <!-- Custom styles for this template -->
+	   	<!-- <link th:href="@{/css/faculty/fac_home.css}" rel="stylesheet"> -->
+	</head>
+	<div th:replace="fragments/fac_header :: header"></div>
 	
-    <!-- Custom styles for this template -->
-   	<!-- <link th:href="@{/css/faculty/fac_home.css}" rel="stylesheet"> -->
-</head>
-<div th:replace="fragments/fac_header :: header"></div>
+	<!-- script to turn nav link active -->
+	<script type="text/javascript">
+		var navBar = document.getElementById("nav-bar");		
+		var current = navBar.getElementsByClassName("active");
+	    // If there's any other active nav, make it inactive
+	    if (current.length > 0) { 
+	      current[0].className = current[0].className.replace(" active", "");
+	    }
+		//set current page nav as active
+		document.getElementById("home-nav").className+=" active";		
+	</script>
+	<body>
+		<div class="card bg-light">
+			<article class="card-body mx-auto">
+				<h3 class="card-title mt-3 text-center" th:if="${facultyProfile}">Your Profile</h3>
+				
+				<table class="table table-bordered table-light" th:if="${facultyProfile}">
+					<tr>
+						<td>First Name</td>
+						<th th:text="${facultyProfile.userDets.firstName}"></th>
+					</tr>
+					<tr>
+						<td>Last Name</td>
+						<th th:text="${facultyProfile.userDets.lastName}"></th>
+					</tr>
+					<tr>
+						<td>UserName (System generated)</td>
+						<th th:text="${facultyProfile.userDets.firstName}"></th>
+					</tr>
+					<tr>
+						<td>Email</td>
+						<th th:text="${facultyProfile.userDets.email}"></th>
+					</tr>
+					<tr>
+						<td>Department</td>
+						<th th:text="${facultyProfile.userDets.firstName}"></th>
+					</tr>
+					<tr>
+						<td>Designation</td>
+						<th th:text="${facultyProfile.designation}"></th>
+					</tr>
+					<tr>
+						<td>Years of Experience</td>
+						<th th:text="${facultyProfile.yearsOfExperience}"></th>
+					</tr>
+					<tr>
+						<td>Qualification</td>
+						<th th:text="${facultyProfile.qualification}"></th>
+					</tr>
+				</table>
+				 
+				 <h3 class="card-title mt-3 text-center" th:if="${facultyAllocation}">Course Allocation Results</h3>
+				  <ol th:if="${facultyAllocation}">
+				 <li th:if="${!facultyAllocation.courseAndDivs.empty}">Courses alloted
+				 <table class="table table-bordered table-light table-hover">
+				 <thead>
+					 <tr>
+						 <td>Course ID</td>
+						 <td>Division</td>
+						 <td>Hours</td>
+					 </tr>
+				 </thead>
+				 <tbody>
+					<tr th:each="fa : ${facultyAllocation.courseAndDivs}">
+						<td th:text="${fa.courseId}"></td>
+						<td th:text="${fa.divisionId}"></td>
+						<td th:text="${fa.noOfHours}"></td>	
+				 	</tr>
+				 	</tbody>
+				 </table>
+				</li>
+				<li th:if="${!facultyAllocation.practicalsAndBatches.empty}">Labs Alloted
+				<table class="table table-bordered table-light table-hover">
+				 <thead>
+					 <tr>
+						 <td>Practical Course ID</td>
+						 <td>Division</td>
+						 <td>Batch</td>
+						 <td>Hours</td>
+					 </tr>
+				 </thead>
+				 <tbody>
+					<tr th:each="fa : ${facultyAllocation.practicalsAndBatches}">
+						<td th:text="${fa.practicalCourseId}"></td>
+						<td th:text="${fa.divId}"></td>
+						<td th:text="${fa.labId}"></td>
+						<td th:text="${fa.noOfHours}"></td>	
+				 	</tr>
+				 	</tbody>
+				 </table>
+				 </li>
 
-<!-- script to turn nav link active -->
-<script type="text/javascript">
-	var navBar = document.getElementById("nav-bar");		
-	var current = navBar.getElementsByClassName("active");
-    // If there's any other active nav, make it inactive
-    if (current.length > 0) { 
-      current[0].className = current[0].className.replace(" active", "");
-    }
-	//set current page nav as active
-	document.getElementById("home-nav").className+=" active";		
-</script>
+				</ol>
+			</article>
+		</div>
+	</body>
+</html>

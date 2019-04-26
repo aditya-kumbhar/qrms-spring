@@ -20,6 +20,7 @@ import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.Resource;
 import com.qrms.spring.model.StudentAcad;
+import com.qrms.spring.model.StudentAllocCourse;
 import com.qrms.spring.model.StudentPref;
 import com.qrms.spring.model.TimeSlots;
 import com.qrms.spring.model.Users;
@@ -27,6 +28,7 @@ import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
+import com.qrms.spring.repository.StudentAllocCourseRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
 import com.qrms.spring.service.BookingsServiceImpl;
 
@@ -52,9 +54,26 @@ public class StudentController {
 	@Autowired
 	private BookingsServiceImpl bookingsService;
 	
+	@Autowired
+	private StudentAllocCourseRepository studentAllocCourseRepository;
+	
 	@GetMapping("/home")
-	public String studentHome() {
-		return "student/home";
+	public ModelAndView studentHome() {
+		ModelAndView model = new ModelAndView();
+		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userName = user.getUserName();
+		
+		StudentAcad studentProfile = studentAcadRepository.findByUserName(userName);
+		if(studentProfile!=null)
+			model.addObject("studentProfile",studentProfile);
+		
+		ArrayList<StudentAllocCourse> studentAllocations = studentAllocCourseRepository.findByStudent(studentProfile);
+		
+		if(!studentAllocations.isEmpty())
+			model.addObject("studentAllocations", studentAllocations);
+		
+		model.setViewName("/student/home");
+		return model;
 	}
 	
 	@RequestMapping(value="/getElectiveId",method=RequestMethod.GET)
@@ -63,8 +82,7 @@ public class StudentController {
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
-		System.out.println(userName);
-		
+			
 
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		

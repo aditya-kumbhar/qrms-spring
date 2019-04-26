@@ -16,6 +16,8 @@ public interface FacultyAllotedHoursRepository extends JpaRepository<FacultyAllo
 	@Query("Select fa from FacultyAllotedHours fa where fa.facultyId in " + 
 			"(SELECT fa.userName FROM com.qrms.spring.model.FacultyAcad fa where fa.department = ?1)")
 	List<FacultyAllotedHours> findFacsByDepartment(Department dept);
+
+	FacultyAllotedHours findByFacultyId(String userName);
 	
 	
 

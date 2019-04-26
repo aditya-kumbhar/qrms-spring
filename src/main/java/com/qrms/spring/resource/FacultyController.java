@@ -32,23 +32,29 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.model.OpenFacultyPrefs;
+import com.qrms.spring.model.PracticalList;
 import com.qrms.spring.model.Resource;
 import com.qrms.spring.model.ResourceRequests;
 import com.qrms.spring.model.TimeSlots;
 import com.qrms.spring.model.TimeTable;
 import com.qrms.spring.model.Course;
+import com.qrms.spring.model.CourseList;
 import com.qrms.spring.model.CoursePrerequisites;
 import com.qrms.spring.model.Department;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
+import com.qrms.spring.model.FacultyAllotedHours;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.CourseAndElectives;
 import com.qrms.spring.queryBeans.FacPrefsList;
+import com.qrms.spring.queryBeans.FacultyAllocations;
+import com.qrms.spring.repository.CourseListRepository;
 import com.qrms.spring.repository.CoursePrerequisitesRepository;
 import com.qrms.spring.repository.CourseRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
 import com.qrms.spring.repository.OpenFacultyPrefsRepository;
+import com.qrms.spring.repository.PracticalListRepository;
 import com.qrms.spring.repository.ResourceRepository;
 import com.qrms.spring.repository.ResourceRequestsRepository;
 import com.qrms.spring.repository.TimeSlotsRepository;
@@ -56,6 +62,7 @@ import com.qrms.spring.repository.TimeTableRepository;
 import com.qrms.spring.service.BookingsServiceImpl;
 import com.qrms.spring.service.EmailServiceImpl;
 import com.qrms.spring.repository.FacultyAcadRepository;
+import com.qrms.spring.repository.FacultyAllotedHoursRepository;
 
 
 @Controller
@@ -98,18 +105,63 @@ public class FacultyController {
 	@Autowired
 	private TimeTableRepository timeTableRepository;
 	
+	@Autowired
+	private CourseListRepository courseListRepository;
+	
+	@Autowired
+	private PracticalListRepository practicalListRepository;
+	
+	@Autowired
+	private FacultyAllotedHoursRepository facultyAllotedHoursRepository;
+
 	@Value("${spring.mail.username}")
 	private String qrmsEmailId;
 	
 	@GetMapping("/home")
-	public String facultyHome() {
-		return "faculty/home";
-	}
-	
-	@RequestMapping(value = "/viewTT",method = RequestMethod.GET)
-	public ModelAndView viewTT() {
+	public ModelAndView facultyHome() {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/faculty/viewTT");
+		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userName = user.getUserName();
+		
+		FacultyAcad facultyProfile = facultyAcadRepository.findByUserName(userName);
+		if(facultyProfile!=null)
+		
+			{
+				model.addObject("facultyProfile", facultyProfile);
+				
+				FacultyAllocations fa = new FacultyAllocations();
+				
+				FacultyAllotedHours fac = facultyAllotedHoursRepository.findByFacultyId(userName);
+				
+				if(fac!=null) {
+					List<CourseList> courses = courseListRepository.findByFacultyId(userName);
+					List<PracticalList> practicals = practicalListRepository.findByFacultyId(userName);
+					
+					int facTheoryHours = 0;
+					for(CourseList c:courses) {
+						facTheoryHours += c.getNoOfHours();
+					}
+					
+					int practicalTheoryHours = 0;
+					for(PracticalList p:practicals) {
+						practicalTheoryHours += p.getNoOfHours();
+					}
+					
+					fa.setAllotedLoad(fac.getAllotedHours());
+					fa.setFacultyId(fac.getFacultyId());
+					fa.setMaxLoad(fac.getMaxHours());
+					fa.setCourseAndDivs(courses);
+					fa.setPracticalsAndBatches(practicals);
+					fa.setPracticalHours(practicalTheoryHours);
+					fa.setTheoryHours(facTheoryHours);
+					
+					model.addObject("facultyAllocation", fa);
+				}
+				
+			}
+		
+		model.setViewName("/faculty/home");
+		
 		return model;
 	}
 	
@@ -119,7 +171,6 @@ public class FacultyController {
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
-		System.out.println(userName);
 		
 		FacultyAcad currUserAcad = facultyAcadRepository.findByUserName(userName);
 		
@@ -153,12 +204,12 @@ public class FacultyController {
 		ArrayList<CourseAndElectives> resultSet = new ArrayList<CourseAndElectives>() ;
 		ArrayList<Course> regCourses,elCourses;
 		if(ofp.getSemType() == 0) {
-			regCourses = courseRepository.findEvenSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
-			elCourses = courseRepository.findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
+			regCourses = courseRepository.findEvenSemCoursesAndCourseTypeRegAndIsTheoryAndDepartmentAndCourseYear(currUserAcad.getDepartment(),year);
+			elCourses = courseRepository.findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartmentAndCourseYear(currUserAcad.getDepartment(),year);
 				
 		}else {
-			regCourses = courseRepository.findOddSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
-			elCourses = courseRepository.findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
+			regCourses = courseRepository.findOddSemCoursesAndCourseTypeRegAndIsTheoryAndDepartmentAndCourseYear(currUserAcad.getDepartment(),year);
+			elCourses = courseRepository.findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartmentAndCourseYear(currUserAcad.getDepartment(),year);
 				
 		}
 		//change later when admin gives current Sem input
@@ -173,7 +224,6 @@ public class FacultyController {
 				ArrayList<Electives> electives = electivesRepository.findByCourse(elCourse);
 				
 				for(Electives el: electives) {
-					System.out.println(elCourse.getCourseId());
 					CoursePrerequisites cp = coursePrerequisitesRepository.findByCourseId(el.getElectiveCourseId());
 					CourseAndElectives ce = new CourseAndElectives();
 
@@ -193,7 +243,7 @@ public class FacultyController {
 						
 						if(cp.getIsPrereq2Elective() == 1)
 							prereq2 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo2()).getElectiveName();				
-						else if(cp.getIsPrereq1Elective() == 0)
+						else if(cp.getIsPrereq2Elective() == 0)
 							prereq2 = courseRepository.findByCourseId(cp.getPrerequisiteNo2()).getCourseName();
 						else
 							prereq2="NA";
@@ -227,7 +277,7 @@ public class FacultyController {
 						prereq1="NA";
 					if(cp.getIsPrereq2Elective() == 1)
 						prereq2 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo2()).getElectiveName();				
-					else if(cp.getIsPrereq1Elective() == 0)
+					else if(cp.getIsPrereq2Elective() == 0)
 						prereq2 = courseRepository.findByCourseId(cp.getPrerequisiteNo2()).getCourseName();	
 					else
 						prereq2="NA";
@@ -247,9 +297,6 @@ public class FacultyController {
 	@ResponseBody
 	@RequestMapping(value = "/givePreference", method = RequestMethod.GET)
 	public String givePreference(Model model, String selectPref, int courseExp, int prereq1Exp, int prereq2Exp) {
-		//Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		System.out.println(selectPref);
-		
 		return selectPref;
 	}
 	
@@ -364,15 +411,12 @@ public class FacultyController {
 		
 	@RequestMapping(value="/getTTForResourceForDate",method=RequestMethod.POST)
 	public String getTTForResourceForDate(Model model,String booking_date,String getTT){
-		System.out.println("hello :)"+booking_date+getTT);
-		
 		List<TimeSlots> list = bookingsService.getTimeSlotsForDate(booking_date, getTT);
 		
 		if(list.isEmpty()) {
 			model.addAttribute("msg","All slots are empty!");
 			return "faculty/bookings:: messageDiv";
 		}else {
-			System.out.println(list.size());
 			model.addAttribute("ttForResource",list);
 			return "faculty/bookings:: resourceTT";
 		}
@@ -426,7 +470,7 @@ public class FacultyController {
 		resourceRequestsRepository.save(resourceRequest);
 		
 		try {
-			emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+resource, "woahla");
+			emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+resource, body);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
@@ -442,7 +486,6 @@ public class FacultyController {
 		
 		ModelAndView model = new ModelAndView();
 		
-		//TODO:
 		LocalDate localDate = LocalDate.now();
 		Date sqlDate = Date.valueOf(localDate.toString());
 		
@@ -538,7 +581,6 @@ public class FacultyController {
 				model.addAttribute("overlappingTimeTableSlots",overlappingTimeTableSlots);
 			}
 			
-			System.out.println(overlappingRequests.size()+" "+overlappingTimeSlots.size()+" "+overlappingTimeTableSlots.size());
 			return "faculty/resourceRequests:: overlapDiv";
 		}else {
 			model.addAttribute("msg","No overlapping requests!");
@@ -726,7 +768,7 @@ public class FacultyController {
 			model.addObject("msg","No History found!");
 		}else if(historyRequests.isEmpty()) {
 			model.addObject("msg", "No pending requests!");
-		} if(historyAccepted.isEmpty()) {
+		}else if(historyAccepted.isEmpty()) {
 			model.addObject("msg","No accepted requests!");
 		}
 		
