@@ -3,7 +3,9 @@ package com.qrms.spring.repository;
 import java.util.ArrayList;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.Electives;
@@ -16,6 +18,8 @@ public interface StudentAllocCourseRepository extends JpaRepository<StudentAlloc
 	void deleteByCourseId(Course course);
 
 	//JPQL
+	@Transactional
+	@Modifying
 	@Query("UPDATE StudentAllocCourse sac SET "
 			+ "sac.batchId=?2 "
 			+ "WHERE sac.elective = ?1")

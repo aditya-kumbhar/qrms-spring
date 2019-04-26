@@ -43,6 +43,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 //import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -696,6 +697,8 @@ public class AdminController {
 		
 	}
 
+	@Transactional
+	@Modifying
 	@ResponseBody
 	@RequestMapping(value="/set-batches",method=RequestMethod.POST)
 	public String setNoOfBatches(Model model,@RequestBody ElectiveBatchCountList electiveBatchCounts) {
