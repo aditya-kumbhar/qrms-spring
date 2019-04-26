@@ -698,6 +698,8 @@ public class AdminController {
 		
 	}
 
+	@Transactional
+	@Modifying
 	@ResponseBody
 	@RequestMapping(value="/set-batches",method=RequestMethod.POST)
 	public String setNoOfBatches(Model model,@RequestBody ElectiveBatchCountList electiveBatchCounts) {

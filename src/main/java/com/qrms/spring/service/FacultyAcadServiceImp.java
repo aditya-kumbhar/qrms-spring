@@ -28,7 +28,6 @@ public class FacultyAcadServiceImp implements FacultyAcadService{
 		ArrayList <FacultyUsers> facUserList = new ArrayList<FacultyUsers>();
 		ArrayList <FacultyAcad> faculties = facultyAcadRepository.findByDepartmentEquals(dept);
 		for(FacultyAcad faculty: faculties) {
-			System.out.println("HI");
 			facUser = new FacultyUsers();
 			Users user = userRepository.findByUserName(faculty.getUserName()).get();
 			facUser.setDesignation(faculty.getDesignation());
