@@ -266,7 +266,7 @@ INSERT into course_prerequisites values ('410244B',0,-1,'310243','NA');
 INSERT into course_prerequisites values ('410244C',0,-1,'310245','NA');
 INSERT into course_prerequisites values ('410244D',0,0,'310242','310244');
 INSERT into course_prerequisites values ('410245A',0,0,'310254','210254');
-INSERT into course_prerequisites values ('410245B',0,0,'310243','310263');
+INSERT into course_prerequisites values ('410245B',0,0,'310243','310253');
 INSERT into course_prerequisites values ('421245C',0,0,'210241','310243');
 INSERT into course_prerequisites values ('410245D',0,-1,'310245','NA');
 

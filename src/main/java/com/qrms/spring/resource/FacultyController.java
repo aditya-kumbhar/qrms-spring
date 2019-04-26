@@ -204,12 +204,12 @@ public class FacultyController {
 		ArrayList<CourseAndElectives> resultSet = new ArrayList<CourseAndElectives>() ;
 		ArrayList<Course> regCourses,elCourses;
 		if(ofp.getSemType() == 0) {
-			regCourses = courseRepository.findEvenSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
-			elCourses = courseRepository.findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
+			regCourses = courseRepository.findEvenSemCoursesAndCourseTypeRegAndIsTheoryAndDepartmentAndCourseYear(currUserAcad.getDepartment(),year);
+			elCourses = courseRepository.findEvenSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartmentAndCourseYear(currUserAcad.getDepartment(),year);
 				
 		}else {
-			regCourses = courseRepository.findOddSemCoursesAndCourseTypeRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
-			elCourses = courseRepository.findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartment(currUserAcad.getDepartment());
+			regCourses = courseRepository.findOddSemCoursesAndCourseTypeRegAndIsTheoryAndDepartmentAndCourseYear(currUserAcad.getDepartment(),year);
+			elCourses = courseRepository.findOddSemCoursesAndCourseTypeNotRegAndIsTheoryAndDepartmentAndCourseYear(currUserAcad.getDepartment(),year);
 				
 		}
 		//change later when admin gives current Sem input
@@ -243,7 +243,7 @@ public class FacultyController {
 						
 						if(cp.getIsPrereq2Elective() == 1)
 							prereq2 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo2()).getElectiveName();				
-						else if(cp.getIsPrereq1Elective() == 0)
+						else if(cp.getIsPrereq2Elective() == 0)
 							prereq2 = courseRepository.findByCourseId(cp.getPrerequisiteNo2()).getCourseName();
 						else
 							prereq2="NA";
@@ -277,7 +277,7 @@ public class FacultyController {
 						prereq1="NA";
 					if(cp.getIsPrereq2Elective() == 1)
 						prereq2 = electivesRepository.findByElectiveCourseId(cp.getPrerequisiteNo2()).getElectiveName();				
-					else if(cp.getIsPrereq1Elective() == 0)
+					else if(cp.getIsPrereq2Elective() == 0)
 						prereq2 = courseRepository.findByCourseId(cp.getPrerequisiteNo2()).getCourseName();	
 					else
 						prereq2="NA";
