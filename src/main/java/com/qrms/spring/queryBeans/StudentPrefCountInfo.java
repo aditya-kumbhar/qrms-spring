@@ -10,7 +10,6 @@ public class StudentPrefCountInfo {
 	private String year;
 	private int sem;
 	private long count1,count2,count3,count4;	//prefCounts for each priority value
-
 	
 	public StudentPrefCountInfo(int c) {
 		this.count1 = c;

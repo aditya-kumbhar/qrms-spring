@@ -10,7 +10,6 @@ public class StudentCountByYearSem {
 		this.count = count;
 		this.sem = sem;
 		this.year = year;
-		
 	}
 
 	public long getCount() {

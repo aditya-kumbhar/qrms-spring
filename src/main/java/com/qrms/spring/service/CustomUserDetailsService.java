@@ -12,6 +12,7 @@ import org.passay.PasswordGenerator;
 import org.passay.CharacterData;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,18 +43,18 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	@Autowired
 	private EmailServiceImpl email;
 	
+	@Value("${spring.mail.username}")
+	private String qrmsEmailId;
+	
 	@Override
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-					
-				Optional<Users> optionalUsers = usersRepository.findByUserName(userName);
-				optionalUsers.orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-				return optionalUsers.map(CustomUserDetails::new).get();
-		
+		Optional<Users> optionalUsers = usersRepository.findByUserName(userName);
+		optionalUsers.orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+		return optionalUsers.map(CustomUserDetails::new).get();
 	}
 	
 	@Override
 	public Users findByUserName(String username) {
-		// TODO Auto-generated method stub
 		Optional<Users> optionalUsers = usersRepository.findByUserName(username);
 		optionalUsers.orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 		return optionalUsers.map(Users::new).get();
@@ -62,7 +63,6 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	@Override
 	public Users findUserByEmail(String email) {
 		Optional<Users> optionalUsers =  usersRepository.findByEmail(email);
-		
 		if(!optionalUsers.isPresent()) {
 			return null;
 		}
@@ -73,7 +73,6 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 	    return new BCryptPasswordEncoder();
-	
 	}
 	
 	public String generatePassayPassword() {
@@ -94,7 +93,6 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	        public String getErrorCode() {
 	            return "Special char password error";
 	        }
-	 
 	        public String getCharacters() {
 	            return "!@#$%^&*()_+";
 	        }
@@ -107,7 +105,6 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	}
 	
 	public boolean isUniqueEmail(String email) {
-	
 		Users tempUser = findUserByEmail(email);
 		if(tempUser!=null) {
 			return false;
@@ -116,7 +113,6 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 	}
 
 	public void saveUser(Users user) {
-		
 		String username = user.getFirstName().toLowerCase() + user.getLastName().toLowerCase().charAt(0);
 		String tempUsername = username;
 		System.out.println(tempUsername);
@@ -139,9 +135,7 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 		}
 		
 		String password= generatePassayPassword();
-		System.out.println("Username: "+ tempUsername + " Password: "+ password);
-		
-		
+
 		String body = "Hi "+user.getFirstName()+",\nYour QRMS Account has been successfully created.\n"
 				+ "Use the following credentials to login:\n"
 				+ "Username: "+tempUsername+"\n"+ "Password: "+password
@@ -149,7 +143,7 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 				+ "Regards,\nQRMS Team.";
 		
 		try {
-		email.send("qrmsmail@gmail.com", user.getEmail(), "Login Credentials for QRMS", body);
+		email.send(qrmsEmailId, user.getEmail(), "Login Credentials for QRMS", body);
 		}catch(Exception e) {
 			System.out.println("Error Sending Email: " + e.getMessage());
 		}
@@ -162,14 +156,12 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 
 	@Override
 	public void createPasswordTokenForUser(Users user, String token) {
-		
 		PasswordResetToken myToken = new PasswordResetToken(token, user);
 	    passwordResetTokenRepository.save(myToken);
 	
 	}
  
 	public String validatePasswordResetToken(String username, String token) {
-		
 		Optional<PasswordResetToken> optionalPassToken = passwordResetTokenRepository.findByToken(token);
 		PasswordResetToken passToken;
 		
@@ -181,7 +173,6 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 			if(!(passToken.getUser().getUserName().equals(username)))
 				return "Invalid Token";
 			else {
-				
 				//check if token has expired
 				Calendar cal = Calendar.getInstance();
 				if ((passToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
@@ -214,7 +205,6 @@ public class CustomUserDetailsService implements UserService,UserDetailsService 
 
 	@Override
 	public ArrayList<Users> findByRole(Set<Role> role) {
-		// TODO Auto-generated method stub
 		ArrayList<Users> users = usersRepository.findByRoles(role);
 		return users;
 	}

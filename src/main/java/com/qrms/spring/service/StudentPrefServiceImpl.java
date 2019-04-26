@@ -29,7 +29,6 @@ public class StudentPrefServiceImpl implements StudentPrefService {
 	
 	@Override
 	public void saveStudentPref(StudentPref student, String username) {
-		
 		student.setUserName(username);
 		studentPrefRepository.save(student);
 	

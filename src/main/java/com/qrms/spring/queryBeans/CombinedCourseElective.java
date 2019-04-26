@@ -9,7 +9,6 @@ public class CombinedCourseElective {
 	int noOfBatches;
 	
 	public CombinedCourseElective(String id,int isElective,int noOfHours,String year,int noOfBatches,int isTheory) {
-		// TODO Auto-generated constructor stub
 		this.id = id;
 		this.isElective = isElective;
 		this.year = year;

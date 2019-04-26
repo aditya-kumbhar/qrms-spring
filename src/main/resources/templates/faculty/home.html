@@ -85,6 +85,7 @@
 				 <thead>
 					 <tr>
 						 <td>Practical Course ID</td>
+						 <td>Theory Course ID</td>
 						 <td>Division</td>
 						 <td>Batch</td>
 						 <td>Hours</td>
@@ -93,6 +94,7 @@
 				 <tbody>
 					<tr th:each="fa : ${facultyAllocation.practicalsAndBatches}">
 						<td th:text="${fa.practicalCourseId}"></td>
+						<td th:text="${fa.theoryCourseId}"></td>
 						<td th:text="${fa.divId}"></td>
 						<td th:text="${fa.labId}"></td>
 						<td th:text="${fa.noOfHours}"></td>	

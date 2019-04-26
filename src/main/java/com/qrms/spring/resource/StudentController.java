@@ -82,12 +82,9 @@ public class StudentController {
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
-			
 
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
-		
-		System.out.println(currUserAcad.getUserName());
-		
+
 		ArrayList<Course> elective_ids = courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndDepartmentAndIsTheoryAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'E',currUserAcad.getDepartment(),1,1);
 		ArrayList<Course> open_elective_ids = courseRepository.findByCourseSemAndCourseYearAndCourseTypeAndIsTheoryAndStudAllocFlag(currUserAcad.getSem(),currUserAcad.getYear(),'O',1,1);
 		
@@ -95,8 +92,7 @@ public class StudentController {
 		
 		model.addObject("elective_ids",elective_ids);
 		model.setViewName("/student/studentPref");
-		
-		System.out.println(msg);
+
 		if(msg!=null)
 			model.addObject("msg",msg);
 		return model;
@@ -110,8 +106,6 @@ public class StudentController {
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
-		System.out.println(userName);
-		
 		StudentAcad currUserAcad = studentAcadRepository.findByUserName(userName);
 		
 		ArrayList <StudentPref> studentPrefs = studentPrefRepository.findByUserNameAndCourseId(currUserAcad.getUserName(),elective_id);
@@ -121,7 +115,6 @@ public class StudentController {
 			Course chosen_course = courseRepository.findByCourseId(elective_id);
 			ArrayList<Electives> electiveList = electivesRepository.findByCourse(chosen_course); 
 			if(electiveList.size()==0) {
-				System.out.println("No courses exist");
 				String msg = "Please choose other elective-id!";
 				return getElectiveId(msg);
 			}
@@ -145,9 +138,7 @@ public class StudentController {
 		
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
-		
-		
-		
+
 		Electives electives[] = {electivesRepository.findByElectiveCourseId(course1),electivesRepository.findByElectiveCourseId(course2),electivesRepository.findByElectiveCourseId(course3),electivesRepository.findByElectiveCourseId(course4)};
 		
 		for(int i = 0;i<4;i++) {
@@ -156,9 +147,6 @@ public class StudentController {
 			studentPrefRepository.save(studentPref);
 		}
 
-		
-		System.out.println(electivesRepository.findByElectiveCourseId(course1).getElectiveCourseId());
-		
 		ElectiveVacancyPrefCounts electiveVacancyPrefCounts = electiveVacancyPrefCountsRepository.findByElectiveId(electivesRepository.findByElectiveCourseId(course1).getElectiveCourseId());
 		
 		int prefCount = electiveVacancyPrefCounts.getPrefCount();
@@ -200,8 +188,7 @@ public class StudentController {
 	
 	@RequestMapping(value="/getTTForResourceForDate",method=RequestMethod.POST)
 	public String getTTForResourceForDate(Model model,String booking_date,String getTT){
-		System.out.println("hello :)"+booking_date+getTT);
-		
+
 		List<TimeSlots> list = bookingsService.getTimeSlotsForDate(booking_date, getTT);
 		
 		if(list.isEmpty()) {
@@ -223,8 +210,6 @@ public class StudentController {
 			minSeats=0;
 		}
 		ArrayList<Resource> options = bookingsService.listResourcesByDepartmentAndRTypeAndMinSeats(dept, rType, minSeats);
-		System.out.println("ok2"+" "+options.size());
-		
 		
 		if(options.isEmpty()) {
 			model.addAttribute("err_msg","No suitable rooms/halls/classrooms were found.");

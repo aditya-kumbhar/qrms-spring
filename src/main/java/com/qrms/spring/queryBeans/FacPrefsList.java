@@ -14,7 +14,4 @@ public class FacPrefsList {
 	public void setFacultyPrefs(List<FacultyPref> facultyPrefs) {
 		this.facultyPrefs = facultyPrefs;
 	}
-	
-	
-	
 }
