@@ -255,6 +255,7 @@ insert into user values("stud236",1,"stud236@gmail.com","Student236","Student236
 insert into user values("stud237",1,"stud237@gmail.com","Student237","Student237","student");
 insert into user values("stud238",1,"stud238@gmail.com","Student238","Student238","student");
 insert into user values("stud239",1,"stud239@gmail.com","Student239","Student239","student");
+insert into user values("stud240",1,"stud240@gmail.com","Student240","Student240","student");
 
 /*FACULTY*/
 insert into user values('fac1',1,'fac1@gmail.com','Rajeswari','Kannan','faculty');
