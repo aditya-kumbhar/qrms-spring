@@ -178,7 +178,7 @@ public class FacultyController {
 		{
 			model.addObject("err_msg_1","You have already submitted your preferences. Please wait until allocation process takes place.");
 		}
-		
+		model.addObject("semType",ofp.getSemType());
 		model.setViewName("/faculty/facultyPref");
 		return model;
 	}
@@ -192,7 +192,7 @@ public class FacultyController {
 		
 		//ArrayList <FacultyPref> facultyPrefs = facultyPrefRepository.findByUserNameAndYear(currUserAcad.getUserName(),year);
 		OpenFacultyPrefs ofp = openFacultyPrefsRepository.findByDeptId(currUserAcad.getDepartment().getDeptId());
-	
+		System.out.println(ofp.getSemType());
 		ArrayList<CourseAndElectives> resultSet = new ArrayList<CourseAndElectives>() ;
 		ArrayList<Course> regCourses,elCourses;
 		if(ofp.getSemType() == 0) {
@@ -282,7 +282,6 @@ public class FacultyController {
 			}
 		}
 		model.addAttribute("resultSet",resultSet);
-		
 		return "faculty/facultyPref :: selectPreferenceFragment";
 	}
 	

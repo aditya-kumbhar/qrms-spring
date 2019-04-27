@@ -1223,6 +1223,8 @@ public class AdminController {
 		return model;
 	}
 	
+	@Transactional
+	@Modifying
 	@RequestMapping(value="/open_faculty_allocation",method=RequestMethod.POST)
 	public ModelAndView open_faculty_allocation(String deptId, String semType) {
 		
@@ -1234,6 +1236,10 @@ public class AdminController {
 		openFacPrefs.setStatus(1);
 		
 		openFacultyPrefsRepository.save(openFacPrefs);
+		
+		Department dept = departmentRepository.findByDeptId(deptId);
+		
+		facultyPrefRepository.deleteByDepartment(dept);
 		
 		ArrayList<Department> departments = departmentRepository.findAll();
 		model.addObject("departments",departments);		
