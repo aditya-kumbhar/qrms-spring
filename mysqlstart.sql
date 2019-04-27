@@ -508,7 +508,7 @@ INSERT into course_prerequisites values ('210245',-1,-1,'NA','NA');
 /*BE sem2*/
 INSERT into companion_course(id,course_id,companion_course) values  (1,'410250','410254A');
 INSERT into companion_course(id,course_id,companion_course) values (2,'410251','410254B');
-INSERT into companion_course(id,course_id,companion_course) values (3,'410252A','410255A');
+/*INSERT into companion_course(id,course_id,companion_course) values (3,'410252A','410255A');
 INSERT into companion_course(id,course_id,companion_course) values (4,'410252B','410255A');
 INSERT into companion_course(id,course_id,companion_course) values (5,'410252C','410255A');
 INSERT into companion_course(id,course_id,companion_course) values (6,'410252D','410255A');
@@ -516,6 +516,9 @@ INSERT into companion_course(id,course_id,companion_course) values (7,'410253A',
 INSERT into companion_course(id,course_id,companion_course) values (8,'410253B','410255B');
 INSERT into companion_course(id,course_id,companion_course) values (9,'410253C','410255B');
 INSERT into companion_course(id,course_id,companion_course) values (10,'410253D','410255B');
+*/
+INSERT into companion_course(id,course_id,companion_course) values (10,'410253','410255B');
+INSERT into companion_course(id,course_id,companion_course) values (11,'410252','410255A');
 
 /*BE sem1*/
 INSERT into companion_course(id,course_id,companion_course) values (12,'410242','410246A');
@@ -884,10 +887,9 @@ insert into resource values('CO112B',25,"",'112B',"Lab","CO","fac12");
 insert into resource values('CO112C',25,"",'112C',"Lab","CO","fac13");
 insert into resource values('CO007',25,"",'007',"Lab","CO","fac14");
 
-
-
 /*FACULTY_PREF TABLE*/
 /*fac prefs for 36 facs*/
+/*
 INSERT INTO faculty_pref values(0,8,'410250',null,1,2,1,'fac1','BE');
 INSERT INTO faculty_pref values(1,5,null,'410252B',6,6,6,'fac1','BE');
 INSERT INTO faculty_pref values(2,7,'310251',null,2,4,5,'fac1','TE');
@@ -1104,8 +1106,9 @@ INSERT INTO faculty_pref values(212,6,'310254',null,4,3,3,'fac36','TE');
 INSERT INTO faculty_pref values(213,8,'310253',null,3,2,2,'fac36','TE');
 INSERT INTO faculty_pref values(214,5,'210254',null,6,5,5,'fac36','SE');
 INSERT INTO faculty_pref values(215,8,'210253',null,2,4,6,'fac36','SE');
-
+*/
 /* Student Prefs */
+/*
 insert into student_pref values(1,"410252",1,"stud1","410252A");
 insert into student_pref values(2,"410252",4,"stud1","410252B");
 insert into student_pref values(3,"410252",3,"stud1","410252C");
@@ -3026,6 +3029,7 @@ insert into student_pref values(1917,"410253",4,"stud240","410253A");
 insert into student_pref values(1918,"410253",2,"stud240","410253B");
 insert into student_pref values(1919,"410253",1,"stud240","410253C");
 insert into student_pref values(1920,"410253",3,"stud240","410253D");
-
+*/
 /* Required for accepting preference for COMP dept, even semester*/
-INSERT INTO open_faculty_prefs values('CO',0,1);	
+/*INSERT INTO open_faculty_prefs values('CO',0,1);*/
+	

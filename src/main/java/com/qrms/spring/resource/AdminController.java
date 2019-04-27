@@ -624,6 +624,10 @@ public class AdminController {
 		String electiveIds[] = courseIdList.split(",");
 		String seats[] = seatList.split(",");
 		String courseId = "";
+		
+		//check whether no of students is more than seats available
+		//TODO
+		
 		for(int i=0;i<electiveIds.length;i++) {
 			ElectiveVacancyPrefCounts ec = electiveVacancyPrefCountsRepository.findByElectiveId(electiveIds[i]);
 			ec.setVacancyCount(Integer.parseInt(seats[i]));
@@ -634,7 +638,6 @@ public class AdminController {
 		
 		ModelAndView model = new ModelAndView();
 
-		
 		if(g_err_msg!=null) {
 			return getStudPrefDetailsTable();
 		}
@@ -687,13 +690,9 @@ public class AdminController {
 				batchIdList.add(batchId);
 			}
 			if(ebc.getNoOfBatches() == 1)
-				studentAllocCourseRepository.updateBatchIdByElectiveId(
-						electivesRepository.findByElectiveCourseId(ebc.getElectiveId()), batchId);
-			
+				studentAllocCourseRepository.updateBatchIdByElectiveId(electivesRepository.findByElectiveCourseId(ebc.getElectiveId()), batchId);
 			else {
-
-				ArrayList<StudentAllocCourse> sacList = studentAllocCourseRepository.findByElectiveIdSortedByDiv(
-						electivesRepository.findByElectiveCourseId(ebc.getElectiveId()));
+				ArrayList<StudentAllocCourse> sacList = studentAllocCourseRepository.findByElectiveIdSortedByDiv(electivesRepository.findByElectiveCourseId(ebc.getElectiveId()));
 				int totalStudents =  sacList.size();
 				int studentsPerBatch = Math.round(totalStudents/ebc.getNoOfBatches());
 				int i = 0,extra=0;
@@ -1687,7 +1686,7 @@ public class AdminController {
 			
 			}		
 		}
-
+		
 		//add elective practical courses to course list
 		for(Course c: allElectivePracticals) {
 			System.out.println(c.getCourseId());
