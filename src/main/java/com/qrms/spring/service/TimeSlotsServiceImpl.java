@@ -6,16 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qrms.spring.model.CurrentTimeSlots;
 import com.qrms.spring.model.OldTimeSlots;
-import com.qrms.spring.model.TimeSlots;
 import com.qrms.spring.repository.CurrTimeSlotsRepository;
 import com.qrms.spring.repository.OldTimeSlotsRepository;
-import com.qrms.spring.repository.TimeSlotsRepository;
-
 
 public class TimeSlotsServiceImpl implements TimeSlotsService{
-
-	@Autowired
-	private TimeSlotsRepository timeSlotsRepository;
 	
 	@Autowired
 	private CurrTimeSlotsRepository currTimeSlotsRepository;
@@ -25,7 +19,6 @@ public class TimeSlotsServiceImpl implements TimeSlotsService{
 	
 	@Override
 	public void updateTimeSlots() {
-		// TODO Auto-generated method stub
 		List<CurrentTimeSlots> currTimeSlots = currTimeSlotsRepository.findAll();
 		for(CurrentTimeSlots cts:currTimeSlots) {
 			OldTimeSlots ots = new OldTimeSlots();

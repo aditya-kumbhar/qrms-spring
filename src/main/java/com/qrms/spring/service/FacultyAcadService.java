@@ -8,6 +8,4 @@ import com.qrms.spring.queryBeans.FacultyUsers;
 public interface FacultyAcadService {
 
 	public ArrayList<FacultyUsers> getFacultyList(Department dept);
-	
-
 }

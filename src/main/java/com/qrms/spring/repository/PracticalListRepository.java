@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.qrms.spring.model.Department;
-import com.qrms.spring.model.FacultyAcad;
 import com.qrms.spring.model.PracticalList;
 
 public interface PracticalListRepository extends JpaRepository<PracticalList, Integer> {

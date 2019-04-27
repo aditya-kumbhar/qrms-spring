@@ -10,5 +10,4 @@ public interface StudentAcadService {
 	public void saveStudentAcad(StudentAcad student, String username);
 	public ArrayList<StudentUsers> getStudentList(Department dept, String year);
 	boolean validateAndSetStudDiv(StudentAcad student, String divName);
-	
 }

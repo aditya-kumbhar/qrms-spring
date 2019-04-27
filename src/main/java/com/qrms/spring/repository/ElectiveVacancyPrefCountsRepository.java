@@ -10,4 +10,5 @@ public interface ElectiveVacancyPrefCountsRepository extends JpaRepository<Elect
 	ArrayList<ElectiveVacancyPrefCounts> findAll();
 	ArrayList<ElectiveVacancyPrefCounts> findByCourseId(String course_id);
 	ElectiveVacancyPrefCounts findByElectiveId(String elective_id);
+	void deleteByCourseId(String courseId);
 }

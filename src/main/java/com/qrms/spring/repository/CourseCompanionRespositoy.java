@@ -21,4 +21,6 @@ public interface CourseCompanionRespositoy extends JpaRepository<CompanionCourse
 			+ ")")
 	ArrayList<CompanionCourse> findByCompanionCourseAndCourseIdInElectiveBatches(String courseId);
 
+	CompanionCourse findByCompanionCourse(String courseId);
+
 }

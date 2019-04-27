@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import com.qrms.spring.model.CourseList;
 import com.qrms.spring.model.Department;
-import com.qrms.spring.model.FacultyAcad;
 
 @Repository
 public interface CourseListRepository extends JpaRepository<CourseList, Integer>{

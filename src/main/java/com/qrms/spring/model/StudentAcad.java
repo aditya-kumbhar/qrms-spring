@@ -18,20 +18,6 @@ import javax.persistence.Table;
 @Table(name="student_acad")
 public class StudentAcad  implements Comparable <StudentAcad>{
 
-//	public StudentAcad(String userName, Users user_dets, Department department, String year, int sem, String div,
-//			int shift, String rollno, Float aggMarks, String academicYear) {
-//		super();
-//		this.userName = userName;
-//		this.userDets = userDets;
-//		this.department = department;
-//		this.year = year;
-//		this.sem = sem;
-//		this.div = div;
-//		this.shift = shift;
-//		this.rollno = rollno;
-//		this.aggMarks = aggMarks;
-//		this.academicYear = academicYear;
-//	}
 
 	public StudentAcad(){
 		

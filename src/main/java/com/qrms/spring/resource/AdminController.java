@@ -1,49 +1,34 @@
 package com.qrms.spring.resource;
 
-import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.ConsoleHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
-import org.apache.poi.ss.formula.functions.Column;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-//import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,7 +50,6 @@ import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.FacultyUsers;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
-import com.qrms.spring.queryBeans.CombinedCourseElective;
 import com.qrms.spring.queryBeans.ElectiveBatchCount;
 import com.qrms.spring.queryBeans.ElectiveBatchCountList;
 import com.qrms.spring.queryBeans.FacPrefCountInfo;
@@ -89,7 +73,6 @@ import com.qrms.spring.model.ElectiveBatches;
 import com.qrms.spring.model.ElectiveVacancyPrefCounts;
 import com.qrms.spring.model.Electives;
 import com.qrms.spring.model.FacultyAcad;
-import com.qrms.spring.model.FacultyAllocCourse;
 import com.qrms.spring.model.FacultyAllotedHours;
 import com.qrms.spring.model.FacultyPref;
 import com.qrms.spring.model.OpenFacultyPrefs;
@@ -106,7 +89,6 @@ import com.qrms.spring.repository.ElectiveBatchesRepository;
 import com.qrms.spring.repository.ElectiveVacancyPrefCountsRepository;
 import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.repository.FacultyAcadRepository;
-import com.qrms.spring.repository.FacultyAllocCourseRepository;
 import com.qrms.spring.repository.FacultyAllotedHoursRepository;
 import com.qrms.spring.repository.FacultyPrefRepository;
 import com.qrms.spring.repository.OpenFacultyPrefsRepository;
@@ -116,7 +98,6 @@ import com.qrms.spring.repository.RoleRepository;
 import com.qrms.spring.repository.StudentAcadRepository;
 import com.qrms.spring.repository.StudentAllocCourseRepository;
 import com.qrms.spring.repository.StudentPrefRepository;
-import com.qrms.spring.repository.TimeSlotsRepository;
 import com.qrms.spring.repository.TimeTableRepository;
 import com.qrms.spring.repository.UsersRepository;
 import com.qrms.spring.service.BookingsServiceImpl;
@@ -125,7 +106,6 @@ import com.qrms.spring.service.FacPrefServiceImpl;
 import com.qrms.spring.service.FacultyAcadService;
 import com.qrms.spring.service.StudentAcadServiceImpl;
 import com.qrms.spring.service.StudentPrefServiceImpl;
-import com.qrms.spring.service.TimeSlotsService;
 
 @Controller
 @RequestMapping("/u/admin")
@@ -147,16 +127,12 @@ public class AdminController {
 	
 	@Autowired
 	private StudentAcadServiceImpl studAcadService;
-//	
-//	@Autowired
-//	private TimeSlotsService timeSlotsService;
 	
 	@Autowired
 	private RoleRepository roleRepository;
 	
 	@Autowired
 	private OpenFacultyPrefsRepository openFacultyPrefsRepository;
-	
 	
 	@Autowired
 	private StudentAcadRepository studentAcadRepository;
@@ -202,9 +178,6 @@ public class AdminController {
 	
 	@Autowired
 	private ElectiveBatchesRepository electiveBatchesRepository;
-
-	@Autowired
-	private TimeSlotsRepository timeSlotsRepository;
 	
 	@Autowired
 	private TimeTableRepository timeTableRepository;
@@ -242,9 +215,6 @@ public class AdminController {
 	// Replace with kk:mm if you want 1-24 interval
 	private static final DateFormat TWENTY_FOUR_TF = new SimpleDateFormat("HH:mm");
 
-	
-	
-	
 	//show home page, without tables
 	@GetMapping("/home")
 	public ModelAndView adminHome() {
@@ -445,7 +415,6 @@ public class AdminController {
 		return getViewAdminHome(null,facPrefService.computeFacPrefTable());		
 	}
 	
-	//TODO
 	@Transactional
 	@RequestMapping(value = "/performQuickAction-faculty", method = RequestMethod.POST)
 	public ModelAndView facultyAllocQuickAction(String deptName,  String selectActionFac, String semType, 
@@ -647,13 +616,18 @@ public class AdminController {
 		return "admin/viewUsers:: facultyTable";
 	
 	}
-		
+	
+	@Modifying
 	@Transactional
 	@RequestMapping(value = "/changeSeatsAndAllocate", method = RequestMethod.POST)
 	public ModelAndView changeSeatsAndAllocate(String courseIdList, String seatList) {
 		String electiveIds[] = courseIdList.split(",");
 		String seats[] = seatList.split(",");
 		String courseId = "";
+		
+		//check whether no of students is more than seats available
+		//TODO
+		
 		for(int i=0;i<electiveIds.length;i++) {
 			ElectiveVacancyPrefCounts ec = electiveVacancyPrefCountsRepository.findByElectiveId(electiveIds[i]);
 			ec.setVacancyCount(Integer.parseInt(seats[i]));
@@ -664,7 +638,6 @@ public class AdminController {
 		
 		ModelAndView model = new ModelAndView();
 
-		
 		if(g_err_msg!=null) {
 			return getStudPrefDetailsTable();
 		}
@@ -696,11 +669,17 @@ public class AdminController {
 		
 	}
 
+	@Transactional
+	@Modifying
 	@ResponseBody
 	@RequestMapping(value="/set-batches",method=RequestMethod.POST)
 	public String setNoOfBatches(Model model,@RequestBody ElectiveBatchCountList electiveBatchCounts) {
 		String dept = electiveBatchCounts.getDeptId();
 		String year = electiveBatchCounts.getYear();
+		Course delCourse =  electivesRepository.findByElectiveCourseId(electiveBatchCounts.getElectiveBatchCounts().get(0).getElectiveId()).getCourse();
+		System.out.println(delCourse.getCourseId());
+		electiveBatchesRepository.deleteByCourseId(delCourse);
+		
 		for(ElectiveBatchCount ebc:electiveBatchCounts.getElectiveBatchCounts()) {
 			String batchId = "";
 			List<String> batchIdList = new ArrayList<String>();
@@ -715,13 +694,9 @@ public class AdminController {
 				batchIdList.add(batchId);
 			}
 			if(ebc.getNoOfBatches() == 1)
-				studentAllocCourseRepository.updateBatchIdByElectiveId(
-						electivesRepository.findByElectiveCourseId(ebc.getElectiveId()), batchId);
-			
+				studentAllocCourseRepository.updateBatchIdByElectiveId(electivesRepository.findByElectiveCourseId(ebc.getElectiveId()), batchId);
 			else {
-
-				ArrayList<StudentAllocCourse> sacList = studentAllocCourseRepository.findByElectiveIdSortedByDiv(
-						electivesRepository.findByElectiveCourseId(ebc.getElectiveId()));
+				ArrayList<StudentAllocCourse> sacList = studentAllocCourseRepository.findByElectiveIdSortedByDiv(electivesRepository.findByElectiveCourseId(ebc.getElectiveId()));
 				int totalStudents =  sacList.size();
 				int studentsPerBatch = Math.round(totalStudents/ebc.getNoOfBatches());
 				int i = 0,extra=0;
@@ -844,7 +819,6 @@ public class AdminController {
 		ModelAndView model = new ModelAndView();	
 		Role userRole = roleRepository.findByRole(role);
 		user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
-		System.out.println(role);
 		//check unique email
 		String email = user.getEmail();
 		if(!userDetails.isUniqueEmail(email)) {
@@ -1296,7 +1270,7 @@ public class AdminController {
 				g_msg = null;
 			}
 			else if(alloc==-2) {
-				g_err_msg = "Number of total seats is less than number of students.";
+				g_err_msg = "Total number of seats is less than number of students.";
 				g_msg = null;
 			}
 				
@@ -1329,11 +1303,9 @@ public class AdminController {
 
 				Collections.sort(studentAcads);
 				
-				
 				//Store all vacancy counts for all courses
 				
 				ArrayList <ElectiveVacancyPrefCounts> allElectiveCounts = electiveVacancyPrefCountsRepository.findByCourseId(course_id);
-				
 
 				HashMap<String,Integer> eVHM = new HashMap<String,Integer>();
 				
@@ -1454,7 +1426,7 @@ public class AdminController {
 		}
 		else {
 			studentPrefRepository.deleteByCourseId(electiveIdOption);
-			
+			electiveVacancyPrefCountsRepository.deleteByCourseId(electiveIdOption);
 			Course c = courseRepository.findByCourseId(electiveIdOption);
 			c.setStudAllocFlag(0);
 			courseRepository.save(c);
@@ -1621,7 +1593,6 @@ public class AdminController {
 		int totalCourseHours = 0, totalFacLoad = 0;
 	
 		for(FacultyAcad f:allFacs) {
-			
 			totalFacLoad+= desigHours.get(f.getDesignation())[1];
 		}
 		//divisions for each year sem
@@ -1670,6 +1641,7 @@ public class AdminController {
 						for(int i = 1;i<=d.getNoOfBatches();i++) {
 							PracticalList p = new PracticalList();
 							p.setFacultyId("");
+							System.out.println(d.getDivId());
 							p.setDivId(d.getDivId());
 							p.setLabId(d.getDivId().concat(Integer.toString(i)));
 							p.setNoOfHours(courseRepository.findByCourseId(cc.getCompanionCourse()).getNoOfHours());
@@ -1715,11 +1687,15 @@ public class AdminController {
 			
 			}		
 		}
-
-		//add elective practical courses to course list
+		
+		//add elective practical courses to practical list
 		for(Course c: allElectivePracticals) {
-			ArrayList<CompanionCourse> ccs = courseCompanionRepository.findByCompanionCourseAndCourseIdInElectiveBatches(c.getCourseId());
-			for(CompanionCourse cc:ccs) {
+			System.out.println(c.getCourseId());
+//			ArrayList<CompanionCourse> ccs = courseCompanionRepository.findByCompanionCourseAndCourseIdInElectiveBatches(c.getCourseId());
+//			System.out.println("ccs size "+ccs.size());
+			CompanionCourse cc = courseCompanionRepository.findByCompanionCourse(c.getCourseId());
+			ArrayList<Electives> courseElectives  = electivesRepository.findByCourse(courseRepository.findByCourseId(cc.getCourse()));
+//			for(CompanionCourse cc:ccs) {
 				for(Divisions d:divisionNeeds) {
 					if(d.getDepartment().equals(c.getDepartment()) && d.getYear().equals(c.getCourseYear())) {
 						for(int i = 1;i<=d.getNoOfBatches();i++) {
@@ -1727,23 +1703,30 @@ public class AdminController {
 							p.setFacultyId("");
 							p.setDivId(d.getDivId());
 							p.setLabId(d.getDivId().concat(Integer.toString(i)));
-							p.setNoOfHours(courseRepository.findByCourseId(cc.getCompanionCourse()).getNoOfHours());
-							p.setPracticalCourseId(cc.getCompanionCourse());
+							p.setNoOfHours(c.getNoOfHours());
+							p.setPracticalCourseId(c.getCourseId());
 							p.setTheoryCourseId(cc.getCourse());
-							if(practicalListPointer.get(cc.getCourse()) == null) {
-								List<Integer> li = new ArrayList<Integer>();
-								li.add(pl);
-								practicalListPointer.put(cc.getCourse(),li);
-							} 
-							else {
-								practicalListPointer.get(cc.getCourse()).add(pl);
-							}
-							if(practicalListPointerPerDiv.get(cc.getCourse()+d.getDivId()) == null) {
-								List<Integer> li = new ArrayList<Integer>();
-								li.add(pl);
-								practicalListPointerPerDiv.put(cc.getCourse()+d.getDivId(),li);
-							} else {
-								practicalListPointerPerDiv.get(cc.getCourse()+d.getDivId()).add(pl);
+							for(Electives e: courseElectives) {
+								if(practicalListPointer.get(e.getElectiveCourseId()) == null) {
+									List<Integer> li = new ArrayList<Integer>();
+									li.add(pl);
+									practicalListPointer.put(e.getElectiveCourseId(),li);
+								} 
+								else {
+									practicalListPointer.get(e.getElectiveCourseId()).add(pl);
+								}
+								for(ElectiveBatches eb:electiveNeeds) {
+									if(eb.getElectiveId().equals(e.getElectiveCourseId())) {
+										if(practicalListPointerPerDiv.get(e.getElectiveCourseId()+d.getDivId()) == null) {
+											List<Integer> li = new ArrayList<Integer>();
+											li.add(pl);
+											practicalListPointerPerDiv.put(e.getElectiveCourseId()+eb.getBatchId(),li);
+										} else {
+											practicalListPointerPerDiv.get(e.getElectiveCourseId()+eb.getBatchId()).add(pl);
+										}	
+									}
+								}
+								
 							}
 							totalCourseHours+=p.getNoOfHours();
 							pl++;
@@ -1751,8 +1734,10 @@ public class AdminController {
 						}
 					}
 				}
-			}
+//			}
 		}
+//		for(practicalList)
+		
 		//more fac hrs than courses
 		if(totalCourseHours < totalFacLoad) {
 			HashMap<String,Integer> facsPerDesig = new HashMap<String,Integer>();

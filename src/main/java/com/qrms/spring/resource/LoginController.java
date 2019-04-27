@@ -74,7 +74,6 @@ public class LoginController {
 	    if (result != null) {
 	        model.addObject("errmsg",result);
 	        model.setViewName("login");
-	        System.out.println(result);
 	        return model;
 	    }
 	    model.addObject("username",username);

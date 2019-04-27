@@ -31,7 +31,6 @@ public class FacPrefServiceImpl implements FacPrefService {
 	
 	@Override
 	public List<FacPrefCountInfo> computeFacPrefTable() {
-		// TODO Auto-generated method stub
 		List<FacPrefCountInfo> fpList = new ArrayList<FacPrefCountInfo>();
 		List<OpenFacultyPrefs> openFacPrefs = openFacultyPrefsRepository.findAll();
 		
@@ -47,7 +46,6 @@ public class FacPrefServiceImpl implements FacPrefService {
 			fp.setTotalFacultyCount(facultyAcadRepository.countFacultyByDepartment(dept));
 			fpList.add(fp);
 		}
-		
 		return fpList;
 		
 	}

@@ -15,7 +15,7 @@
 		var clearChoice;
 		var inputChoice;
 		var prefData = [];
-		var SE=0, TE=0, BE=0;
+		var SE=0, TE=0, BE=0, ME1=0, ME2=0;
 		var prereq1, prereq2;
 		$(document).ready(function(){
 		    $(".choose").click(function(){
@@ -39,6 +39,10 @@
 		        $('#'+clearChoice).html("");
 		        
 		        var ind = clearChoice[clearChoice.length-1];
+		        if(prefData[ind].year=="ME1")
+		        	ME2--;
+		        if(prefData[ind].year=="ME2")
+		        	ME1--;
 		        if(prefData[ind].year=="BE")
 		        	BE--;
 		        if(prefData[ind].year=="TE")
@@ -190,6 +194,35 @@
   	</tr>
   	
   	<tr>
+  		<td>
+  			<h6>7</h6>
+  		</td>
+  		<td>
+  			<h6 id="pref7"></h6>
+  		</td>
+  		<td>
+  			<button class="choose" id="pref7">Choose</button>	
+  		</td>
+  		<td>
+			<button class="clear" id="pref7">Clear</button>			
+  		</td>
+  	</tr>
+  	
+  	<tr>
+  		<td>
+  			<h6>8</h6>
+  		</td>
+  		<td>
+  			<h6 id="pref8"></h6>
+  		</td>
+  		<td>
+  			<button class="choose" id="pref8">Choose</button>	
+  		</td>
+  		<td>
+			<button class="clear" id="pref8">Clear</button>			
+  		</td>
+  	</tr>
+  	<tr>
 		<td colspan=4 align=center>
        		<button type="submit" id="submit" class="btn btn-primary btn-block" onclick="submitPrefs()"  style="width:150px; background-color: #2B7526;">Submit</button>
     	</td> 	  
@@ -218,6 +251,8 @@
 					<option value="SE" style="color:#000">SE</option>
 					<option value="TE" style="color:#000">TE</option>
 					<option value="BE" style="color:#000">BE</option>
+					<option value="ME1" style="color:#000">ME 1</option>
+					<option value="ME2" style="color:#000">ME 2</option>
 				</select>	
 			</td>
 		</tr>
@@ -330,6 +365,22 @@
         } 
 		console.log('ajax: '+$('#year').val());
 		
+		if(cyear=="ME2")
+		{
+			if(ME2>=1)
+			{
+				alert("Maximum preference for selected year reached. Cannot give more than 2 preferences for a single year");
+				return;
+			}
+		}
+		if(cyear=="ME1")
+		{
+			if(ME1>=1)
+			{
+				alert("Maximum preference for selected year reached. Cannot give more than 2 preferences for a single year");
+				return;
+			}
+		}
 		if(cyear=="BE")
 		{
 			if(BE>=2)
@@ -407,6 +458,10 @@
 	      
 		
         var cyear = $('#year').val(); 
+        if(cyear=="ME2")
+			ME2++;
+        if(cyear=="ME1")
+			ME1++;
         if(cyear=="BE")
 			BE++;
 		if(cyear=="TE")

@@ -26,37 +26,7 @@ public class UserAuthenticationSuccessHandler implements AuthenticationSuccessHa
 		public void onAuthenticationSuccess(HttpServletRequest request,HttpServletResponse response, Authentication authentication)
 				throws IOException, ServletException {
 			handle(request, response, authentication);
-	        clearAuthenticationAttributes(request);
-	        
-//			Collection<?extends GrantedAuthority> authorities = authentication.getAuthorities(); //<?extends means any sub-type of GrantedAuthority is also allowed in the collection
-//			
-//			authorities.forEach(authority -> {
-//				if(authority.getAuthority().equals("ROLE_USER")) {
-//					try {
-//						redirectStrategy.sendRedirect(arg0, arg1, "/u/student-home");
-//					} catch (Exception e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				} else if(authority.getAuthority().equals("ROLE_ADMIN")) {
-//					try {
-//						redirectStrategy.sendRedirect(arg0, arg1, "/u/admin-home");
-//					} catch (Exception e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				} else if(authority.getAuthority().equals("ROLE_FACULTY")) {
-//					try {
-//						redirectStrategy.sendRedirect(arg0, arg1, "/u/faculty-home");
-//					} catch (Exception e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}else {
-//		            throw new IllegalStateException();
-//		        }
-//			});
-			
+	        clearAuthenticationAttributes(request);			
 		}
 		
 		protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -78,7 +48,6 @@ public class UserAuthenticationSuccessHandler implements AuthenticationSuccessHa
 			                break;
 			            } else if (grantedAuthority.getAuthority().equals("ROLE_ADMIN")) {
 			                isAdmin = true;
-			                System.out.println("Admin login");
 			                break;
 			            } else if (grantedAuthority.getAuthority().equals("ROLE_FACULTY")) {
 			                isFaculty = true;

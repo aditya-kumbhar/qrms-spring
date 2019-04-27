@@ -28,7 +28,6 @@ public class StudentAcadServiceImpl implements StudentAcadService {
 	
 	@Override
 	public void saveStudentAcad(StudentAcad student, String username) {
-		
 		student.setUserName(username);
 		studentAcadRepository.save(student);
 	
@@ -59,10 +58,7 @@ public class StudentAcadServiceImpl implements StudentAcadService {
 	
 	@Override
 	public boolean validateAndSetStudDiv(StudentAcad s, String divName) {
-
 		String divId = s.getYear() + s.getDepartment().getDeptId() + divName;
-		System.out.println(s.getUserName());
-		System.out.println(divId);
 		Divisions div = divisionsRepository.findByDivId(divId);
 		if(div!=null) {
 			s.setDiv(div);

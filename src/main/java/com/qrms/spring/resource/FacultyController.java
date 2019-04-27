@@ -1,25 +1,17 @@
 package com.qrms.spring.resource;
 
-
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.mail.MailException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -428,10 +420,8 @@ public class FacultyController {
 	public String sendBookingRequest(Model model,String booking_date,String resource,String startTime,String endTime,String activityName) {
 		
 		LocalDateTime reqTime = LocalDateTime.now();
-		System.out.println(reqTime.getYear()+"/"+reqTime.getMonthValue()+"/"+reqTime.getDayOfMonth()+"  "+reqTime.getHour()+":"+reqTime.getMinute()+":"+reqTime.getSecond());
 		String reqGenTime = reqTime.getYear()+"/"+reqTime.getMonthValue()+"/"+reqTime.getDayOfMonth()+"  "+reqTime.getHour()+":"+reqTime.getMinute()+":"+reqTime.getSecond();
 		
-		System.out.println("booking_date "+booking_date+" "+"resource "+resource+" "+"startTime "+startTime+" "+"endTime "+endTime+" "+"activityName "+activityName);
 		Users user = (Users)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = user.getUserName();
 		
@@ -454,7 +444,6 @@ public class FacultyController {
 		
 		LocalDate requestDate = LocalDate.parse(reqTime.getYear()+"-"+String.format("%02d", reqTime.getMonthValue())+"-"+String.format("%02d", reqTime.getDayOfMonth()), df);
 		Date requestedSqlDate = java.sql.Date.valueOf(requestDate.toString());
-		
 		
 		ResourceRequests resourceRequest = new ResourceRequests();
 		resourceRequest.setSlotActivityName(activityName);
