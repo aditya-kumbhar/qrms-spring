@@ -24,7 +24,7 @@ insert into user values('stud5',1,'stud5@gmail.com','Student','Student','student
 insert into user values('stud6',1,'stud6@gmail.com','Student','Student','student');
 insert into user values('stud7',1,'stud7@gmail.com','Student','Student','student');
 insert into user values('stud8',1,'stud8@gmail.com','Student','Student','student');
-insert into user values('stud9',1,'stud9@gmail.com','Student','Student','student');
+insert into user values('stud9',1,'stud9@gmail.com','Student','Stude4nt','student');
 insert into user values('stud10',1,'stud10@gmail.com','Student','Student','student');
 insert into user values('stud11',1,'stud11@gmail.com','Student','Student','student');
 insert into user values('stud12',1,'stud12@gmail.com','Student','Student','student');
