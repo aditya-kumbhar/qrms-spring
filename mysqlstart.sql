@@ -327,6 +327,26 @@ INSERT INTO `department` VALUES ('CO','Computer Department'),('ME','Mechanical D
 
 
 /*COURSE TABLE*/
+/*ME sem3*/
+INSERT INTO `course` VALUES ('610101',4,'Advanced Storeage Systems and Infrastructure Management',3,'R','ME',1,4,0,'CO');
+INSERT INTO `course` VALUES ('610102',4,'Advanced Unix Programming',3,'R','ME',1,4,0,'CO');
+INSERT INTO `course` VALUES ('610103',5,'Elective 3',3,'E','ME',1,5,0,'CO');
+
+/*ME sem2*/
+INSERT INTO `course` VALUES ('510107',4,'Operating System Design',2,'R','ME',1,4,0,'CO');
+INSERT INTO `course` VALUES ('510108',4,'Software Design and Architecture',2,'R','ME',1,4,0,'CO');
+INSERT INTO `course` VALUES ('510109',4,'Advanced Computer Networks',2,'R','ME',1,4,0,'CO');
+INSERT INTO `course` VALUES ('510110',5,'Elective 2',2,'E','ME',1,5,0,'CO');
+INSERT INTO `course` VALUES ('510111',4,'LP-2',2,'R','ME',0,4,0,'CO');
+
+/*ME sem1*/
+INSERT INTO `course` VALUES ('510101',4,'Applied Algorithms',1,'R','ME',1,4,0,'CO');
+INSERT INTO `course` VALUES ('510102',4,'High Performance Databases',1,'R','ME',1,4,0,'CO');
+INSERT INTO `course` VALUES ('510103',4,'Advanced Computer Architecture',1,'R','ME',1,4,0,'CO');
+INSERT INTO `course` VALUES ('510104',4,'Research Methodolody',1,'R','ME',1,4,0,'CO');
+INSERT INTO `course` VALUES ('510105',5,'Elective 1',1,'E','ME',1,5,0,'CO');
+INSERT INTO `course` VALUES ('510106',4,'LP1',1,'R','ME',0,4,0,'CO');
+
 /*BE sem2*/
 INSERT INTO `course` VALUES ('410250',3,'Machine Learning',8,'R','BE',1,3,0,'CO');
 INSERT INTO `course` VALUES ('410251',3,'Information and Cyber Security',8,'R','BE',1,3,0,'CO');
@@ -398,6 +418,27 @@ INSERT INTO `course` VALUES ('210249',1,'Soft Skills',3,'R','SE',0,2,0,'CO');
 
 
 /*ELECTIVES TABLE*/
+/*ME sem3 elective3*/
+INSERT INTO `electives` VALUES ('610103A','Network Security','610103');
+INSERT INTO `electives` VALUES ('610103B','Cloud Computing','610103');
+INSERT INTO `electives` VALUES ('610103C','Computer Vision and Pattern Recognition','610103');
+INSERT INTO `electives` VALUES ('610103D','Soft Computing','610103');
+INSERT INTO `electives` VALUES ('610103E','Open Elective','610103');
+
+/*ME sem2 elective2*/
+INSERT INTO `electives` VALUES ('510110A','Business Intelligence and Data Mining','510110');
+INSERT INTO `electives` VALUES ('510110B','Usability Engineering','510110');
+INSERT INTO `electives` VALUES ('510110C','Advanced Compiler Design','510110');
+INSERT INTO `electives` VALUES ('510110D','Embedded System Design','510110');
+INSERT INTO `electives` VALUES ('510110E','Open Elective','510110');
+
+/*ME sem1 elective1*/
+INSERT INTO `electives` VALUES ('510105A','Intelligent Systems','510105');
+INSERT INTO `electives` VALUES ('510105B','IR and Web Mining','510105');
+INSERT INTO `electives` VALUES ('510105C','Machine Learning and Translation','510105');
+INSERT INTO `electives` VALUES ('510105D','Real Time Systems','510105');
+INSERT INTO `electives` VALUES ('510105E','Open Elective','510105');
+
 /*BE sem2 elective4*/
 INSERT INTO `electives` VALUES ('410253A','Software Defined Networks','410253');
 INSERT INTO `electives` VALUES ('410253B','Human Computer Interface','410253');
@@ -425,7 +466,6 @@ INSERT INTO `electives` VALUES ('410244D','Data Mining and Warehousing','410244'
 
 
 /*BE sem2 elective_batches -- will be populated during student allocation*/
-
 -- SCOA(1), Compilers(1), ERTOS(1)
 INSERT INTO `elective_batches` VALUES('410252B-1','410252B','BE','CO');
 INSERT INTO `elective_batches` VALUES('410252C-1','410252C','BE','CO');
@@ -441,6 +481,7 @@ INSERT INTO `elective_batches` VALUES('410253C-1','410253C','BE','CO');
 INSERT INTO `elective_batches` VALUES('410245B-1','410245B','BE','CO');
 INSERT INTO `elective_batches` VALUES('410245B-2','410245B','BE','CO');
 INSERT INTO `elective_batches` VALUES('410245B-3','410245B','BE','CO');
+
 -- DMW(3)
 INSERT INTO `elective_batches` VALUES('410244D-1','410244D','BE','CO');
 INSERT INTO `elective_batches` VALUES('410244D-2','410244D','BE','CO');
@@ -449,6 +490,36 @@ INSERT INTO `elective_batches` VALUES('410244D-3','410244D','BE','CO');
 
 
 /*COURSE_PREREQUISITES TABLE*/
+/*ME sem3*/
+INSERT into course_prerequisites values ('610101',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('610102',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('610103A',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('610103B',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('610103C',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('610103D',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('610103E',-1,-1,'NA','NA');
+
+/*ME sem2*/
+INSERT into course_prerequisites values ('510107',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510108',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510109',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510110A',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510110B',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510110C',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510110D',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510110E',-1,-1,'NA','NA');
+
+/*ME sem1*/
+INSERT into course_prerequisites values ('510101',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510102',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510103',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510104',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510105A',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510105B',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510105C',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510105D',-1,-1,'NA','NA');
+INSERT into course_prerequisites values ('510105E',-1,-1,'NA','NA');
+
 /*BE sem2*/
 INSERT into course_prerequisites values ('410250',0,-1,'207003','NA');
 INSERT into course_prerequisites values ('410251',0,-1,'310245','NA');
