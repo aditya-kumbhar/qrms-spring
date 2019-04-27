@@ -208,7 +208,7 @@
   		</td>
   	</tr>
   	
-  	<tr>
+  	<tr id="pref8tr" th:if="${semType} != 0">
   		<td>
   			<h6>8</h6>
   		</td>
@@ -252,7 +252,7 @@
 					<option value="TE" style="color:#000">TE</option>
 					<option value="BE" style="color:#000">BE</option>
 					<option value="ME1" style="color:#000">ME 1</option>
-					<option value="ME2" style="color:#000">ME 2</option>
+					<option th:if="${semType} != 0" value="ME2" style="color:#000">ME 2</option>
 				</select>	
 			</td>
 		</tr>
@@ -287,10 +287,10 @@
 </div>
 
 
-<article class="card-body mx-auto" id="article2">
-    <form role="form" id="form2" th:fragment="selectPreferenceFragment"> 
+<article class="card-body mx-auto" id="article2" th:fragment="selectPreferenceFragment">
+    <form role="form" id="form2"> 
     <h4 class="card-title mt-3 text-center card-body mx-auto">Give preferences for <span th:text="${chosen_year_name}"></span> courses</h4>
-    <div th:id="selectPreferenceFragment">
+    <div>
     <table>
     	<tr>
     		<td>
@@ -354,7 +354,7 @@
 </div>
 </div>
 
-<script>
+<script th:inline="javascript">
 	$('#getChoices').click(function(){
 		var cyear = $('#year').val();
         if (cyear == "none") {
@@ -425,7 +425,9 @@
 	              	$('#form2').html(response);
 	              	$('#form2').show();
 	             	$('#messageDiv').hide();                   
-
+	             	console.log(response);
+	             	console.log("not err");
+					
                 }
               }
 		});
@@ -513,11 +515,31 @@
        	
       	$('#messageDiv').hide();
       	$("#heading").show();
-
+      	$('html, body').animate({
+            scrollTop: $('#form1').offset().top
+          }, 500);
 	}
-	
 	function submitPrefs()
 	{
+		if (document.getElementById('pref8tr')==null){
+			
+			if (document.getElementById('pref1').innerHTML == "" || document.getElementById('pref2').innerHTML == "" || 
+					document.getElementById('pref3').innerHTML == "" || document.getElementById('pref4').innerHTML == "" ||
+					document.getElementById('pref5').innerHTML == "" || document.getElementById('pref6').innerHTML == "" ||
+					document.getElementById('pref7').innerHTML == "")
+				{
+				 alert("Please fill all the preferences first!");
+				}
+			
+		}else{
+			if (document.getElementById('pref1').innerHTML == "" || document.getElementById('pref2').innerHTML == "" || 
+					document.getElementById('pref3').innerHTML == "" || document.getElementById('pref4').innerHTML == "" ||
+					document.getElementById('pref5').innerHTML == "" || document.getElementById('pref6').innerHTML == "" ||
+					document.getElementById('pref7').innerHTML == "" || document.getElementById('pref8').innerHTML == "")
+				{
+				 alert("Please fill all the preferences first!");
+				}
+		}
 		console.log(prefData);
 		var facultyPrefs = [];
 		
