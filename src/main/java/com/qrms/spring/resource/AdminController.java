@@ -48,12 +48,12 @@ import com.qrms.spring.model.TimeSlots;
 import com.qrms.spring.model.TimeTable;
 import com.qrms.spring.model.Users;
 import com.qrms.spring.queryBeans.FacultyUsers;
+import com.qrms.spring.queryBeans.FacultyAllocations;
 import com.qrms.spring.queryBeans.PrefNumCountPerElective;
 import com.qrms.spring.queryBeans.StudentPrefCountInfo;
 import com.qrms.spring.queryBeans.ElectiveBatchCount;
 import com.qrms.spring.queryBeans.ElectiveBatchCountList;
 import com.qrms.spring.queryBeans.FacPrefCountInfo;
-import com.qrms.spring.queryBeans.FacultyAllocations;
 import com.qrms.spring.queryBeans.StudentUsers;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CourseList;
@@ -2115,6 +2115,30 @@ public class AdminController {
 			fa.setPracticalsAndBatches(facPracticalCourses.get(f.getFacultyId()));
 			fa.setPracticalHours(f.getPracticalHours());
 			fa.setTheoryHours(f.getTheoryHours());
+			ArrayList<String> courseNames = new ArrayList<>();
+			ArrayList<String> pracNames = new ArrayList<>();
+			
+			for(CourseList c:facCourses.get(f.getFacultyId()))	{
+				Course tempc = courseRepository.findByCourseId(c.getCourseId());
+				if(tempc!=null) {
+					courseNames.add(tempc.getCourseName());
+				}
+				else{
+					Electives tempe = electivesRepository.findByElectiveCourseId(c.getCourseId());
+					courseNames.add(tempe.getElectiveName());
+				}
+			}
+			
+			for(PracticalList p:facPracticalCourses.get(f.getFacultyId())) {
+				Course tempc = courseRepository.findByCourseId(p.getPracticalCourseId());
+				System.out.println(p.getPracticalCourseId()+"   "+p.getTheoryCourseId());
+				if(tempc!=null) {
+					pracNames.add(tempc.getCourseName());
+				}
+			}
+			
+			fa.setCourses(courseNames);
+			fa.setPracticals(pracNames);
 			rs.add(fa);
 		}
 		return rs;

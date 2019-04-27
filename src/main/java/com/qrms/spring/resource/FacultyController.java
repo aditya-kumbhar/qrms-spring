@@ -129,14 +129,30 @@ public class FacultyController {
 					List<CourseList> courses = courseListRepository.findByFacultyId(userName);
 					List<PracticalList> practicals = practicalListRepository.findByFacultyId(userName);
 					
+					List<String> courseNames = new ArrayList<>();
+					List<String> pracNames = new ArrayList<>();
+					
 					int facTheoryHours = 0;
 					for(CourseList c:courses) {
 						facTheoryHours += c.getNoOfHours();
+						Course tempc = courseRepository.findByCourseId(c.getCourseId());
+						if(tempc!=null) {
+							courseNames.add(tempc.getCourseName());
+						}
+						else{
+							Electives tempe = electivesRepository.findByElectiveCourseId(c.getCourseId());
+							courseNames.add(tempe.getElectiveName());
+						}
 					}
 					
 					int practicalTheoryHours = 0;
 					for(PracticalList p:practicals) {
 						practicalTheoryHours += p.getNoOfHours();
+						Course tempc = courseRepository.findByCourseId(p.getPracticalCourseId());
+						System.out.println(p.getPracticalCourseId()+"   "+p.getTheoryCourseId());
+						if(tempc!=null) {
+							pracNames.add(tempc.getCourseName());
+						}
 					}
 					
 					fa.setAllotedLoad(fac.getAllotedHours());
@@ -146,7 +162,8 @@ public class FacultyController {
 					fa.setPracticalsAndBatches(practicals);
 					fa.setPracticalHours(practicalTheoryHours);
 					fa.setTheoryHours(facTheoryHours);
-					
+					fa.setPracticals(pracNames);
+					fa.setCourses(courseNames);
 					model.addObject("facultyAllocation", fa);
 				}
 				

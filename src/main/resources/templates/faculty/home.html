@@ -67,13 +67,15 @@
 				 <thead>
 					 <tr>
 						 <td>Course ID</td>
+						 <td>Course Name</td>
 						 <td>Division</td>
 						 <td>Hours</td>
 					 </tr>
 				 </thead>
 				 <tbody>
-					<tr th:each="fa : ${facultyAllocation.courseAndDivs}">
+					<tr th:each="fa,iterStat : ${facultyAllocation.courseAndDivs}">
 						<td th:text="${fa.courseId}"></td>
+						<td th:text="${facultyAllocation.courses[iterStat.index]}">
 						<td th:text="${fa.divisionId}"></td>
 						<td th:text="${fa.noOfHours}"></td>	
 				 	</tr>
@@ -85,6 +87,7 @@
 				 <thead>
 					 <tr>
 						 <td>Practical Course ID</td>
+						 <td>Practical Name</td>
 						 <td>Theory Course ID</td>
 						 <td>Division</td>
 						 <td>Batch</td>
@@ -92,8 +95,10 @@
 					 </tr>
 				 </thead>
 				 <tbody>
-					<tr th:each="fa : ${facultyAllocation.practicalsAndBatches}">
+					 
+					<tr th:each="fa,iterStat : ${facultyAllocation.practicalsAndBatches}">
 						<td th:text="${fa.practicalCourseId}"></td>
+						<td th:text="${facultyAllocation.practicals[iterStat.index]}">
 						<td th:text="${fa.theoryCourseId}"></td>
 						<td th:text="${fa.divId}"></td>
 						<td th:text="${fa.labId}"></td>

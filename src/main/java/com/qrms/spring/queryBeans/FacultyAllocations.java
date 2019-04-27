@@ -6,15 +6,34 @@ import com.qrms.spring.model.CourseList;
 import com.qrms.spring.model.PracticalList;
 
 public class FacultyAllocations {
+
 	String facultyId,name;
 	
 	List<CourseList> courseAndDivs;
 	List<PracticalList> practicalsAndBatches;
+	List<String> courses;
+	List<String> practicals;
 	
 	Integer theoryHours,practicalHours,allotedLoad,maxLoad;
 
 	public FacultyAllocations() {
 	
+	}
+
+	public List<String> getCourses() {
+		return courses;
+	}
+
+	public void setCourses(List<String> courses) {
+		this.courses = courses;
+	}
+
+	public List<String> getPracticals() {
+		return practicals;
+	}
+
+	public void setPracticals(List<String> practicals) {
+		this.practicals = practicals;
 	}
 
 	public String getName() {

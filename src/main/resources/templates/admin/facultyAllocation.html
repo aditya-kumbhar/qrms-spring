@@ -118,37 +118,43 @@
 	<div th:if="${facultyAllocation}">
  		<h5 id="nameDet" th:text="${facultyAllocation.name}"></h5>
 	 <ol>
-	 <li>Courses alloted
+	 <li th:if="${!facultyAllocation.courseAndDivs.empty}">Courses alloted
 	 <table class="table table-bordered table-hover">
 	 <thead>
 		 <tr>
 			 <td>Course ID</td>
+			 <td>Course Name</td>
 			 <td>Division</td>
 			 <td>Hours</td>
 		 </tr>
 	 </thead>
 	 <tbody>
-		<tr th:each="fa : ${facultyAllocation.courseAndDivs}">
+		<tr th:each="fa,iterStat : ${facultyAllocation.courseAndDivs}">
 			<td th:text="${fa.courseId}"></td>
+			<td th:text="${facultyAllocation.courses[iterStat.index]}">
 			<td th:text="${fa.divisionId}"></td>
 			<td th:text="${fa.noOfHours}"></td>	
 	 	</tr>
 	 	</tbody>
 	 </table>
 	</li>
-	<li>Practicals Alloted
+	<li th:if="${!facultyAllocation.practicalsAndBatches.empty}">Labs Alloted
 	<table class="table table-bordered table-hover">
 	 <thead>
 		 <tr>
 			 <td>Practical Course ID</td>
+			 <td>Practical Name</td>
+			 <td>Theory Course ID</td>
 			 <td>Division</td>
 			 <td>Batch</td>
 			 <td>Hours</td>
 		 </tr>
 	 </thead>
 	 <tbody>
-		<tr th:each="fa : ${facultyAllocation.practicalsAndBatches}">
+		<tr th:each="fa,iterStat : ${facultyAllocation.practicalsAndBatches}">
 			<td th:text="${fa.practicalCourseId}"></td>
+			<td th:text="${facultyAllocation.practicals[iterStat.index]}">
+			<td th:text="${fa.theoryCourseId}"></td>
 			<td th:text="${fa.divId}"></td>
 			<td th:text="${fa.labId}"></td>
 			<td th:text="${fa.noOfHours}"></td>	

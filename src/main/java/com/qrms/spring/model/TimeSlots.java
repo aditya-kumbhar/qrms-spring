@@ -117,10 +117,9 @@ public class TimeSlots implements Comparable<TimeSlots>{
 
 	@Override
 	public int compareTo(TimeSlots o) {
-		// TODO Auto-generated method stub
 		return (this.getStartTime().before(o.getStartTime()) ? -1 : 
 
-            (this.getStartTime().equals(o) ? 0 : 1));
+            (this.getStartTime().equals(o.getStartTime()) ? 0 : 1));
 	}
 	
 }
