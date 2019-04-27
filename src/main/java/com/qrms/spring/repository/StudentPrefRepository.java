@@ -22,8 +22,8 @@ public interface StudentPrefRepository extends JpaRepository<StudentPref, Intege
 	//JPQL
 	@Query("SELECT "+
 			"new com.qrms.spring.queryBeans.PrefGroupByCourseStudent(count(DISTINCT sp.userName),sp.courseId) "+
-			"FROM StudentPref sp GROUP BY sp.courseId")
-	List<PrefGroupByCourseStudent> findPrefsGroupByCourseStudent();
+			"FROM StudentPref sp where sp.courseId = ?1 GROUP BY sp.courseId")
+	PrefGroupByCourseStudent findPrefsGroupByCourseStudent(String courseId);
 
 	//JPQL: Count priority-wise number of preferences for each elective
 	@Query("SELECT "+

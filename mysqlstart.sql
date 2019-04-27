@@ -1411,4 +1411,3 @@ INSERT INTO faculty_pref values(212,6,'310254',null,4,3,3,'fac36','TE');
 INSERT INTO faculty_pref values(213,8,'310253',null,3,2,2,'fac36','TE');
 INSERT INTO faculty_pref values(214,5,'210254',null,6,5,5,'fac36','SE');
 INSERT INTO faculty_pref values(215,8,'210253',null,2,4,6,'fac36','SE');
-

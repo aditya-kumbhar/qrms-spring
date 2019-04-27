@@ -676,6 +676,10 @@ public class AdminController {
 	public String setNoOfBatches(Model model,@RequestBody ElectiveBatchCountList electiveBatchCounts) {
 		String dept = electiveBatchCounts.getDeptId();
 		String year = electiveBatchCounts.getYear();
+		Course delCourse =  electivesRepository.findByElectiveCourseId(electiveBatchCounts.getElectiveBatchCounts().get(0).getElectiveId()).getCourse();
+		System.out.println(delCourse.getCourseId());
+		electiveBatchesRepository.deleteByCourseId(delCourse);
+		
 		for(ElectiveBatchCount ebc:electiveBatchCounts.getElectiveBatchCounts()) {
 			String batchId = "";
 			List<String> batchIdList = new ArrayList<String>();
@@ -1272,7 +1276,7 @@ public class AdminController {
 				g_msg = null;
 			}
 			else if(alloc==-2) {
-				g_err_msg = "Number of total seats is less than number of students.";
+				g_err_msg = "Total number of seats is less than number of students.";
 				g_msg = null;
 			}
 				
@@ -1305,11 +1309,9 @@ public class AdminController {
 
 				Collections.sort(studentAcads);
 				
-				
 				//Store all vacancy counts for all courses
 				
 				ArrayList <ElectiveVacancyPrefCounts> allElectiveCounts = electiveVacancyPrefCountsRepository.findByCourseId(course_id);
-				
 
 				HashMap<String,Integer> eVHM = new HashMap<String,Integer>();
 				
@@ -1430,7 +1432,7 @@ public class AdminController {
 		}
 		else {
 			studentPrefRepository.deleteByCourseId(electiveIdOption);
-			
+			electiveVacancyPrefCountsRepository.deleteByCourseId(electiveIdOption);
 			Course c = courseRepository.findByCourseId(electiveIdOption);
 			c.setStudAllocFlag(0);
 			courseRepository.save(c);
@@ -1597,7 +1599,6 @@ public class AdminController {
 		int totalCourseHours = 0, totalFacLoad = 0;
 	
 		for(FacultyAcad f:allFacs) {
-			
 			totalFacLoad+= desigHours.get(f.getDesignation())[1];
 		}
 		//divisions for each year sem
@@ -1693,12 +1694,13 @@ public class AdminController {
 			}		
 		}
 		
-		//add elective practical courses to course list
+		//add elective practical courses to practical list
 		for(Course c: allElectivePracticals) {
 			System.out.println(c.getCourseId());
-			ArrayList<CompanionCourse> ccs = courseCompanionRepository.findByCompanionCourseAndCourseIdInElectiveBatches(c.getCourseId());
-			System.out.println("ccs size "+ccs.size());
+//			ArrayList<CompanionCourse> ccs = courseCompanionRepository.findByCompanionCourseAndCourseIdInElectiveBatches(c.getCourseId());
+//			System.out.println("ccs size "+ccs.size());
 			CompanionCourse cc = courseCompanionRepository.findByCompanionCourse(c.getCourseId());
+			ArrayList<Electives> courseElectives  = electivesRepository.findByCourse(courseRepository.findByCourseId(cc.getCourse()));
 //			for(CompanionCourse cc:ccs) {
 				for(Divisions d:divisionNeeds) {
 					if(d.getDepartment().equals(c.getDepartment()) && d.getYear().equals(c.getCourseYear())) {
@@ -1710,20 +1712,27 @@ public class AdminController {
 							p.setNoOfHours(c.getNoOfHours());
 							p.setPracticalCourseId(c.getCourseId());
 							p.setTheoryCourseId(cc.getCourse());
-							if(practicalListPointer.get(c.getCourseId()) == null) {
-								List<Integer> li = new ArrayList<Integer>();
-								li.add(pl);
-								practicalListPointer.put(c.getCourseId(),li);
-							} 
-							else {
-								practicalListPointer.get(c.getCourseId()).add(pl);
-							}
-							if(practicalListPointerPerDiv.get(c.getCourseId()+d.getDivId()) == null) {
-								List<Integer> li = new ArrayList<Integer>();
-								li.add(pl);
-								practicalListPointerPerDiv.put(c.getCourseId()+d.getDivId(),li);
-							} else {
-								practicalListPointerPerDiv.get(c.getCourseId()+d.getDivId()).add(pl);
+							for(Electives e: courseElectives) {
+								if(practicalListPointer.get(e.getElectiveCourseId()) == null) {
+									List<Integer> li = new ArrayList<Integer>();
+									li.add(pl);
+									practicalListPointer.put(e.getElectiveCourseId(),li);
+								} 
+								else {
+									practicalListPointer.get(e.getElectiveCourseId()).add(pl);
+								}
+								for(ElectiveBatches eb:electiveNeeds) {
+									if(eb.getElectiveId().equals(e.getElectiveCourseId())) {
+										if(practicalListPointerPerDiv.get(e.getElectiveCourseId()+d.getDivId()) == null) {
+											List<Integer> li = new ArrayList<Integer>();
+											li.add(pl);
+											practicalListPointerPerDiv.put(e.getElectiveCourseId()+eb.getBatchId(),li);
+										} else {
+											practicalListPointerPerDiv.get(e.getElectiveCourseId()+eb.getBatchId()).add(pl);
+										}	
+									}
+								}
+								
 							}
 							totalCourseHours+=p.getNoOfHours();
 							pl++;
@@ -1733,6 +1742,8 @@ public class AdminController {
 				}
 //			}
 		}
+//		for(practicalList)
+		
 		//more fac hrs than courses
 		if(totalCourseHours < totalFacLoad) {
 			HashMap<String,Integer> facsPerDesig = new HashMap<String,Integer>();

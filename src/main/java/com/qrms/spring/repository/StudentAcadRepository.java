@@ -20,9 +20,10 @@ public interface StudentAcadRepository extends JpaRepository<StudentAcad, Intege
 	//JPQL
 	@Query("SELECT "+
 			"new com.qrms.spring.queryBeans.StudentCountByYearSem(count(sa.userName),sa.year,sa.sem) "+ 
-			"FROM StudentAcad sa "+
+			"FROM StudentAcad sa where "+
+			"sa.year=?1 and sa.sem=?2 and sa.department=?3 "+
 			"GROUP BY sa.sem,sa.year,sa.department")
-	List<StudentCountByYearSem> findStudentCountByYearSemDept();
+	StudentCountByYearSem findStudentCountByYearSemDept(String year, int sem, Department dept);
 	
 	ArrayList<StudentAcad> findBySemEqualsAndYearEqualsAndDepartmentEquals(int semester, String year,
 			Department department);

@@ -36,54 +36,53 @@ public class StudentPrefServiceImpl implements StudentPrefService {
 
 	@Override
 	public List<StudentPrefCountInfo> computeStudPrefTable() {
-		List<StudentCountByYearSem> totalStudentCount;
+		StudentCountByYearSem totalStudentCount;
 		
-		List<PrefGroupByCourseStudent> prefsPerElective;
+		PrefGroupByCourseStudent p;
 		List<StudentPrefCountInfo> studCountInfo = new ArrayList<StudentPrefCountInfo>();
 	
-		totalStudentCount = studentAcadRepository.findStudentCountByYearSemDept();
-		prefsPerElective = studentPrefRepository.findPrefsGroupByCourseStudent();
+//		totalStudentCount = studentAcadRepository.findStudentCountByYearSemDept();
+//		prefsPerElective = studentPrefRepository.findPrefsGroupByCourseStudent();
 		Course c;
 		
 		List<Course> openCourses = courseRepository.findByStudAllocFlagNot(0);
 		
-		for(PrefGroupByCourseStudent p: prefsPerElective) {
-			c = courseRepository.findByCourseId(p.getCourseId());
-			
-			for(StudentCountByYearSem s: totalStudentCount) {
-			
-				if(s.getSem() == c.getCourseSem() && s.getYear().equals(c.getCourseYear())) {
-					StudentPrefCountInfo si = new StudentPrefCountInfo();
-					si.setCourseId(c.getCourseId());
-					si.setCourseName(c.getCourseName());
-					si.setDeptId(c.getDepartment().getDeptId());
-					si.setSem(c.getCourseSem());
-					si.setSubmitCount(p.getCount());
-					si.setTotalStudentCount(s.getCount());
-					si.setYear(c.getCourseYear());
-					studCountInfo.add(si);
-					openCourses.remove(c);
-					break;
-				}
-			}
-		}
-		
+//		for(PrefGroupByCourseStudent p: prefsPerElective) {
+//			c = courseRepository.findByCourseId(p.getCourseId());
 		for(Course openCourse: openCourses) {
+			c = openCourse;
+			totalStudentCount = studentAcadRepository.findStudentCountByYearSemDept(c.getCourseYear(),c.getCourseSem(),c.getDepartment());
+			p = studentPrefRepository.findPrefsGroupByCourseStudent(c.getCourseId());
 			StudentPrefCountInfo si = new StudentPrefCountInfo();
-			si.setCourseId(openCourse.getCourseId());
-			si.setCourseName(openCourse.getCourseName());
-			si.setDeptId(openCourse.getDepartment().getDeptId());
-			si.setSem(openCourse.getCourseSem());
-			si.setSubmitCount(0);
-			for(StudentCountByYearSem s: totalStudentCount) {
-				if(s.getSem() == openCourse.getCourseSem() && s.getYear().equals(openCourse.getCourseYear())) {
-					si.setTotalStudentCount(s.getCount());
-					break;
-				}
-			}
-			si.setYear(openCourse.getCourseYear());
+			si.setCourseId(c.getCourseId());
+			si.setCourseName(c.getCourseName());
+			si.setDeptId(c.getDepartment().getDeptId());
+			si.setSem(c.getCourseSem());
+			
+			si.setSubmitCount(p.getCount());
+			si.setTotalStudentCount(totalStudentCount.getCount());
+			si.setYear(c.getCourseYear());
 			studCountInfo.add(si);
+//					openCourses.remove(c);
 		}
+			
+		
+//		for(Course openCourse: openCourses) {
+//			StudentPrefCountInfo si = new StudentPrefCountInfo();
+//			si.setCourseId(openCourse.getCourseId());
+//			si.setCourseName(openCourse.getCourseName());
+//			si.setDeptId(openCourse.getDepartment().getDeptId());
+//			si.setSem(openCourse.getCourseSem());
+//			si.setSubmitCount(0);
+//			for(StudentCountByYearSem s: totalStudentCount) {
+//				if(s.getSem() == openCourse.getCourseSem() && s.getYear().equals(openCourse.getCourseYear())) {
+//					si.setTotalStudentCount(s.getCount());
+//					break;
+//				}
+//			}
+//			si.setYear(openCourse.getCourseYear());
+//			studCountInfo.add(si);
+//		}
 		return studCountInfo;
 	}
 }
