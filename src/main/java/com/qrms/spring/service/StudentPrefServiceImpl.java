@@ -58,8 +58,12 @@ public class StudentPrefServiceImpl implements StudentPrefService {
 			si.setCourseName(c.getCourseName());
 			si.setDeptId(c.getDepartment().getDeptId());
 			si.setSem(c.getCourseSem());
+			if(p!=null) {
+				si.setSubmitCount(p.getCount());
+			}else {
+				si.setSubmitCount(0);
+			}
 			
-			si.setSubmitCount(p.getCount());
 			si.setTotalStudentCount(totalStudentCount.getCount());
 			si.setYear(c.getCourseYear());
 			studCountInfo.add(si);

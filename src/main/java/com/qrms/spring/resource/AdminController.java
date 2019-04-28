@@ -1118,7 +1118,7 @@ public class AdminController {
 		model.setViewName("/admin/studCourseAllocation");
 		model.addObject("course",new Course());
 		
-		if(!elective_ids.isEmpty())
+		if(elective_ids!=null && !elective_ids.isEmpty())
 			model.addObject("elective_ids",elective_ids);
 		
 		if(err_msg!=null)
@@ -1136,6 +1136,12 @@ public class AdminController {
 		
 		System.out.println(course.getCourseSem()+" "+course.getCourseYear());
 		System.out.println(department.getDeptId());
+		
+		ArrayList<Course> courses = courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheory(course.getCourseSem(),course.getCourseYear(),'R',department,1);
+		if(courses.size()==0) {
+			String msg = "No Elective Courses found!";
+			return openCourseAllocation(null,msg);
+		}
 		
 		ArrayList<Course> elective_ids= courseRepository.findByCourseSemAndCourseYearAndCourseTypeNotAndDepartmentAndIsTheoryAndStudAllocFlag(course.getCourseSem(),course.getCourseYear(),'R',department,1,0);
 
@@ -1330,7 +1336,7 @@ public class AdminController {
 					
 					if(stud.size()!=0) {
 						
-						Electives prefs[] = new Electives[4];
+						Electives prefs[] = new Electives[stud.size()];
 						int i = 0;
 						for (StudentPref studPref : stud) {
 							prefs[i]= studPref.getElective();
@@ -1798,7 +1804,7 @@ public class AdminController {
 		HashMap <String,LinkedHashSet<String>> courseFacs = new HashMap<>();
 		
 		for(CourseList c:courseList) {
-			
+				
 				courseIndex++;
 				ArrayList<FacultyPref> fpref=new ArrayList<>();
 
@@ -1917,8 +1923,9 @@ public class AdminController {
     	//for each unpreferred course, find fac with lowest load and allocate
         for(int i: nonPreferredCourseIndices) {
         	//find fac with highest load left and allocate
-        	int ll = 0;
+        	int ll = Integer.MIN_VALUE;
         	String bestFac = null;
+        	
         	for (Entry<String, Integer> fac : facLoadLeft.entrySet()) {
         		if(fac.getValue()>ll) {
         			ll=fac.getValue();
@@ -1966,7 +1973,7 @@ public class AdminController {
         	
         	if(p.getFacultyId().equals("")) {
         		String bestFac = null;
-        		int ll = 0;
+        		int ll = Integer.MIN_VALUE;
         		System.out.println("Finding fac for "+p.getPracticalCourseId());
         		//find fac with highest load left and allocate
         		for (Entry<String, Integer> fac : facLoadLeft.entrySet()) {
