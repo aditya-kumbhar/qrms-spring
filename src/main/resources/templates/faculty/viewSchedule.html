@@ -4,24 +4,14 @@
 		<meta charset="UTF-8">
 		<th:block th:include="fragments/fac_header.html :: headerfiles"></th:block>
 		<title>Time slot booking</title>
-		
 		<link rel="stylesheet" th:href="@{/css/register.css}">
-		
-		
 	</head>
 
 	<div th:replace="fragments/fac_header :: header"></div>
 	
 	<!-- script to turn nav link active -->
 	<script type="text/javascript">
-		var navBar = document.getElementById("nav-bar");		
-		var current = navBar.getElementsByClassName("active");
-	    // If there's any other active nav, make it inactive
-	    if (current.length > 0) { 
-	      current[0].className = current[0].className.replace(" active", "");
-	    }
-		//set current page nav as active
-		document.getElementById("viewSchedule-nav").className+=" active";
+		navbar_activation("viewSchedule-nav");
 	</script>
 	<script>
 		$(document).ready(function () {

@@ -18,15 +18,9 @@
 	<div th:replace="fragments/fac_header :: header"></div>
 	<!-- script to turn nav link active -->
 		<script type="text/javascript">
-			var navBar = document.getElementById("nav-bar");		
-			var current = navBar.getElementsByClassName("active");
-		    // If there's any other active nav, make it inactive
-		    if (current.length > 0) { 
-		      current[0].className = current[0].className.replace(" active", "");
-		    }
-			//set current page nav as active
-			document.getElementById("requests-nav").className+=" active";
+			navbar_activation("requests-nav");
 		</script>
+		
 	<body>
 		<div class="card bg-light" th:fragment="wholeDiv" id="wholeDiv">
 			<article class="card-body mx-auto">

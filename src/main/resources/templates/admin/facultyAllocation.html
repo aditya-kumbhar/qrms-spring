@@ -36,17 +36,9 @@
 <body>
 
 <!-- script to turn nav link active -->
-<script type="text/javascript">
-	var navBar = document.getElementById("nav-bar");		
-	var current = navBar.getElementsByClassName("active");
-    // If there's any other active nav, make it inactive
-    if (current.length > 0) { 
-      current[0].className = current[0].className.replace(" active", "");
-    }
-	//set current page nav as active
-	document.getElementById("facultyAllocation-nav").className+=" active";		
-</script>
-
+	<script type="text/javascript">
+		navbar_activation("facultyAllocation-nav");
+	</script>
 <div class="card bg-light">
 <article class="card-body mx-auto" id="article1">
 	<h4 class="card-title mt-3 text-center">View Faculty to Course Allocation details</h4>
