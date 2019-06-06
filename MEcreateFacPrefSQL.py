@@ -12,7 +12,7 @@
 # | year        | varchar(255) | YES  |     | NULL    |       |
 # +-------------+--------------+------+-----+---------+-------+
 import pandas as pd
-df = pd.read_csv('ok.xlsx',dtype={'course':str,'year':str,'facID':str})
+df = pd.read_excel('try.xlsx',dtype={'course':str,'year':str,'facID':str})
 # df_list = pd.read_html('ok.xlsx')
 # df = pd.DataFrame(df_list[0])
 for index,row in df.iterrows():

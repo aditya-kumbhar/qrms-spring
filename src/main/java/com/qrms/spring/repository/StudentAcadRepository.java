@@ -25,5 +25,5 @@ public interface StudentAcadRepository extends JpaRepository<StudentAcad, Intege
 	
 	ArrayList<StudentAcad> findBySemEqualsAndYearEqualsAndDepartmentEquals(int semester, String year,
 			Department department);
-	ArrayList<StudentAcad> findByYearEqualsAndDepartmentEquals(String year, Department dept);
+	ArrayList<StudentAcad> findByYearEqualsAndDepartmentEqualsOrderByDivAsc(String year, Department dept);
 }

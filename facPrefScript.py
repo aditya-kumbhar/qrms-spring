@@ -7,15 +7,17 @@ excluded_courses = ['410252C','310252','210252']
 
 
 import random as r
+'''
 for i in range(36):
 
 #   #print ME2
-	k = r.randint(0,len(me2)-1)
-	while(me2[k] in excluded_courses):
-		k = r.randint(0,len(me2)-1)
-	print(me2[k])
+#	k = r.randint(0,len(me2)-1)
+#	while(me2[k] in excluded_courses):
+#		k = r.randint(0,len(me2)-1)
+#	print(me2[k])
 
 #   #print ME1
+
 	k = r.randint(0,len(me1)-1)
 	while(me1[k] in excluded_courses):
 		k = r.randint(0,len(me1)-1)
@@ -54,39 +56,40 @@ for i in range(36):
 		k = r.randint(0,len(se)-1)
 	print(se[k])
 
-
 # # Experience print
 # for i in range(36*8):
 # 	k = r.randint(0,8)
 # 	print(k)
 #
 #
-# ###PREF NO Print
-# for i in range(36):
-# 	li=[]
-# 	for i in range(8):
-# 		k = r.randint(1,8)
-# 		while k in li:
-# 			k = r.randint(1,8)
-# 		li.append(k)
-# 		print(k)
 
-# for i in range(36):
+for i in range(36):
 # 	print("ME2")
-# 	print("ME1")
-# 	print("BE")
-# 	print("BE")
-# 	print("TE")
-# 	print("TE")
-# 	print("SE")
-# 	print("SE")
+	print("ME1")
+	print("BE")
+	print("BE")
+	print("TE")
+	print("TE")
+	print("SE")
+	print("SE")
 
-# for i in range(1,37):
-# 	print("fac"+str(i))
-# 	print("fac"+str(i))
-# 	print("fac"+str(i))
-# 	print("fac"+str(i))
-# 	print("fac"+str(i))
-# 	print("fac"+str(i))
-# 	print("fac"+str(i))
-# 	print("fac"+str(i))
+
+for i in range(1,37):
+#	print("fac"+str(i))
+	print("fac"+str(i))
+	print("fac"+str(i))
+	print("fac"+str(i))
+	print("fac"+str(i))
+	print("fac"+str(i))
+	print("fac"+str(i))
+	print("fac"+str(i))
+'''
+# ###PREF NO Print
+for i in range(36):
+	li=[]
+	for i in range(7):
+		k = r.randint(1,7)
+		while k in li:
+			k = r.randint(1,7)
+		li.append(k)
+		print(k)

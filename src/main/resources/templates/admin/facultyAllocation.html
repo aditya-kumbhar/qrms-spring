@@ -75,20 +75,20 @@
 	
 	<table class="table table-bordered table-hover" > 
 	<thead class="thead-dark">
-	<!-- <tr>
-		<td colspan="7" align="center">
-			<button class="btn btn-primary" th:id="downloadAllocationListBtn" onclick="downloadAllocationsFile()">Download Allocations File</button>
-		</td>
-	</tr> -->
-    <tr>
-      <th scope="col">Username</th>
-      <th scope="col">Name</th>
-      <th scope="col">Theory Hours</th>
-      <th scope="col">Practical Hours</th>
-      <th scope="col">Total Load Alloted</th>
-      <th scope="col">Maximum Load</th>
-      <th scope="col">Details</th>
-    </tr>
+		<!-- <tr>
+			<td colspan="7" align="center">
+				<button class="btn btn-primary" th:id="downloadAllocationListBtn" onclick="downloadAllocationsFile()">Download Allocations File</button>
+			</td>
+		</tr> -->
+	    <tr>
+	      <th scope="col">Username</th>
+	      <th scope="col">Name</th>
+	      <th scope="col">Theory Hours</th>
+	      <th scope="col">Practical Hours</th>
+	      <th scope="col">Total Load Alloted</th>
+	      <th scope="col">Maximum Load</th>
+	      <th scope="col">Details</th>
+	    </tr>
   	</thead>
   	<tbody>
     	<tr th:each="rs,iterStat : ${facAllotmentList}">

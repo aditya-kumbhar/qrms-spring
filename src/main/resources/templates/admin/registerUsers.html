@@ -343,11 +343,10 @@
 			<td>
 				<select  class ="form-control"  autofocus th:id="facDesignation" th:name="facDesignation">
 					<option value="none" style="color:#8F8B87">Select Designation</option>
-					<option value="prof" style="color:#000">Professor</option>
-					<option value="assistant prof" style="color:#000">Asst. Professor</option>
-					<option value="associate prof" style="color:#000">Assoc. Professor</option>					
-				</select>			
-				
+					<option value="Professor" style="color:#000">Professor</option>
+					<option value="Assistant professor" style="color:#000">Asst. Professor</option>
+					<option value="Associate professor" style="color:#000">Assoc. Professor</option>					
+				</select>
 			</td>
 		</tr>
 		<tr>
@@ -369,12 +368,10 @@
 				Experience
 			</td>
 			<td>
-				<input type="number" class ="form-control" placeholder="Experience (in years)" autofocus th:id="facExp" th:name="facExp"/>								
+				<input type="number" class ="form-control" placeholder="Experience (in years)" min='0' autofocus th:id="facExp" th:name="facExp"/>								
 			</td>
 		</tr>
-		
 		</tbody>
-		
 		<tr>
 			<td colspan=2 align=center>
 				<div class="form-group">

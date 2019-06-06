@@ -37,7 +37,7 @@ public class StudentAcadServiceImpl implements StudentAcadService {
 	public ArrayList<StudentUsers> getStudentList(Department department, String year) {
 		StudentUsers studUser;
 		ArrayList <StudentUsers> studUserList = new ArrayList<StudentUsers>();
-		ArrayList <StudentAcad> students = studentAcadRepository.findByYearEqualsAndDepartmentEquals(year, department);
+		ArrayList <StudentAcad> students = studentAcadRepository.findByYearEqualsAndDepartmentEqualsOrderByDivAsc(year, department);
 		int i = 0;
 		for(StudentAcad student: students) {
 			i++;
