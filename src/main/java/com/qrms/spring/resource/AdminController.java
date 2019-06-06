@@ -2290,9 +2290,7 @@ public class AdminController {
 		}
 		myFile.delete();
        	return msg;
-	}
-	
-	
+	}	
 	
 
 	@RequestMapping(value = "/viewSchedule",method=RequestMethod.GET)
@@ -2303,7 +2301,6 @@ public class AdminController {
 			
 		model.setViewName("/admin/viewSchedule");
 		return model;
-		
 	}
 	
 	@RequestMapping(value="/getScheduleForResource", method=RequestMethod.GET)
@@ -2333,7 +2330,6 @@ public class AdminController {
 			model.addAttribute("ttForResource",list);
 			return "admin/viewSchedule:: resourceTT";
 		}
-		
 	}
 	
 	@RequestMapping(value="/getViewOptions",method=RequestMethod.POST)
