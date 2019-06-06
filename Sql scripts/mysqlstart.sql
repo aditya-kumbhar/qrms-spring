@@ -15,8 +15,6 @@ insert into role values(3,'STUDENT');
 /*ADMIN*/
 insert into user values('admin',1,'adminpccoe@gmail.com','Admin','Admin','admin');
 
-/*STUDENT*/
-
 /*FACULTY*/
 insert into user values('fac1',1,'fac1@gmail.com','Rajeswari','Kannan','faculty');
 insert into user values('fac2',1,'fac2@gmail.com','Anuradha','Thakare','faculty');
@@ -55,8 +53,6 @@ insert into user values('fac34',1,'fac34@gmail.com','Sudeep','Thapade','faculty'
 insert into user values('fac35',1,'fac35@gmail.com','Deepa','Abin','faculty');
 insert into user values('fac36',1,'fac36@gmail.com','Ganesh','Deshmukh','faculty');
 
-
-
 /*USER_ROLE TABLE*/
 /*admin*/
 insert into user_role values('admin',1);
@@ -71,13 +67,9 @@ insert into user_role values('fac31',2),('fac32',2),('fac33',2),('fac34',2),('fa
 insert into user_role values('fac37',2),('fac38',2),('fac39',2),('fac40',2),('fac41',2),('fac42',2);
 insert into user_role values('fac43',2),('fac44',2),('fac45',2),('fac46',2),('fac47',2),('fac48',2);
 
-/*students*/
-
 
 /*DEPARTMENT TABLE*/
 INSERT INTO `department` VALUES ('CO','Computer Department'),('ME','Mechanical Department'),('EN','EnTC Department'),('IT','IT Department'),('CI','Civil Department');
-
-
 
 /*COURSE TABLE*/
 /*ME sem3*/
@@ -693,3 +685,4 @@ INSERT INTO faculty_pref values(212,6,'310254',null,4,3,3,'fac36','TE');
 INSERT INTO faculty_pref values(213,8,'310253',null,3,2,2,'fac36','TE');
 INSERT INTO faculty_pref values(214,5,'210254',null,6,5,5,'fac36','SE');
 INSERT INTO faculty_pref values(215,8,'210253',null,2,4,6,'fac36','SE');
+*/
