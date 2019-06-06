@@ -833,6 +833,7 @@ public class AdminController {
 			if(studAcadService.validateAndSetStudDiv(student,divName)) {
 				userDetails.saveUser(user);
 				student.setUserName(user.getUserName());
+				student.setUserDets(user);
 				studentAcadRepository.save(student);				
 			}
 			else 
@@ -851,6 +852,7 @@ public class AdminController {
 			faculty.setDesignation(facDesignation);
 			faculty.setQualification(facQualification);
 			faculty.setYearsOfExperience(facExp);
+			faculty.setUserDets(user);
 			facultyAcadRepository.save(faculty);
 			
 		}
