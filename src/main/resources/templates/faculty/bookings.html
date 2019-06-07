@@ -144,6 +144,7 @@
 							<div class="row">
 								<h5 class="card-title mt-3 text-center" th:if="${ttForResource}" th:name="resource-id-heading" th:id="resource-id-heading"></h5>
 							</div>
+							<input type="hidden" id="ttResource" th:value="${ttForResource}">
 							<div class="row">
 								<table th:if="${ttForResource}" class="table table-light table-hover table-bordered">
 									<thead>
@@ -219,8 +220,9 @@
 				</div>
 			</article>
 		</div>
-			  
+		
 		<script>
+			  
 			function requestTimeSlot(){
 				var date = document.getElementById("booking-date").value;
 				var activityName = document.getElementById("activity-name").value;
@@ -234,8 +236,7 @@
 				
 				var st = startTime.split(":");
 				var et = endTime.split(":");
-				
-				
+								
 				if(date==""){
 					alert("Please select a date to book!");
 				}else if(activityName==""){
@@ -250,32 +251,53 @@
 					var curDate = new Date();
         	   		console.log(curDate);
         	   		var d = document.getElementById("booking-date");
-                   var d1 = Date.parse(curDate.toISOString().substr(0, 10));
-                   var d2 = Date.parse(d.value);
-                   
+        	   		var d1 = Date.parse(curDate.toISOString().substr(0, 10));
+        	   		var d2 = Date.parse(d.value);
+                   	
 	                if(d1==d2 && ((curDate.getHours()*60 + curDate.getMinutes()) > (parseInt(st[0])*60 + parseInt(st[1]))))
 	                   {
-	                	 alert("Can't book! Start Time for slot is greater than current time!");
+	                	 alert("Can't book! Start Time for slot is lesser than current time!");
 	                   }else{
-	                	   var retVal = confirm("Do you want to book?");
-	   					if(retVal==true){
-	   						console.log("user wants to continue");
 	   						$.ajax({
 	   							type: "POST",
 	   							data: {booking_date: date,resource: Resource,startTime:startTime,endTime:endTime,activityName:activityName},
-	   							url: '/u/faculty/sendBookingRequest',
+	   							url: '/u/faculty/checkOverlappingRequest',
 	   							success: function(data){
 	   								if ($(data).find('#err').length){
-	   				        			$('#resourceTT').html('');
 	   				         	   		$('#messageDiv').html('');
-	   				        	   		$('#messageDiv').html(data);                   
+	   				         	   		//$('#messageDiv').html(data);
+	   				        	   		var cnfVal = confirm("Your request is overlapping with existing schedule! Do you still want to send a booking request?");
+	   				        	   		if(cnfVal==true){
+	   				        	   		$.ajax({
+	   			   							type: "POST",
+	   			   							data: {booking_date: date,resource: Resource,startTime:startTime,endTime:endTime,activityName:activityName},
+	   			   							url: '/u/faculty/sendBookingRequest',
+	   			   							success: function(data){
+	   			   								if ($(data).find('#err').length){
+	   			   				         	   		$('#messageDiv').html('');
+	   			   				         	   		//$('#messageDiv').html(data);
+	   			   					           } else if($(data).find('#success').length){
+	   			   					        	   	$('#messageDiv').html('');
+	   			   									$('#messageDiv').html(data);
+	   			   									alert("Sent request to the resource incharge, the updates will be mailed to you soon!");
+	   			   					           }else{
+	   			   					        	   $('#messageDiv').html('');
+	   			   					        	   //$('#resourceTT').html('');
+	   			   				                   $('#resourceTT').html(data);   
+	   			   				                   $('html, body').animate({
+	   			   				                       scrollTop: $('#resourceTT').offset().top
+	   			   				                     }, 500);
+	   			   				          	 	}
+	   			   					        }
+	   			   						});
+	   				        	   		}
 	   					           } else if($(data).find('#success').length){
 	   					        	   	$('#messageDiv').html('');
 	   									//$('#messageDiv').html(data);
 	   									alert("Sent request to the resource incharge, the updates will be mailed to you soon!");
 	   					           }else{
 	   					        	   $('#messageDiv').html('');
-	   					        	   $('#resourceTT').html('');
+	   					        	   //$('#resourceTT').html('');
 	   				                   $('#resourceTT').html(data);   
 	   				                   $('html, body').animate({
 	   				                       scrollTop: $('#resourceTT').offset().top
@@ -283,7 +305,6 @@
 	   				          	 	}
 	   					        }
 	   						});
-	   					}
 	                   }
 					
 				}
@@ -333,6 +354,7 @@
 			                   }else{
 			                	   $('.bookingsAllowed').css("display",'');
 			                   }
+			                   
 			          	 	}
 				        }
 					});
@@ -377,6 +399,7 @@
 				    setTimeout(function(){
 						 bindDatePicker();
 						 }, 100);
+				    
 				});
 			}
 			$( "#resourceReqForm" ).on( "submit", function( event ) {
@@ -409,5 +432,6 @@
 				    
 			});
 		</script>
+		
 	</body>
 </html>

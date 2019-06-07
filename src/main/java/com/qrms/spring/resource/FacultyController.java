@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Modifying;
@@ -421,12 +422,44 @@ public class FacultyController {
 	public String getTTForResourceForDate(Model model,String booking_date,String getTT){
 		List<TimeSlots> list = bookingsService.getTimeSlotsForDate(booking_date, getTT);
 		
+		
 		if(list.isEmpty()) {
 			model.addAttribute("msg","All slots are empty!");
 			return "faculty/bookings:: messageDiv";
 		}else {
 			model.addAttribute("ttForResource",list);
 			return "faculty/bookings:: resourceTT";
+		}
+		
+	}
+	
+	
+	@RequestMapping(value="/checkOverlappingRequest",method=RequestMethod.POST)
+	public String checkOverlappingRequest(Model model,String booking_date,String resource,String startTime,String endTime,String activityName) {
+
+		List<TimeSlots> list = bookingsService.getTimeSlotsForDate(booking_date, resource);
+		
+		
+		Long st = Time.valueOf(startTime+":00").getTime();
+		Long et = Time.valueOf(endTime+":00").getTime();
+		
+		int flag = 0;
+		
+		for(TimeSlots tss:list) {
+			Long gost = tss.getStartTime().getTime();
+			Long goet = tss.getEndTime().getTime();
+			
+			if((st>=gost && et<=goet) || (st>=gost && st<goet) || (et>gost && et<=goet) || (st<=gost && et>=goet) || (st<=gost && et>gost && et<=goet)) {
+				flag+=1;
+			}
+		}
+		
+		if(flag>0) {
+			model.addAttribute("err_msg","err");
+			return "faculty/bookings:: messageDiv";
+		}else {
+			model.addAttribute("msg","success");
+			return "faculty/bookings:: messageDiv";
 		}
 		
 	}
@@ -444,7 +477,7 @@ public class FacultyController {
 		FacultyAcad requestingFaculty = facultyAcadRepository.findByUserName(userName);
 		
 		Resource resourceObj = resourceRepository.findByResourceId(resource);
-		String resourceIncharge = resourceObj.getResourceIncharge().getUserDets().getEmail();
+		String resourceInchargeEmail = resourceObj.getResourceIncharge().getUserDets().getEmail();
 		
 		String body;
 		body = "Request BY: "+requestingFaculty.getUserDets().getFirstName()+" "+requestingFaculty.getUserDets().getLastName()+"\n";
@@ -475,7 +508,7 @@ public class FacultyController {
 		resourceRequestsRepository.save(resourceRequest);
 		
 		try {
-			emailServiceImpl.send(qrmsEmailId, "bmk15897@gmail.com", "QRMS: Request to book resource "+resource, body);
+			emailServiceImpl.send(qrmsEmailId, resourceInchargeEmail, "QRMS: Request to book resource "+resource, body);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
