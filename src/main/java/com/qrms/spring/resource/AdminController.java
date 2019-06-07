@@ -1491,7 +1491,7 @@ public class AdminController {
 			model.addObject("err_msg", "No allocations done yet for Course Id: "+electiveIdOption);
 		return model;
 	}
-	
+	 
 	//delete course or elective
 	@Transactional
 	@RequestMapping(value="/delete-course-elective",method=RequestMethod.GET)

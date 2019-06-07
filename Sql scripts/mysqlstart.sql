@@ -19,7 +19,7 @@ insert into user values('admin',1,'adminpccoe@gmail.com','Admin','Admin','admin'
 insert into user values('fac1',1,'fac1@gmail.com','Rajeswari','Kannan','faculty');
 insert into user values('fac2',1,'fac2@gmail.com','Anuradha','Thakare','faculty');
 insert into user values('fac3',1,'fac3@gmail.com','Swati','Shinde','faculty');
-insert into user values('fac4',1,'fac4@gmail.com','Pravin','Futane','faculty');
+insert into user values('fac4',1,'fac4@gmail.com','Anagha','Chaudhari','faculty');
 insert into user values('fac5',1,'fac5@gmail.com','Sonali','Patil','faculty');
 insert into user values('fac6',1,'fac6@gmail.com','Govinda','Sambare','faculty');
 insert into user values('fac7',1,'fac7@gmail.com','Reena','Kharat','faculty');
@@ -30,16 +30,16 @@ insert into user values('fac11',1,'fac11@gmail.com','Shailaja','Pede','faculty')
 insert into user values('fac12',1,'fac12@gmail.com','Anand','Birajdar','faculty');
 insert into user values('fac13',1,'fac13@gmail.com','Rahul','Patil','faculty');
 insert into user values('fac14',1,'fac14@gmail.com','Priya','Surana','faculty');
-insert into user values('fac15',1,'fac15@gmail.com','Alaka','Londhe','faculty');
+insert into user values('fac15',1,'fac15@gmail.com','Alka','Londhe','faculty');
 insert into user values('fac16',1,'fac16@gmail.com','Harshada','Mhaske','faculty');
 insert into user values('fac17',1,'fac17@gmail.com','Atul','Pawar','faculty');
 insert into user values('fac18',1,'fac18@gmail.com','Shrikant','Kokate','faculty');
 insert into user values('fac19',1,'fac19@gmail.com','Shailesh','Hule','faculty');
-insert into user values('fac20',1,'fac20@gmail.com','Snatwana','Gudadhe','faculty');
+insert into user values('fac20',1,'fac20@gmail.com','Santwana','Gudadhe','faculty');
 insert into user values('fac21',1,'fac21@gmail.com','Pallavi','Dhade','faculty');
 insert into user values('fac22',1,'fac22@gmail.com','Rahul','Pitale','faculty');
 insert into user values('fac23',1,'fac23@gmail.com','Sagar','Salunke','faculty');
-insert into user values('fac24',1,'fac24@gmail.com','Rajesh','Lomate','faculty');
+insert into user values('fac24',1,'fac24@gmail.com','Rajesh','Lomte','faculty');
 insert into user values('fac25',1,'fac25@gmail.com','Kapil','Tajane','faculty');
 insert into user values('fac26',1,'fac26@gmail.com','Namrata','Gawande','faculty');
 insert into user values('fac27',1,'fac27@gmail.com','Meghana','Lokhande','faculty');
@@ -49,9 +49,10 @@ insert into user values('fac30',1,'fac30@gmail.com','Ketan','Desale','faculty');
 insert into user values('fac31',1,'fac31@gmail.com','Madhura','Kalbhor','faculty');
 insert into user values('fac32',1,'fac32@gmail.com','Swati','Chandurkar','faculty');
 insert into user values('fac33',1,'fac33@gmail.com','Priya','Ithape','faculty');
-insert into user values('fac34',1,'fac34@gmail.com','Sudeep','Thapade','faculty');
+insert into user values('fac34',1,'fac34@gmail.com','Sudeep','Thepade','faculty');
 insert into user values('fac35',1,'fac35@gmail.com','Deepa','Abin','faculty');
 insert into user values('fac36',1,'fac36@gmail.com','Ganesh','Deshmukh','faculty');
+insert into user values('fac37',1,'fac37@gmail.com','Janhavi','Gudsoorkar','faculty');
 
 /*USER_ROLE TABLE*/
 /*admin*/
@@ -159,8 +160,6 @@ INSERT INTO `course` VALUES ('210246',1,'DELD Lab',3,'R','SE',0,2,0,'CO');
 INSERT INTO `course` VALUES ('210247',2,'DSA Lab',3,'R','SE',0,4,0,'CO');
 INSERT INTO `course` VALUES ('210248',1,'OOP Lab',3,'R','SE',0,2,0,'CO');
 INSERT INTO `course` VALUES ('210249',1,'Soft Skills',3,'R','SE',0,2,0,'CO');
-
-
 
 /*ELECTIVES TABLE*/
 /*ME sem3 elective3*/
@@ -320,7 +319,6 @@ INSERT into course_prerequisites values ('210244',-1,-1,'NA','NA');
 INSERT into course_prerequisites values ('210245',-1,-1,'NA','NA');
 
 
-
 /*companion_course(id,course_id,companion_course) TABLE (ID,Course, Practical)*/
 /*BE sem2*/
 INSERT into companion_course(id,course_id,companion_course) values  (1,'410250','410254A');
@@ -339,6 +337,7 @@ INSERT into companion_course(id,course_id,companion_course) values (11,'410252',
 
 /*BE sem1*/
 INSERT into companion_course(id,course_id,companion_course) values (12,'410242','410246A');
+
 INSERT into companion_course(id,course_id,companion_course) values (13,'410243','410246B');
 INSERT into companion_course(id,course_id,companion_course) values (14,'410244A','410247A');
 INSERT into companion_course(id,course_id,companion_course) values (15,'410244B','410247A');
@@ -388,7 +387,7 @@ INSERT into companion_course(id,course_id,companion_course) values (40,'210245',
 insert into faculty_acad values('fac1','Professor','PHD',20,'CO','fac1');
 insert into faculty_acad values('fac2','Professor','PHD',18.4,'CO','fac2');
 insert into faculty_acad values('fac3','Professor','PHD',18.4,'CO','fac3');
-insert into faculty_acad values('fac4','Professor','PHD',20,'CO','fac4');
+insert into faculty_acad values('fac4','Assistant Professor','ME',20,'CO','fac4');
 insert into faculty_acad values('fac5','Associate Professor','PHD',15,'CO','fac5');
 insert into faculty_acad values('fac6','Associate Professor','ME',25,'CO','fac6');
 insert into faculty_acad values('fac7','Assistant Professor','MTECH',15.5,'CO','fac7');
@@ -421,13 +420,12 @@ insert into faculty_acad values('fac33','Assistant Professor','ME',5,'CO','fac33
 insert into faculty_acad values('fac34','Professor','PHD',14.7,'CO','fac34');
 insert into faculty_acad values('fac35','Assistant Professor','ME',14,'CO','fac35');
 insert into faculty_acad values('fac36','Assistant Professor','ME',6.5,'CO','fac36');
+insert into faculty_acad values('fac37','Assistant Professor','ME',0,'CO','fac37');
 
 /*DESIGNATION_TO_HOURS TABLE*/
 insert into designation_to_hours values("Professor",10,8);
 insert into designation_to_hours values("Associate Professor",14,12);
 insert into designation_to_hours values("Assistant Professor",18,16);
-
-
 
 /*DIVISIONS TABLE*/
 insert into divisions values('ME2COA','A',4,'ME2','CO');
@@ -441,8 +439,6 @@ insert into divisions values('TECOC','C',4,'TE','CO');
 insert into divisions values('SECOA','A',4,'SE','CO');
 insert into divisions values('SECOB','B',4,'SE','CO');
 insert into divisions values('SECOC','C',4,'SE','CO');
-
-
 
 /*RESOURCE TABLE*/
 insert into resource values('CO101',80,"","101","Classroom","CO","fac1");
@@ -465,224 +461,3 @@ insert into resource values('CO112A',25,"",'112A',"Lab","CO","fac11");
 insert into resource values('CO112B',25,"",'112B',"Lab","CO","fac12");
 insert into resource values('CO112C',25,"",'112C',"Lab","CO","fac13");
 insert into resource values('CO007',25,"",'007',"Lab","CO","fac14");
-
-/*FACULTY_PREF TABLE*/
-/*fac prefs for 36 facs*/
-/*
-INSERT INTO faculty_pref values(0,8,'410250',null,1,2,1,'fac1','BE');
-INSERT INTO faculty_pref values(1,5,null,'410252B',6,6,6,'fac1','BE');
-INSERT INTO faculty_pref values(2,7,'310251',null,2,4,5,'fac1','TE');
-INSERT INTO faculty_pref values(3,4,'310253',null,4,4,2,'fac1','TE');
-INSERT INTO faculty_pref values(4,5,'210251',null,3,8,6,'fac1','SE');
-INSERT INTO faculty_pref values(5,4,'210253',null,5,1,7,'fac1','SE');
-INSERT INTO faculty_pref values(6,3,null,'410253C',3,7,7,'fac2','BE');
-INSERT INTO faculty_pref values(7,3,null,'410252B',5,2,7,'fac2','BE');
-INSERT INTO faculty_pref values(8,2,'310253',null,2,7,3,'fac2','TE');
-INSERT INTO faculty_pref values(9,2,'310254',null,4,8,8,'fac2','TE');
-INSERT INTO faculty_pref values(10,8,'210254',null,6,3,3,'fac2','SE');
-INSERT INTO faculty_pref values(11,2,'210251',null,1,6,6,'fac2','SE');
-INSERT INTO faculty_pref values(12,5,null,'410253C',2,4,5,'fac3','BE');
-INSERT INTO faculty_pref values(13,5,'410251',null,6,3,5,'fac3','BE');
-INSERT INTO faculty_pref values(14,5,'310254',null,5,4,2,'fac3','TE');
-INSERT INTO faculty_pref values(15,5,'310253',null,4,0,6,'fac3','TE');
-INSERT INTO faculty_pref values(16,5,'210251',null,3,2,2,'fac3','SE');
-INSERT INTO faculty_pref values(17,5,'210254',null,1,2,7,'fac3','SE');
-INSERT INTO faculty_pref values(18,0,'410251',null,1,2,3,'fac4','BE');
-INSERT INTO faculty_pref values(19,6,null,'410253C',4,6,6,'fac4','BE');
-INSERT INTO faculty_pref values(20,6,'310254',null,2,8,6,'fac4','TE');
-INSERT INTO faculty_pref values(21,4,'310250',null,3,3,0,'fac4','TE');
-INSERT INTO faculty_pref values(22,7,'210251',null,6,8,2,'fac4','SE');
-INSERT INTO faculty_pref values(23,2,'210254',null,5,7,8,'fac4','SE');
-INSERT INTO faculty_pref values(24,3,null,'410253B',5,1,0,'fac5','BE');
-INSERT INTO faculty_pref values(25,2,null,'410252B',1,8,4,'fac5','BE');
-INSERT INTO faculty_pref values(26,5,'310250',null,3,3,2,'fac5','TE');
-INSERT INTO faculty_pref values(27,4,'310253',null,6,7,5,'fac5','TE');
-INSERT INTO faculty_pref values(28,6,'210251',null,2,4,7,'fac5','SE');
-INSERT INTO faculty_pref values(29,3,'210254',null,4,8,7,'fac5','SE');
-INSERT INTO faculty_pref values(30,7,null,'410252D',5,1,1,'fac6','BE');
-INSERT INTO faculty_pref values(31,0,null,'410252B',1,1,4,'fac6','BE');
-INSERT INTO faculty_pref values(32,7,'310254',null,3,0,6,'fac6','TE');
-INSERT INTO faculty_pref values(33,5,'310251',null,4,8,1,'fac6','TE');
-INSERT INTO faculty_pref values(34,1,'210254',null,2,4,5,'fac6','SE');
-INSERT INTO faculty_pref values(35,0,'210253',null,6,3,2,'fac6','SE');
-INSERT INTO faculty_pref values(36,2,'410250',null,4,5,1,'fac7','BE');
-INSERT INTO faculty_pref values(37,2,null,'410253C',5,0,6,'fac7','BE');
-INSERT INTO faculty_pref values(38,6,'310254',null,1,6,1,'fac7','TE');
-INSERT INTO faculty_pref values(39,5,'310250',null,2,5,4,'fac7','TE');
-INSERT INTO faculty_pref values(40,7,'210254',null,3,5,0,'fac7','SE');
-INSERT INTO faculty_pref values(41,0,'210253',null,6,8,0,'fac7','SE');
-INSERT INTO faculty_pref values(42,5,'410251',null,1,2,4,'fac8','BE');
-INSERT INTO faculty_pref values(43,2,'410250',null,5,3,8,'fac8','BE');
-INSERT INTO faculty_pref values(44,1,'310251',null,3,6,8,'fac8','TE');
-INSERT INTO faculty_pref values(45,0,'310250',null,2,4,6,'fac8','TE');
-INSERT INTO faculty_pref values(46,4,'210253',null,4,0,3,'fac8','SE');
-INSERT INTO faculty_pref values(47,1,'210251',null,6,0,4,'fac8','SE');
-INSERT INTO faculty_pref values(48,3,null,'410253C',6,4,6,'fac9','BE');
-INSERT INTO faculty_pref values(49,6,null,'410252D',1,3,6,'fac9','BE');
-INSERT INTO faculty_pref values(50,6,'310253',null,2,8,8,'fac9','TE');
-INSERT INTO faculty_pref values(51,6,'310250',null,3,0,1,'fac9','TE');
-INSERT INTO faculty_pref values(52,4,'210253',null,5,6,2,'fac9','SE');
-INSERT INTO faculty_pref values(53,6,'210251',null,4,7,0,'fac9','SE');
-INSERT INTO faculty_pref values(54,8,null,'410253C',2,3,2,'fac10','BE');
-INSERT INTO faculty_pref values(55,5,'410251',null,3,2,7,'fac10','BE');
-INSERT INTO faculty_pref values(56,2,'310251',null,4,7,4,'fac10','TE');
-INSERT INTO faculty_pref values(57,4,'310250',null,1,1,2,'fac10','TE');
-INSERT INTO faculty_pref values(58,4,'210254',null,5,2,2,'fac10','SE');
-INSERT INTO faculty_pref values(59,7,'210253',null,6,2,7,'fac10','SE');
-INSERT INTO faculty_pref values(60,3,'410251',null,4,3,7,'fac11','BE');
-INSERT INTO faculty_pref values(61,5,'410250',null,3,6,3,'fac11','BE');
-INSERT INTO faculty_pref values(62,1,'310250',null,6,2,3,'fac11','TE');
-INSERT INTO faculty_pref values(63,3,'310253',null,2,5,8,'fac11','TE');
-INSERT INTO faculty_pref values(64,7,'210254',null,5,1,6,'fac11','SE');
-INSERT INTO faculty_pref values(65,0,'210251',null,1,3,8,'fac11','SE');
-INSERT INTO faculty_pref values(66,0,'410251',null,2,6,5,'fac12','BE');
-INSERT INTO faculty_pref values(67,4,null,'410253B',4,2,4,'fac12','BE');
-INSERT INTO faculty_pref values(68,2,'310253',null,3,6,2,'fac12','TE');
-INSERT INTO faculty_pref values(69,1,'310251',null,6,1,2,'fac12','TE');
-INSERT INTO faculty_pref values(70,5,'210253',null,5,4,6,'fac12','SE');
-INSERT INTO faculty_pref values(71,8,'210251',null,1,7,1,'fac12','SE');
-INSERT INTO faculty_pref values(72,1,null,'410252D',6,0,1,'fac13','BE');
-INSERT INTO faculty_pref values(73,5,null,'410253B',4,8,1,'fac13','BE');
-INSERT INTO faculty_pref values(74,8,'310253',null,3,0,0,'fac13','TE');
-INSERT INTO faculty_pref values(75,5,'310250',null,1,2,6,'fac13','TE');
-INSERT INTO faculty_pref values(76,8,'210251',null,2,7,8,'fac13','SE');
-INSERT INTO faculty_pref values(77,7,'210254',null,5,1,7,'fac13','SE');
-INSERT INTO faculty_pref values(78,7,'410251',null,3,6,8,'fac14','BE');
-INSERT INTO faculty_pref values(79,2,null,'410252D',2,0,1,'fac14','BE');
-INSERT INTO faculty_pref values(80,4,'310251',null,1,5,8,'fac14','TE');
-INSERT INTO faculty_pref values(81,6,'310254',null,5,8,0,'fac14','TE');
-INSERT INTO faculty_pref values(82,4,'210254',null,6,5,3,'fac14','SE');
-INSERT INTO faculty_pref values(83,1,'210253',null,4,0,4,'fac14','SE');
-INSERT INTO faculty_pref values(84,0,null,'410253B',6,0,5,'fac15','BE');
-INSERT INTO faculty_pref values(85,0,null,'410252B',1,4,6,'fac15','BE');
-INSERT INTO faculty_pref values(86,6,'310251',null,2,2,4,'fac15','TE');
-INSERT INTO faculty_pref values(87,6,'310250',null,5,2,3,'fac15','TE');
-INSERT INTO faculty_pref values(88,5,'210254',null,3,8,2,'fac15','SE');
-INSERT INTO faculty_pref values(89,8,'210253',null,4,3,1,'fac15','SE');
-INSERT INTO faculty_pref values(90,0,'410251',null,1,4,2,'fac16','BE');
-INSERT INTO faculty_pref values(91,6,null,'410252D',4,8,8,'fac16','BE');
-INSERT INTO faculty_pref values(92,1,'310251',null,5,3,6,'fac16','TE');
-INSERT INTO faculty_pref values(93,4,'310254',null,3,0,1,'fac16','TE');
-INSERT INTO faculty_pref values(94,2,'210254',null,2,8,0,'fac16','SE');
-INSERT INTO faculty_pref values(95,3,'210251',null,6,1,0,'fac16','SE');
-INSERT INTO faculty_pref values(96,8,null,'410252D',3,1,7,'fac17','BE');
-INSERT INTO faculty_pref values(97,7,'410251',null,5,1,2,'fac17','BE');
-INSERT INTO faculty_pref values(98,0,'310251',null,1,4,6,'fac17','TE');
-INSERT INTO faculty_pref values(99,5,'310254',null,4,5,0,'fac17','TE');
-INSERT INTO faculty_pref values(100,4,'210251',null,6,6,3,'fac17','SE');
-INSERT INTO faculty_pref values(101,6,'210253',null,2,1,3,'fac17','SE');
-INSERT INTO faculty_pref values(102,7,null,'410252B',1,2,3,'fac18','BE');
-INSERT INTO faculty_pref values(103,0,'410250',null,2,4,2,'fac18','BE');
-INSERT INTO faculty_pref values(104,2,'310250',null,6,4,8,'fac18','TE');
-INSERT INTO faculty_pref values(105,4,'310251',null,4,2,7,'fac18','TE');
-INSERT INTO faculty_pref values(106,3,'210251',null,3,2,7,'fac18','SE');
-INSERT INTO faculty_pref values(107,0,'210253',null,5,4,0,'fac18','SE');
-INSERT INTO faculty_pref values(108,5,null,'410253C',4,2,1,'fac19','BE');
-INSERT INTO faculty_pref values(109,4,'410251',null,3,3,5,'fac19','BE');
-INSERT INTO faculty_pref values(110,6,'310250',null,2,8,8,'fac19','TE');
-INSERT INTO faculty_pref values(111,3,'310253',null,5,3,4,'fac19','TE');
-INSERT INTO faculty_pref values(112,7,'210251',null,6,7,5,'fac19','SE');
-INSERT INTO faculty_pref values(113,8,'210253',null,1,7,0,'fac19','SE');
-INSERT INTO faculty_pref values(114,7,'410251',null,2,2,8,'fac20','BE');
-INSERT INTO faculty_pref values(115,8,'410250',null,1,6,6,'fac20','BE');
-INSERT INTO faculty_pref values(116,1,'310253',null,3,0,4,'fac20','TE');
-INSERT INTO faculty_pref values(117,8,'310251',null,4,2,2,'fac20','TE');
-INSERT INTO faculty_pref values(118,3,'210254',null,5,2,4,'fac20','SE');
-INSERT INTO faculty_pref values(119,6,'210251',null,6,5,3,'fac20','SE');
-INSERT INTO faculty_pref values(120,5,null,'410253C',1,1,4,'fac21','BE');
-INSERT INTO faculty_pref values(121,8,null,'410252B',4,7,2,'fac21','BE');
-INSERT INTO faculty_pref values(122,8,'310251',null,2,7,6,'fac21','TE');
-INSERT INTO faculty_pref values(123,7,'310250',null,6,1,3,'fac21','TE');
-INSERT INTO faculty_pref values(124,2,'210254',null,5,8,7,'fac21','SE');
-INSERT INTO faculty_pref values(125,7,'210253',null,3,1,8,'fac21','SE');
-INSERT INTO faculty_pref values(126,4,'410250',null,1,6,8,'fac22','BE');
-INSERT INTO faculty_pref values(127,7,'410251',null,3,4,4,'fac22','BE');
-INSERT INTO faculty_pref values(128,1,'310253',null,4,3,1,'fac22','TE');
-INSERT INTO faculty_pref values(129,5,'310254',null,5,2,7,'fac22','TE');
-INSERT INTO faculty_pref values(130,4,'210254',null,2,1,1,'fac22','SE');
-INSERT INTO faculty_pref values(131,2,'210251',null,6,5,8,'fac22','SE');
-INSERT INTO faculty_pref values(132,0,'410251',null,2,4,1,'fac23','BE');
-INSERT INTO faculty_pref values(133,3,null,'410252B',3,4,2,'fac23','BE');
-INSERT INTO faculty_pref values(134,8,'310253',null,1,2,0,'fac23','TE');
-INSERT INTO faculty_pref values(135,6,'310254',null,6,3,2,'fac23','TE');
-INSERT INTO faculty_pref values(136,1,'210254',null,5,7,8,'fac23','SE');
-INSERT INTO faculty_pref values(137,7,'210251',null,4,0,4,'fac23','SE');
-INSERT INTO faculty_pref values(138,2,null,'410253C',2,4,2,'fac24','BE');
-INSERT INTO faculty_pref values(139,3,null,'410253B',1,7,3,'fac24','BE');
-INSERT INTO faculty_pref values(140,3,'310251',null,4,0,2,'fac24','TE');
-INSERT INTO faculty_pref values(141,6,'310253',null,5,8,0,'fac24','TE');
-INSERT INTO faculty_pref values(142,6,'210253',null,6,4,0,'fac24','SE');
-INSERT INTO faculty_pref values(143,3,'210254',null,3,6,8,'fac24','SE');
-INSERT INTO faculty_pref values(144,3,'410250',null,5,4,2,'fac25','BE');
-INSERT INTO faculty_pref values(145,7,null,'410253B',4,8,3,'fac25','BE');
-INSERT INTO faculty_pref values(146,0,'310250',null,3,5,4,'fac25','TE');
-INSERT INTO faculty_pref values(147,3,'310254',null,1,7,5,'fac25','TE');
-INSERT INTO faculty_pref values(148,8,'210251',null,6,0,3,'fac25','SE');
-INSERT INTO faculty_pref values(149,7,'210253',null,2,0,3,'fac25','SE');
-INSERT INTO faculty_pref values(150,3,null,'410253C',6,8,8,'fac26','BE');
-INSERT INTO faculty_pref values(151,5,'410250',null,4,2,7,'fac26','BE');
-INSERT INTO faculty_pref values(152,7,'310254',null,3,7,5,'fac26','TE');
-INSERT INTO faculty_pref values(153,2,'310251',null,1,4,1,'fac26','TE');
-INSERT INTO faculty_pref values(154,8,'210253',null,2,7,2,'fac26','SE');
-INSERT INTO faculty_pref values(155,5,'210251',null,5,6,1,'fac26','SE');
-INSERT INTO faculty_pref values(156,8,null,'410252B',4,6,0,'fac27','BE');
-INSERT INTO faculty_pref values(157,1,null,'410252D',5,6,1,'fac27','BE');
-INSERT INTO faculty_pref values(158,2,'310250',null,6,0,4,'fac27','TE');
-INSERT INTO faculty_pref values(159,7,'310253',null,3,7,1,'fac27','TE');
-INSERT INTO faculty_pref values(160,4,'210253',null,1,0,7,'fac27','SE');
-INSERT INTO faculty_pref values(161,5,'210254',null,2,4,5,'fac27','SE');
-INSERT INTO faculty_pref values(162,5,null,'410252B',4,7,8,'fac28','BE');
-INSERT INTO faculty_pref values(163,2,null,'410252D',1,7,7,'fac28','BE');
-INSERT INTO faculty_pref values(164,1,'310251',null,3,3,1,'fac28','TE');
-INSERT INTO faculty_pref values(165,4,'310250',null,5,3,8,'fac28','TE');
-INSERT INTO faculty_pref values(166,1,'210254',null,6,0,0,'fac28','SE');
-INSERT INTO faculty_pref values(167,8,'210253',null,2,8,3,'fac28','SE');
-INSERT INTO faculty_pref values(168,7,'410251',null,6,1,5,'fac29','BE');
-INSERT INTO faculty_pref values(169,7,'410250',null,3,7,1,'fac29','BE');
-INSERT INTO faculty_pref values(170,0,'310250',null,1,5,7,'fac29','TE');
-INSERT INTO faculty_pref values(171,8,'310253',null,5,2,2,'fac29','TE');
-INSERT INTO faculty_pref values(172,2,'210254',null,4,2,2,'fac29','SE');
-INSERT INTO faculty_pref values(173,4,'210251',null,2,1,1,'fac29','SE');
-INSERT INTO faculty_pref values(174,4,'410250',null,6,5,6,'fac30','BE');
-INSERT INTO faculty_pref values(175,6,null,'410252B',2,7,2,'fac30','BE');
-INSERT INTO faculty_pref values(176,8,'310254',null,5,2,7,'fac30','TE');
-INSERT INTO faculty_pref values(177,6,'310251',null,4,8,5,'fac30','TE');
-INSERT INTO faculty_pref values(178,2,'210251',null,1,8,0,'fac30','SE');
-INSERT INTO faculty_pref values(179,1,'210254',null,3,6,6,'fac30','SE');
-INSERT INTO faculty_pref values(180,3,'410251',null,4,6,3,'fac31','BE');
-INSERT INTO faculty_pref values(181,1,null,'410252B',5,5,4,'fac31','BE');
-INSERT INTO faculty_pref values(182,8,'310254',null,3,8,1,'fac31','TE');
-INSERT INTO faculty_pref values(183,7,'310250',null,6,2,7,'fac31','TE');
-INSERT INTO faculty_pref values(184,1,'210251',null,2,6,6,'fac31','SE');
-INSERT INTO faculty_pref values(185,4,'210254',null,1,5,2,'fac31','SE');
-INSERT INTO faculty_pref values(186,6,'410251',null,5,7,8,'fac32','BE');
-INSERT INTO faculty_pref values(187,8,null,'410252D',3,0,7,'fac32','BE');
-INSERT INTO faculty_pref values(188,5,'310250',null,1,4,3,'fac32','TE');
-INSERT INTO faculty_pref values(189,6,'310251',null,6,6,3,'fac32','TE');
-INSERT INTO faculty_pref values(190,6,'210251',null,2,0,1,'fac32','SE');
-INSERT INTO faculty_pref values(191,2,'210253',null,4,6,8,'fac32','SE');
-INSERT INTO faculty_pref values(192,3,null,'410253C',3,6,5,'fac33','BE');
-INSERT INTO faculty_pref values(193,4,null,'410252D',2,1,2,'fac33','BE');
-INSERT INTO faculty_pref values(194,6,'310254',null,6,6,6,'fac33','TE');
-INSERT INTO faculty_pref values(195,6,'310250',null,1,0,1,'fac33','TE');
-INSERT INTO faculty_pref values(196,1,'210253',null,4,8,0,'fac33','SE');
-INSERT INTO faculty_pref values(197,6,'210254',null,5,2,3,'fac33','SE');
-INSERT INTO faculty_pref values(198,7,null,'410253B',5,0,1,'fac34','BE');
-INSERT INTO faculty_pref values(199,3,'410251',null,4,7,5,'fac34','BE');
-INSERT INTO faculty_pref values(200,3,'310250',null,3,0,7,'fac34','TE');
-INSERT INTO faculty_pref values(201,3,'310251',null,1,0,0,'fac34','TE');
-INSERT INTO faculty_pref values(202,2,'210251',null,6,8,1,'fac34','SE');
-INSERT INTO faculty_pref values(203,2,'210254',null,2,4,3,'fac34','SE');
-INSERT INTO faculty_pref values(204,6,'410250',null,2,5,5,'fac35','BE');
-INSERT INTO faculty_pref values(205,7,null,'410252D',5,6,8,'fac35','BE');
-INSERT INTO faculty_pref values(206,3,'310250',null,4,8,1,'fac35','TE');
-INSERT INTO faculty_pref values(207,5,'310251',null,3,0,4,'fac35','TE');
-INSERT INTO faculty_pref values(208,6,'210254',null,6,0,0,'fac35','SE');
-INSERT INTO faculty_pref values(209,3,'210251',null,1,6,3,'fac35','SE');
-INSERT INTO faculty_pref values(210,4,null,'410252B',5,3,7,'fac36','BE');
-INSERT INTO faculty_pref values(211,7,null,'410253B',1,2,8,'fac36','BE');
-INSERT INTO faculty_pref values(212,6,'310254',null,4,3,3,'fac36','TE');
-INSERT INTO faculty_pref values(213,8,'310253',null,3,2,2,'fac36','TE');
-INSERT INTO faculty_pref values(214,5,'210254',null,6,5,5,'fac36','SE');
-INSERT INTO faculty_pref values(215,8,'210253',null,2,4,6,'fac36','SE');
-*/

@@ -15,7 +15,6 @@ import com.qrms.spring.model.FacultyPref;
 @Repository
 public interface FacultyPrefRepository extends JpaRepository<FacultyPref, Integer>{
 	ArrayList<FacultyPref> findByUserName(String user_name);
-
 	ArrayList<FacultyPref> findByUserNameAndYear(String userName, String year);
 	ArrayList<FacultyPref> findByElectiveId(String id);
 	ArrayList<FacultyPref> findByCourseId(String id);
