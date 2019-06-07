@@ -511,26 +511,39 @@
             scrollTop: $('#form1').offset().top
           }, 500);
 	}
+	
 	function submitPrefs()
 	{
-		if (document.getElementById('pref8tr')==null){
+		
+		var cnt = 0;
+		if(document.getElementById('pref1').innerHTML != "")
+			cnt = cnt + 1;
+		if(document.getElementById('pref2').innerHTML != "")
+			cnt = cnt + 1;
+		if(document.getElementById('pref3').innerHTML != "")
+			cnt = cnt + 1;
+		if(document.getElementById('pref4').innerHTML != "")
+			cnt = cnt + 1;
+		if(document.getElementById('pref5').innerHTML != "")
+			cnt = cnt + 1;
+		if(document.getElementById('pref6').innerHTML != "")
+			cnt = cnt + 1;
+		if(document.getElementById('pref7').innerHTML != "")
+			cnt = cnt + 1;
+		if(document.getElementById('pref8tr')==null && document.getElementById('pref8').innerHTML != "")
+			cnt = cnt + 1;
+		
+		if (cnt<4){
+			 alert("You must fill atleast 4 preferences");
+			 return false;
+		} else {
 			
-			if (document.getElementById('pref1').innerHTML == "" || document.getElementById('pref2').innerHTML == "" || 
-					document.getElementById('pref3').innerHTML == "" || document.getElementById('pref4').innerHTML == "" ||
-					document.getElementById('pref5').innerHTML == "" || document.getElementById('pref6').innerHTML == "" ||
-					document.getElementById('pref7').innerHTML == "")
-				{
-				 alert("Please fill all the preferences first!");
-				}
-			
-		}else{
-			if (document.getElementById('pref1').innerHTML == "" || document.getElementById('pref2').innerHTML == "" || 
-					document.getElementById('pref3').innerHTML == "" || document.getElementById('pref4').innerHTML == "" ||
-					document.getElementById('pref5').innerHTML == "" || document.getElementById('pref6').innerHTML == "" ||
-					document.getElementById('pref7').innerHTML == "" || document.getElementById('pref8').innerHTML == "")
-				{
-				 alert("Please fill all the preferences first!");
-				}
+			if(document.getElementById('pref1').innerHTML == "" || document.getElementById('pref2').innerHTML == "" || 
+			   document.getElementById('pref3').innerHTML == "" || document.getElementById('pref4').innerHTML == "") {
+				alert("Preferences should be filled in order");
+				return false;
+			}
+				
 		}
 		console.log(prefData);
 		var facultyPrefs = [];
