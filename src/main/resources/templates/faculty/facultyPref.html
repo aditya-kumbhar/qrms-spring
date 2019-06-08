@@ -513,7 +513,7 @@
 	}
 	
 	function submitPrefs()
-	{
+	{	
 		
 		var cnt = 0;
 		if(document.getElementById('pref1').innerHTML != "")
@@ -530,7 +530,7 @@
 			cnt = cnt + 1;
 		if(document.getElementById('pref7').innerHTML != "")
 			cnt = cnt + 1;
-		if(document.getElementById('pref8tr')==null && document.getElementById('pref8').innerHTML != "")
+		if(document.getElementById('pref8tr')!=null && document.getElementById('pref8').innerHTML != "")
 			cnt = cnt + 1;
 		
 		if (cnt<4){
@@ -542,10 +542,51 @@
 			   document.getElementById('pref3').innerHTML == "" || document.getElementById('pref4').innerHTML == "") {
 				alert("Preferences should be filled in order");
 				return false;
+			} else {
+				
+				var flag = 0;
+				
+				if(document.getElementById('pref5').innerHTML == "") 
+					flag=1;
+				
+				if(flag && document.getElementById('pref6').innerHTML != "") {
+					alert("Preferences should be filled in order");
+					return false;
+				} else if(document.getElementById('pref6').innerHTML == "") 
+					flag=1;
+				
+				if(flag && document.getElementById('pref7').innerHTML != "") {
+					alert("Preferences should be filled in order");
+					return false;
+				} else if(document.getElementById('pref7').innerHTML == "") 
+					flag=1;
+				
+				if(flag && (document.getElementById('pref8tr')!=null && document.getElementById('pref8').innerHTML != "")) {
+					alert("Preferences should be filled in order");
+					return false;
+				}
 			}
 				
 		}
-		console.log(prefData);
+		
+		var l = prefData.length-1;
+		console.log(l);
+		
+		for(var i=1;i<l;i++)
+		{
+			if(prefData[i]==null)
+				continue;
+			for(var j=i+1;j<=l;j++)
+			{
+				if(prefData[j]==null)
+					continue;
+				if(prefData[i]['courseId']==prefData[j]['courseId']) {
+					alert("Two preferences cannot be same");
+					return false;
+				}
+			}
+		}
+		
 		var facultyPrefs = [];
 		
 		for(var i in prefData) {
