@@ -440,8 +440,8 @@ insert into designation_to_hours values("Associate Professor",14,12);
 insert into designation_to_hours values("Assistant Professor",18,16);
 
 /*DIVISIONS TABLE*/
-insert into divisions values('ME2COA','A',4,'ME2','CO');
-insert into divisions values('ME1COA','A',4,'ME1','CO');
+insert into divisions values('ME2COA','A',1,'ME2','CO');
+insert into divisions values('ME1COA','A',1,'ME1','CO');
 insert into divisions values('BECOA','A',4,'BE','CO');
 insert into divisions values('BECOB','B',4,'BE','CO');
 insert into divisions values('BECOC','C',4,'BE','CO');

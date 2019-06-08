@@ -1592,6 +1592,12 @@ public class AdminController {
 			desigHours.put(d.getDesignation(), new int[] {d.getMinLimit(),d.getMaxLimit()});			
 		}
 		
+		//Hashmap for limiting no of thoery courses to 2/faculty
+		HashMap <String,Integer> facTheoryLimit = new HashMap<>();
+		for(FacultyAcad f:allFacs) {
+			facTheoryLimit.put(f.getUserName(), 2);
+		}
+		
 		//faculty to min hours
 		//max hours hashmap, faculty to alloted hours hashmap
 		//key: facultyID, value: current_alloted_hrs
@@ -1752,7 +1758,6 @@ public class AdminController {
 				}
 			}
 		}
-//		for(practicalList)
 		
 		//more fac hrs than courses
 		if(totalCourseHours < totalFacLoad) {
@@ -1810,7 +1815,7 @@ public class AdminController {
 		for(CourseList c:courseList) {
 				
 				courseIndex++;
-				ArrayList<FacultyPref> fpref=new ArrayList<>();
+				ArrayList<FacultyPref> fpref = new ArrayList<>();
 
 				//allocate unalloted practicals for prevIterated course
 				if(!c.getCourseId().equals(prevCourse) && !prevCourse.equals("")) {
@@ -1836,8 +1841,10 @@ public class AdminController {
 							}
 						}	
 				}
+				
 				prevCourse = c.getCourseId();
 				fpref = facultyPrefRepository.findByElectiveId(c.getCourseId());
+				
 				if(fpref.size()==0) {
 					fpref = facultyPrefRepository.findByCourseId(c.getCourseId());
 				}
@@ -1854,6 +1861,9 @@ public class AdminController {
 				List<Integer> pracListptrs = practicalListPointerPerDiv.get(c.getCourseId()+c.getDivisionId());
 				int pracAllotCounter=0;
 				for (FacultyPref fp : fpref) {
+					if(facTheoryLimit.get(fp.getUserName())<=0)
+						continue;
+					
 					if(facAllotedHours.get(fp.getUserName()) >= facLimits.get(fp.getUserName())[1])
 						continue;
 					
@@ -1872,6 +1882,8 @@ public class AdminController {
 								courseFacs.get(c.getCourseId()).add(fp.getUserName());
 							}
 							facTheoryHours.replace(fp.getUserName(), facTheoryHours.get(fp.getUserName())+c.getNoOfHours());
+						
+							facTheoryLimit.put(fp.getUserName(), facTheoryLimit.get(fp.getUserName())-1);
 						} 
 					}
 					
@@ -1943,6 +1955,10 @@ public class AdminController {
         	}
         	
         	CourseList c = courseList.get(i);
+        	
+        	if(facTheoryLimit.get(bestFac)<=0)
+				continue;
+        	
     		if(facLoadLeft.get(bestFac) >= c.getNoOfHours()) {
 	        		//allocate
 					c.setFacultyId(bestFac);
@@ -1950,7 +1966,9 @@ public class AdminController {
 					facLoadLeft.replace(bestFac, facLoadLeft.get(bestFac) - c.getNoOfHours());
 					temp.add(i);
 					facTheoryHours.replace(bestFac, facTheoryHours.get(bestFac)+c.getNoOfHours());
-        	}
+
+					facTheoryLimit.put(bestFac, facTheoryLimit.get(bestFac)-1);
+    		}
     		List<Integer> pracListptrs = practicalListPointer.get(c.getCourseId());
     		if(pracListptrs !=null)
 				for(int pIndex: pracListptrs) {
@@ -1965,7 +1983,7 @@ public class AdminController {
 						}
 					}
 				}	
-    	}
+    		}
         
         //remove alloted non-preferredcourses from list
         for(int i:temp) {
@@ -2013,11 +2031,93 @@ public class AdminController {
         	System.out.println("All facs have reached limit");
         }
         
+        //Find and allocate th-courses to faculties with 0 alloted theory courses
+        for (Entry<String, Integer> fac : facTheoryLimit.entrySet()) {
+			if(fac.getValue()==2) {
+				System.out.println("fac "+fac.getKey());
+
+				ArrayList<FacultyPref> fprefs = facultyPrefRepository.findByUserName(fac.getKey());
+				
+				Collections.sort(fprefs,new FacultyPrefChainedComparator(new FacultyPrefNoComparator()));
+				String prefCourse;
+				for(FacultyPref fp:fprefs) {
+					 prefCourse = fp.getCourseId();
+					if(prefCourse==null) {
+						prefCourse = fp.getElectiveId();
+					}
+					String borrowFromFac = null;
+					CourseList toBorrow = null;
+					HashMap<String,Integer> borrowFromFacList= new HashMap<>();
+					for(CourseList c:courseList) {
+						if(c.getCourseId().equals(prefCourse)) {
+							if(borrowFromFacList.containsKey(c.getFacultyId())) {
+								borrowFromFac = c.getFacultyId();
+								c.setFacultyId(fac.getKey());
+								facAllotedHours.put(borrowFromFac, facAllotedHours.get(borrowFromFac)-c.getNoOfHours());
+								facTheoryHours.put(borrowFromFac, facTheoryHours.get(borrowFromFac)-c.getNoOfHours());
+								facLoadLeft.put(borrowFromFac, facLoadLeft.get(borrowFromFac)+c.getNoOfHours());
+								
+								
+								facAllotedHours.put(fac.getKey(), facAllotedHours.get(fac.getKey())+c.getNoOfHours());
+								facTheoryHours.put(fac.getKey(), facTheoryHours.get(fac.getKey())+c.getNoOfHours());
+								facLoadLeft.put(fac.getKey(), facLoadLeft.get(fac.getKey())-c.getNoOfHours());
+								
+								int hoursToReplace = c.getNoOfHours();
+								
+								
+									for(PracticalList p:practicalList) {
+										if(hoursToReplace>0) {
+											
+										if(p.getFacultyId().equals(fac.getKey())) {
+											p.setFacultyId(borrowFromFac);
+											facAllotedHours.put(borrowFromFac, facAllotedHours.get(borrowFromFac)+p.getNoOfHours());
+											facPracticalHours.put(borrowFromFac, facPracticalHours.get(borrowFromFac)+p.getNoOfHours());
+											facLoadLeft.put(borrowFromFac, facLoadLeft.get(borrowFromFac)-p.getNoOfHours());
+											
+											facAllotedHours.put(fac.getKey(), facAllotedHours.get(fac.getKey())-p.getNoOfHours());
+											facPracticalHours.put(fac.getKey(), facPracticalHours.get(fac.getKey())-p.getNoOfHours());
+											facLoadLeft.put(fac.getKey(), facLoadLeft.get(fac.getKey())+p.getNoOfHours());
+											
+											hoursToReplace-=p.getNoOfHours();
+											}
+										}
+										else {
+											break;
+										}
+								}
+								
+								
+								break;
+							}
+							else
+								borrowFromFacList.put(c.getFacultyId(),1);
+							
+							
+						}
+					}
+					
+					
+					
+					if(borrowFromFac == null)
+						continue;
+					else
+						break;
+					
+					
+				}
+			
+			}
+		}
+        
+        
+        
+        
         System.out.println("FacGroups");
         for (Entry<String, LinkedHashSet<String>> fac : courseFacs.entrySet()) {
-			System.out.println(fac.getKey() + " "+ fac.getValue().toString() );
-		}
-		System.out.println("course list");
+			System.out.println(fac.getKey() + " "+ fac.getValue().toString());
+        }			
+		
+        System.out.println("course list");
 		System.out.println("courseID divisionID facID noOfHrs");
 		for(CourseList c:courseList) {
 			courseListRepository.save(c);
