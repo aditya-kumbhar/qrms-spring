@@ -1705,11 +1705,13 @@ public class AdminController {
 		//add elective practical courses to practical list
 		for(Course c: allElectivePracticals) {
 			System.out.println(c.getCourseId());
-//			ArrayList<CompanionCourse> ccs = courseCompanionRepository.findByCompanionCourseAndCourseIdInElectiveBatches(c.getCourseId());
+			ArrayList<CompanionCourse> ccs = courseCompanionRepository.findByCompanionCourseAndCourseIdInElectiveBatches(c.getCourseId());
 //			System.out.println("ccs size "+ccs.size());
-			CompanionCourse cc = courseCompanionRepository.findByCompanionCourse(c.getCourseId());
-			ArrayList<Electives> courseElectives  = electivesRepository.findByCourse(courseRepository.findByCourseId(cc.getCourse()));
-//			for(CompanionCourse cc:ccs) {
+//			CompanionCourse cc = courseCompanionRepository.findByCompanionCourse(c.getCourseId());
+			for(CompanionCourse cc:ccs) {
+				ArrayList<Electives> courseElectives  = electivesRepository.findByCourse(courseRepository.findByCourseId(cc.getCourse()));
+	
+			
 				for(Divisions d:divisionNeeds) {
 					if(d.getDepartment().equals(c.getDepartment()) && d.getYear().equals(c.getCourseYear())) {
 						for(int i = 1;i<=d.getNoOfBatches();i++) {
@@ -1748,7 +1750,7 @@ public class AdminController {
 						}
 					}
 				}
-//			}
+			}
 		}
 //		for(practicalList)
 		
