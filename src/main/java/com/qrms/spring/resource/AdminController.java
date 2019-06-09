@@ -1818,6 +1818,8 @@ public class AdminController {
 		
 		//Collections.sort(courseList,new CourseListChainedComaparator(new CourseListYearComparator()));
 		
+		
+		
 		for(CourseList c:courseList) {
 				
 				courseIndex++;
@@ -2046,6 +2048,9 @@ public class AdminController {
 				
 				Collections.sort(fprefs,new FacultyPrefChainedComparator(new FacultyPrefNoComparator()));
 				String prefCourse;
+				
+				int flag = 0;
+				
 				for(FacultyPref fp:fprefs) {
 					 prefCourse = fp.getCourseId();
 					if(prefCourse==null) {
@@ -2069,8 +2074,7 @@ public class AdminController {
 								facLoadLeft.put(fac.getKey(), facLoadLeft.get(fac.getKey())-c.getNoOfHours());
 								
 								int hoursToReplace = c.getNoOfHours();
-								
-								
+																
 									for(PracticalList p:practicalList) {
 										if(hoursToReplace>0) {
 											
@@ -2104,15 +2108,69 @@ public class AdminController {
 					
 					
 					
-					if(borrowFromFac == null)
-						continue;
-					else
+					if(borrowFromFac != null)
+					{
+						flag=1;
 						break;
+					}
+						
 					
 					
 				}
-			
+				if(flag==0) {
+					
+					String borrowFromFac;
+					
+					for (Entry<String, Integer> fac1 : facTheoryLimit.entrySet()) {
+						if(fac1.getValue()==0) {
+							
+							for(CourseList c:courseList) {
+								if(c.getFacultyId().equals(fac1.getKey())) {
+									borrowFromFac = fac1.getKey();
+									c.setFacultyId(fac.getKey());
+									facAllotedHours.put(borrowFromFac, facAllotedHours.get(borrowFromFac)-c.getNoOfHours());
+									facTheoryHours.put(borrowFromFac, facTheoryHours.get(borrowFromFac)-c.getNoOfHours());
+									facLoadLeft.put(borrowFromFac, facLoadLeft.get(borrowFromFac)+c.getNoOfHours());
+									
+									
+									facAllotedHours.put(fac.getKey(), facAllotedHours.get(fac.getKey())+c.getNoOfHours());
+									facTheoryHours.put(fac.getKey(), facTheoryHours.get(fac.getKey())+c.getNoOfHours());
+									facLoadLeft.put(fac.getKey(), facLoadLeft.get(fac.getKey())-c.getNoOfHours());
+									
+									int hoursToReplace = c.getNoOfHours();
+																	
+										for(PracticalList p:practicalList) {
+											if(hoursToReplace>0) {
+												
+											if(p.getFacultyId().equals(fac.getKey())) {
+												p.setFacultyId(borrowFromFac);
+												facAllotedHours.put(borrowFromFac, facAllotedHours.get(borrowFromFac)+p.getNoOfHours());
+												facPracticalHours.put(borrowFromFac, facPracticalHours.get(borrowFromFac)+p.getNoOfHours());
+												facLoadLeft.put(borrowFromFac, facLoadLeft.get(borrowFromFac)-p.getNoOfHours());
+												
+												facAllotedHours.put(fac.getKey(), facAllotedHours.get(fac.getKey())-p.getNoOfHours());
+												facPracticalHours.put(fac.getKey(), facPracticalHours.get(fac.getKey())-p.getNoOfHours());
+												facLoadLeft.put(fac.getKey(), facLoadLeft.get(fac.getKey())+p.getNoOfHours());
+												
+												hoursToReplace-=p.getNoOfHours();
+												}
+											}
+								}
+							}
+							
+									else {
+										break;
+									}
+							}
+							
+							
+							
+						}
+					}
+				}
+				
 			}
+			
 		}
         
         
@@ -2165,6 +2223,7 @@ public class AdminController {
 		
 		System.out.println("Total hrs to be alloted: "+totalCourseHours);
 		System.out.println("MaxLoad: "+maxLoad+" TotalLoadAlloted: "+totalLoadAlloted+" TotalLoadLeft: "+totalLoadLeft);
+		
 		
 	}
 	
