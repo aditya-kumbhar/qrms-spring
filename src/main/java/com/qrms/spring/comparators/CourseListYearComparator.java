@@ -17,7 +17,7 @@ import com.qrms.spring.repository.ElectivesRepository;
 import com.qrms.spring.service.CourseService;
 import com.qrms.spring.service.CourseServiceImpl;
 
-@Component
+
 public class CourseListYearComparator implements Comparator<CourseList> {
 	
 	@Autowired
