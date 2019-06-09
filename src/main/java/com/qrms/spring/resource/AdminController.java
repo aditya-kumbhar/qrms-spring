@@ -57,8 +57,12 @@ import com.qrms.spring.queryBeans.FacPrefCountInfo;
 import com.qrms.spring.queryBeans.StudentUsers;
 import com.qrms.spring.model.Course;
 import com.qrms.spring.model.CourseList;
+import com.qrms.spring.comparators.AlphaNumericalComparator;
+import com.qrms.spring.comparators.CourseListChainedComaparator;
+import com.qrms.spring.comparators.CourseListYearComparator;
 import com.qrms.spring.comparators.DivisionsChainedComparator;
 import com.qrms.spring.comparators.DivisionsYearComparator;
+import com.qrms.spring.comparators.FacultyAllocationsChainedComparator;
 import com.qrms.spring.comparators.FacultyPrefChainedComparator;
 import com.qrms.spring.comparators.FacultyPrefCourseExpComparator;
 import com.qrms.spring.comparators.FacultyPrefNoComparator;
@@ -1812,6 +1816,8 @@ public class AdminController {
 		String prevCourse = "";
 		HashMap <String,LinkedHashSet<String>> courseFacs = new HashMap<>();
 		
+		//Collections.sort(courseList,new CourseListChainedComaparator(new CourseListYearComparator()));
+		
 		for(CourseList c:courseList) {
 				
 				courseIndex++;
@@ -2185,7 +2191,9 @@ public class AdminController {
 			model.addObject("err_msg","Allocation has not been performed for "+d.getDeptName());
 		}
 		else {
-			model.addObject("facAllotmentList",generateFacultyAllotedList(d));
+			List<FacultyAllocations> facAllocs = generateFacultyAllotedList(d);
+			Collections.sort(facAllocs,new FacultyAllocationsChainedComparator(new AlphaNumericalComparator()));
+			model.addObject("facAllotmentList",facAllocs);
 		}
 		return model;
 	}	
