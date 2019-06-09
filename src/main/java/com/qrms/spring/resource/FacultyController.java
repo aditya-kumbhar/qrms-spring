@@ -335,12 +335,11 @@ public class FacultyController {
 				fp.setElectiveId(null);
 			}
 			
-			if(fp.getPrereq1Exp()==null) {
+			if(fp.getPrereq1Exp()==null)
 				fp.setPrereq1Exp(-1);
-			}
-			if(fp.getPrereq2Exp()==null) {
+			if(fp.getPrereq2Exp()==null)
 				fp.setPrereq2Exp(-1);
-			}
+			
 			facultyPrefRepository.save(fp);
 		}
 		

@@ -18,7 +18,7 @@ insert into user values('admin',1,'adminpccoe@gmail.com','Admin','Admin','admin'
 /*FACULTY*/
 insert into user values('fac1',1,'fac1@gmail.com','Rajeswari','Kannan','faculty');
 insert into user values('fac2',1,'fac2@gmail.com','Anuradha','Thakare','faculty');
-insert into user values('fac3',1,'fac3@gmail.com','Swati','Shinde','faculty');
+insert into user values('fac3',1,'fac351@gmail.com','Swati','Shinde','faculty');
 insert into user values('fac4',1,'fac4@gmail.com','Anagha','Chaudhari','faculty');
 insert into user values('fac5',1,'fac5@gmail.com','Janhavi','Gudsoorkar','faculty');
 insert into user values('fac6',1,'fac6@gmail.com','Govinda','Sambare','faculty');
@@ -81,16 +81,15 @@ INSERT INTO `course` VALUES ('510109',4,'System Simulation and Modeling',2,'R','
 INSERT INTO `course` VALUES ('510110',4,'Machine Learning',2,'R','ME1',1,4,0,'CO');
 INSERT INTO `course` VALUES ('510111',5,'Elective 2',2,'E','ME1',1,5,0,'CO');
 
-
-INSERT INTO `course` VALUES ('510111',4,'LP-2',2,'R','ME1',0,4,0,'CO');
-
+INSERT INTO `course` VALUES ('510113',4,'LP-2',2,'R','ME1',0,4,0,'CO');
 
 /*ME sem1*/
 INSERT INTO `course` VALUES ('510101',4,'Research Methodology',1,'R','ME1',1,5,0,'CO');
 INSERT INTO `course` VALUES ('510102',4,'Bio-Inspired Optimization Algorithms',1,'R','ME1',1,5,0,'CO');
 INSERT INTO `course` VALUES ('510103',4,'Software Development and Version Control',1,'R','ME1',1,5,0,'CO');
 INSERT INTO `course` VALUES ('510104',4,'Embedded and Real Time Operating Systems',1,'R','ME1',1,5,0,'CO');
-INSERT INTO `course` VALUES ('510105',5,'Elective 1',1,'E','ME1',1,5,0,'CO');
+
+INSERT INTO `course` VALUES ('510105',5,'Elective 1',1,'E','ME1',1,6,0,'CO');
 
 INSERT INTO `course` VALUES ('510106A',4,'LP1-Research Methodology',1,'R','ME1',0,2,0,'CO');
 INSERT INTO `course` VALUES ('510106B',4,'LP1-Bio-Inspired Optimization Algorithms',1,'R','ME1',0,2,0,'CO');
@@ -281,6 +280,7 @@ INSERT into course_prerequisites values ('410253B',0,-1,'210251','NA');
 INSERT into course_prerequisites values ('410253C',-1,-1,'NA','NA');
 INSERT into course_prerequisites values ('410253D',-1,-1,'NA','NA');
 
+
 /*BE sem1*/
 INSERT into course_prerequisites values ('410241',0,0,'210253','210244');
 INSERT into course_prerequisites values ('410242',0,-1,'210254','NA');
@@ -291,9 +291,8 @@ INSERT into course_prerequisites values ('410244C',0,-1,'310245','NA');
 INSERT into course_prerequisites values ('410244D',0,0,'310242','310244');
 INSERT into course_prerequisites values ('410245A',0,0,'310254','210254');
 INSERT into course_prerequisites values ('410245B',0,0,'310243','310253');
-INSERT into course_prerequisites values ('421245C',0,0,'210241','310243');
+INSERT into course_prerequisites values ('410245C',0,0,'210241','310243');
 INSERT into course_prerequisites values ('410245D',0,-1,'310245','NA');
-
 /*TE sem2*/
 INSERT into course_prerequisites values ('310250',0,0,'210243','210252');
 INSERT into course_prerequisites values ('310251',0,0,'210243','210252');
@@ -330,8 +329,13 @@ INSERT into course_prerequisites values ('210245',-1,-1,'NA','NA');
 /*ME1 sem1*/
 INSERT into companion_course(id,course_id,companion_course) values  (44,'510101','510106A');
 INSERT into companion_course(id,course_id,companion_course) values (45,'510102','510106B');
+<<<<<<< HEAD
 INSERT into companion_course(id,course_id,companion_course) values (45,'510103','510106C');
 INSERT into companion_course(id,course_id,companion_course) values (45,'510104','510106D');
+=======
+INSERT into companion_course(id,course_id,companion_course) values (46,'510103','510106C');
+INSERT into companion_course(id,course_id,companion_course) values (47,'510104','510106D');
+>>>>>>> 683e782316e87e20b8b447f16d099ade012e16b0
 
 /*BE sem2*/
 INSERT into companion_course(id,course_id,companion_course) values  (1,'410250','410254A');
@@ -358,7 +362,7 @@ INSERT into companion_course(id,course_id,companion_course) values (16,'410244C'
 INSERT into companion_course(id,course_id,companion_course) values (17,'410244D','410247A');
 INSERT into companion_course(id,course_id,companion_course) values (18,'410245A','410247B');
 INSERT into companion_course(id,course_id,companion_course) values (19,'410245B','410247B');
-INSERT into companion_course(id,course_id,companion_course) values (20,'421245C','410247B');
+INSERT into companion_course(id,course_id,companion_course) values (20,'410245C','410247B');
 INSERT into companion_course(id,course_id,companion_course) values (21,'410245D','410247B');
 
 /*TE sem2*/
@@ -400,7 +404,11 @@ INSERT into companion_course(id,course_id,companion_course) values (40,'210245',
 insert into faculty_acad values('fac1','Professor','PHD',20,'CO','fac1');
 insert into faculty_acad values('fac2','Professor','PHD',18.4,'CO','fac2');
 insert into faculty_acad values('fac3','Professor','PHD',18.4,'CO','fac3');
+<<<<<<< HEAD
 insert into faculty_acad values('fac4','Assistant Professor','ME',20,'CO','fac4');
+=======
+insert into faculty_acad values('fac4','Assistant Professor','ME',8,'CO','fac4');
+>>>>>>> 683e782316e87e20b8b447f16d099ade012e16b0
 insert into faculty_acad values('fac5','Assistant Professor','ME',0,'CO','fac5');
 insert into faculty_acad values('fac6','Associate Professor','ME',25,'CO','fac6');
 insert into faculty_acad values('fac7','Assistant Professor','MTECH',15.5,'CO','fac7');
@@ -440,8 +448,8 @@ insert into designation_to_hours values("Associate Professor",14,12);
 insert into designation_to_hours values("Assistant Professor",18,16);
 
 /*DIVISIONS TABLE*/
-insert into divisions values('ME2COA','A',4,'ME2','CO');
-insert into divisions values('ME1COA','A',4,'ME1','CO');
+insert into divisions values('ME2COA','A',1,'ME2','CO');
+insert into divisions values('ME1COA','A',1,'ME1','CO');
 insert into divisions values('BECOA','A',4,'BE','CO');
 insert into divisions values('BECOB','B',4,'BE','CO');
 insert into divisions values('BECOC','C',4,'BE','CO');
