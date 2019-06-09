@@ -1717,7 +1717,6 @@ public class AdminController {
 			for(CompanionCourse cc:ccs) {
 				ArrayList<Electives> courseElectives  = electivesRepository.findByCourse(courseRepository.findByCourseId(cc.getCourse()));
 	
-			
 				for(Divisions d:divisionNeeds) {
 					if(d.getDepartment().equals(c.getDepartment()) && d.getYear().equals(c.getCourseYear())) {
 						for(int i = 1;i<=d.getNoOfBatches();i++) {
