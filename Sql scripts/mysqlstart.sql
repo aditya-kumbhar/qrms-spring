@@ -20,7 +20,7 @@ insert into user values('fac1',1,'fac1@gmail.com','Rajeswari','Kannan','faculty'
 insert into user values('fac2',1,'fac2@gmail.com','Anuradha','Thakare','faculty');
 insert into user values('fac3',1,'fac3@gmail.com','Swati','Shinde','faculty');
 insert into user values('fac4',1,'fac4@gmail.com','Anagha','Chaudhari','faculty');
-insert into user values('fac5',1,'fac5@gmail.com','Sonali','Patil','faculty');
+insert into user values('fac5',1,'fac5@gmail.com','Janhavi','Gudsoorkar','faculty');
 insert into user values('fac6',1,'fac6@gmail.com','Govinda','Sambare','faculty');
 insert into user values('fac7',1,'fac7@gmail.com','Reena','Kharat','faculty');
 insert into user values('fac8',1,'fac8@gmail.com','Sonal','Gore','faculty');
@@ -52,7 +52,6 @@ insert into user values('fac33',1,'fac33@gmail.com','Priya','Ithape','faculty');
 insert into user values('fac34',1,'fac34@gmail.com','Sudeep','Thepade','faculty');
 insert into user values('fac35',1,'fac35@gmail.com','Deepa','Abin','faculty');
 insert into user values('fac36',1,'fac36@gmail.com','Ganesh','Deshmukh','faculty');
-insert into user values('fac37',1,'fac37@gmail.com','Janhavi','Gudsoorkar','faculty');
 
 /*USER_ROLE TABLE*/
 /*admin*/
@@ -65,8 +64,6 @@ insert into user_role values('fac13',2),('fac14',2),('fac15',2),('fac16',2),('fa
 insert into user_role values('fac19',2),('fac20',2),('fac21',2),('fac22',2),('fac23',2),('fac24',2);
 insert into user_role values('fac25',2),('fac26',2),('fac27',2),('fac28',2),('fac29',2),('fac30',2);
 insert into user_role values('fac31',2),('fac32',2),('fac33',2),('fac34',2),('fac35',2),('fac36',2);
-insert into user_role values('fac37',2),('fac38',2),('fac39',2),('fac40',2),('fac41',2),('fac42',2);
-insert into user_role values('fac43',2),('fac44',2),('fac45',2),('fac46',2),('fac47',2),('fac48',2);
 
 
 /*DEPARTMENT TABLE*/
@@ -74,24 +71,31 @@ INSERT INTO `department` VALUES ('CO','Computer Department'),('ME','Mechanical D
 
 /*COURSE TABLE*/
 /*ME sem3*/
-INSERT INTO `course` VALUES ('610101',4,'Advanced Storeage Systems and Infrastructure Management',3,'R','ME2',1,4,0,'CO');
-INSERT INTO `course` VALUES ('610102',4,'Advanced Unix Programming',3,'R','ME2',1,4,0,'CO');
+INSERT INTO `course` VALUES ('610101',4,'Fault Tolerant Systems',3,'R','ME2',1,4,0,'CO');
+INSERT INTO `course` VALUES ('610102',4,'Information Retrieval',3,'R','ME2',1,4,0,'CO');
 INSERT INTO `course` VALUES ('610103',5,'Elective 3',3,'E','ME2',1,5,0,'CO');
 
 /*ME sem2*/
-INSERT INTO `course` VALUES ('510107',4,'Operating System Design',2,'R','ME1',1,4,0,'CO');
-INSERT INTO `course` VALUES ('510108',4,'Software Design and Architecture',2,'R','ME1',1,4,0,'CO');
-INSERT INTO `course` VALUES ('510109',4,'Advanced Computer Networks',2,'R','ME1',1,4,0,'CO');
-INSERT INTO `course` VALUES ('510110',5,'Elective 2',2,'E','ME1',1,5,0,'CO');
+INSERT INTO `course` VALUES ('510108',4,'Operations Research',2,'R','ME1',1,4,0,'CO');
+INSERT INTO `course` VALUES ('510109',4,'System Simulation and Modeling',2,'R','ME1',1,5,0,'CO');
+INSERT INTO `course` VALUES ('510110',4,'Machine Learning',2,'R','ME1',1,4,0,'CO');
+INSERT INTO `course` VALUES ('510111',5,'Elective 2',2,'E','ME1',1,5,0,'CO');
+
+
 INSERT INTO `course` VALUES ('510111',4,'LP-2',2,'R','ME1',0,4,0,'CO');
 
+
 /*ME sem1*/
-INSERT INTO `course` VALUES ('510101',4,'Applied Algorithms',1,'R','ME1',1,4,0,'CO');
-INSERT INTO `course` VALUES ('510102',4,'High Performance Databases',1,'R','ME1',1,4,0,'CO');
-INSERT INTO `course` VALUES ('510103',4,'Advanced Computer Architecture',1,'R','ME1',1,4,0,'CO');
-INSERT INTO `course` VALUES ('510104',4,'Research Methodolody',1,'R','ME1',1,4,0,'CO');
+INSERT INTO `course` VALUES ('510101',4,'Research Methodology',1,'R','ME1',1,5,0,'CO');
+INSERT INTO `course` VALUES ('510102',4,'Bio-Inspired Optimization Algorithms',1,'R','ME1',1,5,0,'CO');
+INSERT INTO `course` VALUES ('510103',4,'Software Development and Version Control',1,'R','ME1',1,5,0,'CO');
+INSERT INTO `course` VALUES ('510104',4,'Embedded and Real Time Operating Systems',1,'R','ME1',1,5,0,'CO');
 INSERT INTO `course` VALUES ('510105',5,'Elective 1',1,'E','ME1',1,5,0,'CO');
-INSERT INTO `course` VALUES ('510106',4,'LP1',1,'R','ME1',0,4,0,'CO');
+
+INSERT INTO `course` VALUES ('510106A',4,'LP1-Research Methodology',1,'R','ME1',0,2,0,'CO');
+INSERT INTO `course` VALUES ('510106B',4,'LP1-Bio-Inspired Optimization Algorithms',1,'R','ME1',0,2,0,'CO');
+INSERT INTO `course` VALUES ('510106C',4,'LP1-Software Development and Version Control',1,'R','ME1',0,2,0,'CO');
+INSERT INTO `course` VALUES ('510106D',4,'LP1-Research Methodology',1,'R','ME1',0,2,0,'CO');
 
 /*BE sem2*/
 INSERT INTO `course` VALUES ('410250',3,'Machine Learning',8,'R','BE',1,3,0,'CO');
@@ -163,24 +167,24 @@ INSERT INTO `course` VALUES ('210249',1,'Soft Skills',3,'R','SE',0,2,0,'CO');
 
 /*ELECTIVES TABLE*/
 /*ME sem3 elective3*/
-INSERT INTO `electives` VALUES ('610103A','Network Security','610103');
-INSERT INTO `electives` VALUES ('610103B','Cloud Computing','610103');
-INSERT INTO `electives` VALUES ('610103C','Computer Vision and Pattern Recognition','610103');
-INSERT INTO `electives` VALUES ('610103D','Soft Computing','610103');
+INSERT INTO `electives` VALUES ('610103A','Cloud Security','610103');
+INSERT INTO `electives` VALUES ('610103B','Speech Signal Processing','610103');
+INSERT INTO `electives` VALUES ('610103C','Mobile Ad-hoc Networks','610103');
+INSERT INTO `electives` VALUES ('610103D','Pattern Recognition','610103');
 INSERT INTO `electives` VALUES ('610103E','Open Elective','610103');
 
 /*ME sem2 elective2*/
-INSERT INTO `electives` VALUES ('510110A','Business Intelligence and Data Mining','510110');
-INSERT INTO `electives` VALUES ('510110B','Usability Engineering','510110');
-INSERT INTO `electives` VALUES ('510110C','Advanced Compiler Design','510110');
-INSERT INTO `electives` VALUES ('510110D','Embedded System Design','510110');
-INSERT INTO `electives` VALUES ('510110E','Open Elective','510110');
+INSERT INTO `electives` VALUES ('510111A','Image Processing','510111');
+INSERT INTO `electives` VALUES ('510111B','Web Mining','510111');
+INSERT INTO `electives` VALUES ('510111C','Pervasive and Ubiquitous Computing','510111');
+INSERT INTO `electives` VALUES ('510111D','Network Security','510111');
+INSERT INTO `electives` VALUES ('510111E','Open Elective','510111');
 
 /*ME sem1 elective1*/
-INSERT INTO `electives` VALUES ('510105A','Intelligent Systems','510105');
-INSERT INTO `electives` VALUES ('510105B','IR and Web Mining','510105');
-INSERT INTO `electives` VALUES ('510105C','Machine Learning and Translation','510105');
-INSERT INTO `electives` VALUES ('510105D','Real Time Systems','510105');
+INSERT INTO `electives` VALUES ('510105A','Advanced Digital Signal Processing','510105');
+INSERT INTO `electives` VALUES ('510105B','Data Mining','510105');
+INSERT INTO `electives` VALUES ('510105C','Network Design and Analysis','510105');
+INSERT INTO `electives` VALUES ('510105D','Data Algorithms','510105');
 INSERT INTO `electives` VALUES ('510105E','Open Elective','510105');
 
 /*BE sem2 elective4*/
@@ -320,6 +324,15 @@ INSERT into course_prerequisites values ('210245',-1,-1,'NA','NA');
 
 
 /*companion_course(id,course_id,companion_course) TABLE (ID,Course, Practical)*/
+
+
+
+/*ME1 sem1*/
+INSERT into companion_course(id,course_id,companion_course) values  (44,'510101','510106A');
+INSERT into companion_course(id,course_id,companion_course) values (45,'510102','510106B');
+INSERT into companion_course(id,course_id,companion_course) values (45,'510103','510106C');
+INSERT into companion_course(id,course_id,companion_course) values (45,'510104','510106D');
+
 /*BE sem2*/
 INSERT into companion_course(id,course_id,companion_course) values  (1,'410250','410254A');
 INSERT into companion_course(id,course_id,companion_course) values (2,'410251','410254B');
@@ -388,7 +401,7 @@ insert into faculty_acad values('fac1','Professor','PHD',20,'CO','fac1');
 insert into faculty_acad values('fac2','Professor','PHD',18.4,'CO','fac2');
 insert into faculty_acad values('fac3','Professor','PHD',18.4,'CO','fac3');
 insert into faculty_acad values('fac4','Assistant Professor','ME',20,'CO','fac4');
-insert into faculty_acad values('fac5','Associate Professor','PHD',15,'CO','fac5');
+insert into faculty_acad values('fac5','Assistant Professor','ME',0,'CO','fac5');
 insert into faculty_acad values('fac6','Associate Professor','ME',25,'CO','fac6');
 insert into faculty_acad values('fac7','Assistant Professor','MTECH',15.5,'CO','fac7');
 insert into faculty_acad values('fac8','Assistant Professor','ME',13,'CO','fac8');
@@ -420,7 +433,6 @@ insert into faculty_acad values('fac33','Assistant Professor','ME',5,'CO','fac33
 insert into faculty_acad values('fac34','Professor','PHD',14.7,'CO','fac34');
 insert into faculty_acad values('fac35','Assistant Professor','ME',14,'CO','fac35');
 insert into faculty_acad values('fac36','Assistant Professor','ME',6.5,'CO','fac36');
-insert into faculty_acad values('fac37','Assistant Professor','ME',0,'CO','fac37');
 
 /*DESIGNATION_TO_HOURS TABLE*/
 insert into designation_to_hours values("Professor",10,8);
