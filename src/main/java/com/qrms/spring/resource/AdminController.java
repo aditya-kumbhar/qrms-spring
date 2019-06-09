@@ -1711,10 +1711,6 @@ public class AdminController {
 			}
 		}
 
-		for (CourseList c : courseList) {
-			System.out.println("CourseLISTTtttttt" + c.getCourseId());
-		}
-
 		// add elective practical courses to practical list
 		for (Course c : allElectivePracticals) {
 			System.out.println(c.getCourseId());
@@ -1936,17 +1932,6 @@ public class AdminController {
 			}
 		}
 
-//		for (CourseList c : courseList) {
-//			ArrayList<FacultyPref> fpref1;
-//			fpref1 = facultyPrefRepository.findByCourseId(c.getCourseId());
-//			if (fpref1.size() == 0) {
-//				fpref1 = facultyPrefRepository.findByElectiveId(c.getCourseId());
-//			}
-//			if (fpref1.size() == 0) {
-//				nonPreferredCourseIndices.add(courseIndex);
-//			}
-//		}
-
 		// allocate remaining pracs for last courseID
 		if (!prevCourse.equals("")) {
 			List<Integer> pracListptrs = practicalListPointer.get(prevCourse);
@@ -1978,13 +1963,10 @@ public class AdminController {
 			if(c.getFacultyId().isEmpty())
 				{
 					nonPreferredCourseIndices.add(ind);
-					System.out.println(c.getCourseId());
 				}
 				
 			ind++;
 		}
-		
-		System.out.println("***************************NON PREFFERED****"+nonPreferredCourseIndices.size());
 		
 		// for each unpreferred course, find fac with lowest load and allocate
 		for (int i : nonPreferredCourseIndices) {
@@ -2189,7 +2171,6 @@ public class AdminController {
 											break;
 										}
 									}
-
 									break;
 								} else
 									borrowFromFacList.put(c.getFacultyId(), 1);
@@ -2316,6 +2297,76 @@ public class AdminController {
 		System.out.println("MaxLoad: "+maxLoad+" TotalLoadAlloted: "
 				+totalLoadAlloted+" TotalLoadLeft: "+totalLoadLeft);
 
+		
+		System.out.println("Lets count the preferences for each faculty!");
+		
+		HashMap<String,ArrayList<String>> allotedCourses = new HashMap<String, ArrayList<String>>();
+		for(CourseList c:courseList) {
+			if(allotedCourses.containsKey(c.getFacultyId())) {
+				allotedCourses.get(c.getFacultyId()).add(c.getCourseId());
+			}else {
+				ArrayList<String> ac = new ArrayList<>();
+				ac.add(c.getCourseId());
+				allotedCourses.put(c.getFacultyId(),ac);
+			}
+		}
+		
+		HashMap<String, ArrayList<FacultyPref>> prefsPerFac = new HashMap<>();
+		
+		HashMap<String,ArrayList<Integer>> prefSatisfaction = new HashMap<>(); 
+		
+		for(FacultyAcad f:allFacs) {
+			ArrayList<FacultyPref> fprefs = facultyPrefRepository.findByUserName(f.getUserName());
+			prefsPerFac.put(f.getUserName(),fprefs);
+			
+			int prefNo = 100;
+			ArrayList<Integer> aprefNo = new ArrayList<Integer>();
+			
+			for(String s:allotedCourses.get(f.getUserName())) {
+				for(FacultyPref fp:fprefs) {
+					if((fp.getCourseId()!=null && fp.getCourseId().equals(s)) || (fp.getElectiveId()!=null && fp.getElectiveId().equals(s))){
+						if(prefNo>fp.getPrefNo()) {
+							prefNo = fp.getPrefNo();
+							aprefNo.add(prefNo);
+							break;
+						}
+					}
+				}
+			}
+			
+			prefSatisfaction.put(f.getUserName(), aprefNo);
+			System.out.println("Faculty: "+f.getUserName()+" pref No: "+prefNo);
+		}
+		
+		System.out.println("Faculty satisfaction summary: ");
+		float satisPercent;
+
+		float t = 0;
+		int divBy = 8;
+		if(isSemOdd==0) {
+			divBy=7;
+		}
+		for(int i=1;i<9;i++) {
+			int cnt = 0;
+			for (Entry<String, ArrayList<Integer>> fac1 : prefSatisfaction.entrySet()) {
+				
+				for(Integer p:fac1.getValue()) {
+					if(p==i) {
+						cnt++;
+						//t += 1-i/prefsPerFac.get(fac1.getKey()).size();
+						t += 1-i/divBy;
+					}
+				}
+			}
+			
+			System.out.println("Pref No "+i+" : "+cnt);
+			
+		}
+		System.out.println("t: "+t);
+		satisPercent = t/courseList.size();
+		System.out.println("Average Satisfaction Percentage: "+satisPercent*100);
+		
+		
 	}
 
 	@GetMapping("/getfacultyAllocationPage")
