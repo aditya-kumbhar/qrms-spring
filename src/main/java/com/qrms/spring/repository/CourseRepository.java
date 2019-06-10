@@ -12,7 +12,9 @@ import com.qrms.spring.model.Department;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Integer> {
-
+	@Query("SELECT new com.qrms.spring.model.Course(c.courseId, c.courseName, c.courseCredits, c.department, c.courseType, c.courseYear, c.courseSem, c.studAllocFlag, c.isTheory, c.noOfHours) FROM Course c WHERE c.courseId=?1")
+	Optional<Course> findByCourseIdOnExistance(String s);
+	
 	ArrayList<Course> findByCourseSemAndCourseYearAndCourseTypeAndDepartment(int sem, String year, char cType,Department d);
 	Course findByCourseId(String course_id);
 	ArrayList<Course> findAll();

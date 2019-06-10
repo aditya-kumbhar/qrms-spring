@@ -32,5 +32,7 @@ public interface FacultyPrefRepository extends JpaRepository<FacultyPref, Intege
 	@Query("Delete from FacultyPref fp where fp.userName in "
 			+ "(SELECT fa.userName FROM com.qrms.spring.model.FacultyAcad fa where fa.department = ?1)")
 	void deleteByDepartment(Department dept);
+	ArrayList<FacultyPref> findByElectiveIdAndPrefNo(String courseId, int prefNo);
+	ArrayList<FacultyPref> findByCourseIdAndPrefNo(String courseId, int prefNo);
 	
 }

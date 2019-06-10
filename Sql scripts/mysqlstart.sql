@@ -81,15 +81,14 @@ INSERT INTO `course` VALUES ('510109',4,'System Simulation and Modeling',2,'R','
 INSERT INTO `course` VALUES ('510110',4,'Machine Learning',2,'R','ME1',1,4,0,'CO');
 INSERT INTO `course` VALUES ('510111',5,'Elective 2',2,'E','ME1',1,5,0,'CO');
 
-
 INSERT INTO `course` VALUES ('510113',4,'LP-2',2,'R','ME1',0,4,0,'CO');
-
 
 /*ME sem1*/
 INSERT INTO `course` VALUES ('510101',4,'Research Methodology',1,'R','ME1',1,5,0,'CO');
 INSERT INTO `course` VALUES ('510102',4,'Bio-Inspired Optimization Algorithms',1,'R','ME1',1,5,0,'CO');
 INSERT INTO `course` VALUES ('510103',4,'Software Development and Version Control',1,'R','ME1',1,5,0,'CO');
 INSERT INTO `course` VALUES ('510104',4,'Embedded and Real Time Operating Systems',1,'R','ME1',1,5,0,'CO');
+
 INSERT INTO `course` VALUES ('510105',5,'Elective 1',1,'E','ME1',1,6,0,'CO');
 
 INSERT INTO `course` VALUES ('510106A',4,'LP1-Research Methodology',1,'R','ME1',0,2,0,'CO');
@@ -330,8 +329,13 @@ INSERT into course_prerequisites values ('210245',-1,-1,'NA','NA');
 /*ME1 sem1*/
 INSERT into companion_course(id,course_id,companion_course) values  (44,'510101','510106A');
 INSERT into companion_course(id,course_id,companion_course) values (45,'510102','510106B');
+<<<<<<< HEAD
+INSERT into companion_course(id,course_id,companion_course) values (45,'510103','510106C');
+INSERT into companion_course(id,course_id,companion_course) values (45,'510104','510106D');
+=======
 INSERT into companion_course(id,course_id,companion_course) values (46,'510103','510106C');
 INSERT into companion_course(id,course_id,companion_course) values (47,'510104','510106D');
+>>>>>>> 683e782316e87e20b8b447f16d099ade012e16b0
 
 /*BE sem2*/
 INSERT into companion_course(id,course_id,companion_course) values  (1,'410250','410254A');
@@ -400,7 +404,11 @@ INSERT into companion_course(id,course_id,companion_course) values (40,'210245',
 insert into faculty_acad values('fac1','Professor','PHD',20,'CO','fac1');
 insert into faculty_acad values('fac2','Professor','PHD',18.4,'CO','fac2');
 insert into faculty_acad values('fac3','Professor','PHD',18.4,'CO','fac3');
+<<<<<<< HEAD
+insert into faculty_acad values('fac4','Assistant Professor','ME',20,'CO','fac4');
+=======
 insert into faculty_acad values('fac4','Assistant Professor','ME',8,'CO','fac4');
+>>>>>>> 683e782316e87e20b8b447f16d099ade012e16b0
 insert into faculty_acad values('fac5','Assistant Professor','ME',0,'CO','fac5');
 insert into faculty_acad values('fac6','Associate Professor','ME',25,'CO','fac6');
 insert into faculty_acad values('fac7','Assistant Professor','MTECH',15.5,'CO','fac7');

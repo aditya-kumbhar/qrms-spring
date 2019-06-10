@@ -324,6 +324,7 @@ public class FacultyController {
 			fp.setUserName(userName);
 			
 			Course c = courseRepository.findByCourseId(fp.getCourseId());
+			
 			if(c==null)
 			{
 				fp.setElectiveId(fp.getCourseId());
