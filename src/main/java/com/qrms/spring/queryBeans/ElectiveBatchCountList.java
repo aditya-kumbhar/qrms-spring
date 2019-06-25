@@ -6,6 +6,17 @@ public class ElectiveBatchCountList {
 	private List<ElectiveBatchCount> electiveBatchCounts;
 	private String year,deptId;
 	
+	public ElectiveBatchCountList() {
+		super();
+	}
+
+	public ElectiveBatchCountList(List<ElectiveBatchCount> electiveBatchCounts, String year, String deptId) {
+		super();
+		this.electiveBatchCounts = electiveBatchCounts;
+		this.year = year;
+		this.deptId = deptId;
+	}
+
 	public String getYear() {
 		return year;
 	}
