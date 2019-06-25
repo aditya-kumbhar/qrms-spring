@@ -1,9 +1,7 @@
 package com.qrms.spring.queryBeans;
 
 public class ElectiveBatchCount {
-	public ElectiveBatchCount() {
-		
-	}
+
 	private String electiveId;
 	private Integer noOfBatches;
 	public String getElectiveId() {
