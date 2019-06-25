@@ -21,5 +21,7 @@ public class ElectiveBatchCount {
 		this.noOfBatches = noOfBatches;
 	}
 	
-	
+	public ElectiveBatchCount() {
+		
+	}
 }

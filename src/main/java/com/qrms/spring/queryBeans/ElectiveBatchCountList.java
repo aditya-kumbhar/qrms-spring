@@ -30,4 +30,7 @@ public class ElectiveBatchCountList {
 		return electiveBatchCounts;
 	}
 
+	public ElectiveBatchCountList() {
+			
+	}
 }
