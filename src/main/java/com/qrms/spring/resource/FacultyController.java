@@ -321,6 +321,8 @@ public class FacultyController {
 		List<FacultyPref> prefArray = facultyPrefs.getFacultyPrefs();
 		
 		for(FacultyPref fp : prefArray) {
+			if(fp==null)
+				break;
 			fp.setUserName(userName);
 			
 			Course c = courseRepository.findByCourseId(fp.getCourseId());
